@@ -30,6 +30,17 @@ public interface LanguagePlugin {
     public ExerciseDesc scanExercise(Path path, String exerciseName);
 
     /**
+     * Returns test results for the exercise.
+     *
+     * <p>
+     * This is called either by an IDE plugin or by the sandbox runner.
+     *
+     * @param path The path to the exercise directory.
+     * @return The results of the run (not null).
+     */
+    public RunResult runExercise(Path path);
+
+    /**
      * Prepares a submission for processing.
      *
      * <p>

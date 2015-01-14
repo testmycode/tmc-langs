@@ -12,5 +12,6 @@
 
     <modules>
         <module>tmc-langs-framework</module>
+        <!-- TODO: add plugins and support libraries here -->
     </modules>
 </project>

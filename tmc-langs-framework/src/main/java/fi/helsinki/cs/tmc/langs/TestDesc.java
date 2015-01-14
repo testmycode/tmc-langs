@@ -3,6 +3,9 @@ package fi.helsinki.cs.tmc.langs;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * A description of an exercise's test case.
+ */
 public final class TestDesc {
     /**
      * The full name of the test.
@@ -16,6 +19,7 @@ public final class TestDesc {
     /**
      * The list of point names that passing this test may give.
      *
+     * <p>
      * To obtain a point X, the user must pass all exercises that require
      * point X.
      */

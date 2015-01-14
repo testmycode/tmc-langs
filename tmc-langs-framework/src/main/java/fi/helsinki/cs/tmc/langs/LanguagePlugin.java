@@ -1,16 +1,45 @@
 package fi.helsinki.cs.tmc.langs;
 
+import com.google.common.collect.ImmutableList;
 import java.nio.file.Path;
 
 /**
  * The interface that each language plugin must implement.
+ *
+ * <p>
+ * These implement the operations needed by the TMC server to support a
+ * programming language. These are provided as a library to IDE plugins as a
+ * convenience. IDE plugins often need additional integration work to support a
+ * language properly. This interface does NOT attempt to provide everything that
+ * an IDE plugin might need to fully support a language.
+ *
+ * <p>
+ * Parts of this interface may be called in a TMC sandbox.
+ *
+ * <p>
+ * Implementations must be thread-safe and preferably fully stateless.
+ * Users of this interface are free to cache results if needed.
  */
 public interface LanguagePlugin {
     /**
      * Returns the name of the programming language supported by this plugin.
+     *
      * @return The name of the language supported by this plugin.
      */
     public String getLanguageName();
+
+    /**
+     * Returns a list of all directories that contain an exercise in this
+     * language.
+     *
+     * <p>
+     * These directories might overlap with directories returned by some other
+     * language plugin.
+     *
+     * @param basePath The directory to search in.
+     * @return A list of subdirectories. Never null.
+     */
+    public ImmutableList<Path> findExercises(Path basePath);
 
     /**
      * Produces an exercise description of an exercise directory.
@@ -30,33 +59,31 @@ public interface LanguagePlugin {
     public ExerciseDesc scanExercise(Path path, String exerciseName);
 
     /**
-     * Returns test results for the exercise.
-     *
-     * <p>
-     * This is called either by an IDE plugin or by the sandbox runner.
+     * Runs the tests for the exercise.
      *
      * @param path The path to the exercise directory.
-     * @return The results of the run (not null).
+     * @return The results of the run. Never null.
      */
-    public RunResult runExercise(Path path);
+    public RunResult runTests(Path path);
 
     /**
-     * Prepares a submission for processing.
-     *
-     * <p>
-     * Usually this picks source files from the submission and test and other
-     * files from the original exercise.
+     * Prepares a submission for processing in the sandbox.
      *
      * <p>
      * The destination path is initialized with the original exercise as it
-     * appears in the course repository. The implementation shall copy over
-     * files from the submission such that the student cannot easily replace
-     * the tests.
+     * appears in the course repository. The implementation should copy over
+     * a selection of files from the submission so that the student cannot e.g.
+     * easily replace the tests.
+     *
+     * <p>
+     * TODO: make it easy for an implementation to take into account a possible
+     * <tt>extra_student_files</tt> setting in a <tt>.tmcproject.yml</tt> file.
+     * See http://tmc.mooc.fi/usermanual/pages/instructors.html#_tmcproject_yml
      *
      * @param submissionPath A path to a directory where the submission has
      * been extracted. May be modified (e.g. by doing moves instead of copies).
-     * @param destPath A path to a directory where the raw exercise has been
-     * copied and where parts of the submission are to be copied.
+     * @param destPath A path to a directory where the original exercise has
+     * been copied and where parts of the submission are to be copied.
      */
     public void prepareSubmission(Path submissionPath, Path destPath);
 
@@ -67,11 +94,10 @@ public interface LanguagePlugin {
      * The stub is a copy of the original where the model solution and special
      * comments have been stripped and stubs like ('return 0') have been added.
      *
-     * @param originalPath A path to the original exercise. May not be modified.
-     * @param stubPath A path to an empty directory where the stub
-     * should be assembled.
+     * @param path A path to a directory where the original exericse has been
+     * copied. This method should modify the contents of this directory.
      */
-    public void prepareStub(Path originalPath, Path stubPath);
+    public void prepareStub(Path path);
 
     /**
      * Prepares a presentable solution from the original.
@@ -79,28 +105,8 @@ public interface LanguagePlugin {
      * <p>
      * The solution usually has stubs and special comments stripped.
      *
-     * @param originalPath A path to the original exercise. May not be modified.
-     * @param solutionPath A path to an empty directory where the solution
-     * should be assembled.
+     * @param path A path to a directory where the original exericse has been
+     * copied. This method should modify the contents of this directory.
      */
-    public void prepareSolution(Path originalPath, Path solutionPath);
-
-    /**
-     * Prepares the sandbox from within during the build process.
-     *
-     * <p>
-     * This is run inside the sandbox chroot.
-     *
-     * <p>
-     * Guidelines:
-     * <ul>
-     *   <li>Do not repeat work that has been done. If you e.g. download
-     *       something, check whether it's already been downloaded.
-     *   <li>Place any temporary files in the /tmp/build directory.
-     *       For instance, downloads should go there. These files are excluded
-     *       from the sandbox image.
-     *   <li>Do not depend on the execution order of language plugins.
-     * </ul>
-     */
-    public void prepareSandboxChroot();
+    public void prepareSolution(Path path);
 }

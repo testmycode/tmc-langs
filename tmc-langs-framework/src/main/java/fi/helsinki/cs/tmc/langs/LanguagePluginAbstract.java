@@ -6,7 +6,6 @@
 
 package fi.helsinki.cs.tmc.langs;
 
-import com.google.common.collect.ImmutableList;
 import java.nio.file.Path;
 
 /**
@@ -19,7 +18,7 @@ public abstract class LanguagePluginAbstract implements LanguagePlugin {
 
     /**
      * 
-     * @param languageName The name of the language as given in the extending class
+     * @param languageName The name of the language as given in the extending class.
      */
     public LanguagePluginAbstract(String languageName) {
         this.languageName = languageName;
@@ -31,7 +30,17 @@ public abstract class LanguagePluginAbstract implements LanguagePlugin {
     }
     
     @Override
-    public ImmutableList<Path> findExercises(Path basePath) {
+        public void prepareSubmission(Path submissionPath, Path destPath) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+        public void prepareStub(Path path) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+        public void prepareSolution(Path path) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

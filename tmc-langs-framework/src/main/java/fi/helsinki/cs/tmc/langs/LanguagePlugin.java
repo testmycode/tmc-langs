@@ -4,14 +4,14 @@ import com.google.common.collect.ImmutableList;
 import java.nio.file.Path;
 
 /**
- * The interface that each language plugin must implement.
+ * The interface that each language plug-in must implement.
  *
  * <p>
  * These implement the operations needed by the TMC server to support a
- * programming language. These are provided as a library to IDE plugins as a
- * convenience. IDE plugins often need additional integration work to support a
+ * programming language. These are provided as a library to IDE plug-ins as a
+ * convenience. IDE plug-ins often need additional integration work to support a
  * language properly. This interface does NOT attempt to provide everything that
- * an IDE plugin might need to fully support a language.
+ * an IDE plug-in might need to fully support a language.
  *
  * <p>
  * Parts of this interface may be called in a TMC sandbox.
@@ -22,9 +22,9 @@ import java.nio.file.Path;
  */
 public interface LanguagePlugin {
     /**
-     * Returns the name of the programming language supported by this plugin.
+     * Returns the name of the programming language supported by this plug-in.
      *
-     * @return The name of the language supported by this plugin.
+     * @return The name of the language supported by this plug-in.
      */
     public String getLanguageName();
 
@@ -34,7 +34,7 @@ public interface LanguagePlugin {
      *
      * <p>
      * These directories might overlap with directories returned by some other
-     * language plugin.
+     * language plug-in.
      *
      * @param basePath The directory to search in.
      * @return A list of subdirectories. Never null.
@@ -50,10 +50,10 @@ public interface LanguagePlugin {
      *
      * <p>
      * Must return null if the given path is not a valid exercise directory
-     * for this langauge.
+     * for this language.
      *
      * @param path The path of the exercise directory.
-     * @param exerciseName This must be set as the returned value's `name`.
+     * @param exerciseName This must be set as the name of the returned value.
      * @return The exercise description, or null if none.
      */
     public ExerciseDesc scanExercise(Path path, String exerciseName);
@@ -70,7 +70,7 @@ public interface LanguagePlugin {
      * Prepares a submission for processing in the sandbox.
      *
      * <p>
-     * The destination path is initialized with the original exercise as it
+     * The destination path is initialised with the original exercise as it
      * appears in the course repository. The implementation should copy over
      * a selection of files from the submission so that the student cannot e.g.
      * easily replace the tests.
@@ -94,7 +94,7 @@ public interface LanguagePlugin {
      * The stub is a copy of the original where the model solution and special
      * comments have been stripped and stubs like ('return 0') have been added.
      *
-     * @param path A path to a directory where the original exericse has been
+     * @param path A path to a directory where the original exercise has been
      * copied. This method should modify the contents of this directory.
      */
     public void prepareStub(Path path);
@@ -105,7 +105,7 @@ public interface LanguagePlugin {
      * <p>
      * The solution usually has stubs and special comments stripped.
      *
-     * @param path A path to a directory where the original exericse has been
+     * @param path A path to a directory where the original exercise has been
      * copied. This method should modify the contents of this directory.
      */
     public void prepareSolution(Path path);

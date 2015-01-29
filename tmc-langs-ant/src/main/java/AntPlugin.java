@@ -4,23 +4,26 @@ import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import java.nio.file.Path;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 /**
  *
  * @author TMC-langs
  */
 public class AntPlugin extends LanguagePluginAbstract {
-  
+
+    private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
+
     public AntPlugin() {
         super("apache-ant");
     }
-    
+
+    @Override
+    public ImmutableList<Path> findExercises(Path basePath) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     @Override
     public ExerciseDesc scanExercise(Path path, String exerciseName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -28,22 +31,7 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     @Override
     public RunResult runTests(Path path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<String> args = new ArrayList<>();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    public void prepareSubmission(Path submissionPath, Path destPath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void prepareStub(Path path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void prepareSolution(Path path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

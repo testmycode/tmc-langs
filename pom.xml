@@ -12,6 +12,7 @@
     <modules>
         <module>tmc-langs-framework</module>
         <!-- TODO: add plugins and support libraries here -->
+        <module>tmc-langs-ant</module>
     </modules>
     
     <build>

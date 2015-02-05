@@ -4,6 +4,20 @@ package fi.helsinki.cs.tmc.langs.util;
 import java.nio.file.Path;
 
 public class ExerciseUtils {
+    
+     /**
+     * Constuctor 
+     * 
+     * <p>
+     * TODO:
+     * Needs to be expanded with LanguagePlugin, which determines the comment
+     * style used with the language
+     * 
+     */
+    
+    public ExerciseUtils() {
+        
+    }
         /**
      * Prepares a stub exercise from the original.
      *

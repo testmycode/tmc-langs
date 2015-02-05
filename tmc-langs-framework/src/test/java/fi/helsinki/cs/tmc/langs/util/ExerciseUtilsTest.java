@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
@@ -37,6 +38,7 @@ public class ExerciseUtilsTest {
 
     /**
      * Test of prepareStub method, of class ExerciseUtils.
+     * @throws java.io.IOException
      */
     @Test
     public void testPrepareStub() throws IOException {
@@ -57,10 +59,14 @@ public class ExerciseUtilsTest {
         for(String fileName : expectedFiles.keySet()) {
             File expected = expectedFiles.get(fileName);
             File actual = actualFiles.get(fileName);
-            assertNotNull("actual file should exist", actual);
-            assertEquals("converted file should have model solution extracted", 
-                    FileUtils.readLines(expected), 
-                    FileUtils.readLines(actual));
+            List<String> expectedLines = FileUtils.readLines(expected);
+            List<String> actualLines = FileUtils.readLines(actual);
+            for (int i = 0 ; i < expectedLines.size() ; ++i) {
+                String expectedLine = expectedLines.get(i);
+                String actualLine = actualLines.get(i);
+                assertEquals("Line in file " + fileName + " did not match ", expectedLine, actualLine);
+            }
+            
         }
         
     }

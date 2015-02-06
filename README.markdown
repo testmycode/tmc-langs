@@ -1,7 +1,7 @@
 
 # tmc-langs #
 
-[![Build Status](https://travis-ci.org/tmc-langs/tmc-langs.svg)](https://travis-ci.org/tmc-langs/tmc-langs)
+[![Build Status](https://travis-ci.org/tmc-langs/tmc-langs.svg?branch=master)](https://travis-ci.org/tmc-langs/tmc-langs)
 
 [![Coverage Status](https://coveralls.io/repos/tmc-langs/tmc-langs/badge.svg?branch=master)](https://coveralls.io/r/tmc-langs/tmc-langs?branch=master)
 

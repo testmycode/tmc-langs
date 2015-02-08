@@ -1,18 +1,14 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *

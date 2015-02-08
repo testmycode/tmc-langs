@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
 import fi.helsinki.cs.tmc.langs.RunResult;
+
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -38,6 +40,6 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
-        return  true;
+        return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
 }

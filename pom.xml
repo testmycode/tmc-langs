@@ -13,6 +13,7 @@
         <module>tmc-langs-framework</module>
         <!-- TODO: add plugins and support libraries here -->
         <module>tmc-langs-ant</module>
+        <module>tmc-langs-util</module>
     </modules>
     
     <build>

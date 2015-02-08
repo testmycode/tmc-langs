@@ -1,6 +1,8 @@
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import static org.junit.Assert.*;
+
+import fi.helsinki.cs.tmc.langs.ant.AntPlugin;
 import org.junit.Test;
 
 /**

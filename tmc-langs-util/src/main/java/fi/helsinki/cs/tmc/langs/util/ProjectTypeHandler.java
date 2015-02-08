@@ -30,13 +30,13 @@ public class ProjectTypeHandler {
      * @return The project type, or null if none.
      */
     public ProjectType getProjectType(Path path) {
-      for(ProjectType type : projectTypes.keySet()) {
-        if(type.getLanguagePlugin().isExerciseTypeCorrect(path)) {
-            return type;
+        for(ProjectType type : projectTypes.keySet()) {
+            if(type.getLanguagePlugin().isExerciseTypeCorrect(path)) {
+                return type;
+            }
         }
-      }
 
-      return null;
+        return null;
     }
 
     /**

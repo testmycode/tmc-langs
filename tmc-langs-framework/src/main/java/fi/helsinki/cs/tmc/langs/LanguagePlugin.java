@@ -1,7 +1,6 @@
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.collect.ImmutableList;
-import fi.helsinki.cs.tmc.langs.util.ProjectType;
 
 import java.nio.file.Path;
 

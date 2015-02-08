@@ -1,6 +1,8 @@
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.langs.util.ProjectType;
+
 import java.nio.file.Path;
 
 /**
@@ -109,4 +111,12 @@ public interface LanguagePlugin {
      * copied. This method should modify the contents of this directory.
      */
     public void prepareSolution(Path path);
+
+    /**
+     * Check if the exercises project type corresponds with the language plugin type.
+     *
+     * @param path The path to the exercise directory.
+     * @return True if language plugin
+     */
+    public boolean isExerciseTypeCorrect(Path path);
 }

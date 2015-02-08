@@ -34,4 +34,9 @@ public class AntPlugin extends LanguagePluginAbstract {
         ArrayList<String> args = new ArrayList<>();
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public boolean isExerciseTypeCorrect(Path path) {
+        return  true;
+    }
 }

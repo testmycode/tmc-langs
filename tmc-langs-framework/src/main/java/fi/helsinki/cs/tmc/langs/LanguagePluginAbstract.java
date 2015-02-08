@@ -43,4 +43,10 @@ public abstract class LanguagePluginAbstract implements LanguagePlugin {
         public void prepareSolution(Path path) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public boolean isExerciseTypeCorrect(Path path) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

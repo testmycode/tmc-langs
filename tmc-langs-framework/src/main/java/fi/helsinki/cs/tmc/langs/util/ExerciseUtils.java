@@ -40,13 +40,13 @@ public class ExerciseUtils {
     public void prepareStub(Path path) {
         File projectRoot = path.resolve(sourceFolderName).toFile();
         List<File> projectFiles = getFileList(projectRoot);
-        
+
         for (File projectFile : projectFiles) {
-            prepareFile(projectFile);
+            prepareStubFile(projectFile);
         }
     }
 
-    private void prepareFile(File file) {
+    private void prepareStubFile(File file) {
         try {
             List<String> lines = FileUtils.readLines(file);
             List<String> parsedLines = new ArrayList<>();
@@ -59,7 +59,7 @@ public class ExerciseUtils {
                 } else if (!skipLine && !line.contains(stubMarker)) {
                     parsedLines.add(line);
                 } else if (line.contains(stubMarker)) {
-                    String start = line.substring(0, line.indexOf(stubMarker)-1);
+                    String start = line.substring(0, line.indexOf(stubMarker) - 1);
                     String end = line.substring(line.indexOf(stubMarker) + stubMarker.length());
                     parsedLines.add(start + end);
                 }
@@ -96,7 +96,28 @@ public class ExerciseUtils {
      * copied. This method should modify the contents of this directory.
      */
     public void prepareSolution(Path path) {
+        File projectRoot = path.resolve(sourceFolderName).toFile();
+        List<File> projectFiles = getFileList(projectRoot);
 
+        for (File projectFile : projectFiles) {
+            prepareSolutionFile(projectFile);
+        }
+    }
+    
+    private void prepareSolutionFile(File file) {
+        try {
+            List<String> lines = FileUtils.readLines(file);
+            List<String> parsedLines = new ArrayList<>();
+            for (String line : lines) {
+                if (line.contains(beginSolution) || line.contains(endSolution) || line.contains(stubMarker)) {
+                    continue;
+                } 
+                parsedLines.add(line);
+            }
+            FileUtils.writeLines(file, parsedLines);
+        } catch (IOException ex) {
+            System.out.println("Unexpected IOException, preparation of file {" + file.getAbsolutePath() + "} interrupted");
+        }
     }
 
 }

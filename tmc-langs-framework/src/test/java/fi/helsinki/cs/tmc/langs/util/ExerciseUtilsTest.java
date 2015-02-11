@@ -90,13 +90,34 @@ public class ExerciseUtilsTest {
      * Test of prepareSolution method, of class ExerciseUtils.
      */
     @Test
-    public void testPrepareSolution() {
+    public void testPrepareSolution() throws IOException {
         System.out.println("prepareSolution");
-        Path path = null;
+        File originProject = new File("src/test/resources/arith_funcs/");
+
+        File targetFolder = createTemporaryCopyOf(originProject);
         ExerciseUtils instance = new ExerciseUtils();
-        instance.prepareSolution(path);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        instance.prepareSolution(targetFolder.toPath());
+       
+        File expectedFolder = new File("src/test/resources/arith_funcs_solution/src");
+        File outputFolder = new File(targetFolder.getAbsolutePath() + "/src");
+        
+        Map<String, File> expectedFiles = getFileMap(expectedFolder);
+        Map<String, File> actualFiles = getFileMap(outputFolder);
+        
+        for(String fileName : expectedFiles.keySet()) {
+            File expected = expectedFiles.get(fileName);
+            File actual = actualFiles.get(fileName);
+            List<String> expectedLines = FileUtils.readLines(expected);
+            List<String> actualLines = FileUtils.readLines(actual);
+            for (int i = 0 ; i < expectedLines.size() ; ++i) {
+                String expectedLine = expectedLines.get(i);
+                String actualLine = actualLines.get(i);
+                assertEquals("Line in file " + fileName + " did not match ", expectedLine, actualLine);
+            }
+            
+        }
+        
     }
 
 }

@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import org.junit.Test;
 
 import java.io.File;
@@ -14,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class AntPluginTest {
 
-    private LanguagePlugin antPlugin;
+    private AntPlugin antPlugin;
 
     public AntPluginTest() {
         antPlugin = new AntPlugin();
@@ -34,6 +35,7 @@ public class AntPluginTest {
     public void returnsFalseForExercisesWithoutBuildFile() {
         assertFalse(antPlugin.isExerciseTypeCorrect(getPath("non_ant_project")));
     }
+
 
     private Path getPath(String location) {
         Path path;

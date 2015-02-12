@@ -6,9 +6,13 @@ import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
 import fi.helsinki.cs.tmc.langs.RunResult;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
 
 public class AntPlugin extends LanguagePluginAbstract {
 
@@ -32,12 +36,32 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     @Override
     public RunResult runTests(Path path) {
-        ArrayList<String> args = new ArrayList<>();
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (!isExerciseTypeCorrect(path)) {
+            throw new RuntimeException("Project has no build.xml");
+        } else {
+            build(path);
+
+            // Run tests, needs relocating
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    private void build(Path path) {
+        Project project = new Project();
+        File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
+        project.setUserProperty("ant.file", buildFile.getAbsolutePath());
+        project.init();
+
+        ProjectHelper helper = ProjectHelper.getProjectHelper();
+        project.addReference("ant.projectHelper", helper);
+        helper.parse(project, buildFile);
+
+        project.executeTarget(project.getDefaultTarget());
     }
 
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
+
 }

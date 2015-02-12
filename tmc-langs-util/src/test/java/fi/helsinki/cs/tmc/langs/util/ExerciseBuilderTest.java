@@ -8,16 +8,10 @@ package fi.helsinki.cs.tmc.langs.util;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -25,9 +19,9 @@ import static org.junit.Assert.*;
  *
  * @author villheik
  */
-public class ExerciseUtilsTest {
+public class ExerciseBuilderTest {
 
-    public ExerciseUtilsTest() {
+    public ExerciseBuilderTest() {
     }
 
     private File createTemporaryCopyOf(File file) throws IOException {
@@ -46,7 +40,7 @@ public class ExerciseUtilsTest {
         File originProject = new File("src/test/resources/arith_funcs/");
 
         File targetFolder = createTemporaryCopyOf(originProject);
-        ExerciseUtils instance = new ExerciseUtils();
+        ExerciseBuilder instance = new ExerciseBuilder();
 
         instance.prepareStub(targetFolder.toPath());
        
@@ -95,7 +89,7 @@ public class ExerciseUtilsTest {
         File originProject = new File("src/test/resources/arith_funcs/");
 
         File targetFolder = createTemporaryCopyOf(originProject);
-        ExerciseUtils instance = new ExerciseUtils();
+        ExerciseBuilder instance = new ExerciseBuilder();
 
         instance.prepareSolution(targetFolder.toPath());
        

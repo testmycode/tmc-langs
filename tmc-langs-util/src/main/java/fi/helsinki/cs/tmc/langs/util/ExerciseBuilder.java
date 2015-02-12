@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 
-public class ExerciseUtils {
+public class ExerciseBuilder {
 
     private String beginSolution = "// BEGIN SOLUTION";
     private String endSolution = "// END SOLUTION";
@@ -23,7 +23,7 @@ public class ExerciseUtils {
      * comment style used with the language
      *
      */
-    public ExerciseUtils() {
+    public ExerciseBuilder() {
 
     }
 

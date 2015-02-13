@@ -7,7 +7,11 @@
         <groupId>fi.helsinki.cs.tmc</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>    
+    
+    <properties>
+        <tmc.basedir>${basedir}/../target</tmc.basedir>
+    </properties>
 
     <artifactId>tmc-langs-util</artifactId>
     <packaging>jar</packaging>
@@ -31,6 +35,36 @@
             <type>jar</type>
         </dependency>
     </dependencies>
-
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <outputDirectory>${tmc.basedir}</outputDirectory>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${tmc.basedir}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -10,16 +10,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-/**
- *
- * @author TMC-langs
- */
 public class AntPlugin extends LanguagePluginAbstract {
 
     private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
 
-    public AntPlugin() {
-        super("apache-ant");
+
+    @Override
+    public String getLanguageName() {
+        return "apache-ant";
     }
 
     @Override

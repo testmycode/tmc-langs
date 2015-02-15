@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
+import com.google.common.base.Throwables;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import org.junit.Test;
 
@@ -10,10 +11,7 @@ import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 
-/**
- *
- * @author alpa
- */
+
 public class AntPluginTest {
 
     private LanguagePlugin antPlugin;
@@ -38,11 +36,11 @@ public class AntPluginTest {
     }
 
     private Path getPath(String location) {
-        Path path = null;
+        Path path;
         try {
-             path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
+            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            throw Throwables.propagate(e);
         }
         return path;
     }

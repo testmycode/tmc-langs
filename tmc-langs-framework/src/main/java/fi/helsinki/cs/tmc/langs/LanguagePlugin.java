@@ -54,7 +54,7 @@ public interface LanguagePlugin {
      * for this language.
      *
      * @param path The path of the exercise directory.
-     * @param exerciseName This must be set as the name of the returned value.
+     * @param exerciseName This must be set as the name of the returned exercise.
      * @return The exercise description, or null if none.
      */
     public ExerciseDesc scanExercise(Path path, String exerciseName);
@@ -112,10 +112,10 @@ public interface LanguagePlugin {
     public void prepareSolution(Path path);
 
     /**
-     * Check if the exercises project type corresponds with the language plugin type.
+     * Check if the exercise's project type corresponds with the language plugin type.
      *
      * @param path The path to the exercise directory.
-     * @return True if language plugin
+     * @return True if given path is valid directory for this language  plugin
      */
     public boolean isExerciseTypeCorrect(Path path);
 }

@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import com.google.common.base.Throwables;
 import fi.helsinki.cs.tmc.langs.ant.AntPlugin;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,11 +36,11 @@ public class ProjectTypeHandlerTest {
     }
 
     private Path getPath(String location) {
-        Path path = null;
+        Path path;
         try {
             path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            throw Throwables.propagate(e);
         }
         return path;
     }

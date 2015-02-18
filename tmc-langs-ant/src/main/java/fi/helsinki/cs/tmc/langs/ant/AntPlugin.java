@@ -4,15 +4,23 @@ import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
 import fi.helsinki.cs.tmc.langs.RunResult;
+import fi.helsinki.cs.tmc.langs.TestResult;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 public class AntPlugin extends LanguagePluginAbstract {
 
@@ -40,9 +48,28 @@ public class AntPlugin extends LanguagePluginAbstract {
             throw new RuntimeException("Project has no build.xml");
         } else {
             build(path);
+            String name = path.getFileName().toString().split(".")[0];
+            File file = path.toFile();
+            File dir = file.getParentFile();
+            URLClassLoader classLoader = null;
+            try {
+                URL url = new URL("file://" + dir.getAbsolutePath());
+                classLoader = new URLClassLoader(new URL[]{url});
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(AntPlugin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            Class<?> clazz = null;
+            try {
+                clazz = classLoader.loadClass(name);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(AntPlugin.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-            // Run tests, needs relocating
-            throw new UnsupportedOperationException("Not supported yet.");
+            Result testResults = JUnitCore.runClasses(clazz);
+
+            return parseAndConvertTestResults(testResults);
+
         }
     }
 
@@ -64,4 +91,9 @@ public class AntPlugin extends LanguagePluginAbstract {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
 
+    private RunResult parseAndConvertTestResults(Result testResults) {
+
+        return null;
+
+    }
 }

@@ -1,30 +1,29 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import fi.helsinki.cs.tmc.testscanner.TestScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
+
+import javax.tools.ToolProvider;
 
 public class AntPlugin extends LanguagePluginAbstract {
 
     private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
+    TestScanner scanner = new TestScanner(ToolProvider.getSystemJavaCompiler());
 
 
     @Override
@@ -39,7 +38,52 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     @Override
     public ExerciseDesc scanExercise(Path path, String exerciseName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (!isExerciseTypeCorrect(path)) {
+            return null;
+        }
+
+        String output;
+        try {
+            output = invokeTestScanner("--test-runner-format", path.toString());
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+
+        return parseAndConvertScannerOutput(output, exerciseName);
+    }
+
+    /**
+     * Parse and convert tmc-testscanner output into ExerciseDescription
+     *
+     * @param output Output from tmc-testscanner
+     * @param exerciseName The name of the exercise
+     * @return Parsed exercise description
+     */
+    private ExerciseDesc parseAndConvertScannerOutput(String output, String exerciseName) {
+        System.out.println(exerciseName);
+        System.out.println(output);
+        return null;
+    }
+
+    /**
+     * Scan for tests for given project path using tmc-testscanner
+     *
+     * @param args Arguments for starting tmc-testscanner
+     * @return Output from tmc-testscanner
+     * @throws Exception
+     */
+    private String invokeTestScanner(String... args) throws Exception {
+        ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
+        PrintStream oldOut = System.out;
+
+        try {
+            System.setOut(new PrintStream(outBuf, true, "UTF-8"));
+            scanner.main(args);
+        } finally {
+            System.setOut(oldOut);
+        }
+
+        return outBuf.toString("UTF-8");
     }
 
     @Override
@@ -86,14 +130,17 @@ public class AntPlugin extends LanguagePluginAbstract {
         project.executeTarget(project.getDefaultTarget());
     }
 
-    @Override
+    /**
+     * Check if the exercise's project type corresponds with the language plugin type.
+     *
+     * @param path The path to the exercise directory.
+     * @return True if given path is valid directory for this language  plugin
+     */
     public boolean isExerciseTypeCorrect(Path path) {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
 
     private RunResult parseAndConvertTestResults(Result testResults) {
-
         return null;
-
     }
 }

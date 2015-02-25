@@ -27,15 +27,9 @@ public class AntPluginTest {
     }
 
     @Test
-    public void returnsTrueForExercisesWithBuildFile() {
-        assertTrue(antPlugin.isExerciseTypeCorrect(getPath("ant_project")));
+    public void test() {
+        antPlugin.scanExercise(getPath("ant_project"), "trivial");
     }
-
-    @Test
-    public void returnsFalseForExercisesWithoutBuildFile() {
-        assertFalse(antPlugin.isExerciseTypeCorrect(getPath("non_ant_project")));
-    }
-
 
     private Path getPath(String location) {
         Path path;
@@ -46,5 +40,7 @@ public class AntPluginTest {
         }
         return path;
     }
+
+
 
 }

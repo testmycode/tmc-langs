@@ -19,6 +19,13 @@
     <name>tmc-langs-framework</name>
     <url>http://testmycode.net</url>
 
+    <repositories>
+        <repository>
+            <id>testmycode.net</id>
+            <url>http://maven.testmycode.net/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -26,7 +33,11 @@
             <version>14.0</version>
             <type>jar</type>
         </dependency>
-
+        <dependency>
+            <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>tmc-junit-runner</artifactId>
+            <version>0.2.5</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

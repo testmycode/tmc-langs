@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import fi.helsinki.cs.tmc.testscanner.TestScanner;
+import java.util.Stack;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.junit.runner.JUnitCore;
@@ -30,15 +31,56 @@ public class AntPlugin extends LanguagePluginAbstract {
     private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
     TestScanner scanner = new TestScanner(ToolProvider.getSystemJavaCompiler());
 
-
     @Override
     public String getLanguageName() {
         return "apache-ant";
     }
 
+    /**
+     *
+     * @param basePath The file path to search in.
+     * @return A list of directories that contain a build file in this language.
+     */
     @Override
     public ImmutableList<Path> findExercises(Path basePath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        File searchPath = new File(basePath.toString());
+        ImmutableList.Builder<Path> listBuilder = new ImmutableList.Builder<>();
+        if (searchPath.exists() && searchPath.isDirectory()) {
+            return search(searchPath, listBuilder);
+        } else {
+            return listBuilder.build();
+        }
+    }
+
+    /**
+     * Search a directory and its subdirectories for build files. If a directory
+     * contains a build file, the directory is added to the list.
+     *
+     * @param file The current file path to search in
+     * @param listBuilder
+     * @return a list of all directories that contain build files for this
+     * language.
+     */
+    private ImmutableList<Path> search(File file, ImmutableList.Builder<Path> listBuilder) {
+        Stack<File> stack = new Stack();
+        // Push the initial directory onto the stack.
+        stack.push(file);
+        // Walk the directories that get added onto the stack.
+        while (!stack.isEmpty()) {
+            File current = stack.pop();
+            if (current.isDirectory()) {
+                for (File temp : current.listFiles()) {
+                    if (temp.isDirectory()) {
+                        stack.push(temp);
+                    }
+                    if (temp.getName().equals("build.xml")) {
+                        listBuilder.add(current.toPath());
+                    }
+                }
+
+            }
+        }
+        return listBuilder.build();
     }
 
     @Override
@@ -80,7 +122,7 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     private TestDesc createTestDesc(String name, String[] points) {
         ImmutableList<String> immutablePoints = ImmutableList.copyOf(Arrays.asList(points));
-        return new TestDesc(name,  immutablePoints);
+        return new TestDesc(name, immutablePoints);
     }
 
     /**
@@ -149,10 +191,11 @@ public class AntPlugin extends LanguagePluginAbstract {
     }
 
     /**
-     * Check if the exercise's project type corresponds with the language plugin type.
+     * Check if the exercise's project type corresponds with the language plugin
+     * type.
      *
      * @param path The path to the exercise directory.
-     * @return True if given path is valid directory for this language  plugin
+     * @return True if given path is valid directory for this language plugin
      */
     private boolean isExerciseTypeCorrect(Path path) {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();

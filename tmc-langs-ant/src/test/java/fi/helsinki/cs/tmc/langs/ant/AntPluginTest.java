@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
@@ -13,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
-
 
 public class AntPluginTest {
 
@@ -29,8 +29,31 @@ public class AntPluginTest {
     }
 
     @Test
+    public void findExercisesReturnsAListOfExerciseDirectories() {
+        ImmutableList<Path> dirs = antPlugin.findExercises(getPath("ant_project"));
+        Path pathOne = getPath("ant_project");
+        Path pathTwo = getPath("ant_project/ant_sub_project");
+        assertTrue(dirs.contains(pathOne) && dirs.contains(pathTwo));
+    }
+
+    @Test
+    public void findExercisesReturnsAListOfRightSize() {
+        assertEquals(2, antPlugin.findExercises(getPath("ant_project")).size());
+    }
+
+    @Test
+    public void findExercisesReturnsAnEmptyListWhenInvalidPath() {
+        assertTrue(antPlugin.findExercises(getPath("ant_project/build.xml")).isEmpty());
+    }
+
+    @Test
+    public void findExercisesReturnsAnEmptyListWhenNoExercisesFound() {
+        assertTrue(antPlugin.findExercises(getPath("not_an_ant_project")).isEmpty());
+    }
+
+    @Test
     public void scanExerciseReturnExerciseDesc() {
-        String name ="Ant Test";
+        String name = "Ant Test";
         ExerciseDesc description = antPlugin.scanExercise(getPath("ant_project"), name);
         assertEquals(name, description.name);
         assertEquals(3, description.tests.size());
@@ -65,7 +88,5 @@ public class AntPluginTest {
         }
         return path;
     }
-
-
 
 }

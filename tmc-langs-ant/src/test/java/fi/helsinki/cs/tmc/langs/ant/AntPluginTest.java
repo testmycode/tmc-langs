@@ -1,8 +1,10 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
+import fi.helsinki.cs.tmc.langs.TestDesc;
 import org.junit.Test;
 
 import java.io.File;
@@ -27,8 +29,31 @@ public class AntPluginTest {
     }
 
     @Test
-    public void test() {
-        antPlugin.scanExercise(getPath("ant_project"), "trivial");
+    public void scanExerciseReturnExerciseDesc() {
+        String name ="Ant Test";
+        ExerciseDesc description = antPlugin.scanExercise(getPath("ant_project"), name);
+        assertEquals(name, description.name);
+        assertEquals(3, description.tests.size());
+    }
+
+    @Test
+    public void scanExerciseReturnsCorrectTests() {
+        ExerciseDesc description = antPlugin.scanExercise(getPath("ant_project"), "AntTestSubject");
+        assertEquals(3, description.tests.size());
+
+        TestDesc test = description.tests.get(0);
+        assertEquals("oneExTestMethod", test.name);
+        assertEquals("one", test.points.get(0));
+
+        test = description.tests.get(2);
+        assertEquals("twoExTestMethod", test.name);
+        assertEquals("one", test.points.get(0));
+        assertEquals("two", test.points.get(1));
+    }
+
+    @Test
+    public void scanExerciseReturnsNullWhenWrongProjectType() {
+        assertNull(antPlugin.scanExercise(getPath("non_ant_project"), "Dummy"));
     }
 
     private Path getPath(String location) {

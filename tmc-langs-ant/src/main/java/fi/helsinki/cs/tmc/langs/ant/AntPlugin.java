@@ -2,6 +2,8 @@ package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.*;
 import fi.helsinki.cs.tmc.langs.*;
 
 import java.io.*;
@@ -9,6 +11,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +49,7 @@ public class AntPlugin extends LanguagePluginAbstract {
 
         String output;
         try {
-            output = invokeTestScanner("--test-runner-format", path.toString());
+            output = invokeTestScanner(path.toString());
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -53,23 +58,36 @@ public class AntPlugin extends LanguagePluginAbstract {
     }
 
     /**
-     * Parse and convert tmc-testscanner output into ExerciseDescription
+     * Parse and convert tmc-testscanner output into ExerciseDescription.
      *
-     * @param output Output from tmc-testscanner
-     * @param exerciseName The name of the exercise
-     * @return Parsed exercise description
+     * @param output Output from the tmc-testscanner.
+     * @param exerciseName The name of the exercise.
+     * @return Parsed exercise description.
      */
     private ExerciseDesc parseAndConvertScannerOutput(String output, String exerciseName) {
-        System.out.println(exerciseName);
-        System.out.println(output);
-        return null;
+
+        List<TestDesc> tests = new ArrayList<>();
+        JsonElement data = new JsonParser().parse(output);
+
+        for(JsonElement test : data.getAsJsonArray()) {
+            String testName = test.getAsJsonObject().get("methodName").getAsString();
+            String[] points = test.getAsJsonObject().get("points").toString().replaceAll("\\\"|\\]|\\[", "").split(",");
+            tests.add(createTestDesc(testName, points));
+        }
+
+        return new ExerciseDesc(exerciseName, ImmutableList.<TestDesc>copyOf(tests));
+    }
+
+    private TestDesc createTestDesc(String name, String[] points) {
+        ImmutableList<String> immutablePoints = ImmutableList.copyOf(Arrays.asList(points));
+        return new TestDesc(name,  immutablePoints);
     }
 
     /**
-     * Scan for tests for given project path using tmc-testscanner
+     * Scan for tests for given project path using tmc-testscanner.
      *
-     * @param args Arguments for starting tmc-testscanner
-     * @return Output from tmc-testscanner
+     * @param args Arguments for starting tmc-testscanner.
+     * @return Output from tmc-testscanner.
      * @throws Exception
      */
     private String invokeTestScanner(String... args) throws Exception {
@@ -102,7 +120,7 @@ public class AntPlugin extends LanguagePluginAbstract {
             } catch (MalformedURLException ex) {
                 Logger.getLogger(AntPlugin.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             Class<?> clazz = null;
             try {
                 clazz = classLoader.loadClass(name);

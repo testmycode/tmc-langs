@@ -69,7 +69,7 @@ public class AntPlugin extends LanguagePluginAbstract {
         List<TestDesc> tests = new ArrayList<>();
         JsonElement data = new JsonParser().parse(output);
 
-        for(JsonElement test : data.getAsJsonArray()) {
+        for (JsonElement test : data.getAsJsonArray()) {
             String testName = test.getAsJsonObject().get("methodName").getAsString();
             String[] points = test.getAsJsonObject().get("points").toString().replaceAll("\\\"|\\]|\\[", "").split(",");
             tests.add(createTestDesc(testName, points));
@@ -154,7 +154,7 @@ public class AntPlugin extends LanguagePluginAbstract {
      * @param path The path to the exercise directory.
      * @return True if given path is valid directory for this language  plugin
      */
-    public boolean isExerciseTypeCorrect(Path path) {
+    private boolean isExerciseTypeCorrect(Path path) {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
 

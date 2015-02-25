@@ -110,12 +110,4 @@ public interface LanguagePlugin {
      * copied. This method should modify the contents of this directory.
      */
     public void prepareSolution(Path path);
-
-    /**
-     * Check if the exercise's project type corresponds with the language plugin type.
-     *
-     * @param path The path to the exercise directory.
-     * @return True if given path is valid directory for this language  plugin
-     */
-    public boolean isExerciseTypeCorrect(Path path);
 }

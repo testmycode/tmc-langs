@@ -9,8 +9,7 @@ public class ProjectTypeHandler {
 
     /**
      * Recognise the project type.
-     * <p/>
-     * <p/>
+     *
      * Iterate through all language plugins to find one that recognises the
      * project as their type.
      *
@@ -19,7 +18,7 @@ public class ProjectTypeHandler {
      */
     public ProjectType getProjectType(Path path) {
         for (ProjectType type : ProjectType.values()) {
-            if (type.getLanguagePlugin().isExerciseTypeCorrect(path)) {
+            if (type.getLanguagePlugin().scanExercise(path, "") != null) {
                 return type;
             }
         }

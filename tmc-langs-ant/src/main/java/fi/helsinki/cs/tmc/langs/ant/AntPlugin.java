@@ -69,15 +69,15 @@ public class AntPlugin extends LanguagePluginAbstract {
         while (!stack.isEmpty()) {
             File current = stack.pop();
             if (current.isDirectory()) {
+                // See if current directory contains a build file.
+                if (isExerciseTypeCorrect(current.toPath())) {
+                    listBuilder.add(current.toPath());
+                }
                 for (File temp : current.listFiles()) {
                     if (temp.isDirectory()) {
                         stack.push(temp);
                     }
-                    if (temp.getName().equals("build.xml")) {
-                        listBuilder.add(current.toPath());
-                    }
                 }
-
             }
         }
         return listBuilder.build();

@@ -62,13 +62,7 @@ public class AntPluginTest {
     }
 
     private Path getPath(String location) {
-        Path path;
-        try {
-            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
-        } catch (URISyntaxException e) {
-            throw Throwables.propagate(e);
-        }
-        return path;
+        return Paths.get("src/test/resources/" + location);
     }
 
 }

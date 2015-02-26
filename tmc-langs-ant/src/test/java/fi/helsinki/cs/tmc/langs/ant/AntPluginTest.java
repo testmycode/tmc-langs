@@ -1,18 +1,12 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.LanguagePlugin;
-import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.TestDesc;
-import fi.helsinki.cs.tmc.stylerunner.validation.CheckstyleResult;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import org.junit.Test;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -66,6 +60,11 @@ public class AntPluginTest {
         antPlugin.runTests(getPath("ant_project"));
     }
 
+    @Test
+    public void buildAntProjectRunsBuildFile() {
+        antPlugin.buildAntProject(getPath("ant_project"));
+    }
+    
     private Path getPath(String location) {
         return Paths.get("src/test/resources/" + location);
     }

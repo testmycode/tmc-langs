@@ -22,6 +22,10 @@ import java.util.logging.Logger;
 import fi.helsinki.cs.tmc.testscanner.TestScanner;
 import java.util.Locale;
 import java.util.logging.Level;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
 
 public class AntPlugin extends LanguagePluginAbstract {
 
@@ -116,6 +120,29 @@ public class AntPlugin extends LanguagePluginAbstract {
         List<String> runnerArgs = generateTestRunnerArgs(path);
 
         return null;
+    }
+
+    public void buildAntProject(Path path) {
+        File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
+        Project buildProject = new Project();
+        buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());
+        DefaultLogger logger = new DefaultLogger();
+        logger.setErrorPrintStream(System.err);
+        logger.setOutputPrintStream(System.out);
+        logger.setMessageOutputLevel(Project.MSG_ERR);
+        buildProject.addBuildListener(logger);
+
+        try {
+            buildProject.fireBuildStarted();
+            buildProject.init();
+            ProjectHelper helper = ProjectHelper.getProjectHelper();
+            buildProject.addReference("ant.projectHelper", helper);
+            helper.parse(buildProject, buildFile);
+            buildProject.executeTarget(buildProject.getDefaultTarget());
+            buildProject.fireBuildFinished(null);
+        } catch (BuildException e) {
+            buildProject.fireBuildFinished(e);
+        }
     }
 
     private List<String> generateTestRunnerArgs(Path path) {

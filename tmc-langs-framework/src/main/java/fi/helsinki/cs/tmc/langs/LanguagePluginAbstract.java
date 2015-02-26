@@ -9,6 +9,13 @@ package fi.helsinki.cs.tmc.langs;
 import java.nio.file.Path;
 
 public abstract class LanguagePluginAbstract implements LanguagePlugin {
+    
+    /**
+      * Exercisebuilder uses an instance because it is somewhat likely
+      * that it will need some language specific configuration
+     */
+    
+    private ExerciseBuilder exerciseBuilder = new ExerciseBuilder();
 
     @Override
     public void prepareSubmission(Path submissionPath, Path destPath) {
@@ -17,11 +24,11 @@ public abstract class LanguagePluginAbstract implements LanguagePlugin {
 
     @Override
     public void prepareStub(Path path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        exerciseBuilder.prepareStub(path);
     }
 
     @Override
     public void prepareSolution(Path path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        exerciseBuilder.prepareSolution(path);
     }
 }

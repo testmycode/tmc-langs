@@ -153,7 +153,7 @@ public class AntPlugin extends LanguagePluginAbstract {
             CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), new Locale("fi"));
             return runner.run();
         } catch (TMCCheckstyleException ex) {
-            log.log(Level.SEVERE, "Error running checkstyle", ex);
+            log.log(Level.SEVERE, "Error running checkstyle:", ex);
             return null;
         }
     }

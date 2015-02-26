@@ -83,7 +83,7 @@ public class AntPluginTest {
     public void scanExerciseReturnsNullWhenWrongProjectType() {
         assertNull(antPlugin.scanExercise(getPath("non_ant_project"), "Dummy"));
     }
-    
+
     @Test
     public void testRunnerArgsGetsCreatedCorrectly() {
         antPlugin.runTests(getPath("ant_project"));
@@ -98,7 +98,7 @@ public class AntPluginTest {
         }
         return path;
     }
-    
+
     @Test
     public void testCheckCodeStyle() {
         File projectToTest = new File("src/test/resources/most_errors/");
@@ -110,5 +110,13 @@ public class AntPluginTest {
             assertEquals("Should return the right amount of errors", 23, errors.size());
         }
     }
+
+    @Test
+    public void testCheckCodeStyleWithUntestableProject() {
+        File projectToTest = new File("src/test/resources/arith_funcs/");
+        ValidationResult result = antPlugin.checkCodeStyle(projectToTest.toPath());
+        assertNull(result);
+    }
+
 
 }

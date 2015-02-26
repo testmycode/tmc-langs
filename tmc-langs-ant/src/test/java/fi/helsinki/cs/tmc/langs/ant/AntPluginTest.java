@@ -29,29 +29,6 @@ public class AntPluginTest {
     }
 
     @Test
-    public void findExercisesReturnsAListOfExerciseDirectories() {
-        ImmutableList<Path> dirs = antPlugin.findExercises(getPath("ant_project"));
-        Path pathOne = getPath("ant_project");
-        Path pathTwo = getPath("ant_project/ant_sub_project");
-        assertTrue(dirs.contains(pathOne) && dirs.contains(pathTwo));
-    }
-
-    @Test
-    public void findExercisesReturnsAListOfRightSize() {
-        assertEquals(2, antPlugin.findExercises(getPath("ant_project")).size());
-    }
-
-    @Test
-    public void findExercisesReturnsAnEmptyListWhenInvalidPath() {
-        assertTrue(antPlugin.findExercises(getPath("ant_project/build.xml")).isEmpty());
-    }
-
-    @Test
-    public void findExercisesReturnsAnEmptyListWhenNoExercisesFound() {
-        assertTrue(antPlugin.findExercises(getPath("not_an_ant_project")).isEmpty());
-    }
-
-    @Test
     public void scanExerciseReturnExerciseDesc() {
         String name = "Ant Test";
         ExerciseDesc description = antPlugin.scanExercise(getPath("ant_project"), name);

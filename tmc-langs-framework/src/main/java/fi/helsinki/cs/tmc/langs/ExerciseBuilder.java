@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs.util;
+package fi.helsinki.cs.tmc.langs;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,6 @@ public class ExerciseBuilder {
     private String endSolution = "// END SOLUTION";
     private String stubMarker = "// STUB:";
     private String sourceFolderName = "src";
-    private String[] sourceExtensions = {"java"};
 
     /**
      * Constuctor

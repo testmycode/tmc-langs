@@ -5,11 +5,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import fi.helsinki.cs.tmc.langs.ClassPath;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
+import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.*;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import fi.helsinki.cs.tmc.testscanner.TestScanner;
+import java.util.Locale;
+import java.util.logging.Level;
 
 public class AntPlugin extends LanguagePluginAbstract {
 
@@ -78,11 +81,11 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     private TestDesc generateTestDesc(String name, JsonArray pointsArray) {
         List<String> points = new ArrayList<>();
-        
+
         for (int i = 0; i < pointsArray.size(); i++) {
             points.add(pointsArray.get(i).getAsString());
         }
-        
+
         ImmutableList<String> immutablePoints = ImmutableList.copyOf(points);
         return new TestDesc(name, immutablePoints);
     }
@@ -111,42 +114,52 @@ public class AntPlugin extends LanguagePluginAbstract {
     @Override
     public RunResult runTests(Path path) {
         List<String> runnerArgs = generateTestRunnerArgs(path);
-        
+
         return null;
     }
-    
+
     private List<String> generateTestRunnerArgs(Path path) {
         List<String> runnerArgs = new ArrayList<>();
-        
+
         runnerArgs.add("-Dtmc.test_class_dir=" + path.toString() + testDir);
         runnerArgs.add("-Dtmc.results_file=" + path.toString() + resultsFile);
         //runnerArgs.add("-Dfi.helsinki.cs.tmc.edutestutils.defaultLocale=" + locale);
-        
+
         String output;
-        
+
         try {
             output = invokeTestScanner("--test-runner-format", path.toString());
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
-        
+
         runnerArgs.add(output);
 
         return runnerArgs;
     }
-    
-    private ClassPath generateClassPath(Path path) {
-        
-        return null;
+
+    private void generateClassPath(Path path) {
+
     }
 
     @Override
-    protected boolean isExerciseTypeCorrect(Path path) {
+    public boolean isExerciseTypeCorrect(Path path) {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
-    
+
     @Override
     public ValidationResult checkCodeStyle(Path path) {
+        try {
+            CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), new Locale("fi"));
+            return runner.run();
+        } catch (TMCCheckstyleException ex) {
+            log.log(Level.SEVERE, "Error running checkstyle", ex);
+            return null;
+        }
+    }
+
+    @Override
+    public ImmutableList<Path> findExercises(Path basePath) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -6,12 +6,17 @@ import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.stylerunner.validation.CheckstyleResult;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import org.junit.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -92,6 +97,18 @@ public class AntPluginTest {
             throw Throwables.propagate(e);
         }
         return path;
+    }
+    
+    @Test
+    public void testCheckCodeStyle() {
+        File projectToTest = new File("src/test/resources/most_errors/");
+        ValidationResult result = antPlugin.checkCodeStyle(projectToTest.toPath());
+        Map<File, List<ValidationError>> res = result.getValidationErrors();
+        assertEquals("Should be one erroneous file", 1, res.size());
+        for (File file : res.keySet()) {
+            List<ValidationError> errors = res.get(file);
+            assertEquals("Should return the right amount of errors", 23, errors.size());
+        }
     }
 
 }

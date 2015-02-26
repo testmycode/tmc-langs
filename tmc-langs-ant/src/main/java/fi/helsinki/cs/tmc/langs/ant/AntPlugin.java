@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.ClassPath;
 import com.google.gson.*;
 import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
@@ -12,7 +13,6 @@ import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -21,7 +21,9 @@ import fi.helsinki.cs.tmc.testscanner.TestScanner;
 public class AntPlugin extends LanguagePluginAbstract {
 
     private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
-    TestScanner scanner = new TestScanner();
+    private final TestScanner scanner = new TestScanner();
+    private final String testDir = File.separatorChar + "test";
+    private final String resultsFile = File.separatorChar + "results.txt";
 
     @Override
     public String getLanguageName() {
@@ -58,8 +60,8 @@ public class AntPlugin extends LanguagePluginAbstract {
 
         for (JsonElement test : data.getAsJsonArray()) {
             String testName = parseTestName(test);
-            String[] points = test.getAsJsonObject().get("points").toString().replaceAll("\\\"|\\]|\\[", "").split(",");
-            tests.add(createTestDesc(testName, points));
+            JsonArray points = test.getAsJsonObject().get("points").getAsJsonArray();
+            tests.add(generateTestDesc(testName, points));
         }
 
         return new ExerciseDesc(exerciseName, ImmutableList.<TestDesc>copyOf(tests));
@@ -72,8 +74,14 @@ public class AntPlugin extends LanguagePluginAbstract {
         return testName + " " + test.getAsJsonObject().get("methodName").getAsString();
     }
 
-    private TestDesc createTestDesc(String name, String[] points) {
-        ImmutableList<String> immutablePoints = ImmutableList.copyOf(Arrays.asList(points));
+    private TestDesc generateTestDesc(String name, JsonArray pointsArray) {
+        List<String> points = new ArrayList<>();
+        
+        for (int i = 0; i < pointsArray.size(); i++) {
+            points.add(pointsArray.get(i).getAsString());
+        }
+        
+        ImmutableList<String> immutablePoints = ImmutableList.copyOf(points);
         return new TestDesc(name, immutablePoints);
     }
 
@@ -100,6 +108,33 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     @Override
     public RunResult runTests(Path path) {
+        List<String> runnerArgs = generateTestRunnerArgs(path);
+        
+        return null;
+    }
+    
+    private List<String> generateTestRunnerArgs(Path path) {
+        List<String> runnerArgs = new ArrayList<>();
+        
+        runnerArgs.add("-Dtmc.test_class_dir=" + path.toString() + testDir);
+        runnerArgs.add("-Dtmc.results_file=" + path.toString() + resultsFile);
+        //runnerArgs.add("-Dfi.helsinki.cs.tmc.edutestutils.defaultLocale=" + locale);
+        
+        String output;
+        
+        try {
+            output = invokeTestScanner("--test-runner-format", path.toString());
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+        
+        runnerArgs.add(output);
+
+        return runnerArgs;
+    }
+    
+    private ClassPath generateClassPath(Path path) {
+        
         return null;
     }
 

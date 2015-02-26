@@ -78,6 +78,11 @@ public class AntPluginTest {
     public void scanExerciseReturnsNullWhenWrongProjectType() {
         assertNull(antPlugin.scanExercise(getPath("non_ant_project"), "Dummy"));
     }
+    
+    @Test
+    public void testRunnerArgsGetsCreatedCorrectly() {
+        antPlugin.runTests(getPath("ant_project"));
+    }
 
     private Path getPath(String location) {
         Path path;

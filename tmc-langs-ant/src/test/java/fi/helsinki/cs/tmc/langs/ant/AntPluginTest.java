@@ -65,11 +65,11 @@ public class AntPluginTest {
         assertEquals(3, description.tests.size());
 
         TestDesc test = description.tests.get(0);
-        assertEquals("oneExTestMethod", test.name);
+        assertEquals("AntTestSubject oneExTestMethod", test.name);
         assertEquals("one", test.points.get(0));
 
         test = description.tests.get(2);
-        assertEquals("twoExTestMethod", test.name);
+        assertEquals("AntTestSubject twoExTestMethod", test.name);
         assertEquals("one", test.points.get(0));
         assertEquals("two", test.points.get(1));
     }

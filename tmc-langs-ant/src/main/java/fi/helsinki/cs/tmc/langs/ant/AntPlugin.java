@@ -10,29 +10,18 @@ import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import fi.helsinki.cs.tmc.testscanner.TestScanner;
-import java.util.Stack;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-
-import javax.tools.ToolProvider;
 
 public class AntPlugin extends LanguagePluginAbstract {
 
     private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
-    TestScanner scanner = new TestScanner(ToolProvider.getSystemJavaCompiler());
+    TestScanner scanner = new TestScanner();
 
     @Override
     public String getLanguageName() {
@@ -68,12 +57,19 @@ public class AntPlugin extends LanguagePluginAbstract {
         JsonElement data = new JsonParser().parse(output);
 
         for (JsonElement test : data.getAsJsonArray()) {
-            String testName = test.getAsJsonObject().get("methodName").getAsString();
+            String testName = parseTestName(test);
             String[] points = test.getAsJsonObject().get("points").toString().replaceAll("\\\"|\\]|\\[", "").split(",");
             tests.add(createTestDesc(testName, points));
         }
 
         return new ExerciseDesc(exerciseName, ImmutableList.<TestDesc>copyOf(tests));
+    }
+
+    private String parseTestName(JsonElement test) {
+        String testName = test.getAsJsonObject().get("className").toString();
+        int index = testName.indexOf('.') + 1;
+        testName = testName.substring(index, testName.length() - 1);
+        return testName + " " + test.getAsJsonObject().get("methodName").getAsString();
     }
 
     private TestDesc createTestDesc(String name, String[] points) {

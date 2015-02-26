@@ -27,6 +27,11 @@
     </repositories>
     <dependencies>
         <dependency>
+            <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>tmc-checkstyle-runner</artifactId>
+            <version>1.0.3-SNAPSHOT</version>    
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>14.0</version>
@@ -50,7 +55,7 @@
             <type>jar</type>
         </dependency>
     </dependencies>
-      <build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

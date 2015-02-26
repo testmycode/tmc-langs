@@ -2,9 +2,12 @@ package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.*;
 import fi.helsinki.cs.tmc.langs.*;
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
+import fi.helsinki.cs.tmc.langs.RunResult;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -197,11 +200,17 @@ public class AntPlugin extends LanguagePluginAbstract {
      * @param path The path to the exercise directory.
      * @return True if given path is valid directory for this language plugin
      */
-    private boolean isExerciseTypeCorrect(Path path) {
+    @Override
+    public boolean isExerciseTypeCorrect(Path path) {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
 
     private RunResult parseAndConvertTestResults(Result testResults) {
         return null;
+    }
+    
+    @Override
+    public ValidationResult checkCodeStyle(Path path) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

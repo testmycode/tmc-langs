@@ -115,15 +115,6 @@ public interface LanguagePlugin {
     public void prepareSolution(Path path);
 
     /**
-     * Check if the exercise's project type corresponds with the language plugin
-     * type.
-     *
-     * @param path The path to the exercise directory.
-     * @return True if given path is valid directory for this language plugin
-     */
-    public boolean isExerciseTypeCorrect(Path path);
-
-    /**
      * Run checkstyle or similar plugin to project if applicable
      *
      * @param path The path to the exercise directory.

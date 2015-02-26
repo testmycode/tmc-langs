@@ -1,6 +1,8 @@
 
 package fi.helsinki.cs.tmc.langs;
 
+import com.google.common.base.Throwables;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -35,9 +37,26 @@ public class ClassPath {
     public List<Path> getPaths() {
         return subPaths;
     }
-    
-    public void addDirAndSubdirs(Path path) {
-        
+
+    /**
+     * Crawl through directories and add every directory to the subPaths.
+     *
+     * @param basePath Directory where to begin the search.
+     */
+    public void addDirAndSubdirs(Path basePath) {
+        if (!basePath.toFile().isDirectory()) {
+            return;
+        }
+
+        add(basePath);
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(basePath, dirFilter)) {
+            for (Path path : stream) {
+                addDirAndSubdirs(path);
+            }
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
     }
     
     private DirectoryStream.Filter<Path> dirFilter = new DirectoryStream.Filter<Path>() {

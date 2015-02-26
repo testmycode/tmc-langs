@@ -49,6 +49,20 @@ public class ClassPathTest {
         assertEquals("Wrong amount of subpaths ", 2, cp.getPaths().size());
     }
 
+    @Test
+    public void addDirAndSubDirAddsDirAndSubDirsToPaths() {
+        cp.addDirAndSubdirs(getPath("arith_funcs" + File.separatorChar + "lib"));
+        System.out.println(cp);
+        assertTrue("ClassPath didn\'t contain edu-test-utils dir", cp.toString().contains("edu-test-utils"));
+        assertTrue("Base path didn\'t get added to the ClassPath", cp.toString().contains("lib:"));
+    }
+
+    @Test
+    public void nonDirectoryPathPassedToDirAndSubdirs() {
+        cp.addDirAndSubdirs(getPath("ant_project" + File.separatorChar + "build.xml"));
+        assertEquals("Subpaths size shouldn\'t change", 1, cp.getPaths().size());
+    }
+
     private Path getPath(String location) {
         Path path;
         try {

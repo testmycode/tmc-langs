@@ -122,6 +122,11 @@ public class AntPlugin extends LanguagePluginAbstract {
         return null;
     }
 
+    /**
+     * Runs the build.xml file for the the given exercise.
+     * 
+     * @param path The file path of the exercise directory.
+     */
     public void buildAntProject(Path path) {
         File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
         Project buildProject = new Project();

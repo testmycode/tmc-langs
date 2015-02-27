@@ -21,10 +21,10 @@ import static org.junit.Assert.*;
  */
 public class LanguagePluginAbstractTest {
 
-    PluginFindImpl PluginFindImpl;
+    PluginFindImpl pluginFindImpl;
 
     public LanguagePluginAbstractTest() {
-        PluginFindImpl = new PluginFindImpl();
+        pluginFindImpl = new PluginFindImpl();
     }
 
     class PluginFindImpl extends LanguagePluginAbstract {
@@ -58,7 +58,7 @@ public class LanguagePluginAbstractTest {
 
     @Test
     public void findExercisesReturnsAListOfExerciseDirectories() {
-        ImmutableList<Path> dirs = PluginFindImpl.findExercises(getPath("ant_project"));
+        ImmutableList<Path> dirs = pluginFindImpl.findExercises(getPath("ant_project"));
         Path pathOne = getPath("ant_project");
         Path pathTwo = getPath("ant_project/ant_sub_project");
         assertTrue(dirs.contains(pathOne) && dirs.contains(pathTwo));
@@ -66,12 +66,12 @@ public class LanguagePluginAbstractTest {
 
     @Test
     public void findExercisesReturnsAnEmptyListWhenInvalidPath() {
-        assertTrue(PluginFindImpl.findExercises(getPath("ant_project/build.xml")).isEmpty());
+        assertTrue(pluginFindImpl.findExercises(getPath("ant_project/build.xml")).isEmpty());
     }
 
     @Test
     public void findExercisesReturnsAnEmptyListWhenNoExercisesFound() {
-        assertTrue(PluginFindImpl.findExercises(getPath("dummy_project")).isEmpty());
+        assertTrue(pluginFindImpl.findExercises(getPath("dummy_project")).isEmpty());
     }
 
     private Path getPath(String location) {

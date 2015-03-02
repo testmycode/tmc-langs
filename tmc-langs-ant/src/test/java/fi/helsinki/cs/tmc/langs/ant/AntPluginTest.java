@@ -1,12 +1,15 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
+import com.google.common.base.Throwables;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+import org.junit.After;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -30,24 +33,24 @@ public class AntPluginTest {
     @Test
     public void scanExerciseReturnExerciseDesc() {
         String name = "Ant Test";
-        ExerciseDesc description = antPlugin.scanExercise(getPath("ant_project"), name);
+        ExerciseDesc description = antPlugin.scanExercise(getPath("ant_arith_funcs"), name);
         assertEquals(name, description.name);
-        assertEquals(3, description.tests.size());
+        assertEquals(4, description.tests.size());
     }
 
     @Test
     public void scanExerciseReturnsCorrectTests() {
-        ExerciseDesc description = antPlugin.scanExercise(getPath("ant_project"), "AntTestSubject");
-        assertEquals(3, description.tests.size());
+        ExerciseDesc description = antPlugin.scanExercise(getPath("ant_arith_funcs"), "AntTestSubject");
+        assertEquals(4, description.tests.size());
 
         TestDesc test = description.tests.get(0);
-        assertEquals("AntTestSubject oneExTestMethod", test.name);
-        assertEquals("one", test.points.get(0));
+        assertEquals("ArithTest testAdd", test.name);
+        assertEquals("arith-funcs", test.points.get(0));
 
         test = description.tests.get(2);
-        assertEquals("AntTestSubject twoExTestMethod", test.name);
-        assertEquals("one", test.points.get(0));
-        assertEquals("two", test.points.get(1));
+        assertEquals("ArithTest testMul", test.name);
+        assertEquals("arith-funcs", test.points.get(0));
+        assertEquals(1, test.points.size());
     }
 
     @Test
@@ -56,17 +59,18 @@ public class AntPluginTest {
     }
 
     @Test
-    public void testRunnerArgsGetsCreatedCorrectly() {
-        antPlugin.runTests(getPath("ant_project"));
+    public void buildAntProjectRunsBuildFile() {
+        antPlugin.buildAntProject(getPath("ant_arith_funcs"));
     }
 
-    @Test
-    public void buildAntProjectRunsBuildFile() {
-        antPlugin.buildAntProject(getPath("ant_project"));
-    }
-    
     private Path getPath(String location) {
-        return Paths.get("src/test/resources/" + location);
+        Path path;
+        try {
+            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
+        } catch (URISyntaxException e) {
+            throw Throwables.propagate(e);
+        }
+        return path;
     }
 
     @Test

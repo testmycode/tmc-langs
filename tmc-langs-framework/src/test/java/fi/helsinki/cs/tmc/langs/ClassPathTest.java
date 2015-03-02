@@ -51,7 +51,7 @@ public class ClassPathTest {
 
     @Test
     public void addDirAndSubDirAddsDirAndSubDirsToPaths() {
-        cp.addDirAndSubdirs(getPath("arith_funcs" + File.separatorChar + "lib"));
+        cp.addDirAndContents(getPath("arith_funcs" + File.separatorChar + "lib"));
         System.out.println(cp);
         assertTrue("ClassPath didn\'t contain edu-test-utils dir", cp.toString().contains("edu-test-utils"));
         assertTrue("Base path didn\'t get added to the ClassPath", cp.toString().contains("lib:"));
@@ -59,11 +59,17 @@ public class ClassPathTest {
 
     @Test
     public void nonDirectoryPathPassedToDirAndSubdirs() {
-        cp.addDirAndSubdirs(getPath("ant_project" + File.separatorChar + "build.xml"));
+        cp.addDirAndContents(getPath("ant_project" + File.separatorChar + "build.xml"));
         assertEquals("Subpaths size shouldn\'t change", 1, cp.getPaths().size());
     }
 
     private Path getPath(String location) {
-        return Paths.get("src/test/resources/" + location);
+        Path path;
+        try {
+            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
+        } catch (URISyntaxException e) {
+            throw Throwables.propagate(e);
+        }
+        return path;
     }
 }

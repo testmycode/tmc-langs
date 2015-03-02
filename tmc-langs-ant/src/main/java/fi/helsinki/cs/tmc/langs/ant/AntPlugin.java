@@ -5,16 +5,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -47,7 +45,10 @@ public class AntPlugin extends LanguagePluginAbstract {
 
         String output;
         try {
-            output = invokeTestScanner(path.toString());
+            path = path.toAbsolutePath();
+            String classPath = generateClassPath(path).toString();
+            String testDir = path.toString() + File.separatorChar + "test";
+            output = invokeTestScanner("java", "-cp", classPath, "fi.helsinki.cs.tmc.testscanner.TestScanner", testDir);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -63,7 +64,6 @@ public class AntPlugin extends LanguagePluginAbstract {
      * @return Parsed exercise description.
      */
     private ExerciseDesc parseAndConvertScannerOutput(String output, String exerciseName) {
-
         List<TestDesc> tests = new ArrayList<>();
         JsonElement data = new JsonParser().parse(output);
 
@@ -78,8 +78,7 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     private String parseTestName(JsonElement test) {
         String testName = test.getAsJsonObject().get("className").toString();
-        int index = testName.indexOf('.') + 1;
-        testName = testName.substring(index, testName.length() - 1);
+        testName = testName.substring(1, testName.length() - 1);
         return testName + " " + test.getAsJsonObject().get("methodName").getAsString();
     }
 
@@ -102,17 +101,38 @@ public class AntPlugin extends LanguagePluginAbstract {
      * @throws Exception
      */
     private String invokeTestScanner(String... args) throws Exception {
-        ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
-        PrintStream oldOut = System.out;
+        ProcessBuilder pb = new ProcessBuilder(args);
+        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
 
         try {
-            System.setOut(new PrintStream(outBuf, true, "UTF-8"));
-            scanner.main(args);
-        } finally {
-            System.setOut(oldOut);
+            Process process = pb.start();
+
+            int status = -1;
+
+            while (status  == -1) {
+                try {
+                    status = process.exitValue();
+                } catch (IllegalThreadStateException e) {
+                    Thread.sleep(100);
+                }
+
+
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String results = "";
+
+            String line;
+            while ((line = br.readLine()) != null && !line.equals("")) {
+                results += line;
+            }
+
+            return results;
+        } catch (InterruptedException e) {
+            Throwables.propagate(e);
         }
 
-        return outBuf.toString("UTF-8");
+        return "Could not scan exercises";
     }
 
     @Override
@@ -124,7 +144,7 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     /**
      * Runs the build.xml file for the the given exercise.
-     * 
+     *
      * @param path The file path of the exercise directory.
      */
     public void buildAntProject(Path path) {
@@ -143,7 +163,7 @@ public class AntPlugin extends LanguagePluginAbstract {
             ProjectHelper helper = ProjectHelper.getProjectHelper();
             buildProject.addReference("ant.projectHelper", helper);
             helper.parse(buildProject, buildFile);
-            buildProject.executeTarget(buildProject.getDefaultTarget());
+            buildProject.executeTarget("compile-test");
             buildProject.fireBuildFinished(null);
         } catch (BuildException e) {
             buildProject.fireBuildFinished(e);
@@ -152,26 +172,26 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     private List<String> generateTestRunnerArgs(Path path) {
         List<String> runnerArgs = new ArrayList<>();
-
-        runnerArgs.add("-Dtmc.test_class_dir=" + path.toString() + testDir);
-        runnerArgs.add("-Dtmc.results_file=" + path.toString() + resultsFile);
-        //runnerArgs.add("-Dfi.helsinki.cs.tmc.edutestutils.defaultLocale=" + locale);
-
-        String output;
-
-        try {
-            output = invokeTestScanner("--test-runner-format", path.toString());
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
-
-        runnerArgs.add(output);
-
         return runnerArgs;
     }
 
-    private void generateClassPath(Path path) {
+    private ClassPath generateClassPath(Path path) {
+        ClassPath classPath = new ClassPath(path.toAbsolutePath());
+        classPath.addDirAndContents(createPath(path, "lib"));
+        classPath.add(createPath(path, "build", "test", "classes"));
+        classPath.add(createPath(path, "build", "classes"));
 
+        return classPath;
+    }
+
+    private Path createPath(Path basePath, String... subDirs) {
+        String path = basePath.toAbsolutePath().toString();
+
+        for (String subDir : subDirs) {
+            path += File.separatorChar + subDir;
+        }
+
+        return Paths.get(path);
     }
 
     @Override
@@ -188,10 +208,5 @@ public class AntPlugin extends LanguagePluginAbstract {
             log.log(Level.SEVERE, "Error running checkstyle:", ex);
             return null;
         }
-    }
-
-    @Override
-    public ImmutableList<Path> findExercises(Path basePath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

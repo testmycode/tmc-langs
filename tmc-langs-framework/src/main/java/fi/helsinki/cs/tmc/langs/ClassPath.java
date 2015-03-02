@@ -17,23 +17,23 @@ import java.util.List;
 public class ClassPath {
 
     private List<Path> subPaths = new ArrayList<>();
-    
+
     public ClassPath(Path path) {
         subPaths.add(path);
     }
-    
+
     public void add(Path path) {
         if (!subPaths.contains(path)) {
-           subPaths.add(path);
+            subPaths.add(path);
         }
     }
-    
+
     public void add(ClassPath path) {
         for (Path subPath : path.subPaths) {
             add(subPath);
         }
     }
-    
+
     public List<Path> getPaths() {
         return subPaths;
     }
@@ -43,37 +43,39 @@ public class ClassPath {
      *
      * @param basePath Directory where to begin the search.
      */
-    public void addDirAndSubdirs(Path basePath) {
+    public void addDirAndContents(Path basePath) {
         if (!basePath.toFile().isDirectory()) {
             return;
         }
 
         add(basePath);
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(basePath, dirFilter)) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(basePath)) {
             for (Path path : stream) {
-                addDirAndSubdirs(path);
+                if(Files.isDirectory(path)) {
+                    addDirAndContents(path);
+                }
+
+                if(path.toString().endsWith("jar")) {
+                    add(path);
+                }
             }
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }
     }
-    
-    private DirectoryStream.Filter<Path> dirFilter = new DirectoryStream.Filter<Path>() {
-        @Override
-        public boolean accept(Path entry) {
-            return Files.isDirectory(entry);
-        }
-    };
-    
+
     @Override
     public String toString() {
         String classPath = subPaths.get(0).toString();
-        
+
         for (int i = 1; i < subPaths.size(); i++) {
             classPath += File.pathSeparatorChar + subPaths.get(i).toString();
+            if (subPaths.get(i).toString().contains("testrunner")) {
+                classPath += File.pathSeparatorChar + subPaths.get(i).toString() + File.separatorChar + "tmc-junit-runner.jar";
+            }
         }
-        
+
         return classPath;
     }
 }

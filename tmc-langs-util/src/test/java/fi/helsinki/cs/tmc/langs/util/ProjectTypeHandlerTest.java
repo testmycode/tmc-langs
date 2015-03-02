@@ -22,12 +22,12 @@ public class ProjectTypeHandlerTest {
 
     @Test
     public void returnsCorrectTypeOnJavaAntExercise() {
-        assertEquals(ProjectType.JAVA_ANT, handler.getProjectType(getPath("ant_project")));
+        assertEquals(ProjectType.JAVA_ANT, handler.getProjectType(getPath("arith_funcs")));
     }
 
     @Test
     public void returnsCorrectLanguagePluginOnJavaAntExercise() {
-        assertEquals(AntPlugin.class, handler.getLanguagePlugin(getPath("ant_project")).getClass());
+        assertEquals(AntPlugin.class, handler.getLanguagePlugin(getPath("arith_funcs")).getClass());
     }
 
     @Test
@@ -36,6 +36,12 @@ public class ProjectTypeHandlerTest {
     }
 
     private Path getPath(String location) {
-        return Paths.get("src/test/resources/" + location);
+        Path path;
+        try {
+            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
+        } catch (URISyntaxException e) {
+            throw Throwables.propagate(e);
+        }
+        return path;
     }
 }

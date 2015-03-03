@@ -48,7 +48,7 @@ public class AntPlugin extends LanguagePluginAbstract {
             path = path.toAbsolutePath();
             String classPath = generateClassPath(path).toString();
             String testDir = path.toString() + File.separatorChar + "test";
-            output = invokeTestScanner("java", "-cp", classPath, "fi.helsinki.cs.tmc.testscanner.TestScanner", testDir);
+            output = startProcess("java", "-cp", classPath, "fi.helsinki.cs.tmc.testscanner.TestScanner", testDir);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -100,39 +100,16 @@ public class AntPlugin extends LanguagePluginAbstract {
      * @return Output from tmc-testscanner.
      * @throws Exception
      */
-    private String invokeTestScanner(String... args) throws Exception {
-        ProcessBuilder pb = new ProcessBuilder(args);
-        pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+    private String startProcess(String... args) throws Exception {
+        Process process = new ProcessBuilder(args).start();
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-        try {
-            Process process = pb.start();
-
-            int status = -1;
-
-            while (status  == -1) {
-                try {
-                    status = process.exitValue();
-                } catch (IllegalThreadStateException e) {
-                    Thread.sleep(100);
-                }
-
-
-            }
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String results = "";
-
-            String line;
-            while ((line = br.readLine()) != null && !line.equals("")) {
-                results += line;
-            }
-
-            return results;
-        } catch (InterruptedException e) {
-            Throwables.propagate(e);
+        String line, results = "";
+        while ((line = br.readLine()) != null && !line.equals("")) {
+            results += line;
         }
 
-        return "Could not scan exercises";
+        return results.length() > 0 ? results : null;
     }
 
     @Override
@@ -172,6 +149,21 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     private List<String> generateTestRunnerArgs(Path path) {
         List<String> runnerArgs = new ArrayList<>();
+
+        runnerArgs.add("-Dtmc.test_class_dir=" + path.toString() + testDir);
+        runnerArgs.add("-Dtmc.results_file=" + path.toString() + resultsFile);
+        //runnerArgs.add("-Dfi.helsinki.cs.tmc.edutestutils.defaultLocale=" + locale);
+
+        String output;
+
+        try {
+            output = startProcess("--test-runner-format", path.toString());
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+
+        runnerArgs.add(output);
+
         return runnerArgs;
     }
 

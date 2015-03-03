@@ -39,8 +39,13 @@ public class AntPlugin extends LanguagePluginAbstract {
             return null;
         }
 
-        String output = startProcess(buildTestScannerArgs(path, null));
-        return resultParser.parseScannerOutput(output, exerciseName);
+        List<String> output = startProcess(buildTestScannerArgs(path, null));
+        String outputString = "";
+
+        for (String line : output) {
+            outputString += line;
+        }
+        return resultParser.parseScannerOutput(outputString, exerciseName);
     }
 
     @Override
@@ -128,15 +133,16 @@ public class AntPlugin extends LanguagePluginAbstract {
      * @param args Arguments for starting the process.
      * @return Possible output of the process.
      */
-    private String startProcess(List<String> args) {
+    private List<String> startProcess(List<String> args) {
         try {
             Process process = new ProcessBuilder(args).start();
             BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-            String line, results = "";
+            String line;
+            List<String> results = new ArrayList<>();
 
             while ((line = br.readLine()) != null && !line.equals("")) {
-                results += line;
+                results.add(line);
             }
 
             return results;
@@ -147,6 +153,7 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     private List<String> buildTestRunnerArgs(Path path) {
         List<String> runnerArgs = new ArrayList<>();
+        List<String> testMethods = new ArrayList<>();
 
         runnerArgs.add("java");
         runnerArgs.add("-Dtmc.test_class_dir=" + path.toString() + testDir);
@@ -162,7 +169,12 @@ public class AntPlugin extends LanguagePluginAbstract {
         runnerArgs.add("-cp");
         runnerArgs.add(classPath.toString());
         runnerArgs.add("fi.helsinki.cs.tmc.testrunner.Main");
-        runnerArgs.add(startProcess(buildTestScannerArgs(path, classPath, "--test-runner-format")));
+
+        testMethods = startProcess(buildTestScannerArgs(path, classPath, "--test-runner-format"));
+
+        for (String testMethod : testMethods) {
+            runnerArgs.add(testMethod);
+        }
 
         return runnerArgs;
     }

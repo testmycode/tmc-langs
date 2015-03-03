@@ -43,7 +43,6 @@ public class TestResultParser {
         TestCaseList testCaseRecords = new Gson().fromJson(resultsJson, TestCaseList.class);
 
         for (TestCase tc : testCaseRecords) {
-            System.out.println(tc);
             testResults.add(convertTestCaseResult(tc));
         }
 

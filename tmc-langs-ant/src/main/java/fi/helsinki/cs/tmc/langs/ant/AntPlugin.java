@@ -1,10 +1,6 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
@@ -44,104 +40,33 @@ public class AntPlugin extends LanguagePluginAbstract {
         }
 
         String output = startProcess(buildTestScannerArgs(path, null));
-        return parseAndConvertScannerOutput(output, exerciseName);
+        return resultParser.parseScannerOutput(output, exerciseName);
     }
 
-    private List<String> buildTestScannerArgs(Path path, ClassPath classPath, String... args) {
-        List<String> scannerArgs = new ArrayList<>();
-
-        scannerArgs.add("java");
-        scannerArgs.add("-cp");
-
-        if (classPath == null) {
-            scannerArgs.add(generateClassPath(path).toString());
-        } else {
-            scannerArgs.add(classPath.toString());
-        }
-
-        scannerArgs.add("fi.helsinki.cs.tmc.testscanner.TestScanner");
-        path = path.toAbsolutePath();
-        scannerArgs.add(path.toString() + testDir);
-
-        if (args != null) {
-            for (String arg : args) {
-                scannerArgs.add(arg);
-            }
-        }
-
-        return scannerArgs;
+    @Override
+    protected boolean isExerciseTypeCorrect(Path path) {
+        return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
 
-    /**
-     * Parse and convert tmc-testscanner output into ExerciseDescription.
-     *
-     * @param output Output from the tmc-testscanner.
-     * @param exerciseName The name of the exercise.
-     * @return Parsed exercise description.
-     */
-    private ExerciseDesc parseAndConvertScannerOutput(String output, String exerciseName) {
-        List<TestDesc> tests = new ArrayList<>();
-        JsonElement data = new JsonParser().parse(output);
-
-        for (JsonElement test : data.getAsJsonArray()) {
-            String testName = parseTestName(test);
-            JsonArray points = test.getAsJsonObject().get("points").getAsJsonArray();
-            tests.add(generateTestDesc(testName, points));
-        }
-
-        return new ExerciseDesc(exerciseName, ImmutableList.<TestDesc>copyOf(tests));
-    }
-
-    private String parseTestName(JsonElement test) {
-        String testName = test.getAsJsonObject().get("className").toString();
-        testName = testName.substring(1, testName.length() - 1);
-        return testName + " " + test.getAsJsonObject().get("methodName").getAsString();
-    }
-
-    private TestDesc generateTestDesc(String name, JsonArray pointsArray) {
-        List<String> points = new ArrayList<>();
-
-        for (int i = 0; i < pointsArray.size(); i++) {
-            points.add(pointsArray.get(i).getAsString());
-        }
-
-        ImmutableList<String> immutablePoints = ImmutableList.copyOf(points);
-        return new TestDesc(name, immutablePoints);
-    }
-
-    /**
-     * Scan for tests for given project path using tmc-testscanner.
-     *
-     * @param args Arguments for starting tmc-testscanner.
-     * @return Output from tmc-testscanner.
-     * @throws Exception
-     */
-    private String startProcess(List<String> args) {
+    @Override
+    public ValidationResult checkCodeStyle(Path path) {
         try {
-            Process process = new ProcessBuilder(args).start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line, results = "";
-
-            while ((line = br.readLine()) != null && !line.equals("")) {
-                results += line;
-            }
-
-            return results;
-        } catch (IOException e) {
-            throw Throwables.propagate(e);
+            CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), new Locale("fi"));
+            return runner.run();
+        } catch (TMCCheckstyleException ex) {
+            log.log(Level.SEVERE, "Error running checkstyle:", ex);
+            return null;
         }
     }
 
     @Override
     public RunResult runTests(Path path) {
         buildAntProject(path);
-        List<String> runnerArgs = generateTestRunnerArgs(path);
+        List<String> runnerArgs = buildTestRunnerArgs(path);
         startProcess(runnerArgs);
 
         File resultFile = new File(path.toString() + resultsFile);
-
-        return null;
+        return resultParser.parseTestResult(resultFile);
     }
 
     /**
@@ -172,7 +97,55 @@ public class AntPlugin extends LanguagePluginAbstract {
         }
     }
 
-    private List<String> generateTestRunnerArgs(Path path) {
+    private List<String> buildTestScannerArgs(Path path, ClassPath classPath, String... args) {
+        List<String> scannerArgs = new ArrayList<>();
+
+        scannerArgs.add("java");
+        scannerArgs.add("-cp");
+
+        if (classPath == null) {
+            scannerArgs.add(generateClassPath(path).toString());
+        } else {
+            scannerArgs.add(classPath.toString());
+        }
+
+        scannerArgs.add("fi.helsinki.cs.tmc.testscanner.TestScanner");
+        path = path.toAbsolutePath();
+        scannerArgs.add(path.toString() + testDir);
+
+        if (args != null) {
+            for (String arg : args) {
+                scannerArgs.add(arg);
+            }
+        }
+
+        return scannerArgs;
+    }
+
+    /**
+     * Start a process using ProcessBuilder.
+     *
+     * @param args Arguments for starting the process.
+     * @return Possible output of the process.
+     */
+    private String startProcess(List<String> args) {
+        try {
+            Process process = new ProcessBuilder(args).start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            String line, results = "";
+
+            while ((line = br.readLine()) != null && !line.equals("")) {
+                results += line;
+            }
+
+            return results;
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+    private List<String> buildTestRunnerArgs(Path path) {
         List<String> runnerArgs = new ArrayList<>();
 
         runnerArgs.add("java");
@@ -216,21 +189,5 @@ public class AntPlugin extends LanguagePluginAbstract {
         }
 
         return Paths.get(path);
-    }
-
-    @Override
-    public boolean isExerciseTypeCorrect(Path path) {
-        return new File(path.toString() + File.separatorChar + "build.xml").exists();
-    }
-
-    @Override
-    public ValidationResult checkCodeStyle(Path path) {
-        try {
-            CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), new Locale("fi"));
-            return runner.run();
-        } catch (TMCCheckstyleException ex) {
-            log.log(Level.SEVERE, "Error running checkstyle:", ex);
-            return null;
-        }
     }
 }

@@ -59,6 +59,11 @@ public class AntPluginTest {
     }
 
     @Test
+    public void testTestRunner() {
+        antPlugin.runTests(getPath("ant_arith_funcs"));
+    }
+
+    @Test
     public void buildAntProjectRunsBuildFile() {
         antPlugin.buildAntProject(getPath("ant_arith_funcs"));
     }

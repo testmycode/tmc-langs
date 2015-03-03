@@ -44,12 +44,6 @@
             <version>14.0</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>fi.helsinki.cs.tmc</groupId>
-            <artifactId>tmc-junit-runner</artifactId>
-            <version>0.2.5</version>
-            <type>jar</type>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

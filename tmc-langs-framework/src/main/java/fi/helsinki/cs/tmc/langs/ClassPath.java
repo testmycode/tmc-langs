@@ -39,7 +39,7 @@ public class ClassPath {
     }
 
     /**
-     * Crawl through directories and add every directory to the subPaths.
+     * Crawl through directories and add every directory and .jar file to the classpath.
      *
      * @param basePath Directory where to begin the search.
      */

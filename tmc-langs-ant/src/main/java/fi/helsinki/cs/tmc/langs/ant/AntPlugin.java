@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import fi.helsinki.cs.tmc.langs.*;
+import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import fi.helsinki.cs.tmc.testscanner.TestScanner;
 import java.util.Locale;
 import java.util.logging.Level;
 import org.apache.tools.ant.BuildException;
@@ -28,9 +28,9 @@ import org.apache.tools.ant.ProjectHelper;
 public class AntPlugin extends LanguagePluginAbstract {
 
     private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
-    private final TestScanner scanner = new TestScanner();
     private final String testDir = File.separatorChar + "test";
     private final String resultsFile = File.separatorChar + "results.txt";
+    private TestResultParser resultParser = new TestResultParser();
 
     @Override
     public String getLanguageName() {
@@ -43,17 +43,33 @@ public class AntPlugin extends LanguagePluginAbstract {
             return null;
         }
 
-        String output;
-        try {
-            path = path.toAbsolutePath();
-            String classPath = generateClassPath(path).toString();
-            String testDir = path.toString() + File.separatorChar + "test";
-            output = startProcess("java", "-cp", classPath, "fi.helsinki.cs.tmc.testscanner.TestScanner", testDir);
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
+        String output = startProcess(buildTestScannerArgs(path, null));
+        return parseAndConvertScannerOutput(output, exerciseName);
+    }
+
+    private List<String> buildTestScannerArgs(Path path, ClassPath classPath, String... args) {
+        List<String> scannerArgs = new ArrayList<>();
+
+        scannerArgs.add("java");
+        scannerArgs.add("-cp");
+
+        if (classPath == null) {
+            scannerArgs.add(generateClassPath(path).toString());
+        } else {
+            scannerArgs.add(classPath.toString());
         }
 
-        return parseAndConvertScannerOutput(output, exerciseName);
+        scannerArgs.add("fi.helsinki.cs.tmc.testscanner.TestScanner");
+        path = path.toAbsolutePath();
+        scannerArgs.add(path.toString() + testDir);
+
+        if (args != null) {
+            for (String arg : args) {
+                scannerArgs.add(arg);
+            }
+        }
+
+        return scannerArgs;
     }
 
     /**
@@ -100,21 +116,30 @@ public class AntPlugin extends LanguagePluginAbstract {
      * @return Output from tmc-testscanner.
      * @throws Exception
      */
-    private String startProcess(String... args) throws Exception {
-        Process process = new ProcessBuilder(args).start();
-        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    private String startProcess(List<String> args) {
+        try {
+            Process process = new ProcessBuilder(args).start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-        String line, results = "";
-        while ((line = br.readLine()) != null && !line.equals("")) {
-            results += line;
+            String line, results = "";
+
+            while ((line = br.readLine()) != null && !line.equals("")) {
+                results += line;
+            }
+
+            return results;
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
         }
-
-        return results.length() > 0 ? results : null;
     }
 
     @Override
     public RunResult runTests(Path path) {
+        buildAntProject(path);
         List<String> runnerArgs = generateTestRunnerArgs(path);
+        startProcess(runnerArgs);
+
+        File resultFile = new File(path.toString() + resultsFile);
 
         return null;
     }
@@ -150,19 +175,21 @@ public class AntPlugin extends LanguagePluginAbstract {
     private List<String> generateTestRunnerArgs(Path path) {
         List<String> runnerArgs = new ArrayList<>();
 
+        runnerArgs.add("java");
         runnerArgs.add("-Dtmc.test_class_dir=" + path.toString() + testDir);
         runnerArgs.add("-Dtmc.results_file=" + path.toString() + resultsFile);
         //runnerArgs.add("-Dfi.helsinki.cs.tmc.edutestutils.defaultLocale=" + locale);
 
-        String output;
-
-        try {
-            output = startProcess("--test-runner-format", path.toString());
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
+        if (endorsedLibsExists(path)) {
+           runnerArgs.add("-Djava.endorsed.dirs=" + createPath(path, "lib", "endorsed"));
         }
 
-        runnerArgs.add(output);
+        ClassPath classPath = generateClassPath(path);
+
+        runnerArgs.add("-cp");
+        runnerArgs.add(classPath.toString());
+        runnerArgs.add("fi.helsinki.cs.tmc.testrunner.Main");
+        runnerArgs.add(startProcess(buildTestScannerArgs(path, classPath, "--test-runner-format")));
 
         return runnerArgs;
     }
@@ -174,6 +201,11 @@ public class AntPlugin extends LanguagePluginAbstract {
         classPath.add(createPath(path, "build", "classes"));
 
         return classPath;
+    }
+
+    private boolean endorsedLibsExists(Path path) {
+        File endorsedDir = createPath(path, "lib", "endorsed").toFile();
+        return endorsedDir.exists() && endorsedDir.isDirectory();
     }
 
     private Path createPath(Path basePath, String... subDirs) {

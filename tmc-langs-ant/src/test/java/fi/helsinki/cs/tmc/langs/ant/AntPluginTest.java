@@ -65,6 +65,7 @@ public class AntPluginTest {
         RunResult runResult = antPlugin.runTests(getPath("ant_arith_funcs"));
         assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
         assertTrue("Logs should be empty", runResult.logs.isEmpty());
+        assertEquals(4, runResult.testResults.size());
     }
 
     @Test

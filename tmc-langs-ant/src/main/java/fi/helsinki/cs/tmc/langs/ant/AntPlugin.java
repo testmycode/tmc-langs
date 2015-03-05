@@ -41,7 +41,6 @@ public class AntPlugin extends LanguagePluginAbstract {
 
         List<String> output = startProcess(buildTestScannerArgs(path, null));
         String outputString = "";
-
         for (String line : output) {
             outputString += line;
         }

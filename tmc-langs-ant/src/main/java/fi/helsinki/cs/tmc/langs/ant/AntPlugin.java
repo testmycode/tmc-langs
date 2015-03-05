@@ -130,33 +130,9 @@ public class AntPlugin extends LanguagePluginAbstract {
         return scannerArgs;
     }
 
-    /**
-     * Start a process using ProcessBuilder.
-     *
-     * @param args Arguments for starting the process.
-     * @return Possible output of the process.
-     */
-    private List<String> startProcess(List<String> args) {
-        try {
-            Process process = new ProcessBuilder(args).start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line;
-            List<String> results = new ArrayList<>();
-
-            while ((line = br.readLine()) != null && !line.equals("")) {
-                results.add(line);
-            }
-
-            return results;
-        } catch (IOException e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
     private List<String> buildTestRunnerArgs(Path path) {
         List<String> runnerArgs = new ArrayList<>();
-        List<String> testMethods = new ArrayList<>();
+        List<String> testMethods;
 
         runnerArgs.add("java");
         runnerArgs.add("-Dtmc.test_class_dir=" + path.toString() + testDir);

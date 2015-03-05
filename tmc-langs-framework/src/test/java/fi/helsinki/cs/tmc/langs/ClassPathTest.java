@@ -52,7 +52,6 @@ public class ClassPathTest {
     @Test
     public void addDirAndSubDirAddsDirAndSubDirsToPaths() {
         cp.addDirAndContents(getPath("arith_funcs" + File.separatorChar + "lib"));
-        System.out.println(cp);
         assertTrue("ClassPath didn\'t contain edu-test-utils dir", cp.toString().contains("edu-test-utils"));
         assertTrue("Base path didn\'t get added to the ClassPath", cp.toString().contains("lib:"));
     }

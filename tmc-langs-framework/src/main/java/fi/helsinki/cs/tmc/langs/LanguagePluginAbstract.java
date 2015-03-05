@@ -6,9 +6,16 @@
 
 package fi.helsinki.cs.tmc.langs;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public abstract class LanguagePluginAbstract implements LanguagePlugin {
@@ -89,5 +96,29 @@ public abstract class LanguagePluginAbstract implements LanguagePlugin {
             }
         }
         return listBuilder.build();
+    }
+
+    /**
+     * Start a process using ProcessBuilder.
+     *
+     * @param args Arguments for starting the process.
+     * @return Possible output of the process.
+     */
+    protected List<String> startProcess(List<String> args) {
+        try {
+            Process process = new ProcessBuilder(args).start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            String line;
+            List<String> results = new ArrayList<>();
+
+            while ((line = br.readLine()) != null && !line.equals("")) {
+                results.add(line);
+            }
+
+            return results;
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
     }
 }

@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 
 import java.util.Locale;
 import java.util.logging.Level;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -70,8 +72,17 @@ public class AntPlugin extends LanguagePluginAbstract {
         List<String> runnerArgs = buildTestRunnerArgs(path);
         startProcess(runnerArgs);
 
+        try {
+            FileUtils.deleteDirectory(new File(path.toString() + File.separatorChar + "build"));
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
+
         File resultFile = new File(path.toString() + resultsFile);
-        return resultParser.parseTestResult(resultFile);
+        RunResult result = resultParser.parseTestResult(resultFile);
+        resultFile.delete();
+
+        return result;
     }
 
     /**

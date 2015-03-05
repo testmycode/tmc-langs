@@ -16,7 +16,7 @@ public class ProjectTypeHandler {
      * @param path The path to the exercise directory.
      * @return The project type, or null if none.
      */
-    public ProjectType getProjectType(Path path) {
+    public static ProjectType getProjectType(Path path) {
         for (ProjectType type : ProjectType.values()) {
             if (type.getLanguagePlugin().scanExercise(path, "") != null) {
                 return type;
@@ -32,7 +32,7 @@ public class ProjectTypeHandler {
      * @param path The path to the exercise directory.
      * @return LanguagePlugin that is responsible for the exercise, or null if none.
      */
-    public LanguagePlugin getLanguagePlugin(Path path) {
+    public static LanguagePlugin getLanguagePlugin(Path path) {
         ProjectType type = getProjectType(path);
         return type == null ? null : getProjectType(path).getLanguagePlugin();
     }

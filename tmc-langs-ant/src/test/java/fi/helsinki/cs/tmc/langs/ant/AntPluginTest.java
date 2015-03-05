@@ -70,7 +70,11 @@ public class AntPluginTest {
 
     @Test
     public void buildAntProjectRunsBuildFile() {
-        antPlugin.buildAntProject(getPath("ant_arith_funcs"));
+        Path path = getPath("ant_arith_funcs").toAbsolutePath();
+        antPlugin.buildAntProject(path);
+        File buildDir = Paths.get(path.toString() + File.separatorChar + "build").toFile();
+        assertNotNull(buildDir);
+        buildDir.delete();
     }
 
     private Path getPath(String location) {

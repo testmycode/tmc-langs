@@ -83,6 +83,9 @@ public class AntPlugin extends LanguagePluginAbstract {
         File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
         Project buildProject = new Project();
         buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());
+        buildProject.init();
+        buildProject.setBaseDir(path.toAbsolutePath().toFile());
+        
         DefaultLogger logger = new DefaultLogger();
         logger.setErrorPrintStream(System.err);
         logger.setOutputPrintStream(System.out);
@@ -91,7 +94,7 @@ public class AntPlugin extends LanguagePluginAbstract {
 
         try {
             buildProject.fireBuildStarted();
-            buildProject.init();
+            
             ProjectHelper helper = ProjectHelper.getProjectHelper();
             buildProject.addReference("ant.projectHelper", helper);
             helper.parse(buildProject, buildFile);

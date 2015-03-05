@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestDesc;
@@ -69,6 +70,14 @@ public class AntPluginTest {
     }
 
     @Test
+    public void runTestsAwardsCorrectPoints() {
+        ImmutableList<TestResult> testResults = antPlugin.runTests(getPath("ant_arith_funcs")).testResults;
+        assertEquals(4, testResults.size());
+        assertTrue(testResults.get(0).passed);
+        assertFalse(testResults.get(3).passed);
+	}
+
+	@Test
     public void buildAntProjectRunsBuildFile() {
         Path path = getPath("ant_arith_funcs").toAbsolutePath();
         antPlugin.buildAntProject(path);
@@ -77,14 +86,15 @@ public class AntPluginTest {
         buildDir.delete();
     }
 
-    private Path getPath(String location) {
-        Path path;
-        try {
-            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
-        } catch (URISyntaxException e) {
-            throw Throwables.propagate(e);
-        }
-        return path;
+    @Test
+    public void runTestsReturnPassedCorrectly() {
+        RunResult runResult = antPlugin.runTests(getPath("trivial"));
+        System.out.println(runResult.testResults.get(0).passed);
+        assertEquals(RunResult.Status.PASSED, runResult.status);
+        TestResult testResult = runResult.testResults.get(0);
+        assertTestResult(testResult, "", "TrivialTest testF", true);
+        assertEquals("trivial", testResult.points.get(0));
+        assertEquals("When all tests pass backtrace should be empty.", 0, testResult.backtrace.size());
     }
 
     @Test
@@ -106,5 +116,19 @@ public class AntPluginTest {
         assertNull(result);
     }
 
+    private void assertTestResult(TestResult testResult, String expectedErrorMessage, String expectedName, boolean expectedPassed) {
+        assertEquals(expectedErrorMessage, testResult.errorMessage);
+        assertEquals(expectedName, testResult.name);
+        assertEquals(expectedPassed, testResult.passed);
+    }
 
+    private Path getPath(String location) {
+        Path path;
+        try {
+            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
+        } catch (URISyntaxException e) {
+            throw Throwables.propagate(e);
+        }
+        return path;
+    }
 }

@@ -39,15 +39,18 @@ public class TestResultParser {
         List<TestResult> testResults = new ArrayList<>();
         Map<String, byte[]> logs = new HashMap<>();
 
-        JsonObject runResult = new JsonParser().parse(resultsJson).getAsJsonArray().get(0).getAsJsonObject();
         TestCaseList testCaseRecords = new Gson().fromJson(resultsJson, TestCaseList.class);
+        boolean passed = true;
 
         for (TestCase tc : testCaseRecords) {
             testResults.add(convertTestCaseResult(tc));
+
+            if (tc.status == TestCase.Status.FAILED) {
+                passed = false;
+            }
         }
 
-        RunResult.Status status = runResult.get("status").getAsString() == "PASSED"
-            ? RunResult.Status.PASSED : RunResult.Status.TESTS_FAILED;
+        RunResult.Status status = passed ? RunResult.Status.PASSED : RunResult.Status.TESTS_FAILED;
 
         return new RunResult(status, ImmutableList.copyOf(testResults), ImmutableMap.copyOf(logs));
     }

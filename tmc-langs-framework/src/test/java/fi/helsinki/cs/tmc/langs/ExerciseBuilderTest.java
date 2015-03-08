@@ -5,7 +5,6 @@
  */
 package fi.helsinki.cs.tmc.langs;
 
-import fi.helsinki.cs.tmc.langs.ExerciseBuilder;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;

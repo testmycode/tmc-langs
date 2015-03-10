@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) {
-        if (args.length == 0 || args[0].equals("--help")) {
+        if (args.length == 0) {
             printHelp();
             System.exit(0);
         }
@@ -17,6 +17,10 @@ public class Main {
     }
 
     private static void run(String[] args) {
+        if (args[0].equals("--help")) {
+            printHelp();
+            return;
+        }
         for (String arg : args) {
             System.out.println(ProjectTypeHandler.getLanguagePlugin(Paths.get(arg)).getLanguageName());
         }

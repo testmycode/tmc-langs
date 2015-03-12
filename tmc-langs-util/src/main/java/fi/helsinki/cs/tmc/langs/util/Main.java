@@ -7,7 +7,7 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        if (args.length == 0) {
+        if (args == null || args.length == 0) {
             printHelp();
         }
         run(args);
@@ -41,9 +41,10 @@ public class Main {
     }
 
     private static Map<String, Integer> getCommands() {
+        //Command name and required argument count
         Map<String, Integer> commands = new HashMap<>();
         commands.put("--help", 0);
-
+        commands.put("--checkstyle", 1);
         return commands;
     }
 

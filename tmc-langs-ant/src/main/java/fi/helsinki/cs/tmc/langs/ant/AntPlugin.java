@@ -100,6 +100,7 @@ public class AntPlugin extends LanguagePluginAbstract {
         File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
         Project buildProject = new Project();
         buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());
+        buildProject.setProperty("javac.fork", "true");
         buildProject.init();
         buildProject.setBaseDir(path.toAbsolutePath().toFile());
         File buildLog;

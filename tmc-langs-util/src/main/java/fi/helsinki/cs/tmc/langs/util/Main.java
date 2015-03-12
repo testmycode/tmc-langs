@@ -1,5 +1,9 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import com.google.common.base.Optional;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +39,7 @@ public class Main {
                 printHelp();
                 break;
             case "--checkstyle" :
-                runCheckStyle(args);
+                runCheckCodeStyle(args);
                 break;
         }
     }
@@ -48,9 +52,15 @@ public class Main {
         return commands;
     }
 
-    private static boolean runCheckStyle(String[] args) {
-        Paths.get(args[1]);
+    private static void runCheckCodeStyle(String[] args) {
+        Path testPath = Paths.get(args[1]);
+        Path outputPath = Paths.get(args[2]);
+        ValidationResult validationResult;
+        Optional<ValidationResult> valResOptional = TaskExecutor.runCheckCodeStyle(testPath);
 
-        return true;
+        if (valResOptional.isPresent()) {
+            validationResult = valResOptional.get();
+            JsonWriter.writeCodeStyleReport(validationResult, outputPath);
+        }
     }
 }

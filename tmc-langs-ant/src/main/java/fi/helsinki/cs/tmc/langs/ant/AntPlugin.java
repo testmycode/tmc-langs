@@ -1,7 +1,10 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.*;
+import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
@@ -12,11 +15,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 import java.util.Locale;
 import java.util.logging.Level;
-
+import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
@@ -29,6 +30,7 @@ public class AntPlugin extends LanguagePluginAbstract {
     private final String testDir = File.separatorChar + "test";
     private final String resultsFile = File.separatorChar + "results.txt";
     private TestResultParser resultParser = new TestResultParser();
+    private RunResult buildRunResult;
 
     @Override
     public String getLanguageName() {
@@ -68,7 +70,10 @@ public class AntPlugin extends LanguagePluginAbstract {
 
     @Override
     public RunResult runTests(Path path) {
-        buildAntProject(path);
+        if (!buildAntProject(path)) {
+            return buildRunResult;
+        }
+
         List<String> runnerArgs = buildTestRunnerArgs(path);
         startProcess(runnerArgs);
 
@@ -89,30 +94,48 @@ public class AntPlugin extends LanguagePluginAbstract {
      * Runs the build.xml file for the the given exercise.
      *
      * @param path The file path of the exercise directory.
+     * @return true if build success, else return false.
      */
-    public void buildAntProject(Path path) {
+    public boolean buildAntProject(Path path) {
         File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
         Project buildProject = new Project();
         buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());
+        buildProject.setProperty("javac.fork", "true");
         buildProject.init();
         buildProject.setBaseDir(path.toAbsolutePath().toFile());
+        File buildLog;
         
-        DefaultLogger logger = new DefaultLogger();
-        logger.setErrorPrintStream(System.err);
-        logger.setOutputPrintStream(System.out);
-        logger.setMessageOutputLevel(Project.MSG_ERR);
-        buildProject.addBuildListener(logger);
-
         try {
-            buildProject.fireBuildStarted();
             
-            ProjectHelper helper = ProjectHelper.getProjectHelper();
-            buildProject.addReference("ant.projectHelper", helper);
-            helper.parse(buildProject, buildFile);
-            buildProject.executeTarget("compile-test");
-            buildProject.fireBuildFinished(null);
-        } catch (BuildException e) {
-            buildProject.fireBuildFinished(e);
+            DefaultLogger logger = new DefaultLogger();
+            buildLog = new File(path.toString(), "build_log.txt");
+            PrintStream errorPrintStream = new PrintStream(buildLog);
+            logger.setErrorPrintStream(errorPrintStream);
+            logger.setOutputPrintStream(System.out);
+            logger.setMessageOutputLevel(Project.MSG_ERR);
+            buildProject.addBuildListener(logger);
+            
+            try {
+                
+                buildProject.fireBuildStarted();
+                ProjectHelper helper = ProjectHelper.getProjectHelper();
+                buildProject.addReference("ant.projectHelper", helper);
+                helper.parse(buildProject, buildFile);
+                buildProject.executeTarget("compile-test");
+                buildProject.fireBuildFinished(null);
+                return true;
+                
+            } catch (BuildException e) {
+                
+                buildProject.fireBuildFinished(e);
+                buildRunResult = new RunResult(Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
+                        new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
+                                java.nio.file.Files.readAllBytes(buildLog.toPath())).build());
+                return false;
+                
+            }
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
         }
     }
 
@@ -151,7 +174,7 @@ public class AntPlugin extends LanguagePluginAbstract {
         //runnerArgs.add("-Dfi.helsinki.cs.tmc.edutestutils.defaultLocale=" + locale);
 
         if (endorsedLibsExists(path)) {
-           runnerArgs.add("-Djava.endorsed.dirs=" + createPath(path, "lib", "endorsed"));
+            runnerArgs.add("-Djava.endorsed.dirs=" + createPath(path, "lib", "endorsed"));
         }
 
         ClassPath classPath = generateClassPath(path);

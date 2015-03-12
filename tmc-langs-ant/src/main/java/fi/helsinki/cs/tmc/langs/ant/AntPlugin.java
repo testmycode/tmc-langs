@@ -103,7 +103,9 @@ public class AntPlugin extends LanguagePluginAbstract {
         buildProject.init();
         buildProject.setBaseDir(path.toAbsolutePath().toFile());
         File buildLog;
+        
         try {
+            
             DefaultLogger logger = new DefaultLogger();
             buildLog = new File(path.toString(), "build_log.txt");
             PrintStream errorPrintStream = new PrintStream(buildLog);
@@ -111,22 +113,25 @@ public class AntPlugin extends LanguagePluginAbstract {
             logger.setOutputPrintStream(System.out);
             logger.setMessageOutputLevel(Project.MSG_ERR);
             buildProject.addBuildListener(logger);
-
+            
             try {
+                
                 buildProject.fireBuildStarted();
-
                 ProjectHelper helper = ProjectHelper.getProjectHelper();
                 buildProject.addReference("ant.projectHelper", helper);
                 helper.parse(buildProject, buildFile);
                 buildProject.executeTarget("compile-test");
                 buildProject.fireBuildFinished(null);
                 return true;
+                
             } catch (BuildException e) {
+                
                 buildProject.fireBuildFinished(e);
                 buildRunResult = new RunResult(Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
                         new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
                                 java.nio.file.Files.readAllBytes(buildLog.toPath())).build());
                 return false;
+                
             }
         } catch (IOException e) {
             throw Throwables.propagate(e);

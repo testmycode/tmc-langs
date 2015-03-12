@@ -1,8 +1,11 @@
 package fi.helsinki.cs.tmc.langs.util;
 
 
+import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+import org.apache.tools.ant.Project;
 
+import javax.swing.text.html.Option;
 import java.nio.file.Path;
 
 public class ProjectTypeHandler {
@@ -14,27 +17,29 @@ public class ProjectTypeHandler {
      * project as their type.
      *
      * @param path The path to the exercise directory.
-     * @return The project type, or null if none.
+     * @return The project type, or Optional absent if none.
      */
-    public static ProjectType getProjectType(Path path) {
+    static Optional<ProjectType> getProjectType(Path path) {
         for (ProjectType type : ProjectType.values()) {
             if (type.getLanguagePlugin().scanExercise(path, "") != null) {
-                return type;
+                return Optional.of(type);
             }
         }
-
-        return null;
+        return Optional.absent();
     }
 
     /**
      * Return the LanguagePlugin that is responsible for the exercise at the given path.
      *
      * @param path The path to the exercise directory.
-     * @return LanguagePlugin that is responsible for the exercise, or null if none.
+     * @return LanguagePlugin that is responsible for the exercise, or Optional absent if none.
      */
-    public static LanguagePlugin getLanguagePlugin(Path path) {
-        ProjectType type = getProjectType(path);
-        return type == null ? null : getProjectType(path).getLanguagePlugin();
+    public static Optional<LanguagePlugin> getLanguagePlugin(Path path) {
+        Optional<ProjectType> type = getProjectType(path);
+        if (type.isPresent()) {
+            return Optional.of(type.get().getLanguagePlugin());
+        }
+        return Optional.absent();
     }
 
 }

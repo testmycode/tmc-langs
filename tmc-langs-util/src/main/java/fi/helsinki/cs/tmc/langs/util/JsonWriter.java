@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.nio.file.Path;
@@ -12,8 +14,13 @@ public class JsonWriter {
      */
     public static void writeCodeStyleReport(ValidationResult validationResult, Path outputFile) {
         StringBuilder sb = new StringBuilder();
+    }
 
+    public static void writeExerciseDesc(ExerciseDesc exerciseDesc, Path outputFile) {
 
+    }
+
+    public static void writeRunResult(RunResult runResult, Path outputFile) {
 
     }
 }

@@ -1,6 +1,8 @@
 package fi.helsinki.cs.tmc.langs.util;
 
 import com.google.common.base.Optional;
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.nio.file.Path;
@@ -15,6 +17,7 @@ public class Main {
             printHelp();
         }
         run(args);
+        System.exit(0);
     }
 
     private static void printHelp() {
@@ -34,12 +37,23 @@ public class Main {
             printHelp();
         }
 
-        switch(command) {
-            case "--help" :
+        Map<String, Path> paths = parsePaths(args);
+
+        switch (command) {
+            case "--help":
                 printHelp();
                 break;
-            case "--checkstyle" :
-                runCheckCodeStyle(args);
+            case "--checkstyle":
+                runCheckCodeStyle(paths);
+                break;
+            case "--scanexercise":
+                runScanExercise(paths);
+                break;
+            case "--runtests":
+                runTests(paths);
+                break;
+            default:
+                printHelp();
                 break;
         }
     }
@@ -49,18 +63,52 @@ public class Main {
         Map<String, Integer> commands = new HashMap<>();
         commands.put("--help", 0);
         commands.put("--checkstyle", 1);
+        commands.put("--scanexercise", 2);
+        commands.put("--runtests", 2);
         return commands;
     }
 
-    private static void runCheckCodeStyle(String[] args) {
-        Path testPath = Paths.get(args[1]);
-        Path outputPath = Paths.get(args[2]);
-        ValidationResult validationResult;
-        Optional<ValidationResult> valResOptional = TaskExecutor.runCheckCodeStyle(testPath);
+    private static void runCheckCodeStyle(Map<String, Path> paths) {
+        Optional<ValidationResult> validationResult = TaskExecutor.runCheckCodeStyle(paths.get("testPath"));
 
-        if (valResOptional.isPresent()) {
-            validationResult = valResOptional.get();
-            JsonWriter.writeCodeStyleReport(validationResult, outputPath);
+        if (validationResult.isPresent()) {
+            JsonWriter.writeCodeStyleReport(validationResult.get(), paths.get("outputPath"));
         }
+    }
+
+    private static void runScanExercise(Map<String, Path> paths) {
+        // Exercise name, should it be something else than directory name?
+        String exerciseName = paths.get("testPath").toFile().getName();
+        Optional<ExerciseDesc> exerciseDesc = TaskExecutor.scanExercise(paths.get("testPath"), exerciseName);
+
+        if (exerciseDesc.isPresent()) {
+            JsonWriter.writeExerciseDesc(exerciseDesc.get(), paths.get("outputPath"));
+        }
+    }
+
+    private static void runTests(Map<String, Path> paths) {
+        Optional<RunResult> runResult = TaskExecutor.runTests(paths.get("testPath"));
+
+        if (runResult.isPresent()) {
+            JsonWriter.writeRunResult(runResult.get(), paths.get("outputPath"));
+        }
+    }
+
+    private static void checkTestPath(Path testPath) {
+        if (!testPath.toFile().isDirectory()) {
+            System.out.println("ERROR: Given test path is not a directory.");
+            printHelp();
+        }
+    }
+
+    private static Map<String, Path> parsePaths(String[] args) {
+        Map<String, Path> argsMap = new HashMap<>();
+
+        argsMap.put("testPath", Paths.get(args[1]));
+        argsMap.put("outputPath", Paths.get(args[2]));
+
+        checkTestPath(argsMap.get("testPath"));
+
+        return argsMap;
     }
 }

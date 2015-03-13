@@ -1,13 +1,13 @@
 package fi.helsinki.cs.tmc.langs.maven;
 
+import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.LanguagePluginAbstract;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import java.io.File;
 import java.nio.file.Path;
 
-public class MavenPlugin extends LanguagePluginAbstract {
+public class MavenPlugin extends AbstractLanguagePlugin {
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {

@@ -2,6 +2,8 @@ package fi.helsinki.cs.tmc.langs;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ public class ExerciseBuilder {
     private String endSolution = "// END SOLUTION";
     private String stubMarker = "// STUB:";
     private String sourceFolderName = "src";
+    private final Charset charset = StandardCharsets.UTF_8;
 
     /**
      * Prepares a stub exercise from the original.
@@ -30,8 +33,9 @@ public class ExerciseBuilder {
     }
 
     private void prepareStubFile(File file) {
+
         try {
-            List<String> lines = Files.readAllLines(file.toPath());
+            List<String> lines = Files.readAllLines(file.toPath(), charset);
             List<String> filteredLines = new ArrayList<>();
             boolean skipLine = false;
             for (String line : lines) {
@@ -47,7 +51,7 @@ public class ExerciseBuilder {
                     filteredLines.add(line);
                 }
             }
-            Files.write(file.toPath(), filteredLines);
+            Files.write(file.toPath(), filteredLines, charset);
         } catch (IOException ex) {
             throw new RuntimeException("Unexpected IOException, preparation of file {" + file.getAbsolutePath() + "} interrupted", ex);
         }
@@ -86,7 +90,7 @@ public class ExerciseBuilder {
 
     private void prepareSolutionFile(File file) {
         try {
-            List<String> lines = Files.readAllLines(file.toPath());
+            List<String> lines = Files.readAllLines(file.toPath(), charset);
             List<String> filteredLines = new ArrayList<>();
             for (String line : lines) {
                 if (line.contains(beginSolution) || line.contains(endSolution) || line.contains(stubMarker)) {
@@ -94,7 +98,7 @@ public class ExerciseBuilder {
                 }
                 filteredLines.add(line);
             }
-            Files.write(file.toPath(), filteredLines);
+            Files.write(file.toPath(), filteredLines, charset);
         } catch (IOException ex) {
             throw new RuntimeException("Unexpected IOException, preparation of file {" + file.getAbsolutePath() + "} interrupted", ex);
         }

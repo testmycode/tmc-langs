@@ -24,9 +24,9 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
-public class AntPluginLanguagePlugin extends AbstractLanguagePlugin {
+public class AntPlugin extends AbstractLanguagePlugin {
 
-    private static final Logger log = Logger.getLogger(AntPluginLanguagePlugin.class.getName());
+    private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
     private final String testDir = File.separatorChar + "test";
     private final String resultsFile = File.separatorChar + "results.txt";
     private TestResultParser resultParser = new TestResultParser();

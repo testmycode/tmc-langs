@@ -21,10 +21,10 @@ import static org.junit.Assert.*;
 
 public class AntPluginTest {
 
-    private AntPluginLanguagePlugin antPlugin;
+    private AntPlugin antPlugin;
 
     public AntPluginTest() {
-        antPlugin = new AntPluginLanguagePlugin();
+        antPlugin = new AntPlugin();
     }
 
     @Test

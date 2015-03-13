@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.base.Throwables;
@@ -15,19 +10,15 @@ import java.nio.file.Paths;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author alpa
- */
-public class LanguagePluginAbstractTest {
+public class AbstractLanguagePluginTest {
 
-    PluginFindImpl pluginFindImpl;
+    PluginFindImplLanguagePlugin pluginFindImpl;
 
-    public LanguagePluginAbstractTest() {
-        pluginFindImpl = new PluginFindImpl();
+    public AbstractLanguagePluginTest() {
+        pluginFindImpl = new PluginFindImplLanguagePlugin();
     }
 
-    class PluginFindImpl extends LanguagePluginAbstract {
+    class PluginFindImplLanguagePlugin extends AbstractLanguagePlugin {
 
         @Override
         protected boolean isExerciseTypeCorrect(Path path) {
@@ -36,22 +27,22 @@ public class LanguagePluginAbstractTest {
 
         @Override
         public String getLanguageName() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public ExerciseDesc scanExercise(Path path, String exerciseName) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public RunResult runTests(Path path) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public ValidationResult checkCodeStyle(Path path) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
     }

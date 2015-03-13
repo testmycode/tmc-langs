@@ -9,6 +9,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,8 +19,10 @@ public class ClassPath {
 
     private List<Path> subPaths = new ArrayList<>();
 
-    public ClassPath(Path path) {
-        subPaths.add(path);
+    public ClassPath(Path... paths) {
+        for(Path path : paths) {
+            add(path);
+        }
     }
 
     public void add(Path path) {
@@ -35,7 +38,7 @@ public class ClassPath {
     }
 
     public List<Path> getPaths() {
-        return subPaths;
+        return Collections.unmodifiableList(subPaths);
     }
 
     /**
@@ -52,11 +55,11 @@ public class ClassPath {
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(basePath)) {
             for (Path path : stream) {
-                if(Files.isDirectory(path)) {
+                if (Files.isDirectory(path)) {
                     addDirAndContents(path);
                 }
 
-                if(path.toString().endsWith("jar")) {
+                if (path.toString().endsWith("jar")) {
                     add(path);
                 }
             }
@@ -67,13 +70,14 @@ public class ClassPath {
 
     @Override
     public String toString() {
+        if (subPaths.isEmpty()) {
+            return "";
+        }
+
         String classPath = subPaths.get(0).toString();
 
         for (int i = 1; i < subPaths.size(); i++) {
             classPath += File.pathSeparatorChar + subPaths.get(i).toString();
-            if (subPaths.get(i).toString().contains("testrunner")) {
-                classPath += File.pathSeparatorChar + subPaths.get(i).toString() + File.separatorChar + "tmc-junit-runner.jar";
-            }
         }
 
         return classPath;

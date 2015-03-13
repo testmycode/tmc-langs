@@ -1,7 +1,7 @@
 package fi.helsinki.cs.tmc.langs.util;
 
 import com.google.common.base.Throwables;
-import fi.helsinki.cs.tmc.langs.ant.AntPlugin;
+import fi.helsinki.cs.tmc.langs.ant.AntPluginLanguagePlugin;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class ProjectTypeHandlerTest {
 
     @Test
     public void returnsCorrectLanguagePluginOnJavaAntExercise() {
-        assertEquals(AntPlugin.class, handler.getLanguagePlugin(getPath("arith_funcs")).getClass());
+        assertEquals(AntPluginLanguagePlugin.class, handler.getLanguagePlugin(getPath("arith_funcs")).getClass());
     }
 
     @Test

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class LanguagePluginAbstract implements LanguagePlugin {
+public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     
     /**
       * Exercisebuilder uses an instance because it is somewhat likely

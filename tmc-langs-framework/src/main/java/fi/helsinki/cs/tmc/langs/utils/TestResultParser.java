@@ -103,8 +103,7 @@ public class TestResultParser {
      * @return Name of the test.
      */
     private String parseTestName(JsonElement test) {
-        String testName = test.getAsJsonObject().get("className").toString();
-        testName = testName.substring(1, testName.length() - 1);
+        String testName = test.getAsJsonObject().get("className").getAsString();
         return testName + " " + test.getAsJsonObject().get("methodName").getAsString();
     }
 

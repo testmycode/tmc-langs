@@ -21,10 +21,10 @@ import static org.junit.Assert.*;
 
 public class AntPluginTest {
 
-    private AntPlugin antPlugin;
+    private AntPluginLanguagePlugin antPlugin;
 
     public AntPluginTest() {
-        antPlugin = new AntPlugin();
+        antPlugin = new AntPluginLanguagePlugin();
     }
 
     @Test
@@ -88,7 +88,6 @@ public class AntPluginTest {
     @Test
     public void testRunTestsReturnPassedCorrectly() {
         RunResult runResult = antPlugin.runTests(getPath("trivial"));
-        System.out.println(runResult.testResults.get(0).passed);
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
         assertTestResult(testResult, "", "TrivialTest testF", true);

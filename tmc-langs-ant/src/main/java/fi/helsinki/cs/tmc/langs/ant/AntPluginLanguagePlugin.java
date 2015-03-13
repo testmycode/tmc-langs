@@ -18,15 +18,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.io.FileUtils;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
-public class AntPlugin extends LanguagePluginAbstract {
+public class AntPluginLanguagePlugin extends AbstractLanguagePlugin {
 
-    private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
+    private static final Logger log = Logger.getLogger(AntPluginLanguagePlugin.class.getName());
     private final String testDir = File.separatorChar + "test";
     private final String resultsFile = File.separatorChar + "results.txt";
     private TestResultParser resultParser = new TestResultParser();
@@ -76,12 +76,6 @@ public class AntPlugin extends LanguagePluginAbstract {
 
         List<String> runnerArgs = buildTestRunnerArgs(path);
         startProcess(runnerArgs);
-
-        try {
-            FileUtils.deleteDirectory(new File(path.toString() + File.separatorChar + "build"));
-        } catch (IOException e) {
-            throw Throwables.propagate(e);
-        }
 
         File resultFile = new File(path.toString() + resultsFile);
         RunResult result = resultParser.parseTestResult(resultFile);

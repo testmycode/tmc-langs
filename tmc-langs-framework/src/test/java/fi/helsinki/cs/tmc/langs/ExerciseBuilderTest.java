@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fi.helsinki.cs.tmc.langs;
 
-import fi.helsinki.cs.tmc.langs.ExerciseBuilder;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
@@ -16,10 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author villheik
- */
 public class ExerciseBuilderTest {
 
     public ExerciseBuilderTest() {
@@ -86,7 +76,6 @@ public class ExerciseBuilderTest {
      */
     @Test
     public void testPrepareSolution() throws IOException {
-        System.out.println("prepareSolution");
         File originProject = new File("src/test/resources/arith_funcs/");
 
         File targetFolder = createTemporaryCopyOf(originProject);
@@ -100,7 +89,7 @@ public class ExerciseBuilderTest {
         Map<String, File> expectedFiles = getFileMap(expectedFolder);
         Map<String, File> actualFiles = getFileMap(outputFolder);
         
-        for(String fileName : expectedFiles.keySet()) {
+        for (String fileName : expectedFiles.keySet()) {
             File expected = expectedFiles.get(fileName);
             File actual = actualFiles.get(fileName);
             List<String> expectedLines = FileUtils.readLines(expected);

@@ -19,6 +19,7 @@ public class MainTest {
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     private String HELP_TEXT = "Usage: TODO: Write instructions here.";
+    private String expectedMessage = "";
 
     @Test
     public void testMain() {
@@ -33,8 +34,28 @@ public class MainTest {
         String exercisePath = getTargetPath("arith_funcs");
         String outputPath = exercisePath + "/checkstyle.txt";
         String[] args = {"--scanexercise", exercisePath, outputPath};
+        expectedMessage = "Exercise scanned successfully, results can be found in " + outputPath;
+        mainTest(0, args);
+    }
+
+    @Test
+    public void testScanExerciseWithInvalidArgs() {
+        String[] args = {"--scanexercise", "dummy string", "another"};
         exit.expectSystemExitWithStatus(0);
-        exitEqualsAssertion("Exercise scanned successfully, results can be found in " + outputPath);
+        expectedMessage = "ERROR: Given test path is not a directory.\n" + HELP_TEXT;
+        mainTest(0, args);
+    }
+
+    @Test
+    public void testScanExerciseWithWrongArgumentCount() {
+        String[] args = {"--scanexercise"};
+        expectedMessage = "ERROR: wrong argument count for --scanexercise expected 2 got 0\n" + HELP_TEXT;
+        mainTest(0, args);
+    }
+
+    private void mainTest(int exitStatus, String[] args, String... optionalErrorMessage) {
+        exit.expectSystemExitWithStatus(exitStatus);
+        exitEqualsAssertion(expectedMessage, optionalErrorMessage);
         Main.main(args);
     }
 
@@ -47,12 +68,12 @@ public class MainTest {
         return getClass().getResource(File.separatorChar + location).toString().substring(5);
     }
 
-    private void exitEqualsAssertion(final String expected, final String... optionalMessage) {
+    private void exitEqualsAssertion(final String expected, final String... optionalErrorMessage) {
         exit.checkAssertionAfterwards(new Assertion() {
             @Override
             public void checkAssertion() throws Exception {
-                if (optionalMessage != null && optionalMessage.length == 1) {
-                    assertEquals(optionalMessage[1], expected, mio.getSysOut());
+                if (optionalErrorMessage != null && optionalErrorMessage.length == 1) {
+                    assertEquals(optionalErrorMessage[1], expected, mio.getSysOut());
                 } else {
                     assertEquals(expected, mio.getSysOut().trim());
                 }

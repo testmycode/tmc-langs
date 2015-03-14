@@ -34,7 +34,7 @@ public class Main {
             printHelp();
         } else if (!argsCount.equals(args.length - 1)) {
             System.out.println("ERROR: wrong argument count for " + command
-                + " expected " + argsCount + " got " + args.length);
+                + " expected " + argsCount + " got " + (args.length - 1));
             printHelp();
         }
 

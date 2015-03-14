@@ -52,6 +52,12 @@ public class Main {
             case "--runtests":
                 runTests(paths);
                 break;
+            case "--preparestub":
+                runPrepareStub(paths);
+                break;
+            case "--preparesolution":
+                runPrepareSolution(paths);
+                break;
             default:
                 printHelp();
                 break;
@@ -65,11 +71,13 @@ public class Main {
         commands.put("--checkstyle", 1);
         commands.put("--scanexercise", 2);
         commands.put("--runtests", 2);
+        commands.put("--preparestub", 1);
+        commands.put("--preparesolution", 1);
         return commands;
     }
 
     private static void runCheckCodeStyle(Map<String, Path> paths) {
-        Optional<ValidationResult> validationResult = TaskExecutor.runCheckCodeStyle(paths.get("testPath"));
+        Optional<ValidationResult> validationResult = TaskExecutor.runCheckCodeStyle(paths.get("exercisePath"));
 
         if (validationResult.isPresent()) {
             JsonWriter.writeCodeStyleReport(validationResult.get(), paths.get("outputPath"));
@@ -78,8 +86,8 @@ public class Main {
 
     private static void runScanExercise(Map<String, Path> paths) {
         // Exercise name, should it be something else than directory name?
-        String exerciseName = paths.get("testPath").toFile().getName();
-        Optional<ExerciseDesc> exerciseDesc = TaskExecutor.scanExercise(paths.get("testPath"), exerciseName);
+        String exerciseName = paths.get("exercisePath").toFile().getName();
+        Optional<ExerciseDesc> exerciseDesc = TaskExecutor.scanExercise(paths.get("exercisePath"), exerciseName);
 
         if (exerciseDesc.isPresent()) {
             JsonWriter.writeExerciseDesc(exerciseDesc.get(), paths.get("outputPath"));
@@ -87,15 +95,23 @@ public class Main {
     }
 
     private static void runTests(Map<String, Path> paths) {
-        Optional<RunResult> runResult = TaskExecutor.runTests(paths.get("testPath"));
+        Optional<RunResult> runResult = TaskExecutor.runTests(paths.get("exercisePath"));
 
         if (runResult.isPresent()) {
             JsonWriter.writeRunResult(runResult.get(), paths.get("outputPath"));
         }
     }
 
-    private static void checkTestPath(Path testPath) {
-        if (!testPath.toFile().isDirectory()) {
+    private static void runPrepareStub(Map<String, Path> paths) {
+        TaskExecutor.prepareStub(paths.get("exercisePath"));
+    }
+
+    private static void runPrepareSolution(Map<String, Path> paths) {
+        TaskExecutor.prepareSolution(paths.get("exercisePath"));
+    }
+
+    private static void checkTestPath(Path exercisePath) {
+        if (!exercisePath.toFile().isDirectory()) {
             System.out.println("ERROR: Given test path is not a directory.");
             printHelp();
         }
@@ -104,10 +120,10 @@ public class Main {
     private static Map<String, Path> parsePaths(String[] args) {
         Map<String, Path> argsMap = new HashMap<>();
 
-        argsMap.put("testPath", Paths.get(args[1]));
+        argsMap.put("exercisePath", Paths.get(args[1]));
         argsMap.put("outputPath", Paths.get(args[2]));
 
-        checkTestPath(argsMap.get("testPath"));
+        checkTestPath(argsMap.get("exercisePath"));
 
         return argsMap;
     }

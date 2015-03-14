@@ -44,4 +44,20 @@ public class TaskExecutor {
 
         return Optional.absent();
     }
+
+    public static void prepareStub(Path path) {
+        Optional<LanguagePlugin> languagePluginOptional = ProjectTypeHandler.getLanguagePlugin(path);
+
+        if (languagePluginOptional.isPresent()) {
+            languagePluginOptional.get().prepareStub(path);
+        }
+    }
+
+    public static void prepareSolution(Path path) {
+        Optional<LanguagePlugin> languagePluginOptional = ProjectTypeHandler.getLanguagePlugin(path);
+
+        if (languagePluginOptional.isPresent()) {
+            languagePluginOptional.get().prepareSolution(path);
+        }
+    }
 }

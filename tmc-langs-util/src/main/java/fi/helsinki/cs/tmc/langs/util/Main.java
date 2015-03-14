@@ -33,7 +33,8 @@ public class Main {
         if (argsCount == null) {
             printHelp();
         } else if (!argsCount.equals(args.length - 1)) {
-            System.out.println("ERROR: wrong argument count for " + command);
+            System.out.println("ERROR: wrong argument count for " + command
+                + " expected " + argsCount + " got " + args.length);
             printHelp();
         }
 
@@ -92,6 +93,8 @@ public class Main {
         if (exerciseDesc.isPresent()) {
             JsonWriter.writeExerciseDesc(exerciseDesc.get(), paths.get("outputPath"));
         }
+
+        System.out.println("Exercise scanned successfully, results can be found in " + paths.get("outputPath").toString());
     }
 
     private static void runTests(Map<String, Path> paths) {

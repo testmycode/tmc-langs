@@ -83,6 +83,7 @@ public class Main {
         if (validationResult.isPresent()) {
             JsonWriter.writeCodeStyleReport(validationResult.get(), paths.get("outputPath"));
         }
+        System.out.println("Codestyle report can be found at " + paths.get("outputPath"));
     }
 
     private static void runScanExercise(Map<String, Path> paths) {

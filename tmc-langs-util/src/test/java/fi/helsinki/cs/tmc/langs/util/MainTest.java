@@ -1,15 +1,14 @@
 package fi.helsinki.cs.tmc.langs.util;
 
 import fi.helsinki.cs.tmc.edutestutils.MockStdio;
-
-import static org.junit.Assert.*;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.Assertion;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.File;
+
+import static org.junit.Assert.assertTrue;
 
 public class MainTest {
     @Rule
@@ -62,6 +61,23 @@ public class MainTest {
         mainTest(0, args);
     }
 
+    @Test
+    public void testRunCheckCodeStyle() {
+        String exercisePath = getTargetPath("arith_funcs");
+        String outputPath = exercisePath + "/exercises.txt";
+        String[] args = {"--checkstyle", exercisePath, outputPath};
+        expectedMessage = "Codestyle report can be found at " + outputPath;
+        mainTest(0, args);
+    }
+
+    /**
+     * Call main method with given args, and assert that main exits with given exit status.
+     * Additionally do assertion that main prints out {@link #expectedMessage}.
+     *
+     * @param exitStatus           expected exit status for main.
+     * @param args                 for calling main.
+     * @param optionalErrorMessage for system out assertion.
+     */
     private void mainTest(int exitStatus, String[] args, String... optionalErrorMessage) {
         exit.expectSystemExitWithStatus(exitStatus);
         exitStringContainsAssertion(expectedMessage, optionalErrorMessage);
@@ -70,6 +86,7 @@ public class MainTest {
 
     /**
      * Convert the given location into absolute test target path.
+     *
      * @param location to be converted into target path.
      * @return Absolute test target path, with file:/ stripped away.
      */
@@ -81,7 +98,7 @@ public class MainTest {
         exit.checkAssertionAfterwards(new Assertion() {
             @Override
             public void checkAssertion() throws Exception {
-                String defaultErrorMessage = "Expected system output to contain\n" + expected  +
+                String defaultErrorMessage = "Expected system output to contain\n" + expected +
                     "\ninstead got: " + mio.getSysOut().trim();
                 if (optionalErrorMessage != null && optionalErrorMessage.length == 1) {
                     assertTrue(optionalErrorMessage[1], mio.getSysOut().trim().contains(expected));

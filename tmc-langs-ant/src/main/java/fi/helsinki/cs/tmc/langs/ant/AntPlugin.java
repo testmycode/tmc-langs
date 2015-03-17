@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -90,7 +91,8 @@ public class AntPlugin extends AbstractLanguagePlugin {
      * @param path The file path of the exercise directory.
      * @return true if build success, else return false.
      */
-    public boolean buildAntProject(Path path) {
+    @VisibleForTesting
+    protected boolean buildAntProject(Path path) {
         File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
         Project buildProject = new Project();
         buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());

@@ -18,14 +18,14 @@ public class MainTest {
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-    private String HELP_TEXT = "Usage: TODO: Write instructions here.";
+    private final String HELP_TEXT = "Usage: TODO: Write instructions here.";
     private String expectedMessage = "";
 
     @Test
     public void testMain() {
         String[] args = null;
         exit.expectSystemExitWithStatus(0);
-        exitEqualsAssertion(HELP_TEXT);
+        exitStringContainsAssertion(HELP_TEXT);
         Main.main(args);
     }
 
@@ -34,7 +34,7 @@ public class MainTest {
         String exercisePath = getTargetPath("arith_funcs");
         String outputPath = exercisePath + "/checkstyle.txt";
         String[] args = {"--scanexercise", exercisePath, outputPath};
-        expectedMessage = "Exercise scanned successfully, results can be found in " + outputPath;
+        expectedMessage = "Exercises scanned successfully, results can be found in " + outputPath;
         mainTest(0, args);
     }
 
@@ -47,15 +47,24 @@ public class MainTest {
     }
 
     @Test
-    public void testScanExerciseWithWrongArgumentCount() {
+    public void testWithInvalidArgumentCount() {
         String[] args = {"--scanexercise"};
         expectedMessage = "ERROR: wrong argument count for --scanexercise expected 2 got 0\n" + HELP_TEXT;
         mainTest(0, args);
     }
 
+    @Test
+    public void testRunTests() {
+        String exercisePath = getTargetPath("arith_funcs");
+        String outputPath = exercisePath + "/results.txt";
+        String[] args = {"--runtests", exercisePath, outputPath};
+        expectedMessage = "Test results can be found in " + outputPath;
+        mainTest(0, args);
+    }
+
     private void mainTest(int exitStatus, String[] args, String... optionalErrorMessage) {
         exit.expectSystemExitWithStatus(exitStatus);
-        exitEqualsAssertion(expectedMessage, optionalErrorMessage);
+        exitStringContainsAssertion(expectedMessage, optionalErrorMessage);
         Main.main(args);
     }
 
@@ -68,14 +77,16 @@ public class MainTest {
         return getClass().getResource(File.separatorChar + location).toString().substring(5);
     }
 
-    private void exitEqualsAssertion(final String expected, final String... optionalErrorMessage) {
+    private void exitStringContainsAssertion(final String expected, final String... optionalErrorMessage) {
         exit.checkAssertionAfterwards(new Assertion() {
             @Override
             public void checkAssertion() throws Exception {
+                String defaultErrorMessage = "Expected system output to contain\n" + expected  +
+                    "\ninstead got: " + mio.getSysOut().trim();
                 if (optionalErrorMessage != null && optionalErrorMessage.length == 1) {
-                    assertEquals(optionalErrorMessage[1], expected, mio.getSysOut());
+                    assertTrue(optionalErrorMessage[1], mio.getSysOut().trim().contains(expected));
                 } else {
-                    assertEquals(expected, mio.getSysOut().trim());
+                    assertTrue(defaultErrorMessage, mio.getSysOut().trim().contains(expected));
                 }
             }
         });

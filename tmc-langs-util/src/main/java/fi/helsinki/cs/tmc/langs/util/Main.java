@@ -94,7 +94,7 @@ public class Main {
             JsonWriter.writeExerciseDesc(exerciseDesc.get(), paths.get("outputPath"));
         }
 
-        System.out.println("Exercise scanned successfully, results can be found in " + paths.get("outputPath").toString());
+        System.out.println("Exercises scanned successfully, results can be found in " + paths.get("outputPath").toString());
     }
 
     private static void runTests(Map<String, Path> paths) {
@@ -103,6 +103,8 @@ public class Main {
         if (runResult.isPresent()) {
             JsonWriter.writeRunResult(runResult.get(), paths.get("outputPath"));
         }
+
+        System.out.println("Test results can be found in " + paths.get("outputPath"));
     }
 
     private static void runPrepareStub(Map<String, Path> paths) {

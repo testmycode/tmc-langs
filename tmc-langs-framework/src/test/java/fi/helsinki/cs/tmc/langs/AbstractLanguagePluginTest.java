@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 public class AbstractLanguagePluginTest {
 
-    PluginFindImplLanguagePlugin pluginFindImpl;
+    private PluginFindImplLanguagePlugin pluginFindImpl;
 
     public AbstractLanguagePluginTest() {
         pluginFindImpl = new PluginFindImplLanguagePlugin();

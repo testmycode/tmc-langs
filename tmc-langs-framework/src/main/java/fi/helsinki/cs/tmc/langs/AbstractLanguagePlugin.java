@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.base.Throwables;
@@ -19,17 +13,16 @@ import java.util.List;
 import java.util.Stack;
 
 public abstract class AbstractLanguagePlugin implements LanguagePlugin {
-    
+
     /**
-      * Exercisebuilder uses an instance because it is somewhat likely
-      * that it will need some language specific configuration
+     * Exercisebuilder uses an instance because it is somewhat likely that it
+     * will need some language specific configuration
      */
-    
     private ExerciseBuilder exerciseBuilder = new ExerciseBuilder();
 
     @Override
     public void prepareSubmission(Path submissionPath, Path destPath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -41,7 +34,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     public void prepareSolution(Path path) {
         exerciseBuilder.prepareSolution(path);
     }
-    
+
     /**
      * Check if the exercise's project type corresponds with the language plugin
      * type.
@@ -50,7 +43,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @return True if given path is valid directory for this language plugin
      */
     protected abstract boolean isExerciseTypeCorrect(Path path);
-    
+
     /**
      *
      * @param basePath The file path to search in.
@@ -61,7 +54,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         File searchPath = new File(basePath.toString());
         ImmutableList.Builder<Path> listBuilder = new ImmutableList.Builder<>();
         if (searchPath.exists() && searchPath.isDirectory()) {
-            return search(searchPath, listBuilder);
+            return searchForExercises(searchPath, listBuilder);
         } else {
             return listBuilder.build();
         }
@@ -76,7 +69,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @return a list of all directories that contain build files for this
      * language.
      */
-    private ImmutableList<Path> search(File file, ImmutableList.Builder<Path> listBuilder) {
+    private ImmutableList<Path> searchForExercises(File file, ImmutableList.Builder<Path> listBuilder) {
         Stack<File> stack = new Stack();
         // Push the initial directory onto the stack.
         stack.push(file);

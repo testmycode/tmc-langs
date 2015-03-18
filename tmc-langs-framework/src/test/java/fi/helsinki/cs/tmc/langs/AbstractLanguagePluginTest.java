@@ -1,24 +1,29 @@
 package fi.helsinki.cs.tmc.langs;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import static org.junit.Assert.assertTrue;
 
 public class AbstractLanguagePluginTest {
 
-    PluginFindImplLanguagePlugin pluginFindImpl;
+    private PluginImplLanguagePlugin pluginImpl;
 
     public AbstractLanguagePluginTest() {
-        pluginFindImpl = new PluginFindImplLanguagePlugin();
+        pluginImpl = new PluginImplLanguagePlugin();
     }
 
-    class PluginFindImplLanguagePlugin extends AbstractLanguagePlugin {
+    class PluginImplLanguagePlugin extends AbstractLanguagePlugin {
 
         @Override
         protected boolean isExerciseTypeCorrect(Path path) {
@@ -39,40 +44,40 @@ public class AbstractLanguagePluginTest {
         public RunResult runTests(Path path) {
             throw new UnsupportedOperationException();
         }
-
-        @Override
-        public ValidationResult checkCodeStyle(Path path) {
-            throw new UnsupportedOperationException();
-        }
-
     }
 
     @Test
     public void findExercisesReturnsAListOfExerciseDirectories() {
-        ImmutableList<Path> dirs = pluginFindImpl.findExercises(getPath("ant_project"));
-        Path pathOne = getPath("ant_project");
-        Path pathTwo = getPath("ant_project/ant_sub_project");
+        ImmutableList<Path> dirs = pluginImpl.findExercises(TestUtils.getPath(getClass(), "ant_project"));
+        Path pathOne = TestUtils.getPath(getClass(), "ant_project");
+        Path pathTwo = TestUtils.getPath(getClass(), "ant_project/ant_sub_project");
         assertTrue(dirs.contains(pathOne) && dirs.contains(pathTwo));
     }
 
     @Test
     public void findExercisesReturnsAnEmptyListWhenInvalidPath() {
-        assertTrue(pluginFindImpl.findExercises(getPath("ant_project/build.xml")).isEmpty());
+        assertTrue(pluginImpl.findExercises(TestUtils.getPath(getClass(), "ant_project/build.xml")).isEmpty());
     }
 
     @Test
     public void findExercisesReturnsAnEmptyListWhenNoExercisesFound() {
-        assertTrue(pluginFindImpl.findExercises(getPath("dummy_project")).isEmpty());
+        assertTrue(pluginImpl.findExercises(TestUtils.getPath(getClass(), "dummy_project")).isEmpty());
     }
 
-    private Path getPath(String location) {
-        Path path;
-        try {
-            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
-        } catch (URISyntaxException e) {
-            throw Throwables.propagate(e);
+    @Test
+    public void testCheckCodeStyle() {
+        ValidationResult result = pluginImpl.checkCodeStyle(TestUtils.getPath(getClass(), "most_errors"));
+        Map<File, List<ValidationError>> res = result.getValidationErrors();
+        assertEquals("Should be one erroneous file", 1, res.size());
+        for (File file : res.keySet()) {
+            List<ValidationError> errors = res.get(file);
+            assertEquals("Should return the right amount of errors", 23, errors.size());
         }
-        return path;
     }
 
+    @Test
+    public void testCheckCodeStyleWithUntestableProject() {
+        ValidationResult result = pluginImpl.checkCodeStyle(TestUtils.getPath(getClass(), "dummy_project"));
+        assertNull(result);
+    }
 }

@@ -14,10 +14,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TestResultParser {
 
@@ -65,9 +62,7 @@ public class TestResultParser {
             }
         }
 
-        for (String point : testCase.pointNames) {
-            points.add(point);
-        }
+        Collections.addAll(points, testCase.pointNames);
 
         String name = testCase.className + " " + testCase.methodName;
         boolean passed = testCase.status == TestCase.Status.PASSED;

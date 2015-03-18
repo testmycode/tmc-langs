@@ -81,7 +81,7 @@ public class Main {
         Optional<ValidationResult> validationResult = TaskExecutor.runCheckCodeStyle(paths.get("exercisePath"));
 
         if (validationResult.isPresent()) {
-            JsonWriter.writeCodeStyleReport(validationResult.get(), paths.get("outputPath"));
+            JsonWriter.writeObjectIntoJsonFormat(validationResult.get(), paths.get("outputPath"));
         }
         System.out.println("Codestyle report can be found at " + paths.get("outputPath"));
     }
@@ -92,7 +92,7 @@ public class Main {
         Optional<ExerciseDesc> exerciseDesc = TaskExecutor.scanExercise(paths.get("exercisePath"), exerciseName);
 
         if (exerciseDesc.isPresent()) {
-            JsonWriter.writeExerciseDesc(exerciseDesc.get(), paths.get("outputPath"));
+            JsonWriter.writeObjectIntoJsonFormat(exerciseDesc.get(), paths.get("outputPath"));
         }
 
         System.out.println("Exercises scanned successfully, results can be found in " + paths.get("outputPath").toString());
@@ -102,7 +102,7 @@ public class Main {
         Optional<RunResult> runResult = TaskExecutor.runTests(paths.get("exercisePath"));
 
         if (runResult.isPresent()) {
-            JsonWriter.writeRunResult(runResult.get(), paths.get("outputPath"));
+            JsonWriter.writeObjectIntoJsonFormat(runResult.get(), paths.get("outputPath"));
         }
 
         System.out.println("Test results can be found in " + paths.get("outputPath"));

@@ -1,14 +1,14 @@
 package fi.helsinki.cs.tmc.langs;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.io.File;
+import java.nio.file.Path;
+
+import static org.junit.Assert.assertTrue;
 
 public class AbstractLanguagePluginTest {
 
@@ -49,30 +49,19 @@ public class AbstractLanguagePluginTest {
 
     @Test
     public void findExercisesReturnsAListOfExerciseDirectories() {
-        ImmutableList<Path> dirs = pluginFindImpl.findExercises(getPath("ant_project"));
-        Path pathOne = getPath("ant_project");
-        Path pathTwo = getPath("ant_project/ant_sub_project");
+        ImmutableList<Path> dirs = pluginFindImpl.findExercises(TestUtils.getPath(getClass(), "ant_project"));
+        Path pathOne = TestUtils.getPath(getClass(), "ant_project");
+        Path pathTwo = TestUtils.getPath(getClass(), "ant_project/ant_sub_project");
         assertTrue(dirs.contains(pathOne) && dirs.contains(pathTwo));
     }
 
     @Test
     public void findExercisesReturnsAnEmptyListWhenInvalidPath() {
-        assertTrue(pluginFindImpl.findExercises(getPath("ant_project/build.xml")).isEmpty());
+        assertTrue(pluginFindImpl.findExercises(TestUtils.getPath(getClass(), "ant_project/build.xml")).isEmpty());
     }
 
     @Test
     public void findExercisesReturnsAnEmptyListWhenNoExercisesFound() {
-        assertTrue(pluginFindImpl.findExercises(getPath("dummy_project")).isEmpty());
+        assertTrue(pluginFindImpl.findExercises(TestUtils.getPath(getClass(), "dummy_project")).isEmpty());
     }
-
-    private Path getPath(String location) {
-        Path path;
-        try {
-            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
-        } catch (URISyntaxException e) {
-            throw Throwables.propagate(e);
-        }
-        return path;
-    }
-
 }

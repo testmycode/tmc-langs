@@ -1,17 +1,16 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import org.junit.Test;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -35,14 +34,14 @@ public class AntPluginTest {
     @Test
     public void testScanExerciseReturnExerciseDesc() {
         String name = "Ant Test";
-        ExerciseDesc description = antPlugin.scanExercise(getPath("ant_arith_funcs"), name);
+        ExerciseDesc description = antPlugin.scanExercise(TestUtils.getPath(getClass(), "ant_arith_funcs"), name);
         assertEquals(name, description.name);
         assertEquals(4, description.tests.size());
     }
 
     @Test
     public void testScanExerciseReturnsCorrectTests() {
-        ExerciseDesc description = antPlugin.scanExercise(getPath("ant_arith_funcs"), "AntTestSubject");
+        ExerciseDesc description = antPlugin.scanExercise(TestUtils.getPath(getClass(), "ant_arith_funcs"), "AntTestSubject");
         assertEquals(4, description.tests.size());
 
         TestDesc test = description.tests.get(0);
@@ -57,12 +56,12 @@ public class AntPluginTest {
 
     @Test
     public void testScanExerciseReturnsNullWhenWrongProjectType() {
-        assertNull(antPlugin.scanExercise(getPath("non_ant_project"), "Dummy"));
+        assertNull(antPlugin.scanExercise(TestUtils.getPath(getClass(), "non_ant_project"), "Dummy"));
     }
 
     @Test
     public void testRunTestsReturnsRunResultCorrectly() {
-        RunResult runResult = antPlugin.runTests(getPath("ant_arith_funcs"));
+        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
         assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
         assertTrue("Logs should be empty", runResult.logs.isEmpty());
         assertEquals(4, runResult.testResults.size());
@@ -70,7 +69,7 @@ public class AntPluginTest {
 
     @Test
     public void testRunTestsAwardsCorrectPoints() {
-        ImmutableList<TestResult> testResults = antPlugin.runTests(getPath("ant_arith_funcs")).testResults;
+        ImmutableList<TestResult> testResults = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs")).testResults;
         assertEquals(4, testResults.size());
         assertTrue(testResults.get(0).passed);
         assertFalse(testResults.get(3).passed);
@@ -78,7 +77,7 @@ public class AntPluginTest {
 
     @Test
     public void testBuildAntProjectRunsBuildFile() {
-        Path path = getPath("ant_arith_funcs").toAbsolutePath();
+        Path path = TestUtils.getPath(getClass(), "ant_arith_funcs").toAbsolutePath();
         antPlugin.buildAntProject(path);
         File buildDir = Paths.get(path.toString() + File.separatorChar + "build").toFile();
         assertNotNull("Build directory should exist after building.", buildDir);
@@ -87,7 +86,7 @@ public class AntPluginTest {
 
     @Test
     public void testRunTestsReturnPassedCorrectly() {
-        RunResult runResult = antPlugin.runTests(getPath("trivial"));
+        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "trivial"));
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
         assertTestResult(testResult, "", "TrivialTest testF", true);
@@ -97,7 +96,7 @@ public class AntPluginTest {
 
     @Test
     public void testRunTestsReturnsCompileFailedCorrectly() {
-        RunResult runResult = antPlugin.runTests(getPath("failing_trivial"));
+        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "failing_trivial"));
         assertEquals("When the build fails the returned status should report it.", RunResult.Status.COMPILE_FAILED, runResult.status);
         assertTrue("When the build fails no test results should be returned", runResult.testResults.isEmpty());
         assertFalse(runResult.logs.isEmpty());
@@ -126,15 +125,5 @@ public class AntPluginTest {
         assertEquals(expectedErrorMessage, testResult.errorMessage);
         assertEquals(expectedName, testResult.name);
         assertEquals(expectedPassed, testResult.passed);
-    }
-
-    private Path getPath(String location) {
-        Path path;
-        try {
-            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
-        } catch (URISyntaxException e) {
-            throw Throwables.propagate(e);
-        }
-        return path;
     }
 }

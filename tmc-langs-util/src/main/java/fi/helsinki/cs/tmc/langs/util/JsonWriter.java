@@ -1,26 +1,40 @@
 package fi.helsinki.cs.tmc.langs.util;
 
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+import com.google.gson.Gson;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/**
+ * Utility tool for converting objects into JSON format and writing them into a file.
+ */
 public class JsonWriter {
     /**
-     * Parse and save ValidationResult into outputFile.
-     * @param validationResult to be parsed into JSON format.
-     * @param outputFile where the validation result is to be written.
+     * Convert and save object into outputFile as JSON.
+     * @param obj to be converted into JSON format.
+     * @param outputFile destination where the converted result is to be saved
      */
-    public static void writeCodeStyleReport(ValidationResult validationResult, Path outputFile) {
-        StringBuilder sb = new StringBuilder();
+    public static void writeObjectIntoJsonFormat(Object obj, Path outputFile) {
+        String objectInJson = buildJson(obj);
+        writeOutputFile(objectInJson, outputFile);
     }
-
-    public static void writeExerciseDesc(ExerciseDesc exerciseDesc, Path outputFile) {
-
+    
+    private static String buildJson(Object obj) {
+        Gson gson = new Gson();
+        return gson.toJson(obj);
     }
-
-    public static void writeRunResult(RunResult runResult, Path outputFile) {
-
+    
+    private static void writeOutputFile(String content, Path outputFile) {
+        try {
+            FileWriter writer = new FileWriter(outputFile.toAbsolutePath().toString());
+            writer.write(content);
+            writer.close();
+        } catch (IOException ex) {
+            Logger.getLogger(JsonWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }

@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Utility tool for converting objects into JSON format and writing them into a file.
+ * Utility for converting objects into JSON format and writing them into a file.
  */
 public class JsonWriter {
     /**

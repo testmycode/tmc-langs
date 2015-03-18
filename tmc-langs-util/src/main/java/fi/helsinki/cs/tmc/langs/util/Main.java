@@ -12,6 +12,9 @@ import java.util.Map;
 
 public class Main {
 
+    final static String EXERCISE_PATH = "exercisePath";
+    final static String OUTPUT_PATH = "outputPath";
+
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
             printHelp();
@@ -34,7 +37,7 @@ public class Main {
             printHelp();
         } else if (!argsCount.equals(args.length - 1)) {
             System.out.println("ERROR: wrong argument count for " + command
-                + " expected " + argsCount + " got " + (args.length - 1));
+                    + " expected " + argsCount + " got " + (args.length - 1));
             printHelp();
         }
 
@@ -78,42 +81,48 @@ public class Main {
     }
 
     private static void runCheckCodeStyle(Map<String, Path> paths) {
-        Optional<ValidationResult> validationResult = TaskExecutor.runCheckCodeStyle(paths.get("exercisePath"));
+        Optional<ValidationResult> validationResult = TaskExecutor.runCheckCodeStyle(paths.get(EXERCISE_PATH));
 
         if (validationResult.isPresent()) {
-            JsonWriter.writeObjectIntoJsonFormat(validationResult.get(), paths.get("outputPath"));
+            JsonWriter.writeObjectIntoJsonFormat(validationResult.get(), paths.get(OUTPUT_PATH));
+            System.out.println("Codestyle report can be found at " + paths.get(OUTPUT_PATH));
+        } else {
+            System.out.println("ERROR: Something went wrong, could not output validation result!");
         }
-        System.out.println("Codestyle report can be found at " + paths.get("outputPath"));
     }
 
     private static void runScanExercise(Map<String, Path> paths) {
         // Exercise name, should it be something else than directory name?
-        String exerciseName = paths.get("exercisePath").toFile().getName();
-        Optional<ExerciseDesc> exerciseDesc = TaskExecutor.scanExercise(paths.get("exercisePath"), exerciseName);
+        String exerciseName = paths.get(EXERCISE_PATH).toFile().getName();
+        Optional<ExerciseDesc> exerciseDesc = TaskExecutor.scanExercise(paths.get(EXERCISE_PATH), exerciseName);
 
         if (exerciseDesc.isPresent()) {
-            JsonWriter.writeObjectIntoJsonFormat(exerciseDesc.get(), paths.get("outputPath"));
+            JsonWriter.writeObjectIntoJsonFormat(exerciseDesc.get(), paths.get(OUTPUT_PATH));
+            System.out.println("Exercises scanned successfully, results can be found in " + paths.get(OUTPUT_PATH).toString());
+        } else {
+            System.out.println("ERROR: Failed to write scanExercise output!!");
         }
 
-        System.out.println("Exercises scanned successfully, results can be found in " + paths.get("outputPath").toString());
     }
 
     private static void runTests(Map<String, Path> paths) {
-        Optional<RunResult> runResult = TaskExecutor.runTests(paths.get("exercisePath"));
+        Optional<RunResult> runResult = TaskExecutor.runTests(paths.get(EXERCISE_PATH));
 
         if (runResult.isPresent()) {
-            JsonWriter.writeObjectIntoJsonFormat(runResult.get(), paths.get("outputPath"));
+            JsonWriter.writeObjectIntoJsonFormat(runResult.get(), paths.get(OUTPUT_PATH));
+            System.out.println("Test results can be found in " + paths.get(OUTPUT_PATH));
+        } else {
+            System.out.println("ERROR: Could not output test results!");
         }
 
-        System.out.println("Test results can be found in " + paths.get("outputPath"));
     }
 
     private static void runPrepareStub(Map<String, Path> paths) {
-        TaskExecutor.prepareStub(paths.get("exercisePath"));
+        TaskExecutor.prepareStub(paths.get(EXERCISE_PATH));
     }
 
     private static void runPrepareSolution(Map<String, Path> paths) {
-        TaskExecutor.prepareSolution(paths.get("exercisePath"));
+        TaskExecutor.prepareSolution(paths.get(EXERCISE_PATH));
     }
 
     private static void checkTestPath(Path exercisePath) {
@@ -126,10 +135,10 @@ public class Main {
     private static Map<String, Path> parsePaths(String[] args) {
         Map<String, Path> argsMap = new HashMap<>();
 
-        argsMap.put("exercisePath", Paths.get(args[1]));
-        argsMap.put("outputPath", Paths.get(args[2]));
+        argsMap.put(EXERCISE_PATH, Paths.get(args[1]));
+        argsMap.put(OUTPUT_PATH, Paths.get(args[2]));
 
-        checkTestPath(argsMap.get("exercisePath"));
+        checkTestPath(argsMap.get(EXERCISE_PATH));
 
         return argsMap;
     }

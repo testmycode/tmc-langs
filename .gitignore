@@ -1,5 +1,6 @@
 target/
 *dependency-reduced-pom.xml
+*.*~
 /tmc-langs-framework/src/test/resources/example_ant_project/nbproject/private/
 /tmc-langs-framework/src/test/resources/example_ant_project/build/
 /tmc-langs-framework/src/test/resources/example_ant_project/dist/

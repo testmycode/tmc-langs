@@ -138,8 +138,8 @@ public class MainTest {
         exit.checkAssertionAfterwards(new Assertion() {
             @Override
             public void checkAssertion() throws Exception {
-                String defaultErrorMessage = "Expected system output to contain\n" + expected
-                        + "\ninstead got: " + mio.getSysOut().trim();
+                String defaultErrorMessage = "Expected system output to contain " + expected
+                        + ", instead got: " + mio.getSysOut().trim();
                 if (optionalErrorMessage != null && optionalErrorMessage.length == 1) {
                     assertTrue(optionalErrorMessage[1], mio.getSysOut().trim().contains(expected));
                 } else {

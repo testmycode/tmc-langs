@@ -3,17 +3,14 @@ package fi.helsinki.cs.tmc.langs.util;
 
 import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
-import org.apache.tools.ant.Project;
-
-import javax.swing.text.html.Option;
 import java.nio.file.Path;
 
 public class ProjectTypeHandler {
 
     /**
-     * Recognise the project type.
+     * Recognizes the project type.
      *
-     * Iterate through all language plugins to find one that recognises the
+     * Iterate through all language plugins to find one that recognizes the
      * project as their type.
      *
      * @param path The path to the exercise directory.

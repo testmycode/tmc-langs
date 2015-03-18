@@ -14,6 +14,11 @@ public class Main {
 
     final static String EXERCISE_PATH = "exercisePath";
     final static String OUTPUT_PATH = "outputPath";
+    private static TaskExecutor executor = new TaskExecutorImpl();
+
+    public Main(TaskExecutor executor) {
+        Main.executor = executor;
+    }
 
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
@@ -31,17 +36,17 @@ public class Main {
     private static void run(String[] args) {
         Map<String, Integer> commands = getCommands();
         String command = args[0];
-        Integer argsCount = commands.get(command);
+        Integer pathsCount = commands.get(command);
 
-        if (argsCount == null) {
+        if (pathsCount == null) {
             printHelp();
-        } else if (!argsCount.equals(args.length - 1)) {
+        } else if (!pathsCount.equals(args.length - 1)) {
             System.out.println("ERROR: wrong argument count for " + command
-                    + " expected " + argsCount + " got " + (args.length - 1));
+                    + " expected " + pathsCount + " got " + (args.length - 1));
             printHelp();
         }
 
-        Map<String, Path> paths = parsePaths(args);
+        Map<String, Path> paths = parsePaths(args, pathsCount);
 
         switch (command) {
             case "--help":
@@ -81,7 +86,7 @@ public class Main {
     }
 
     private static void runCheckCodeStyle(Map<String, Path> paths) {
-        Optional<ValidationResult> validationResult = TaskExecutor.runCheckCodeStyle(paths.get(EXERCISE_PATH));
+        Optional<ValidationResult> validationResult = executor.runCheckCodeStyle(paths.get(EXERCISE_PATH));
 
         if (validationResult.isPresent()) {
             JsonWriter.writeObjectIntoJsonFormat(validationResult.get(), paths.get(OUTPUT_PATH));
@@ -94,7 +99,7 @@ public class Main {
     private static void runScanExercise(Map<String, Path> paths) {
         // Exercise name, should it be something else than directory name?
         String exerciseName = paths.get(EXERCISE_PATH).toFile().getName();
-        Optional<ExerciseDesc> exerciseDesc = TaskExecutor.scanExercise(paths.get(EXERCISE_PATH), exerciseName);
+        Optional<ExerciseDesc> exerciseDesc = executor.scanExercise(paths.get(EXERCISE_PATH), exerciseName);
 
         if (exerciseDesc.isPresent()) {
             JsonWriter.writeObjectIntoJsonFormat(exerciseDesc.get(), paths.get(OUTPUT_PATH));
@@ -106,7 +111,7 @@ public class Main {
     }
 
     private static void runTests(Map<String, Path> paths) {
-        Optional<RunResult> runResult = TaskExecutor.runTests(paths.get(EXERCISE_PATH));
+        Optional<RunResult> runResult = executor.runTests(paths.get(EXERCISE_PATH));
 
         if (runResult.isPresent()) {
             JsonWriter.writeObjectIntoJsonFormat(runResult.get(), paths.get(OUTPUT_PATH));
@@ -118,11 +123,11 @@ public class Main {
     }
 
     private static void runPrepareStub(Map<String, Path> paths) {
-        TaskExecutor.prepareStub(paths.get(EXERCISE_PATH));
+        executor.prepareStub(paths.get(EXERCISE_PATH));
     }
 
     private static void runPrepareSolution(Map<String, Path> paths) {
-        TaskExecutor.prepareSolution(paths.get(EXERCISE_PATH));
+        executor.prepareSolution(paths.get(EXERCISE_PATH));
     }
 
     private static void checkTestPath(Path exercisePath) {
@@ -132,12 +137,16 @@ public class Main {
         }
     }
 
-    private static Map<String, Path> parsePaths(String[] args) {
+    private static Map<String, Path> parsePaths(String[] args, int pathsCount) {
         Map<String, Path> argsMap = new HashMap<>();
 
+        if(pathsCount == 0) {
+            return argsMap;
+        }
         argsMap.put(EXERCISE_PATH, Paths.get(args[1]));
-        argsMap.put(OUTPUT_PATH, Paths.get(args[2]));
-
+        if (pathsCount == 2) {
+            argsMap.put(OUTPUT_PATH, Paths.get(args[2]));
+        }
         checkTestPath(argsMap.get(EXERCISE_PATH));
 
         return argsMap;

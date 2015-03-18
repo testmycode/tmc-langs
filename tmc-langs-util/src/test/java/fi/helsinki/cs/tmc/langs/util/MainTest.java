@@ -1,14 +1,21 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.edutestutils.MockStdio;
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.RunResult;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.Assertion;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.mockito.Mockito;
 
 public class MainTest {
 
@@ -28,24 +35,24 @@ public class MainTest {
         exitStringContainsAssertion(HELP_TEXT);
         Main.main(args);
     }
-    
+
     @Test
     public void testWithNoArgs() {
         String[] args = {};
         expectedMessage = HELP_TEXT;
         mainTest(0, args);
     }
-    
+
     @Test
     public void testHelp() {
         String[] args = {"--help"};
         expectedMessage = HELP_TEXT;
         mainTest(0, args);
     }
-    
+
     @Test
     public void testHelpWithInvalidArgumentCountOneArg() {
-        String[] args = {"--help","dummy_string"};
+        String[] args = {"--help", "dummy_string"};
         expectedMessage = "ERROR: wrong argument count for --help expected 0 got 1\n" + HELP_TEXT;
         mainTest(0, args);
     }
@@ -98,16 +105,45 @@ public class MainTest {
         expectedMessage = "Codestyle report can be found at " + outputPath;
         mainTest(0, args);
     }
-    
-//    @Test
-//    public void testPrepareStub() {
-//        
-//    }
-    
-//    @Test
-//    public void testPrepareSolution() {
-//        
-//    }
+
+    @Test
+    public void testPrepareStub() {
+        final Boolean stubCalled = false;
+        String[] args = {"--preparestub", getTargetPath("arith_funcs")};
+
+        final TaskExecutor executor = Mockito.mock(TaskExecutor.class);
+        final Path stubPath = new File(getTargetPath("arith_funcs")).toPath();
+
+        Main mainClass = new Main(executor);
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verify(executor).prepareStub(stubPath);
+            }
+        });
+        mainClass.main(args);
+
+    }
+
+    @Test
+    public void testPrepareSolution() {
+        final Boolean stubCalled = false;
+        String[] args = {"--preparesolution", getTargetPath("arith_funcs")};
+
+        final TaskExecutor executor = Mockito.mock(TaskExecutor.class);
+        final Path solutionPath = new File(getTargetPath("arith_funcs")).toPath();
+
+        Main mainClass = new Main(executor);
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verify(executor).prepareSolution(solutionPath);
+            }
+        });
+        mainClass.main(args);
+    }
 
     /**
      * Call main method with given args, and assert that main exits with given

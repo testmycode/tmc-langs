@@ -62,7 +62,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         File searchPath = new File(basePath.toString());
         ImmutableList.Builder<Path> listBuilder = new ImmutableList.Builder<>();
         if (searchPath.exists() && searchPath.isDirectory()) {
-            return search(searchPath, listBuilder);
+            return searchForExercises(searchPath, listBuilder);
         } else {
             return listBuilder.build();
         }
@@ -90,7 +90,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @return a list of all directories that contain build files for this
      * language.
      */
-    private ImmutableList<Path> search(File file, ImmutableList.Builder<Path> listBuilder) {
+    private ImmutableList<Path> searchForExercises(File file, ImmutableList.Builder<Path> listBuilder) {
         Stack<File> stack = new Stack();
         // Push the initial directory onto the stack.
         stack.push(file);

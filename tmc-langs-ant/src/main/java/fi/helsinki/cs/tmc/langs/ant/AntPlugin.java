@@ -7,17 +7,12 @@ import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
-import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
-import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tools.ant.BuildException;
@@ -27,7 +22,6 @@ import org.apache.tools.ant.ProjectHelper;
 
 public class AntPlugin extends AbstractLanguagePlugin {
 
-    private static final Logger log = Logger.getLogger(AntPlugin.class.getName());
     private final String testDir = File.separatorChar + "test";
     private final String resultsFile = File.separatorChar + "results.txt";
     private TestResultParser resultParser = new TestResultParser();

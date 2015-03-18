@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 
 public class MavenPlugin extends AbstractLanguagePlugin {
 
-    private static final Logger log = Logger.getLogger(MavenPlugin.class.getName());
-
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
         return new File(path.toString() + File.separatorChar + "pom.xml").exists();

@@ -1,13 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
+import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,20 +13,24 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractLanguagePlugin implements LanguagePlugin {
-    
+
     /**
-      * Exercisebuilder uses an instance because it is somewhat likely
-      * that it will need some language specific configuration
+     * Exercisebuilder uses an instance because it is somewhat likely that it
+     * will need some language specific configuration
      */
-    
     private ExerciseBuilder exerciseBuilder = new ExerciseBuilder();
+
+    private static final Logger log = Logger.getLogger(AbstractLanguagePlugin.class.getName());
 
     @Override
     public void prepareSubmission(Path submissionPath, Path destPath) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -41,7 +42,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     public void prepareSolution(Path path) {
         exerciseBuilder.prepareSolution(path);
     }
-    
+
     /**
      * Check if the exercise's project type corresponds with the language plugin
      * type.
@@ -50,7 +51,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @return True if given path is valid directory for this language plugin
      */
     protected abstract boolean isExerciseTypeCorrect(Path path);
-    
+
     /**
      *
      * @param basePath The file path to search in.
@@ -64,6 +65,19 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
             return search(searchPath, listBuilder);
         } else {
             return listBuilder.build();
+        }
+    }
+
+    @Override
+    public ValidationResult checkCodeStyle(Path path) {
+        try {
+            System.out.println(path.toString());
+            CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), new Locale("fi"));
+
+            return runner.run();
+        } catch (TMCCheckstyleException ex) {
+            log.log(Level.SEVERE, "Error running checkstyle:", ex);
+            return null;
         }
     }
 
@@ -121,4 +135,5 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
             throw Throwables.propagate(e);
         }
     }
+
 }

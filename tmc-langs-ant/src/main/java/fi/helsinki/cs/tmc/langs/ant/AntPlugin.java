@@ -57,17 +57,6 @@ public class AntPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ValidationResult checkCodeStyle(Path path) {
-        try {
-            CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), new Locale("fi"));
-            return runner.run();
-        } catch (TMCCheckstyleException ex) {
-            log.log(Level.SEVERE, "Error running checkstyle:", ex);
-            return null;
-        }
-    }
-
-    @Override
     public RunResult runTests(Path path) {
         if (!buildAntProject(path)) {
             return buildRunResult;

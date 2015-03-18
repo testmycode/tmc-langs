@@ -3,11 +3,13 @@ package fi.helsinki.cs.tmc.langs.maven;
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 public class MavenPlugin extends AbstractLanguagePlugin {
+
+    private static final Logger log = Logger.getLogger(MavenPlugin.class.getName());
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
@@ -26,11 +28,6 @@ public class MavenPlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ValidationResult checkCodeStyle(Path path) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

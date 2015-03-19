@@ -8,3 +8,5 @@ target/
 /tmc-langs-ant/src/test/resources/example_ant_project/dist/
 /tmc-langs-ant/src/test/resources/example_ant_project/nbproject/private/
 /tmc-langs-ant/src/test/resources/most_errors/nbproject/private/
+/tmc-langs-ant/src/test/resources/most_errors/build/
+/tmc-langs-ant/src/test/resources/trivial/build/

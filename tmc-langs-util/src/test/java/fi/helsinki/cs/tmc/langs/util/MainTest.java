@@ -20,7 +20,14 @@ public class MainTest {
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-    private final String HELP_TEXT = "Usage: TODO: Write instructions here.";
+    private final String HELP_TEXT = "\nUsage: Main <exercise path> <output path>\n"
+                + "\nOptions:\n"
+                + " --checkstyle <exercise path> <output path>\t\tRun checkstyle or similar plugin to project if applicable.\n"
+                + " --help\t\t\t\t\t\t\tDisplay help information.\n"
+                + " --preparesolution <exercise path>\t\t\tPrepare a presentable solution from the original.\n"
+                + " --preparestub <exercise path>\t\t\t\tPrepare a stub exercise from the original.\n"
+                + " --runtests <exercise path> <output path>\t\tRun the tests for the exercise.\n"
+                + " --scanexercise <exercise path> <output path>\t\tProduce an exercise description of an exercise directory.\n";
     private String expectedMessage = "";
 
     @Test

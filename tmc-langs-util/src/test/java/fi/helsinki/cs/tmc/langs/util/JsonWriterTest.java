@@ -2,6 +2,8 @@ package fi.helsinki.cs.tmc.langs.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,14 +15,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class JsonWriterTest {
-    
-    Path outputFile;
-    
+
+    File outputFile;
+
     @Before
-    public void setUp() {
-        outputFile = Paths.get("./src/test/resources/jsonwriter_files/test.json");
+    public void setUp() throws IOException {
+        outputFile = Files.createTempFile("test", "json").toFile();
     }
-    
+
     /**
      * Test of writeObjectIntoJsonFormat method, of class JsonWriter.
      */
@@ -28,19 +30,18 @@ public class JsonWriterTest {
     public void testWriteObjectIntoJsonFormat() {
         try {
             MockClass mock = new MockClass("test");
-            JsonWriter.writeObjectIntoJsonFormat(mock, outputFile);
-            
-            File f = outputFile.toFile();
-            Scanner s = new Scanner(f);
-            assertEquals(s.nextLine(), "{\"arr\":[0,1,2,3,4,5,6,7,8,9],\"name\":\"testi\"}");
+            JsonWriter.writeObjectIntoJsonFormat(mock, outputFile.toPath());
+            Scanner s = new Scanner(outputFile);
+            assertEquals(s.nextLine(), "{\"arr\":[0,1,2,3,4,5,6,7,8,9],\"name\":\"test\"}");
             s.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JsonWriterTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private class MockClass {
-        private ArrayList<Integer> arr;
+
+        private ArrayList<Integer> arr = new ArrayList<>();
         private String name;
 
         public MockClass(String name) {
@@ -49,6 +50,6 @@ public class JsonWriterTest {
                 arr.add(i);
             }
         }
-        
+
     }
 }

@@ -1,10 +1,6 @@
 package fi.helsinki.cs.tmc.langs.util;
 
-import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.edutestutils.MockStdio;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.Assertion;
@@ -14,7 +10,6 @@ import java.io.File;
 import java.nio.file.Path;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.mockito.Mockito;
 
 public class MainTest {

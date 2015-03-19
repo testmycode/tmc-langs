@@ -8,6 +8,7 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.File;
 import java.nio.file.Path;
+import static org.junit.Assert.assertEquals;
 
 import static org.junit.Assert.assertTrue;
 import org.mockito.Mockito;
@@ -20,21 +21,21 @@ public class MainTest {
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-    private final String HELP_TEXT = "\nUsage: Main <exercise path> <output path>\n"
+    private final String HELP_TEXT = "Usage: Main <exercise path> <output path>\n"
                 + "\nOptions:\n"
                 + " --checkstyle <exercise path> <output path>\t\tRun checkstyle or similar plugin to project if applicable.\n"
                 + " --help\t\t\t\t\t\t\tDisplay help information.\n"
                 + " --preparesolution <exercise path>\t\t\tPrepare a presentable solution from the original.\n"
                 + " --preparestub <exercise path>\t\t\t\tPrepare a stub exercise from the original.\n"
                 + " --runtests <exercise path> <output path>\t\tRun the tests for the exercise.\n"
-                + " --scanexercise <exercise path> <output path>\t\tProduce an exercise description of an exercise directory.\n";
+                + " --scanexercise <exercise path> <output path>\t\tProduce an exercise description of an exercise directory.";
     private String expectedMessage = "";
 
     @Test
     public void testMain() {
         String[] args = null;
         exit.expectSystemExitWithStatus(0);
-        exitStringContainsAssertion(HELP_TEXT);
+        exitStringEqualsAssertion(HELP_TEXT);
         Main.main(args);
     }
 
@@ -42,21 +43,21 @@ public class MainTest {
     public void testWithNoArgs() {
         String[] args = {};
         expectedMessage = HELP_TEXT;
-        mainTest(0, args);
+        mainTestEquals(0, args);
     }
 
     @Test
     public void testHelp() {
         String[] args = {"--help"};
         expectedMessage = HELP_TEXT;
-        mainTest(0, args);
+        mainTestEquals(0, args);
     }
 
     @Test
     public void testHelpWithInvalidArgumentCountOneArg() {
         String[] args = {"--help", "dummy_string"};
-        expectedMessage = "ERROR: wrong argument count for --help expected 0 got 1\n" + HELP_TEXT;
-        mainTest(0, args);
+        expectedMessage = "ERROR: wrong argument count for --help expected 0 got 1\n\n" + HELP_TEXT;
+        mainTestEquals(0, args);
     }
 
     @Test
@@ -64,7 +65,7 @@ public class MainTest {
         String exercisePath = getTargetPath("arith_funcs");
         String outputPath = exercisePath + "/checkstyle.txt";
         String[] args = {"--scanexercise", exercisePath, outputPath};
-        expectedMessage = "Exercises scanned successfully, results can be found in " + outputPath;
+        expectedMessage = "Exercises scanned successfully, results can be found in\n\n" + outputPath;
         mainTest(0, args);
     }
 
@@ -72,22 +73,22 @@ public class MainTest {
     public void testScanExerciseWithInvalidArgs() {
         String[] args = {"--scanexercise", "dummy string", "another"};
         exit.expectSystemExitWithStatus(0);
-        expectedMessage = "ERROR: Given test path is not a directory.\n" + HELP_TEXT;
-        mainTest(0, args);
+        expectedMessage = "ERROR: Given test path is not a directory.\n\n" + HELP_TEXT;
+        mainTestEquals(0, args);
     }
 
     @Test
     public void testScanExerciseWithInvalidArgumentCountZeroArgs() {
         String[] args = {"--scanexercise"};
-        expectedMessage = "ERROR: wrong argument count for --scanexercise expected 2 got 0\n" + HELP_TEXT;
-        mainTest(0, args);
+        expectedMessage = "ERROR: wrong argument count for --scanexercise expected 2 got 0\n\n" + HELP_TEXT;
+        mainTestEquals(0, args);
     }
 
     @Test
     public void testScanExerciseWithInvalidArgumentCountOneArg() {
         String[] args = {"--scanexercise", "dummy string"};
-        expectedMessage = "ERROR: wrong argument count for --scanexercise expected 2 got 1\n" + HELP_TEXT;
-        mainTest(0, args);
+        expectedMessage = "ERROR: wrong argument count for --scanexercise expected 2 got 1\n\n" + HELP_TEXT;
+        mainTestEquals(0, args);
     }
 
     @Test
@@ -161,6 +162,12 @@ public class MainTest {
         exitStringContainsAssertion(expectedMessage, optionalErrorMessage);
         Main.main(args);
     }
+    
+    private void mainTestEquals(int exitStatus, String[] args) {
+        exit.expectSystemExitWithStatus(exitStatus);
+        exitStringEqualsAssertion(expectedMessage);
+        Main.main(args);
+    }
 
     /**
      * Convert the given location into absolute test target path.
@@ -183,6 +190,15 @@ public class MainTest {
                 } else {
                     assertTrue(defaultErrorMessage, mio.getSysOut().trim().contains(expected));
                 }
+            }
+        });
+    }
+    
+    private void exitStringEqualsAssertion(final String expected) {
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                assertEquals(expected, mio.getSysOut().trim());
             }
         });
     }

@@ -65,7 +65,7 @@ public class MainTest {
         String exercisePath = getTargetPath("arith_funcs");
         String outputPath = exercisePath + "/checkstyle.txt";
         String[] args = {"--scanexercise", exercisePath, outputPath};
-        expectedMessage = "Exercises scanned successfully, results can be found in\n\n" + outputPath;
+        expectedMessage = "Exercises scanned successfully, results can be found in " + outputPath;
         mainTest(0, args);
     }
 

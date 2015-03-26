@@ -111,7 +111,6 @@ public class MainTest {
 
     @Test
     public void testPrepareStub() {
-        final Boolean stubCalled = false;
         String[] args = {"--preparestub", getTargetPath("arith_funcs")};
 
         final TaskExecutor executor = Mockito.mock(TaskExecutor.class);
@@ -131,7 +130,6 @@ public class MainTest {
 
     @Test
     public void testPrepareSolution() {
-        final Boolean stubCalled = false;
         String[] args = {"--preparesolution", getTargetPath("arith_funcs")};
 
         final TaskExecutor executor = Mockito.mock(TaskExecutor.class);

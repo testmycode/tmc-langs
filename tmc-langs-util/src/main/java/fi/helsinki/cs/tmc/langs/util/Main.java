@@ -84,7 +84,7 @@ public class Main {
         //Command name and required argument count
         Map<String, Integer> commands = new HashMap<>();
         commands.put("--help", 0);
-        commands.put("--checkstyle", 1);
+        commands.put("--checkstyle", 2);
         commands.put("--scanexercise", 2);
         commands.put("--runtests", 2);
         commands.put("--preparestub", 1);

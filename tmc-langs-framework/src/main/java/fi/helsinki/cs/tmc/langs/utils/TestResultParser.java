@@ -14,7 +14,10 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TestResultParser {
 
@@ -62,62 +65,14 @@ public class TestResultParser {
             }
         }
 
-        Collections.addAll(points, testCase.pointNames);
+        for (String point : testCase.pointNames) {
+            points.add(point);
+        }
 
         String name = testCase.className + " " + testCase.methodName;
         boolean passed = testCase.status == TestCase.Status.PASSED;
         String message = testCase.message == null ? "" : testCase.message;
 
         return new TestResult(name, passed, ImmutableList.copyOf(points), message, ImmutableList.copyOf(exception));
-    }
-
-    /**
-     * Parse and convert tmc-testscanner output into ExerciseDescription.
-     *
-     * @param output Output from the tmc-testscanner.
-     * @param exerciseName The name of the exercise.
-     * @return Parsed exercise description.
-     */
-    public ExerciseDesc parseScannerOutput(String output, String exerciseName) {
-        List<TestDesc> tests = new ArrayList<>();
-        JsonElement data = new JsonParser().parse(output);
-
-        for (JsonElement test : data.getAsJsonArray()) {
-            String testName = parseTestName(test);
-            JsonArray points = test.getAsJsonObject().get("points").getAsJsonArray();
-            tests.add(generateTestDesc(testName, points));
-        }
-
-        return new ExerciseDesc(exerciseName, ImmutableList.<TestDesc>copyOf(tests));
-    }
-
-    /**
-     * Parse and return the name of the test from the JsonElement.
-     *
-     * @param test JsonElement containing test information.
-     * @return Name of the test.
-     */
-    private String parseTestName(JsonElement test) {
-        String testName = test.getAsJsonObject().get("className").getAsString();
-        return testName + " " + test.getAsJsonObject().get("methodName").getAsString();
-    }
-
-    /**
-     * Generate TestDesc from the given JsonArray and name. Assigns the given name as
-     * the name of the test description.
-     *
-     * @param name to be given to the description.
-     * @param pointsArray JsonArray containing test points information.
-     * @return TestDesc object.
-     */
-    private TestDesc generateTestDesc(String name, JsonArray pointsArray) {
-        List<String> points = new ArrayList<>();
-
-        for (int i = 0; i < pointsArray.size(); i++) {
-            points.add(pointsArray.get(i).getAsString());
-        }
-
-        ImmutableList<String> immutablePoints = ImmutableList.copyOf(points);
-        return new TestDesc(name, immutablePoints);
     }
 }

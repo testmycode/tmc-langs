@@ -1,20 +1,22 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
+import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
+import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -33,17 +35,15 @@ public class AntPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ExerciseDesc scanExercise(Path path, String exerciseName) {
+    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         if (!isExerciseTypeCorrect(path)) {
             return null;
         }
 
-        List<String> output = startProcess(buildTestScannerArgs(path, null));
-        String outputString = "";
-        for (String line : output) {
-            outputString += line;
-        }
-        return resultParser.parseScannerOutput(outputString, exerciseName);
+        TestScanner scanner = new TestScanner();
+        SourceFiles sourceFiles = new SourceFiles();
+        sourceFiles.addSource(createPath(path.toAbsolutePath(), testDir).toFile());
+        return scanner.findTests(generateClassPath(path), sourceFiles, exerciseName);
     }
 
     @Override
@@ -73,18 +73,18 @@ public class AntPlugin extends AbstractLanguagePlugin {
      * @param path The file path of the exercise directory.
      * @return true if build success, else return false.
      */
+    @VisibleForTesting
     protected boolean buildAntProject(Path path) {
-        final File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
-        final File buildLog;
-
+        File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
         Project buildProject = new Project();
         buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());
         buildProject.setProperty("javac.fork", "true");
         buildProject.init();
         buildProject.setBaseDir(path.toAbsolutePath().toFile());
-
+        File buildLog;
+        
         try {
-
+            
             DefaultLogger logger = new DefaultLogger();
             buildLog = new File(path.toString(), "build_log.txt");
             PrintStream errorPrintStream = new PrintStream(buildLog);
@@ -92,9 +92,9 @@ public class AntPlugin extends AbstractLanguagePlugin {
             logger.setOutputPrintStream(System.out);
             logger.setMessageOutputLevel(Project.MSG_ERR);
             buildProject.addBuildListener(logger);
-
+            
             try {
-
+                
                 buildProject.fireBuildStarted();
                 ProjectHelper helper = ProjectHelper.getProjectHelper();
                 buildProject.addReference("ant.projectHelper", helper);
@@ -102,15 +102,15 @@ public class AntPlugin extends AbstractLanguagePlugin {
                 buildProject.executeTarget("compile-test");
                 buildProject.fireBuildFinished(null);
                 return true;
-
+                
             } catch (BuildException e) {
-
+                
                 buildProject.fireBuildFinished(e);
                 buildRunResult = new RunResult(Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
                         new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
-                                Files.readAllBytes(buildLog.toPath())).build());
+                                java.nio.file.Files.readAllBytes(buildLog.toPath())).build());
                 return false;
-
+                
             }
         } catch (IOException e) {
             throw Throwables.propagate(e);
@@ -134,7 +134,9 @@ public class AntPlugin extends AbstractLanguagePlugin {
         scannerArgs.add(path.toString() + testDir);
 
         if (args != null) {
-            Collections.addAll(scannerArgs, args);
+            for (String arg : args) {
+                scannerArgs.add(arg);
+            }
         }
 
         return scannerArgs;

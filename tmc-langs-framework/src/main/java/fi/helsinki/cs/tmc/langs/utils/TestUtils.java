@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public final class TestUtils {
-
     public static Path getPath(Class clazz, String location) {
         Path path;
         try {

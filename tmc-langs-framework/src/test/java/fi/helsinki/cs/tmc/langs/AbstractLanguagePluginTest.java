@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
@@ -36,7 +37,7 @@ public class AbstractLanguagePluginTest {
         }
 
         @Override
-        public ExerciseDesc scanExercise(Path path, String exerciseName) {
+        public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
             throw new UnsupportedOperationException();
         }
 

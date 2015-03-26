@@ -45,20 +45,6 @@ public class TestResultParserTest {
         assertTrue("ArithTest testAdd passed should be true", testResult.passed);
     }
 
-    @Test
-    public void testParseScannerOutput() {
-        String output = "[{\"className\":\"ArithTest\",\"methodName\":\"testAdd\",\"points\":[\"arith-funcs\"]},{\"className\":\"ArithTest\",\"methodName\":\"testSub\",\"points\":[\"arith-funcs\"]},{\"className\":\"ArithTest\",\"methodName\":\"testMul\",\"points\":[\"arith-funcs\"]},{\"className\":\"ArithTest\",\"methodName\":\"testDiv\",\"points\":[\"arith-funcs\"]}]";
-        ExerciseDesc result = parser.parseScannerOutput(output, "Test Name");
-        assertNotNull(result);
-
-        assertEquals("Exercise name wasn't set correctly", "Test Name", result.name);
-        assertEquals("Exercise should contain 4 tests", 4, result.tests.size());
-
-        TestDesc testResult = result.tests.get(2);
-        assertEquals("Test name is wrong", "ArithTest testMul", testResult.name);
-        assertEquals("Test ArithTest testMul should award towards 1 point", 1, testResult.points.size());
-    }
-
     private void assertFieldsNotNull(TestResult testResult) {
         assertNotNull(testResult.errorMessage);
         assertNotNull(testResult.backtrace);

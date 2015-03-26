@@ -30,14 +30,14 @@ public class AntPluginTest {
     @Test
     public void testScanExerciseReturnExerciseDesc() {
         String name = "Ant Test";
-        ExerciseDesc description = antPlugin.scanExercise(TestUtils.getPath(getClass(), "ant_arith_funcs"), name);
+        ExerciseDesc description = antPlugin.scanExercise(TestUtils.getPath(getClass(), "ant_arith_funcs"), name).get();
         assertEquals(name, description.name);
         assertEquals(4, description.tests.size());
     }
 
     @Test
     public void testScanExerciseReturnsCorrectTests() {
-        ExerciseDesc description = antPlugin.scanExercise(TestUtils.getPath(getClass(), "ant_arith_funcs"), "AntTestSubject");
+        ExerciseDesc description = antPlugin.scanExercise(TestUtils.getPath(getClass(), "ant_arith_funcs"), "AntTestSubject").get();
         assertEquals(4, description.tests.size());
 
         TestDesc test = description.tests.get(0);

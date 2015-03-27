@@ -1,16 +1,14 @@
 package fi.helsinki.cs.tmc.langs.util;
 
-import com.google.common.base.Throwables;
+import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.ant.AntPlugin;
+import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class ProjectTypeHandlerTest {
     private ProjectTypeHandler handler;
@@ -21,27 +19,27 @@ public class ProjectTypeHandlerTest {
     }
 
     @Test
-    public void returnsCorrectTypeOnJavaAntExercise() {
-        assertEquals(ProjectType.JAVA_ANT, handler.getProjectType(getPath("ant_project")));
-    }
-
-    @Test
-    public void returnsCorrectLanguagePluginOnJavaAntExercise() {
-        assertEquals(AntPlugin.class, handler.getLanguagePlugin(getPath("ant_project")).getClass());
-    }
-
-    @Test
-    public void returnsNullIfNoPluginCanRunTheExercise() {
-        assertNull(handler.getLanguagePlugin(getPath("dummy_project")));
-    }
-
-    private Path getPath(String location) {
-        Path path;
-        try {
-            path = Paths.get(getClass().getResource(File.separatorChar + location).toURI());
-        } catch (URISyntaxException e) {
-            throw Throwables.propagate(e);
+    public void testProjectTypeOnJavaAntExercise() {
+        Optional<ProjectType> projectType = handler.getProjectType(TestUtils.getPath(getClass(), "arith_funcs"));
+        if (projectType.isPresent()) {
+            assertEquals(ProjectType.JAVA_ANT, projectType.get());
+        } else {
+            fail("Couldn't identify arith_funcs project type, expected JAVA_ANT");
         }
-        return path;
+    }
+
+    @Test
+    public void testLanguagePluginOnJavaAntExercise() {
+        Optional<ProjectType> projectType = handler.getProjectType(TestUtils.getPath(getClass(), "arith_funcs"));
+        if (projectType.isPresent()) {
+            assertEquals(AntPlugin.class, projectType.get().getLanguagePlugin().getClass());
+        } else {
+            fail("Couldn't identify arith_funcs exercise language, expected Ant");
+        }
+    }
+
+    @Test
+    public void testDummyProject() {
+        assertEquals(Optional.absent(), handler.getLanguagePlugin(TestUtils.getPath(getClass(), "dummy_project")));
     }
 }

@@ -32,6 +32,7 @@ public class ExerciseBuilder {
         }
     }
 
+    // TODO: exclude files containing '// SOLUTION FILE'
     private void prepareStubFile(File file) {
 
         try {
@@ -47,7 +48,7 @@ public class ExerciseBuilder {
                     String start = line.substring(0, line.indexOf(stubMarker) - 1);
                     String end = line.substring(line.indexOf(stubMarker) + stubMarker.length());
                     filteredLines.add(start + end);
-                } else if (!skipLine && !line.contains(stubMarker)) {
+                } else if (!skipLine) {
                     filteredLines.add(line);
                 }
             }

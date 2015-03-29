@@ -1,0 +1,1 @@
+[{"className":"ArithTest","methodName":"testAdd","pointNames":["arith-funcs"],"status":"PASSED"}]

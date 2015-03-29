@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.nio.file.Path;
 
@@ -18,10 +19,11 @@ import java.nio.file.Path;
  * Parts of this interface may be called in a TMC sandbox.
  *
  * <p>
- * Implementations must be thread-safe and preferably fully stateless.
- * Users of this interface are free to cache results if needed.
+ * Implementations must be thread-safe and preferably fully stateless. Users of
+ * this interface are free to cache results if needed.
  */
 public interface LanguagePlugin {
+
     /**
      * Returns the name of the programming language supported by this plug-in.
      *
@@ -46,15 +48,16 @@ public interface LanguagePlugin {
      * Produces an exercise description of an exercise directory.
      *
      * <p>
-     * This involves finding the test cases and the points offered by
-     * the exercise.
+     * This involves finding the test cases and the points offered by the
+     * exercise.
      *
      * <p>
-     * Must return null if the given path is not a valid exercise directory
-     * for this language.
+     * Must return null if the given path is not a valid exercise directory for
+     * this language.
      *
      * @param path The path of the exercise directory.
-     * @param exerciseName This must be set as the name of the returned exercise.
+     * @param exerciseName This must be set as the name of the returned
+     * exercise.
      * @return The exercise description, or null if none.
      */
     public ExerciseDesc scanExercise(Path path, String exerciseName);
@@ -72,8 +75,8 @@ public interface LanguagePlugin {
      *
      * <p>
      * The destination path is initialised with the original exercise as it
-     * appears in the course repository. The implementation should copy over
-     * a selection of files from the submission so that the student cannot e.g.
+     * appears in the course repository. The implementation should copy over a
+     * selection of files from the submission so that the student cannot e.g.
      * easily replace the tests.
      *
      * <p>
@@ -81,8 +84,8 @@ public interface LanguagePlugin {
      * <tt>extra_student_files</tt> setting in a <tt>.tmcproject.yml</tt> file.
      * See http://tmc.mooc.fi/usermanual/pages/instructors.html#_tmcproject_yml
      *
-     * @param submissionPath A path to a directory where the submission has
-     * been extracted. May be modified (e.g. by doing moves instead of copies).
+     * @param submissionPath A path to a directory where the submission has been
+     * extracted. May be modified (e.g. by doing moves instead of copies).
      * @param destPath A path to a directory where the original exercise has
      * been copied and where parts of the submission are to be copied.
      */
@@ -112,10 +115,10 @@ public interface LanguagePlugin {
     public void prepareSolution(Path path);
 
     /**
-     * Check if the exercise's project type corresponds with the language plugin type.
+     * Run checkstyle or similar plugin to project if applicable
      *
      * @param path The path to the exercise directory.
-     * @return True if given path is valid directory for this language  plugin
+     * @return Validation result  of the checkstyle ran, or null if not applicable
      */
-    public boolean isExerciseTypeCorrect(Path path);
+    public ValidationResult checkCodeStyle(Path path);
 }

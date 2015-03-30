@@ -24,7 +24,7 @@ public class TestResultParserTest {
             assertFieldsNotNull(testResult);
         }
 
-        assertEquals("Result status should be PASSEd", RunResult.Status.PASSED, result.status);
+        assertEquals("Result status should be PASSED", RunResult.Status.PASSED, result.status);
         assertEquals("Test name was wrong", "ArithTest testAdd", result.testResults.get(0).name);
     }
 

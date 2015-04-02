@@ -7,11 +7,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
+import fi.helsinki.cs.tmc.langs.testrunner.TestCaseList;
+import fi.helsinki.cs.tmc.langs.testrunner.TestRunner;
+import fi.helsinki.cs.tmc.langs.testrunner.TestRunnerMain;
 import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
-import fi.helsinki.cs.tmc.langs.testrunner.TestCaseList;
-import fi.helsinki.cs.tmc.langs.testrunner.TestRunner;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -65,14 +65,14 @@ public class AntPlugin extends AbstractLanguagePlugin {
         }
 
         TestCaseList cases = TestCaseList.fromExerciseDesc(
-                scanExercise(path, path.getFileName().toString()));
-        TestRunner testRunner = new TestRunner(getTestClassLoader(path));
-        testRunner.runTests(cases, 180);
-
+                scanExercise(path, ""));
         RunResult result;
         File resultFile = new File(path.toString() + resultsFile);
-
         try {
+            TestRunnerMain runner = new TestRunnerMain();
+            runner.run(path.toString() + testDir,
+                    path.toString() + resultsFile,
+                    cases);
             cases.writeToJsonFile(resultFile);
         } catch (IOException ex) {
             Logger.getLogger(AntPlugin.class.getName()).log(Level.SEVERE, null, ex);
@@ -81,14 +81,6 @@ public class AntPlugin extends AbstractLanguagePlugin {
         result = resultParser.parseTestResult(resultFile);
         resultFile.delete();
         return result;
-    }
-
-    private ClassLoader getTestClassLoader(Path path) {
-        try {
-            return new URLClassLoader(new URL[]{new File(path + testDir).toURI().toURL()});
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid test class dir: " + testDir);
-        }
     }
 
     /**

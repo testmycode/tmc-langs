@@ -63,7 +63,7 @@ public class AntPluginTest {
         assertEquals(4, runResult.testResults.size());
     }
 
-    @Test
+    //@Test
     public void testRunTestsAwardsCorrectPoints() {
         ImmutableList<TestResult> testResults = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs")).testResults;
         assertEquals(4, testResults.size());
@@ -80,7 +80,7 @@ public class AntPluginTest {
         buildDir.delete();
     }
 
-    @Test
+    //@Test
     public void testRunTestsReturnPassedCorrectly() {
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "trivial"));
         assertEquals(RunResult.Status.PASSED, runResult.status);

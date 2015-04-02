@@ -10,12 +10,19 @@ import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
+import fi.helsinki.cs.tmc.langs.testrunner.TestCaseList;
+import fi.helsinki.cs.tmc.langs.testrunner.TestRunner;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
@@ -57,14 +64,31 @@ public class AntPlugin extends AbstractLanguagePlugin {
             return buildRunResult;
         }
 
-        List<String> runnerArgs = buildTestRunnerArgs(path);
-        startProcess(runnerArgs);
+        TestCaseList cases = TestCaseList.fromExerciseDesc(
+                scanExercise(path, path.getFileName().toString()));
+        TestRunner testRunner = new TestRunner(getTestClassLoader(path));
+        testRunner.runTests(cases, 180);
 
+        RunResult result;
         File resultFile = new File(path.toString() + resultsFile);
-        RunResult result = resultParser.parseTestResult(resultFile);
-        resultFile.delete();
 
+        try {
+            cases.writeToJsonFile(resultFile);
+        } catch (IOException ex) {
+            Logger.getLogger(AntPlugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        result = resultParser.parseTestResult(resultFile);
+        resultFile.delete();
         return result;
+    }
+
+    private ClassLoader getTestClassLoader(Path path) {
+        try {
+            return new URLClassLoader(new URL[]{new File(path + testDir).toURI().toURL()});
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid test class dir: " + testDir);
+        }
     }
 
     /**
@@ -82,9 +106,9 @@ public class AntPlugin extends AbstractLanguagePlugin {
         buildProject.init();
         buildProject.setBaseDir(path.toAbsolutePath().toFile());
         File buildLog;
-        
+
         try {
-            
+
             DefaultLogger logger = new DefaultLogger();
             buildLog = new File(path.toString(), "build_log.txt");
             PrintStream errorPrintStream = new PrintStream(buildLog);
@@ -92,9 +116,9 @@ public class AntPlugin extends AbstractLanguagePlugin {
             logger.setOutputPrintStream(System.out);
             logger.setMessageOutputLevel(Project.MSG_ERR);
             buildProject.addBuildListener(logger);
-            
+
             try {
-                
+
                 buildProject.fireBuildStarted();
                 ProjectHelper helper = ProjectHelper.getProjectHelper();
                 buildProject.addReference("ant.projectHelper", helper);
@@ -102,15 +126,15 @@ public class AntPlugin extends AbstractLanguagePlugin {
                 buildProject.executeTarget("compile-test");
                 buildProject.fireBuildFinished(null);
                 return true;
-                
+
             } catch (BuildException e) {
-                
+
                 buildProject.fireBuildFinished(e);
                 buildRunResult = new RunResult(Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
                         new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
                                 java.nio.file.Files.readAllBytes(buildLog.toPath())).build());
                 return false;
-                
+
             }
         } catch (IOException e) {
             throw Throwables.propagate(e);

@@ -84,7 +84,11 @@ public class TestRunnerMain {
 
     private ClassLoader getTestClassLoader() {
         try {
-            return new URLClassLoader(new URL[]{new File(testClassDir).toURI().toURL()});
+            return new URLClassLoader(new URL[]{
+                    new File(testClassDir + "/test/").toURI().toURL(),
+                    new File(testClassDir + "/build/test/classes").toURI().toURL(),
+                    new File(testClassDir + "/build/classes").toURI().toURL()
+            });
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Invalid test class dir: " + testClassDir);
         }

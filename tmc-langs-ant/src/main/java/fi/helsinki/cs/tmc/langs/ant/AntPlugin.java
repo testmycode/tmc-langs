@@ -70,7 +70,7 @@ public class AntPlugin extends AbstractLanguagePlugin {
         File resultFile = new File(path.toString() + resultsFile);
         try {
             TestRunnerMain runner = new TestRunnerMain();
-            runner.run(path.toString() + testDir,
+            runner.run(path.toString(),
                     path.toString() + resultsFile,
                     cases);
             cases.writeToJsonFile(resultFile);

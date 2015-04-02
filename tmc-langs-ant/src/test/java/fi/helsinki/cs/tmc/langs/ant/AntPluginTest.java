@@ -83,7 +83,6 @@ public class AntPluginTest {
     @Test
     public void testRunTestsReturnPassedCorrectly() {
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "trivial"));
-        System.out.println(runResult.testResults.get(0));
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
         assertTestResult(testResult, "", "TrivialTest testF", true);

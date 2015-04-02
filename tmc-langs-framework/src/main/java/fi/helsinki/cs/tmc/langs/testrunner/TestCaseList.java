@@ -20,10 +20,20 @@ public class TestCaseList extends ArrayList<TestCase> {
         TestCaseList result = new TestCaseList();
         for (TestDesc m : methods.get().tests) {
 
-            TestCase c = new TestCase(m.name, m.name, pointsAsArray(m));
+            TestCase c = new TestCase(getClassName(m.name), getMethodName(m.name), pointsAsArray(m));
             result.add(c);
         }
         return result;
+    }
+
+    private static String getMethodName(String exerciseName) {
+        String[] names = exerciseName.split(" ");
+        return names[1];
+    }
+
+    private static String getClassName(String exerciseName) {
+        String[] names = exerciseName.split(" ");
+        return names[0];
     }
 
     private static String[] pointsAsArray(TestDesc m) {

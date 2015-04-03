@@ -8,20 +8,15 @@ import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.testrunner.TestCaseList;
-import fi.helsinki.cs.tmc.langs.testrunner.TestRunner;
 import fi.helsinki.cs.tmc.langs.testrunner.TestRunnerMain;
 import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.tools.ant.BuildException;
@@ -66,11 +61,13 @@ public class AntPlugin extends AbstractLanguagePlugin {
 
         TestCaseList cases = TestCaseList.fromExerciseDesc(
                 scanExercise(path, ""));
+        
         RunResult result;
         File resultFile = new File(path.toString() + resultsFile);
         try {
             TestRunnerMain runner = new TestRunnerMain();
             runner.run(path.toString(),
+                    generateClassPath(path),
                     path.toString() + resultsFile,
                     cases);
             cases.writeToJsonFile(resultFile);
@@ -131,59 +128,6 @@ public class AntPlugin extends AbstractLanguagePlugin {
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    private List<String> buildTestScannerArgs(Path path, ClassPath classPath, String... args) {
-        List<String> scannerArgs = new ArrayList<>();
-
-        scannerArgs.add("java");
-        scannerArgs.add("-cp");
-
-        if (classPath == null) {
-            scannerArgs.add(generateClassPath(path).toString());
-        } else {
-            scannerArgs.add(classPath.toString());
-        }
-
-        scannerArgs.add("fi.helsinki.cs.tmc.testscanner.TestScanner");
-        path = path.toAbsolutePath();
-        scannerArgs.add(path.toString() + testDir);
-
-        if (args != null) {
-            for (String arg : args) {
-                scannerArgs.add(arg);
-            }
-        }
-
-        return scannerArgs;
-    }
-
-    private List<String> buildTestRunnerArgs(Path path) {
-        List<String> runnerArgs = new ArrayList<>();
-        List<String> testMethods;
-
-        runnerArgs.add("java");
-        runnerArgs.add("-Dtmc.test_class_dir=" + path.toString() + testDir);
-        runnerArgs.add("-Dtmc.results_file=" + path.toString() + resultsFile);
-        //runnerArgs.add("-Dfi.helsinki.cs.tmc.edutestutils.defaultLocale=" + locale);
-
-        if (endorsedLibsExists(path)) {
-            runnerArgs.add("-Djava.endorsed.dirs=" + createPath(path, "lib", "endorsed"));
-        }
-
-        ClassPath classPath = generateClassPath(path);
-
-        runnerArgs.add("-cp");
-        runnerArgs.add(classPath.toString());
-        runnerArgs.add("fi.helsinki.cs.tmc.testrunner.Main");
-
-        testMethods = startProcess(buildTestScannerArgs(path, classPath, "--test-runner-format"));
-
-        for (String testMethod : testMethods) {
-            runnerArgs.add(testMethod);
-        }
-
-        return runnerArgs;
     }
 
     private ClassPath generateClassPath(Path path) {

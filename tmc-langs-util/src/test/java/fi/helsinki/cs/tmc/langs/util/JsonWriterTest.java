@@ -1,18 +1,18 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class JsonWriterTest {
 
@@ -40,7 +40,6 @@ public class JsonWriterTest {
     }
 
     private class MockClass {
-
         private ArrayList<Integer> arr = new ArrayList<>();
         private String name;
 
@@ -50,6 +49,5 @@ public class JsonWriterTest {
                 arr.add(i);
             }
         }
-
     }
 }

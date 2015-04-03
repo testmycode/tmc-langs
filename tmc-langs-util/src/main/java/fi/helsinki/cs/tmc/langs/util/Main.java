@@ -30,13 +30,13 @@ public class Main {
 
     private static void printHelp() {
         System.out.println("\nUsage: Main <exercise path> <output path>\n"
-                + "\nOptions:\n"
-                + " --checkstyle <exercise path> <output path>\t\tRun checkstyle or similar plugin to project if applicable.\n"
-                + " --help\t\t\t\t\t\t\tDisplay help information.\n"
-                + " --preparesolution <exercise path>\t\t\tPrepare a presentable solution from the original.\n"
-                + " --preparestub <exercise path>\t\t\t\tPrepare a stub exercise from the original.\n"
-                + " --runtests <exercise path> <output path>\t\tRun the tests for the exercise.\n"
-                + " --scanexercise <exercise path> <output path>\t\tProduce an exercise description of an exercise directory.\n");
+            + "\nOptions:\n"
+            + " --checkstyle <exercise path> <output path>\t\tRun checkstyle or similar plugin to project if applicable.\n"
+            + " --help\t\t\t\t\t\t\tDisplay help information.\n"
+            + " --preparesolution <exercise path>\t\t\tPrepare a presentable solution from the original.\n"
+            + " --preparestub <exercise path>\t\t\t\tPrepare a stub exercise from the original.\n"
+            + " --runtests <exercise path> <output path>\t\tRun the tests for the exercise.\n"
+            + " --scanexercise <exercise path> <output path>\t\tProduce an exercise description of an exercise directory.\n");
         System.exit(0);
     }
 
@@ -49,7 +49,7 @@ public class Main {
             printHelp();
         } else if (!pathsCount.equals(args.length - 1)) {
             System.out.println("ERROR: wrong argument count for " + command
-                    + " expected " + pathsCount + " got " + (args.length - 1));
+                + " expected " + pathsCount + " got " + (args.length - 1));
             printHelp();
         }
 
@@ -147,7 +147,7 @@ public class Main {
     private static Map<String, Path> parsePaths(String[] args, int pathsCount) {
         Map<String, Path> argsMap = new HashMap<>();
 
-        if(pathsCount == 0) {
+        if (pathsCount == 0) {
             return argsMap;
         }
         argsMap.put(EXERCISE_PATH, Paths.get(args[1]));

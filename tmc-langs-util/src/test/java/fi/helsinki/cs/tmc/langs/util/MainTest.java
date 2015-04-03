@@ -5,13 +5,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.Assertion;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.nio.file.Path;
-import static org.junit.Assert.assertEquals;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.mockito.Mockito;
 
 public class MainTest {
 
@@ -22,13 +22,13 @@ public class MainTest {
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     private final String HELP_TEXT = "Usage: Main <exercise path> <output path>\n"
-                + "\nOptions:\n"
-                + " --checkstyle <exercise path> <output path>\t\tRun checkstyle or similar plugin to project if applicable.\n"
-                + " --help\t\t\t\t\t\t\tDisplay help information.\n"
-                + " --preparesolution <exercise path>\t\t\tPrepare a presentable solution from the original.\n"
-                + " --preparestub <exercise path>\t\t\t\tPrepare a stub exercise from the original.\n"
-                + " --runtests <exercise path> <output path>\t\tRun the tests for the exercise.\n"
-                + " --scanexercise <exercise path> <output path>\t\tProduce an exercise description of an exercise directory.";
+        + "\nOptions:\n"
+        + " --checkstyle <exercise path> <output path>\t\tRun checkstyle or similar plugin to project if applicable.\n"
+        + " --help\t\t\t\t\t\t\tDisplay help information.\n"
+        + " --preparesolution <exercise path>\t\t\tPrepare a presentable solution from the original.\n"
+        + " --preparestub <exercise path>\t\t\t\tPrepare a stub exercise from the original.\n"
+        + " --runtests <exercise path> <output path>\t\tRun the tests for the exercise.\n"
+        + " --scanexercise <exercise path> <output path>\t\tProduce an exercise description of an exercise directory.";
     private String expectedMessage = "";
 
     @Test
@@ -125,7 +125,6 @@ public class MainTest {
             }
         });
         mainClass.main(args);
-
     }
 
     @Test
@@ -151,8 +150,8 @@ public class MainTest {
      * exit status. Additionally do assertion that main prints out
      * {@link #expectedMessage}.
      *
-     * @param exitStatus expected exit status for main.
-     * @param args for calling main.
+     * @param exitStatus           expected exit status for main.
+     * @param args                 for calling main.
      * @param optionalErrorMessage for system out assertion.
      */
     private void mainTest(int exitStatus, String[] args, String... optionalErrorMessage) {
@@ -160,7 +159,7 @@ public class MainTest {
         exitStringContainsAssertion(expectedMessage, optionalErrorMessage);
         Main.main(args);
     }
-    
+
     private void mainTestEquals(int exitStatus, String[] args) {
         exit.expectSystemExitWithStatus(exitStatus);
         exitStringEqualsAssertion(expectedMessage);
@@ -182,7 +181,7 @@ public class MainTest {
             @Override
             public void checkAssertion() throws Exception {
                 String defaultErrorMessage = "Expected system output to contain " + expected
-                        + ", instead got: " + mio.getSysOut().trim();
+                    + ", instead got: " + mio.getSysOut().trim();
                 if (optionalErrorMessage != null && optionalErrorMessage.length == 1) {
                     assertTrue(optionalErrorMessage[1], mio.getSysOut().trim().contains(expected));
                 } else {
@@ -191,7 +190,7 @@ public class MainTest {
             }
         });
     }
-    
+
     private void exitStringEqualsAssertion(final String expected) {
         exit.checkAssertionAfterwards(new Assertion() {
             @Override

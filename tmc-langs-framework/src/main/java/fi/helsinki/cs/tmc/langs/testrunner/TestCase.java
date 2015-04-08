@@ -1,7 +1,6 @@
 package fi.helsinki.cs.tmc.langs.testrunner;
 
 import org.junit.runner.notification.Failure;
-import static fi.helsinki.cs.tmc.testrunner.TestCase.Status.*;
 
 public class TestCase {
     public enum Status {

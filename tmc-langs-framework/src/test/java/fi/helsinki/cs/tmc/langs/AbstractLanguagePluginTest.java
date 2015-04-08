@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
@@ -20,29 +19,6 @@ public class AbstractLanguagePluginTest {
 
     public AbstractLanguagePluginTest() {
         pluginImpl = new PluginImplLanguagePlugin();
-    }
-
-    class PluginImplLanguagePlugin extends AbstractLanguagePlugin {
-
-        @Override
-        protected boolean isExerciseTypeCorrect(Path path) {
-            return new File(path.toString() + File.separatorChar + "build.xml").exists();
-        }
-
-        @Override
-        public String getLanguageName() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public RunResult runTests(Path path) {
-            throw new UnsupportedOperationException();
-        }
     }
 
     @Test

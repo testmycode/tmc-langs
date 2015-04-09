@@ -3,6 +3,7 @@ package fi.helsinki.cs.tmc.langs.util;
 import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
@@ -11,50 +12,57 @@ import java.nio.file.Path;
 public class TaskExecutorImpl implements TaskExecutor {
 
     @Override
-    public Optional<ValidationResult> runCheckCodeStyle(Path path) {
+    public ValidationResult runCheckCodeStyle(Path path) throws NoLanguagePluginFoundException {
         Optional<LanguagePlugin> languagePlugin = ProjectTypeHandler.getLanguagePlugin(path);
 
         if (languagePlugin.isPresent()) {
-            return Optional.of(languagePlugin.get().checkCodeStyle(path));
+            return languagePlugin.get().checkCodeStyle(path);
         }
-        return Optional.absent();
+
+        throw new NoLanguagePluginFoundException("No suitable language plugin found.");
     }
 
     @Override
-    public Optional<RunResult> runTests(Path path) {
+    public RunResult runTests(Path path) throws NoLanguagePluginFoundException {
         Optional<LanguagePlugin> languagePlugin = ProjectTypeHandler.getLanguagePlugin(path);
 
         if (languagePlugin.isPresent()) {
-            return Optional.of(languagePlugin.get().runTests(path));
+            return languagePlugin.get().runTests(path);
         }
-        return Optional.absent();
+
+        throw new NoLanguagePluginFoundException("No suitable language plugin found.");
     }
 
     @Override
-    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+    public ExerciseDesc scanExercise(Path path, String exerciseName) throws NoLanguagePluginFoundException {
         Optional<LanguagePlugin> languagePlugin = ProjectTypeHandler.getLanguagePlugin(path);
 
         if (languagePlugin.isPresent()) {
-            return Optional.of(languagePlugin.get().scanExercise(path, exerciseName));
+            return languagePlugin.get().scanExercise(path, exerciseName);
         }
-        return Optional.absent();
+
+        throw new NoLanguagePluginFoundException("No suitable language plugin found.");
     }
 
     @Override
-    public void prepareStub(Path path) {
+    public void prepareStub(Path path) throws NoLanguagePluginFoundException {
         Optional<LanguagePlugin> languagePlugin = ProjectTypeHandler.getLanguagePlugin(path);
 
         if (languagePlugin.isPresent()) {
             languagePlugin.get().prepareStub(path);
+        } else {
+            throw new NoLanguagePluginFoundException("No suitable language plugin found.");
         }
     }
 
     @Override
-    public void prepareSolution(Path path) {
+    public void prepareSolution(Path path) throws NoLanguagePluginFoundException {
         Optional<LanguagePlugin> languagePlugin = ProjectTypeHandler.getLanguagePlugin(path);
 
         if (languagePlugin.isPresent()) {
             languagePlugin.get().prepareSolution(path);
+        } else {
+            throw new NoLanguagePluginFoundException("No suitable language plugin found.");
         }
     }
 }

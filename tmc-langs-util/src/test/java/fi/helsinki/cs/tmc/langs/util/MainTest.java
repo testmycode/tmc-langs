@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.util;
 
 import fi.helsinki.cs.tmc.edutestutils.MockStdio;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.Assertion;
@@ -9,9 +10,9 @@ import org.mockito.Mockito;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class MainTest {
 
@@ -21,102 +22,181 @@ public class MainTest {
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-    private final String HELP_TEXT = "Usage: Main <exercise path> <output path>\n"
-        + "\nOptions:\n"
-        + " --checkstyle <exercise path> <output path>\t\tRun checkstyle or similar plugin to project if applicable.\n"
-        + " --help\t\t\t\t\t\t\tDisplay help information.\n"
-        + " --preparesolution <exercise path>\t\t\tPrepare a presentable solution from the original.\n"
-        + " --preparestub <exercise path>\t\t\t\tPrepare a stub exercise from the original.\n"
-        + " --runtests <exercise path> <output path>\t\tRun the tests for the exercise.\n"
-        + " --scanexercise <exercise path> <output path>\t\tProduce an exercise description of an exercise directory.";
     private String expectedMessage = "";
+    private final String HELP_TEXT = Main.HELP_TEXT + "\n";
+    private final TaskExecutor executor = Mockito.mock(TaskExecutor.class);
+    private Main mainClass;
+
+    @Before
+    public void setUp() {
+        mainClass = new Main();
+        mainClass.setExecutor(executor);
+    }
 
     @Test
     public void testMain() {
         String[] args = null;
         exit.expectSystemExitWithStatus(0);
-        exitStringEqualsAssertion(HELP_TEXT);
-        Main.main(args);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verifyZeroInteractions(executor);
+                assertEquals("Error output should be clean.", "", mio.getSysErr());
+                assertEquals(HELP_TEXT, mio.getSysOut());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
     public void testWithNoArgs() {
         String[] args = {};
-        expectedMessage = HELP_TEXT;
-        mainTestEquals(0, args);
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verifyZeroInteractions(executor);
+                assertEquals("Error output should be clean.", "", mio.getSysErr());
+                assertEquals(HELP_TEXT, mio.getSysOut());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
     public void testHelp() {
-        String[] args = {"--help"};
-        expectedMessage = HELP_TEXT;
-        mainTestEquals(0, args);
+        String[] args = {"help"};
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verifyZeroInteractions(executor);
+                assertEquals("Error output should be clean.", "", mio.getSysErr());
+                assertEquals(HELP_TEXT, mio.getSysOut());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
-    public void testHelpWithInvalidArgumentCountOneArg() {
-        String[] args = {"--help", "dummy_string"};
-        expectedMessage = "ERROR: wrong argument count for --help expected 0 got 1\n\n" + HELP_TEXT;
-        mainTestEquals(0, args);
+    public void testHelpWithExtraCommands() {
+        String[] args = {"help", "dummy_string"};
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verifyZeroInteractions(executor);
+                assertEquals("Error output should be clean.", "", mio.getSysErr());
+                assertEquals(HELP_TEXT, mio.getSysOut());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
     public void testScanExercise() {
-        String exercisePath = getTargetPath("arith_funcs");
-        String outputPath = exercisePath + "/checkstyle.txt";
-        String[] args = {"--scanexercise", exercisePath, outputPath};
-        expectedMessage = "Exercises scanned successfully, results can be found in " + outputPath;
-        mainTest(0, args);
+        final String exercisePath = getTargetPath("arith_funcs");
+        final String outputPath = exercisePath + "/checkstyle.txt";
+        String[] args = {"scan-exercise", exercisePath, outputPath};
+
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verify(executor).scanExercise(Paths.get(exercisePath), "arith_funcs");
+                assertEquals("Exercises scanned successfully, results can be found in " + outputPath + "\n", mio.getSysOut());
+                assertEquals("Error output should be clean.", "", mio.getSysErr());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
     public void testScanExerciseWithInvalidArgs() {
-        String[] args = {"--scanexercise", "dummy string", "another"};
+        String[] args = {"scan-exercise", "dummy string", "another"};
         exit.expectSystemExitWithStatus(0);
-        expectedMessage = "ERROR: Given test path is not a directory.\n\n" + HELP_TEXT;
-        mainTestEquals(0, args);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verifyZeroInteractions(executor);
+                assertEquals("Error output wasn't what was expected", "ERROR: Given test path is not a directory.\n", mio.getSysErr());
+                assertEquals("System output wasn't what was expected", HELP_TEXT, mio.getSysOut());
+            }
+        });
+        Main.main(args);
     }
 
     @Test
     public void testScanExerciseWithInvalidArgumentCountZeroArgs() {
-        String[] args = {"--scanexercise"};
-        expectedMessage = "ERROR: wrong argument count for --scanexercise expected 2 got 0\n\n" + HELP_TEXT;
-        mainTestEquals(0, args);
+        String[] args = {"scan-exercise"};
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verifyZeroInteractions(executor);
+                assertEquals(HELP_TEXT, mio.getSysOut());
+                assertEquals("ERROR: wrong argument count for scan-exercise expected 2 got 0\n", mio.getSysErr());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
     public void testScanExerciseWithInvalidArgumentCountOneArg() {
-        String[] args = {"--scanexercise", "dummy string"};
-        expectedMessage = "ERROR: wrong argument count for --scanexercise expected 2 got 1\n\n" + HELP_TEXT;
-        mainTestEquals(0, args);
+        String[] args = {"scan-exercise", "dummy string"};
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verifyZeroInteractions(executor);
+                assertEquals("System output should contain help text", HELP_TEXT, mio.getSysOut());
+                assertEquals("Error output should contain the error message", "ERROR: wrong argument count for scan-exercise expected 2 got 1\n", mio.getSysErr());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
     public void testRunTests() {
-        String exercisePath = getTargetPath("arith_funcs");
-        String outputPath = exercisePath + "/results.txt";
-        String[] args = {"--runtests", exercisePath, outputPath};
-        expectedMessage = "Test results can be found in " + outputPath;
-        mainTest(0, args);
+        final String exercisePath = getTargetPath("arith_funcs");
+        final String outputPath = exercisePath + "/results.txt";
+        String[] args = {"run-tests", exercisePath, outputPath};
+
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verify(executor).runTests(Paths.get(exercisePath));
+                assertEquals("Test results can be found in " + outputPath + "\n", mio.getSysOut());
+                assertEquals("Error output should be empty.", "", mio.getSysErr());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
     public void testRunCheckCodeStyle() {
-        String exercisePath = getTargetPath("arith_funcs");
-        String outputPath = exercisePath + "/exercises.txt";
-        String[] args = {"--checkstyle", exercisePath, outputPath};
-        expectedMessage = "Codestyle report can be found at " + outputPath;
-        mainTest(0, args);
+        final String exercisePath = getTargetPath("arith_funcs");
+        final String outputPath = exercisePath + "/exercises.txt";
+        String[] args = {"checkstyle", exercisePath, outputPath};
+
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+                Mockito.verify(executor).runCheckCodeStyle(Paths.get(exercisePath));
+                assertEquals("Codestyle report can be found at " + outputPath + "\n", mio.getSysOut());
+                assertEquals("Error output should be empty.", "", mio.getSysErr());
+            }
+        });
+        mainClass.main(args);
     }
 
     @Test
     public void testPrepareStub() {
-        String[] args = {"--preparestub", getTargetPath("arith_funcs")};
-
-        final TaskExecutor executor = Mockito.mock(TaskExecutor.class);
+        String[] args = {"prepare-stub", getTargetPath("arith_funcs")};
         final Path stubPath = new File(getTargetPath("arith_funcs")).toPath();
 
-        Main mainClass = new Main(executor);
         exit.expectSystemExitWithStatus(0);
         exit.checkAssertionAfterwards(new Assertion() {
             @Override
@@ -129,12 +209,9 @@ public class MainTest {
 
     @Test
     public void testPrepareSolution() {
-        String[] args = {"--preparesolution", getTargetPath("arith_funcs")};
-
-        final TaskExecutor executor = Mockito.mock(TaskExecutor.class);
+        String[] args = {"prepare-solution", getTargetPath("arith_funcs")};
         final Path solutionPath = new File(getTargetPath("arith_funcs")).toPath();
 
-        Main mainClass = new Main(executor);
         exit.expectSystemExitWithStatus(0);
         exit.checkAssertionAfterwards(new Assertion() {
             @Override
@@ -146,58 +223,18 @@ public class MainTest {
     }
 
     /**
-     * Call main method with given args, and assert that main exits with given
-     * exit status. Additionally do assertion that main prints out
-     * {@link #expectedMessage}.
-     *
-     * @param exitStatus           expected exit status for main.
-     * @param args                 for calling main.
-     * @param optionalErrorMessage for system out assertion.
-     */
-    private void mainTest(int exitStatus, String[] args, String... optionalErrorMessage) {
-        exit.expectSystemExitWithStatus(exitStatus);
-        exitStringContainsAssertion(expectedMessage, optionalErrorMessage);
-        Main.main(args);
-    }
-
-    private void mainTestEquals(int exitStatus, String[] args) {
-        exit.expectSystemExitWithStatus(exitStatus);
-        exitStringEqualsAssertion(expectedMessage);
-        Main.main(args);
-    }
-
-    /**
      * Convert the given location into absolute test target path.
      *
      * @param location to be converted into target path.
      * @return Absolute test target path, with file:/ stripped away.
      */
     private String getTargetPath(String location) {
-        return getClass().getResource(File.separatorChar + location).toString().substring(5);
-    }
+        String targetPath = getClass().getResource(File.separatorChar + location).toString();
 
-    private void exitStringContainsAssertion(final String expected, final String... optionalErrorMessage) {
-        exit.checkAssertionAfterwards(new Assertion() {
-            @Override
-            public void checkAssertion() throws Exception {
-                String defaultErrorMessage = "Expected system output to contain " + expected
-                    + ", instead got: " + mio.getSysOut().trim();
-                if (optionalErrorMessage != null && optionalErrorMessage.length == 1) {
-                    assertTrue(optionalErrorMessage[1], mio.getSysOut().trim().contains(expected));
-                } else {
-                    assertTrue(defaultErrorMessage, mio.getSysOut().trim().contains(expected));
-                }
-            }
-        });
-    }
+        if (targetPath.startsWith("file:/")) {
+            return targetPath.substring(5);
+        }
 
-    private void exitStringEqualsAssertion(final String expected) {
-        exit.checkAssertionAfterwards(new Assertion() {
-            @Override
-            public void checkAssertion() throws Exception {
-                assertEquals(expected, mio.getSysOut().trim());
-            }
-        });
+        return targetPath;
     }
-
 }

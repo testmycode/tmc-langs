@@ -30,7 +30,11 @@ public class JsonWriterTest {
     public void testWriteObjectIntoJsonFormat() {
         try {
             MockClass mock = new MockClass("test");
-            JsonWriter.writeObjectIntoJsonFormat(mock, outputFile.toPath());
+            try {
+                JsonWriter.writeObjectIntoJsonFormat(mock, outputFile.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Scanner s = new Scanner(outputFile);
             assertEquals(s.nextLine(), "{\"arr\":[0,1,2,3,4,5,6,7,8,9],\"name\":\"test\"}");
             s.close();

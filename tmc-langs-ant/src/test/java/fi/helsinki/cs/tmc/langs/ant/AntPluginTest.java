@@ -9,6 +9,7 @@ import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -56,38 +57,41 @@ public class AntPluginTest {
     }
 
     @Test
-    public void testRunTestsReturnsRunResultCorrectly() {
+    public void testRunTestsReturnsRunResultCorrectly() throws IOException {
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
         assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
         assertTrue("Logs should be empty", runResult.logs.isEmpty());
         assertEquals(4, runResult.testResults.size());
+        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
     }
 
     @Test
-    public void testRunTestsAwardsCorrectPoints() {
+    public void testRunTestsAwardsCorrectPoints() throws IOException {
         ImmutableList<TestResult> testResults = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs")).testResults;
         assertEquals(4, testResults.size());
         assertTrue(testResults.get(0).passed);
         assertFalse(testResults.get(3).passed);
+        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
     }
 
     @Test
-    public void testBuildAntProjectRunsBuildFile() {
+    public void testBuildAntProjectRunsBuildFile() throws IOException {
         Path path = TestUtils.getPath(getClass(), "ant_arith_funcs").toAbsolutePath();
         antPlugin.buildAntProject(path);
         File buildDir = Paths.get(path.toString() + File.separatorChar + "build").toFile();
         assertNotNull("Build directory should exist after building.", buildDir);
-        buildDir.delete();
+        TestUtils.removeDirRecursively(buildDir.toPath().toAbsolutePath());
     }
 
     @Test
-    public void testRunTestsReturnPassedCorrectly() {
+    public void testRunTestsReturnPassedCorrectly() throws IOException {
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "trivial"));
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
         assertTestResult(testResult, "", "TrivialTest testF", true);
         assertEquals("trivial", testResult.points.get(0));
         assertEquals("When all tests pass backtrace should be empty.", 0, testResult.backtrace.size());
+        TestUtils.removeDirRecursively(getClass(), "trivial/build");
     }
 
     @Test

@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
@@ -21,8 +22,13 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public ExerciseDesc scanExercise(Path path, String exerciseName) throws NoLanguagePluginFoundException {
-        return getLanguagePlugin(path).scanExercise(path, exerciseName);
+    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) throws NoLanguagePluginFoundException {
+        Optional<ExerciseDesc> result = getLanguagePlugin(path).scanExercise(path, exerciseName);
+        if (result.isPresent()) {
+            return result;
+        }
+
+        return Optional.absent();
     }
 
     @Override
@@ -37,6 +43,7 @@ public class TaskExecutorImpl implements TaskExecutor {
 
     /**
      * Get language plugin for the given path.
+     *
      * @param path of the exercise.
      * @return Language Plugin that recognises the exercise.
      */

@@ -12,17 +12,19 @@ import fi.helsinki.cs.tmc.langs.testrunner.TestRunnerMain;
 import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
 
 public class AntPlugin extends AbstractLanguagePlugin {
 
@@ -59,17 +61,16 @@ public class AntPlugin extends AbstractLanguagePlugin {
             return buildRunResult;
         }
 
-        TestCaseList cases = TestCaseList.fromExerciseDesc(
-                scanExercise(path, ""));
-        
+        TestCaseList cases = TestCaseList.fromExerciseDesc(scanExercise(path, ""));
+
         RunResult result;
         File resultFile = new File(path.toString() + resultsFile);
         try {
             TestRunnerMain runner = new TestRunnerMain();
             runner.run(path.toString(),
-                    generateClassPath(path),
-                    path.toString() + resultsFile,
-                    cases);
+                generateClassPath(path),
+                path.toString() + resultsFile,
+                cases);
             cases.writeToJsonFile(resultFile);
         } catch (IOException ex) {
             Logger.getLogger(AntPlugin.class.getName()).log(Level.SEVERE, null, ex);
@@ -120,8 +121,8 @@ public class AntPlugin extends AbstractLanguagePlugin {
 
                 buildProject.fireBuildFinished(e);
                 buildRunResult = new RunResult(Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
-                        new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
-                                java.nio.file.Files.readAllBytes(buildLog.toPath())).build());
+                    new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
+                        java.nio.file.Files.readAllBytes(buildLog.toPath())).build());
                 return false;
 
             }

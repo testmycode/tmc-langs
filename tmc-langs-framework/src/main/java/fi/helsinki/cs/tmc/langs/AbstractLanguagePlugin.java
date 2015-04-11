@@ -1,18 +1,12 @@
 package fi.helsinki.cs.tmc.langs;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 import java.util.logging.Level;
@@ -53,7 +47,6 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     protected abstract boolean isExerciseTypeCorrect(Path path);
 
     /**
-     *
      * @param basePath The file path to search in.
      * @return A list of directories that contain a build file in this language.
      */
@@ -85,7 +78,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * Search a directory and its subdirectories for build files. If a directory
      * contains a build file, the directory is added to the list.
      *
-     * @param file The current file path to search in
+     * @param file        The current file path to search in
      * @param listBuilder
      * @return a list of all directories that contain build files for this
      * language.
@@ -111,29 +104,4 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         }
         return listBuilder.build();
     }
-
-    /**
-     * Start a process using ProcessBuilder.
-     *
-     * @param args Arguments for starting the process.
-     * @return Possible output of the process.
-     */
-    protected List<String> startProcess(List<String> args) {
-        try {
-            Process process = new ProcessBuilder(args).start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String line;
-            List<String> results = new ArrayList<>();
-
-            while ((line = br.readLine()) != null && !line.equals("")) {
-                results.add(line);
-            }
-
-            return results;
-        } catch (IOException e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
 }

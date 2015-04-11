@@ -1,8 +1,9 @@
 package fi.helsinki.cs.tmc.langs.util;
 
 
-import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
+
 import java.nio.file.Path;
 
 public class ProjectTypeHandler {
@@ -14,29 +15,26 @@ public class ProjectTypeHandler {
      * project as their type.
      *
      * @param path The path to the exercise directory.
-     * @return The project type, or Optional absent if none.
+     * @return The project type that recognizes the project.
      */
-    static Optional<ProjectType> getProjectType(Path path) {
+    static ProjectType getProjectType(Path path) throws NoLanguagePluginFoundException {
         for (ProjectType type : ProjectType.values()) {
             if (type.getLanguagePlugin().scanExercise(path, "") != null) {
-                return Optional.of(type);
+                return type;
             }
         }
-        return Optional.absent();
+
+        throw new NoLanguagePluginFoundException("No suitable language plugin found.");
     }
 
     /**
      * Return the LanguagePlugin that is responsible for the exercise at the given path.
      *
      * @param path The path to the exercise directory.
-     * @return LanguagePlugin that is responsible for the exercise, or Optional absent if none.
+     * @return LanguagePlugin that is responsible for the exercise.
      */
-    public static Optional<LanguagePlugin> getLanguagePlugin(Path path) {
-        Optional<ProjectType> type = getProjectType(path);
-        if (type.isPresent()) {
-            return Optional.of(type.get().getLanguagePlugin());
-        }
-        return Optional.absent();
+    public static LanguagePlugin getLanguagePlugin(Path path) throws NoLanguagePluginFoundException {
+        return getProjectType(path).getLanguagePlugin();
     }
 
 }

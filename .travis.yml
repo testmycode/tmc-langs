@@ -3,7 +3,9 @@ cache:
   directories:
     - $HOME/.m2
 language: java
-script: "mvn clean test"
+script:
+  - mvn clean test
+  - mvn verify
 after_success:
-- mvn clean cobertura:cobertura coveralls:report
+  - mvn clean cobertura:cobertura coveralls:report
 

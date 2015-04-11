@@ -9,12 +9,12 @@ import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -73,18 +73,18 @@ public class AntPlugin extends AbstractLanguagePlugin {
      * @param path The file path of the exercise directory.
      * @return true if build success, else return false.
      */
-    @VisibleForTesting
     protected boolean buildAntProject(Path path) {
-        File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
+        final File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
+        final File buildLog;
+
         Project buildProject = new Project();
         buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());
         buildProject.setProperty("javac.fork", "true");
         buildProject.init();
         buildProject.setBaseDir(path.toAbsolutePath().toFile());
-        File buildLog;
-        
+
         try {
-            
+
             DefaultLogger logger = new DefaultLogger();
             buildLog = new File(path.toString(), "build_log.txt");
             PrintStream errorPrintStream = new PrintStream(buildLog);
@@ -92,9 +92,9 @@ public class AntPlugin extends AbstractLanguagePlugin {
             logger.setOutputPrintStream(System.out);
             logger.setMessageOutputLevel(Project.MSG_ERR);
             buildProject.addBuildListener(logger);
-            
+
             try {
-                
+
                 buildProject.fireBuildStarted();
                 ProjectHelper helper = ProjectHelper.getProjectHelper();
                 buildProject.addReference("ant.projectHelper", helper);
@@ -102,15 +102,15 @@ public class AntPlugin extends AbstractLanguagePlugin {
                 buildProject.executeTarget("compile-test");
                 buildProject.fireBuildFinished(null);
                 return true;
-                
+
             } catch (BuildException e) {
-                
+
                 buildProject.fireBuildFinished(e);
                 buildRunResult = new RunResult(Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
-                        new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
-                                java.nio.file.Files.readAllBytes(buildLog.toPath())).build());
+                    new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
+                        Files.readAllBytes(buildLog.toPath())).build());
                 return false;
-                
+
             }
         } catch (IOException e) {
             throw Throwables.propagate(e);
@@ -134,9 +134,7 @@ public class AntPlugin extends AbstractLanguagePlugin {
         scannerArgs.add(path.toString() + testDir);
 
         if (args != null) {
-            for (String arg : args) {
-                scannerArgs.add(arg);
-            }
+            Collections.addAll(scannerArgs, args);
         }
 
         return scannerArgs;

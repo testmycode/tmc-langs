@@ -6,15 +6,12 @@ import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -60,38 +57,41 @@ public class AntPluginTest {
     }
 
     @Test
-    public void testRunTestsReturnsRunResultCorrectly() {
+    public void testRunTestsReturnsRunResultCorrectly() throws IOException {
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
         assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
         assertTrue("Logs should be empty", runResult.logs.isEmpty());
         assertEquals(4, runResult.testResults.size());
+        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
     }
 
     @Test
-    public void testRunTestsAwardsCorrectPoints() {
+    public void testRunTestsAwardsCorrectPoints() throws IOException {
         ImmutableList<TestResult> testResults = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs")).testResults;
         assertEquals(4, testResults.size());
         assertTrue(testResults.get(0).passed);
         assertFalse(testResults.get(3).passed);
+        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
     }
 
     @Test
-    public void testBuildAntProjectRunsBuildFile() {
+    public void testBuildAntProjectRunsBuildFile() throws IOException {
         Path path = TestUtils.getPath(getClass(), "ant_arith_funcs").toAbsolutePath();
         antPlugin.buildAntProject(path);
         File buildDir = Paths.get(path.toString() + File.separatorChar + "build").toFile();
         assertNotNull("Build directory should exist after building.", buildDir);
-        buildDir.delete();
+        TestUtils.removeDirRecursively(buildDir.toPath().toAbsolutePath());
     }
 
     @Test
-    public void testRunTestsReturnPassedCorrectly() {
+    public void testRunTestsReturnPassedCorrectly() throws IOException {
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "trivial"));
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
         assertTestResult(testResult, "", "TrivialTest testF", true);
         assertEquals("trivial", testResult.points.get(0));
         assertEquals("When all tests pass backtrace should be empty.", 0, testResult.backtrace.size());
+        TestUtils.removeDirRecursively(getClass(), "trivial/build");
     }
 
     @Test
@@ -100,25 +100,6 @@ public class AntPluginTest {
         assertEquals("When the build fails the returned status should report it.", RunResult.Status.COMPILE_FAILED, runResult.status);
         assertTrue("When the build fails no test results should be returned", runResult.testResults.isEmpty());
         assertFalse(runResult.logs.isEmpty());
-    }
-
-    @Test
-    public void testCheckCodeStyle() {
-        File projectToTest = new File("src/test/resources/most_errors/");
-        ValidationResult result = antPlugin.checkCodeStyle(projectToTest.toPath());
-        Map<File, List<ValidationError>> res = result.getValidationErrors();
-        assertEquals("Should be one erroneous file", 1, res.size());
-        for (File file : res.keySet()) {
-            List<ValidationError> errors = res.get(file);
-            assertEquals("Should return the right amount of errors", 23, errors.size());
-        }
-    }
-
-    @Test
-    public void testCheckCodeStyleWithUntestableProject() {
-        File projectToTest = new File("src/test/resources/arith_funcs/");
-        ValidationResult result = antPlugin.checkCodeStyle(projectToTest.toPath());
-        assertNull(result);
     }
 
     private void assertTestResult(TestResult testResult, String expectedErrorMessage, String expectedName, boolean expectedPassed) {

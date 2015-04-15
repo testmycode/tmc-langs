@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.maven;
 
+import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
@@ -20,7 +21,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ExerciseDesc scanExercise(Path path, String exerciseName) {
+    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

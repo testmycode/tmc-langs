@@ -1,6 +1,11 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.edutestutils.MockStdio;
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
+import fi.helsinki.cs.tmc.langs.TestDesc;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,6 +16,7 @@ import org.mockito.Mockito;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
@@ -94,10 +100,12 @@ public class MainTest {
     }
 
     @Test
-    public void testScanExercise() {
+    public void testScanExercise() throws NoLanguagePluginFoundException {
         final String exercisePath = getTargetPath("arith_funcs");
         final String outputPath = exercisePath + "/checkstyle.txt";
         String[] args = {"scan-exercise", exercisePath, outputPath};
+        Mockito.when(executor.scanExercise(Paths.get(exercisePath), "arith_funcs"))
+            .thenReturn(Optional.of(new ExerciseDesc("Name", ImmutableList.copyOf(new ArrayList<TestDesc>()))));
 
         exit.expectSystemExitWithStatus(0);
         exit.checkAssertionAfterwards(new Assertion() {

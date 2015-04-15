@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.RunResult;
@@ -123,15 +124,19 @@ public class Main {
     private static void runScanExercise(Map<String, Path> paths) {
         // Exercise name, should it be something else than directory name?
         String exerciseName = paths.get(EXERCISE_PATH).toFile().getName();
-        ExerciseDesc exerciseDesc = null;
+        Optional<ExerciseDesc> exerciseDesc = Optional.absent();
         try {
             exerciseDesc = executor.scanExercise(paths.get(EXERCISE_PATH), exerciseName);
+
+            if (!exerciseDesc.isPresent()) {
+                printErrAndExit("ERROR: Could not scan the exercises.");
+            }
         } catch (NoLanguagePluginFoundException e) {
             printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
         }
 
         try {
-            JsonWriter.writeObjectIntoJsonFormat(exerciseDesc, paths.get(OUTPUT_PATH));
+            JsonWriter.writeObjectIntoJsonFormat(exerciseDesc.get(), paths.get(OUTPUT_PATH));
             System.out.println("Exercises scanned successfully, results can be found in " + paths.get(OUTPUT_PATH).toString());
         } catch (IOException e) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not write result into given output file", e);

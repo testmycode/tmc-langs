@@ -10,10 +10,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class AbstractLanguagePluginTest {
 
@@ -21,29 +19,6 @@ public class AbstractLanguagePluginTest {
 
     public AbstractLanguagePluginTest() {
         pluginImpl = new PluginImplLanguagePlugin();
-    }
-
-    class PluginImplLanguagePlugin extends AbstractLanguagePlugin {
-
-        @Override
-        protected boolean isExerciseTypeCorrect(Path path) {
-            return new File(path.toString() + File.separatorChar + "build.xml").exists();
-        }
-
-        @Override
-        public String getLanguageName() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public ExerciseDesc scanExercise(Path path, String exerciseName) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public RunResult runTests(Path path) {
-            throw new UnsupportedOperationException();
-        }
     }
 
     @Test

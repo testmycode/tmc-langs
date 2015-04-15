@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
@@ -58,9 +59,9 @@ public interface LanguagePlugin {
      * @param path The path of the exercise directory.
      * @param exerciseName This must be set as the name of the returned
      * exercise.
-     * @return The exercise description, or null if none.
+     * @return The exercise description, or Optional absent if none.
      */
-    public ExerciseDesc scanExercise(Path path, String exerciseName);
+    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName);
 
     /**
      * Runs the tests for the exercise.

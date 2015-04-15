@@ -36,6 +36,7 @@ public class ExerciseBuilderTest {
         instance.prepareStub(targetFolder.toPath());
 
         assertFileLines(expectedFolder, outputFolder);
+
     }
     
     private String getFileName(String parentDir, File file) {
@@ -57,6 +58,7 @@ public class ExerciseBuilderTest {
                 String actualLine = actualLines.get(i);
                 assertEquals("Line in file " + fileName + " did not match ", expectedLine, actualLine);
             }
+
         }
     }
 
@@ -89,4 +91,5 @@ public class ExerciseBuilderTest {
 
         assertFileLines(expectedFolder, outputFolder);
     }
+
 }

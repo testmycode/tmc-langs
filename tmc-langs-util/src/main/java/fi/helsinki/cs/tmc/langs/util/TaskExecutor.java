@@ -52,6 +52,6 @@ public interface TaskExecutor {
      * {@link fi.helsinki.cs.tmc.langs.LanguagePlugin#scanExercise(java.nio.file.Path, String) scanExercise(Path path, String exerciseName)}
      * task.
      */
-    public ExerciseDesc scanExercise(Path path, String exerciseName) throws NoLanguagePluginFoundException;
+    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) throws NoLanguagePluginFoundException;
 
 }

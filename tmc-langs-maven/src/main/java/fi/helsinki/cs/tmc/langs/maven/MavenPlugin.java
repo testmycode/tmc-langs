@@ -1,9 +1,9 @@
 package fi.helsinki.cs.tmc.langs.maven;
 
 import com.google.common.base.Optional;
-import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.*;
 import org.apache.maven.cli.MavenCli;
 
 import java.io.ByteArrayOutputStream;
@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class MavenPlugin extends AbstractLanguagePlugin {
@@ -32,7 +35,18 @@ public class MavenPlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        CompileResult compileResult = buildMaven(path);
+
+        if (compileResult.compileResult != 0) {
+            Map<String, byte[]> logs = new HashMap<>();
+            logs.put(SpecialLogs.STDOUT, compileResult.output.toByteArray());
+            logs.put(SpecialLogs.STDERR, compileResult.err.toByteArray());
+
+            return new RunResult(RunResult.Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
+                    ImmutableMap.copyOf(logs));
+        }
+
+        return null;
     }
 
     protected CompileResult buildMaven(Path path) {

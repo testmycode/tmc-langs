@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.maven;
 
+import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
@@ -55,5 +56,11 @@ public class MavenPluginTest {
         assertEquals("Compile status should be 1 when build fails", 1, result.compileResult);
         assertTrue("Output should contain 'BUILD FAILURE'", result.output.toString().contains("BUILD FAILURE"));
         assertTrue("Output should contain 'App.java:[5,8] error: not a statement'", result.output.toString().contains("App.java:[5,8] error: not a statement"));
+    }
+
+    @Test
+    public void testRunTestsWhenBuildFailing() {
+        RunResult runResult = mavenPlugin.runTests(TestUtils.getPath(getClass(), "failing_maven_exercise"));
+        assertEquals(RunResult.Status.COMPILE_FAILED, runResult.status);
     }
 }

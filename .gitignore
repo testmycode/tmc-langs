@@ -10,3 +10,4 @@ target/
 /tmc-langs-ant/src/test/resources/most_errors/nbproject/private/
 /tmc-langs-ant/src/test/resources/most_errors/build/
 /tmc-langs-ant/src/test/resources/trivial/build/
+/tmc-langs-ant/src/test/resources/ant_arith_funcs/build/

@@ -32,7 +32,6 @@ public class AntPlugin extends AbstractLanguagePlugin {
     private final String testDir = File.separatorChar + "test";
     private final String resultsFile = File.separatorChar + "results.txt";
     private TestResultParser resultParser = new TestResultParser();
-    private RunResult buildRunResult;
 
     @Override
     public String getLanguageName() {
@@ -56,12 +55,20 @@ public class AntPlugin extends AbstractLanguagePlugin {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
 
+    private RunResult getResults(Status statusCode, CompileResult compileResult) {
+        return new RunResult(statusCode, ImmutableList.copyOf(new ArrayList<TestResult>()),
+            new ImmutableMap.Builder<String, byte[]>()
+                .put(SpecialLogs.STDOUT, compileResult.getStdout())
+                .put(SpecialLogs.STDERR, compileResult.getStderr()).build());
+    }
+
     @Override
     public RunResult runTests(Path path) {
-        if (!buildAntProject(path)) {
-            return buildRunResult;
-        }
 
+        CompileResult compileResult = buildAntProject(path);
+        if (compileResult.getStatusCode() != 0) {
+            return getResults(Status.COMPILE_FAILED, compileResult);
+        }
         TestCaseList cases = TestCaseList.fromExerciseDesc(scanExercise(path, ""));
 
         RunResult result;
@@ -89,44 +96,49 @@ public class AntPlugin extends AbstractLanguagePlugin {
      * @return true if build success, else return false.
      */
     @VisibleForTesting
-    protected boolean buildAntProject(Path path) {
+    protected CompileResult buildAntProject(Path path) {
         File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
         Project buildProject = new Project();
         buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());
         buildProject.setProperty("javac.fork", "true");
         buildProject.init();
         buildProject.setBaseDir(path.toAbsolutePath().toFile());
-        File buildLog;
 
+        File buildLog = new File(path.toString(), "build_log.txt");
+        File errorLog = new File(path.toString(), "build_errors.txt");
+
+        DefaultLogger logger = new DefaultLogger();
         try {
 
-            DefaultLogger logger = new DefaultLogger();
-            buildLog = new File(path.toString(), "build_log.txt");
-            PrintStream errorPrintStream = new PrintStream(buildLog);
-            logger.setErrorPrintStream(errorPrintStream);
-            logger.setOutputPrintStream(System.out);
-            logger.setMessageOutputLevel(Project.MSG_ERR);
+            PrintStream stdOut = new PrintStream(buildLog);
+            PrintStream stdErr = new PrintStream(errorLog);
+
+            logger.setErrorPrintStream(stdErr);
+            logger.setOutputPrintStream(stdOut);
+            logger.setMessageOutputLevel(Project.MSG_INFO);
             buildProject.addBuildListener(logger);
+            buildProject.fireBuildStarted();
+            ProjectHelper helper = ProjectHelper.getProjectHelper();
+            buildProject.addReference("ant.projectHelper", helper);
+            helper.parse(buildProject, buildFile);
+            buildProject.executeTarget("compile-test");
+            buildProject.fireBuildFinished(null);
 
+            return new CompileResult(0,
+                Files.readAllBytes(buildLog.toPath()),
+                Files.readAllBytes(errorLog.toPath()));
+
+        } catch (BuildException e) {
             try {
-
-                buildProject.fireBuildStarted();
-                ProjectHelper helper = ProjectHelper.getProjectHelper();
-                buildProject.addReference("ant.projectHelper", helper);
-                helper.parse(buildProject, buildFile);
-                buildProject.executeTarget("compile-test");
-                buildProject.fireBuildFinished(null);
-                return true;
-
-            } catch (BuildException e) {
-
                 buildProject.fireBuildFinished(e);
-                buildRunResult = new RunResult(Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
-                    new ImmutableMap.Builder<String, byte[]>().put(SpecialLogs.COMPILER_OUTPUT,
-                        Files.readAllBytes(buildLog.toPath())).build());
-                return false;
 
+                return new CompileResult(1,
+                    Files.readAllBytes(buildLog.toPath()),
+                    Files.readAllBytes(errorLog.toPath()));
+            } catch (IOException ex) {
+                throw Throwables.propagate(e);
             }
+
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }

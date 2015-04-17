@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.*;
 
@@ -109,5 +111,22 @@ public class AntPluginTest {
         assertEquals(expectedErrorMessage, testResult.errorMessage);
         assertEquals(expectedName, testResult.name);
         assertEquals(expectedPassed, testResult.passed);
+    }
+
+    @Test
+    public void testAntCompileGivesOutputLogging() throws IOException {
+        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
+        File expected = new File("src/test/resources/arith_funcs_build.log");
+        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
+        File actual = new File("target/test-classes/ant_arith_funcs/build_log.txt");
+        assertFileLines(expected, actual);
+
+    }
+
+    private void assertFileLines(File expected, File actual) throws IOException {
+
+        List<String> expectedLines = FileUtils.readLines(expected);
+        List<String> actualLines = FileUtils.readLines(actual);
+        assertEquals("Build log should match by length", expectedLines.size(), actualLines.size());
     }
 }

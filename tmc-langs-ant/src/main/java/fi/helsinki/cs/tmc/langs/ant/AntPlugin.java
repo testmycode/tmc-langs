@@ -95,7 +95,6 @@ public class AntPlugin extends AbstractLanguagePlugin {
      * @param path The file path of the exercise directory.
      * @return true if build success, else return false.
      */
-    @VisibleForTesting
     protected CompileResult buildAntProject(Path path) {
         File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
         Project buildProject = new Project();
@@ -116,6 +115,7 @@ public class AntPlugin extends AbstractLanguagePlugin {
             logger.setErrorPrintStream(stdErr);
             logger.setOutputPrintStream(stdOut);
             logger.setMessageOutputLevel(Project.MSG_INFO);
+
             buildProject.addBuildListener(logger);
             buildProject.fireBuildStarted();
             ProjectHelper helper = ProjectHelper.getProjectHelper();

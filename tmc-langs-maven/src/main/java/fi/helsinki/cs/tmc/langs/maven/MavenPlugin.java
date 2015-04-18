@@ -9,12 +9,10 @@ import org.apache.maven.cli.MavenCli;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class MavenPlugin extends AbstractLanguagePlugin {
 
@@ -37,13 +35,13 @@ public class MavenPlugin extends AbstractLanguagePlugin {
     public RunResult runTests(Path path) {
         CompileResult compileResult = buildMaven(path);
 
-        if (compileResult.compileResult != 0) {
+        if (compileResult.getStatusCode() != 0) {
             Map<String, byte[]> logs = new HashMap<>();
-            logs.put(SpecialLogs.STDOUT, compileResult.output.toByteArray());
-            logs.put(SpecialLogs.STDERR, compileResult.err.toByteArray());
+            logs.put(SpecialLogs.STDOUT, compileResult.getStdout());
+            logs.put(SpecialLogs.STDERR, compileResult.getStderr());
 
             return new RunResult(RunResult.Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
-                    ImmutableMap.copyOf(logs));
+                ImmutableMap.copyOf(logs));
         }
 
         return null;
@@ -51,26 +49,13 @@ public class MavenPlugin extends AbstractLanguagePlugin {
 
     protected CompileResult buildMaven(Path path) {
         MavenCli maven = new MavenCli();
-        String[] args = {"clean", "compile"};
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
-        int compileResult = maven.doMain(args, path.toAbsolutePath().toString(), new PrintStream(outBuf), new PrintStream(errBuf));
+        int compileResult = maven.doMain(new String[]{"clean", "compile"}, path.toAbsolutePath().toString(),
+            new PrintStream(outBuf), new PrintStream(errBuf));
 
-        return new CompileResult(compileResult, outBuf, errBuf);
+        return new CompileResult(compileResult, outBuf.toByteArray(), errBuf.toByteArray());
     }
-
-    protected class CompileResult {
-        public CompileResult(int compileResult, ByteArrayOutputStream output, ByteArrayOutputStream err) {
-            this.compileResult = compileResult;
-            this.output = output;
-            this.err = err;
-        }
-
-        public int compileResult;
-        public ByteArrayOutputStream output;
-        public ByteArrayOutputStream err;
-    }
-
 }

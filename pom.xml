@@ -41,6 +41,7 @@
                     <maxmem>256m</maxmem>
                     <!-- aggregated reports for multi-module projects -->
                     <aggregate>true</aggregate>
+                    <check/>
                 </configuration>
             </plugin>
             <plugin>
@@ -78,7 +79,6 @@
             </plugin>
         </plugins>
     </build>
-
     <modules>
         <module>tmc-langs-framework</module>
         <!-- TODO: add plugins and support libraries here -->

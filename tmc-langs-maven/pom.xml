@@ -26,11 +26,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
-            <artifactId>maven-embedder</artifactId>
-            <version>3.2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
             <artifactId>maven-aether-provider</artifactId>
             <version>3.2.5</version>
         </dependency>
@@ -62,7 +57,7 @@
             <version>14.0</version>
             <type>jar</type>
         </dependency>
-        
+
         <!-- Connector dependecies -->
         <dependency>
             <groupId>org.eclipse.aether</groupId>
@@ -84,7 +79,7 @@
             <artifactId>wagon-provider-api</artifactId>
             <version>2.8</version>
         </dependency>
-        
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>

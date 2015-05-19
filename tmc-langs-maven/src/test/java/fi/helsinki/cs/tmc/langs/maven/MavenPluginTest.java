@@ -5,12 +5,16 @@ import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.maven.shared.invoker.MavenInvocationException;
 
 import static org.junit.Assert.*;
 
@@ -46,13 +50,13 @@ public class MavenPluginTest {
     }
 
     @Test
-    public void testPassingMavenBuild() throws IOException {
+    public void testPassingMavenBuild() throws IOException, MavenInvocationException {
         CompileResult result = mavenPlugin.buildMaven(TestUtils.getPath(getClass(), "maven_exercise"));
         assertEquals("Compile status should be 0 when build passes", 0, result.getStatusCode());
     }
 
     @Test
-    public void testFailingMavenBuild() throws IOException {
+    public void testFailingMavenBuild() throws IOException, MavenInvocationException {
         CompileResult result = mavenPlugin.buildMaven(TestUtils.getPath(getClass(), "failing_maven_exercise"));
         assertEquals("Compile status should be 1 when build fails", 1, result.getStatusCode());
     }
@@ -61,5 +65,63 @@ public class MavenPluginTest {
     public void testRunTestsWhenBuildFailing() {
         RunResult runResult = mavenPlugin.runTests(TestUtils.getPath(getClass(), "failing_maven_exercise"));
         assertEquals(RunResult.Status.COMPILE_FAILED, runResult.status);
+    }
+    
+    @Test
+    public void testMavenProjectWithFailingTestsCompilesAndFailsTests() {
+        Path path = TestUtils.getPath(getClass(), "maven_exercise");
+        RunResult result = mavenPlugin.runTests(path);
+        
+        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+    }
+    
+    @Test
+    public void testFailingMavenProjectHasOneFailedTest() {
+        Path path = TestUtils.getPath(getClass(), "maven_exercise");
+        RunResult result = mavenPlugin.runTests(path);
+        
+        assertEquals(1, result.testResults.size());
+        assertEquals(false, result.testResults.get(0).passed);
+    }
+    
+    @Test
+    public void testFailingMavenProjectHasCorrectError() {
+        Path path = TestUtils.getPath(getClass(), "maven_exercise");
+        RunResult result = mavenPlugin.runTests(path);
+        
+        assertEquals("ComparisonFailure: expected:\u003c[Hello Maven!\n]\u003e but was:\u003c[]\u003e", result.testResults.get(0).errorMessage);
+    }
+    
+    @Test
+    public void testFailingMavenProjectHasStackTrace() {
+        Path path = TestUtils.getPath(getClass(), "maven_exercise");
+        RunResult result = mavenPlugin.runTests(path);
+        
+        assertTrue(result.testResults.get(0).backtrace.size() > 0);
+    }
+    
+    @Test
+    public void testMavenProjectWithPassingTestsCompilesAndPassesTests() {
+        Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
+        RunResult result = mavenPlugin.runTests(path);
+        
+        assertEquals(RunResult.Status.PASSED, result.status);
+    }
+    
+    @Test
+    public void testPassingMavenProjectHasOnePassingTest() {
+        Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
+        RunResult result = mavenPlugin.runTests(path);
+        
+        assertEquals(1, result.testResults.size());
+        assertEquals(true, result.testResults.get(0).passed);
+    }
+    
+    @Test
+    public void testPassingMavenProjectHasNoError() {
+        Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
+        RunResult result = mavenPlugin.runTests(path);
+        
+        assertEquals("", result.testResults.get(0).errorMessage);
     }
 }

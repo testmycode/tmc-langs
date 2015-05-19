@@ -14,7 +14,7 @@ public class TestRunnerTestSubject {
 
     @Test
     public void failingTestCase() {
-        fail("too bad"); // This must be on line 16 of the source file, or the test must be updated.
+        fail("too bad"); // This must be on line 17 of the source file, or the test must be updated.
     }
 }
 

@@ -11,10 +11,10 @@ import java.util.List;
 
 public class ExerciseBuilder {
 
-    private String beginSolution = "// BEGIN SOLUTION";
-    private String endSolution = "// END SOLUTION";
-    private String stubMarker = "// STUB:";
-    private String sourceFolderName = "src";
+    private final String beginSolution = "// BEGIN SOLUTION";
+    private final String endSolution = "// END SOLUTION";
+    private final String stubMarker = "// STUB:";
+    private final String sourceFolderName = "src";
     private final Charset charset = StandardCharsets.UTF_8;
 
     /**

@@ -1,7 +1,7 @@
-
 package fi.helsinki.cs.tmc.langs;
 
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,9 +1,11 @@
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.collect.ImmutableList;
+
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+
 import org.junit.Test;
 
 import java.io.File;

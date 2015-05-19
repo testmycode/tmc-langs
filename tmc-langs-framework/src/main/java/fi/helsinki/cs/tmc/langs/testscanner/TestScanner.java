@@ -1,11 +1,11 @@
 package fi.helsinki.cs.tmc.langs.testscanner;
 
 import com.google.common.base.Optional;
+
 import fi.helsinki.cs.tmc.langs.ClassPath;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 
-import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TestScanner {
+
     private JavaCompiler compiler;
     private StandardJavaFileManager fileManager;
 

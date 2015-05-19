@@ -1,9 +1,8 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.TestResult;
+
 import org.junit.Test;
 
 import java.io.File;

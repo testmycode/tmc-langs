@@ -2,11 +2,13 @@ package fi.helsinki.cs.tmc.langs.testscanner;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+
 import fi.helsinki.cs.tmc.langs.ClassPath;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 

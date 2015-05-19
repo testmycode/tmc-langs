@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.nio.file.Path;
@@ -119,7 +120,8 @@ public interface LanguagePlugin {
      * Run checkstyle or similar plugin to project if applicable
      *
      * @param path The path to the exercise directory.
-     * @return Validation result  of the checkstyle ran, or null if not applicable
+     * @return Validation result of the checkstyle ran, or null if not
+     * applicable
      */
     public ValidationResult checkCodeStyle(Path path);
 }

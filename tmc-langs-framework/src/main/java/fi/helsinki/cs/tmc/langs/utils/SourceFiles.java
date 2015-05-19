@@ -1,13 +1,13 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class SourceFiles {
+
     private List<File> sourceFiles;
 
     public SourceFiles(Path... paths) {

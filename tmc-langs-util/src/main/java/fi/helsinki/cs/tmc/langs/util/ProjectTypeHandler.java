@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.util;
 
-
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
 
@@ -28,7 +27,8 @@ public class ProjectTypeHandler {
     }
 
     /**
-     * Return the LanguagePlugin that is responsible for the exercise at the given path.
+     * Return the LanguagePlugin that is responsible for the exercise at the
+     * given path.
      *
      * @param path The path to the exercise directory.
      * @return LanguagePlugin that is responsible for the exercise.

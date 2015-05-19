@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.testrunner;
 
 import fi.helsinki.cs.tmc.langs.ClassPath;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -21,7 +22,7 @@ public class TestRunnerMain {
 
     public void run(String testDir, ClassPath classPath,
             String resultsDir, TestCaseList cases) throws IOException {
-        
+
         resultsFilename = resultsDir;
         testClassFilename = testDir;
         testClassPath = classPath;
@@ -36,16 +37,16 @@ public class TestRunnerMain {
     }
 
     private ClassLoader getTestClassLoader() {
-        try {   
+        try {
             URL[] urls = new URL[testClassPath.getPaths().size()];
             int i = 0;
             for (Path path : testClassPath.getPaths()) {
                 urls[i] = new File(path.toString()).toURI().toURL();
                 i++;
             }
-            
+
             return new URLClassLoader(urls);
-            
+
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Invalid test class dir: " + testClassFilename);
         }

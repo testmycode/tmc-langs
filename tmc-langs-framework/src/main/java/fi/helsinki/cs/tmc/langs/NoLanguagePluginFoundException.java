@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs;
 
-public class NoLanguagePluginFoundException extends Exception{
+public class NoLanguagePluginFoundException extends Exception {
+
     public NoLanguagePluginFoundException(String message) {
         super(message);
     }

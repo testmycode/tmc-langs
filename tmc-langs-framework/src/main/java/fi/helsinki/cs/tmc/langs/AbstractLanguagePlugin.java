@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.collect.ImmutableList;
+
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
@@ -78,7 +79,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * Search a directory and its subdirectories for build files. If a directory
      * contains a build file, the directory is added to the list.
      *
-     * @param file        The current file path to search in
+     * @param file The current file path to search in
      * @param listBuilder
      * @return a list of all directories that contain build files for this
      * language.

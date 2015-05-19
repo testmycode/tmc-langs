@@ -1,10 +1,11 @@
 package fi.helsinki.cs.tmc.langs.testrunner;
 
 import fi.helsinki.cs.tmc.langs.testrunner.TestCase.Status;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
+
+import static org.junit.Assert.*;
 
 public class TestCaseTest {
 

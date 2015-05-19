@@ -1,11 +1,13 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
 import com.google.common.collect.ImmutableList;
+
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
 import org.junit.After;
 import org.junit.Test;
 
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.*;

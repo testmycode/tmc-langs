@@ -1,13 +1,17 @@
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
+
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public class ExerciseBuilderTest {
@@ -38,9 +42,9 @@ public class ExerciseBuilderTest {
         assertFileLines(expectedFolder, outputFolder);
 
     }
-    
+
     private String getFileName(String parentDir, File file) {
-        return file.getAbsolutePath().substring(parentDir.length()+1);
+        return file.getAbsolutePath().substring(parentDir.length() + 1);
     }
 
     private void assertFileLines(File expectedFolder, File outputFolder) throws IOException {

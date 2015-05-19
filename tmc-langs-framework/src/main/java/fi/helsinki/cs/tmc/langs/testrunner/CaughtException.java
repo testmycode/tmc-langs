@@ -4,14 +4,15 @@ package fi.helsinki.cs.tmc.langs.testrunner;
  * Serializable form of an exception.
  */
 public class CaughtException implements Cloneable {
+
     public String className; // Fully qualified, not null
     public String message; // May be null
     public StackTraceElement[] stackTrace;
     public CaughtException cause; // May be null
-    
+
     public CaughtException() {
     }
-    
+
     public CaughtException(Throwable ex) {
         this.className = ex.getClass().getName();
         this.message = ex.getMessage();

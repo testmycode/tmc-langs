@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
  * A description of an exercise.
  */
 public final class ExerciseDesc {
+
     /**
      * The name of the exercise to be shown to the user.
      *

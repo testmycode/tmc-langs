@@ -3,10 +3,12 @@ package fi.helsinki.cs.tmc.langs.testrunner;
 import org.junit.runner.notification.Failure;
 
 public class TestCase {
+
     public enum Status {
+
         PASSED, FAILED, RUNNING, NOT_STARTED
     }
-    
+
     public String className;
     public String methodName;
     public String[] pointNames;
@@ -45,18 +47,18 @@ public class TestCase {
     public void testFailed(Failure f) {
         this.message = failureMessage(f);
         this.status = Status.FAILED;
-        
+
         Throwable ex = f.getException();
         if (ex != null) {
             this.exception = new CaughtException(ex);
         }
     }
-    
+
     private String failureMessage(Failure f) {
         if (f.getException() == null) { // Not sure if this is possible
             return null;
         }
-        
+
         String exceptionClass = f.getException().getClass().getSimpleName();
         String exMsg = f.getException().getMessage();
         if (exceptionClass.equals("AssertionError")) {

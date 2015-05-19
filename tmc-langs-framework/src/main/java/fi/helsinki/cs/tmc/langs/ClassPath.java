@@ -1,4 +1,3 @@
-
 package fi.helsinki.cs.tmc.langs;
 
 import com.google.common.base.Throwables;
@@ -20,7 +19,7 @@ public class ClassPath {
     private List<Path> subPaths = new ArrayList<>();
 
     public ClassPath(Path... paths) {
-        for(Path path : paths) {
+        for (Path path : paths) {
             add(path);
         }
     }
@@ -42,7 +41,8 @@ public class ClassPath {
     }
 
     /**
-     * Crawl through directories and add every directory and .jar file to the classpath.
+     * Crawl through directories and add every directory and .jar file to the
+     * classpath.
      *
      * @param basePath Directory where to begin the search.
      */

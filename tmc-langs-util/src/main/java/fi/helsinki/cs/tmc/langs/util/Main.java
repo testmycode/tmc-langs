@@ -21,14 +21,14 @@ public class Main {
     final static String OUTPUT_PATH = "outputPath";
     private static TaskExecutor executor = new TaskExecutorImpl();
     final public static String HELP_TEXT = "\n"
-        + " Usage: Main <command> [<command-arguments>] \n\n"
-        + " Commands:\n"
-        + " checkstyle <exercise path> <output path>     Run checkstyle or similar plugin to project if applicable.\n"
-        + " help                                         Display help information.\n"
-        + " prepare-solution <exercise path>             Prepare a presentable solution from the original.\n"
-        + " prepare-stub <exercise path>                 Prepare a stub exercise from the original.\n"
-        + " run-tests <exercise path> <output path>      Run the tests for the exercise.\n"
-        + " scan-exercise <exercise path> <output path>  Produce an exercise description of an exercise directory.";
+            + " Usage: Main <command> [<command-arguments>] \n\n"
+            + " Commands:\n"
+            + " checkstyle <exercise path> <output path>     Run checkstyle or similar plugin to project if applicable.\n"
+            + " help                                         Display help information.\n"
+            + " prepare-solution <exercise path>             Prepare a presentable solution from the original.\n"
+            + " prepare-stub <exercise path>                 Prepare a stub exercise from the original.\n"
+            + " run-tests <exercise path> <output path>      Run the tests for the exercise.\n"
+            + " scan-exercise <exercise path> <output path>  Produce an exercise description of an exercise directory.";
 
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
@@ -61,7 +61,7 @@ public class Main {
             printHelpAndExit();
         } else if (!pathsCount.equals(args.length - 1)) {
             System.err.println("ERROR: wrong argument count for " + command
-                + " expected " + pathsCount + " got " + (args.length - 1));
+                    + " expected " + pathsCount + " got " + (args.length - 1));
             printHelpAndExit();
         }
 

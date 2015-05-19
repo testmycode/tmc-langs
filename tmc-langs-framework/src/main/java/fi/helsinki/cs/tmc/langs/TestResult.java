@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
  * The result of a single test case.
  */
 public class TestResult {
+
     /**
      * The full name of the test.
      *

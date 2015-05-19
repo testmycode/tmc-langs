@@ -1,10 +1,10 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.testrunner.TestCaseList;
@@ -12,6 +12,7 @@ import fi.helsinki.cs.tmc.langs.testrunner.TestRunnerMain;
 import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -57,7 +58,7 @@ public class AntPlugin extends AbstractLanguagePlugin {
 
     private RunResult getResults(Status statusCode, CompileResult compileResult) {
         return new RunResult(statusCode, ImmutableList.copyOf(new ArrayList<TestResult>()),
-            new ImmutableMap.Builder<String, byte[]>()
+                new ImmutableMap.Builder<String, byte[]>()
                 .put(SpecialLogs.STDOUT, compileResult.getStdout())
                 .put(SpecialLogs.STDERR, compileResult.getStderr()).build());
     }
@@ -76,9 +77,9 @@ public class AntPlugin extends AbstractLanguagePlugin {
         try {
             TestRunnerMain runner = new TestRunnerMain();
             runner.run(path.toString(),
-                generateClassPath(path),
-                path.toString() + resultsFile,
-                cases);
+                    generateClassPath(path),
+                    path.toString() + resultsFile,
+                    cases);
             cases.writeToJsonFile(resultFile);
         } catch (IOException ex) {
             Logger.getLogger(AntPlugin.class.getName()).log(Level.SEVERE, null, ex);
@@ -125,16 +126,16 @@ public class AntPlugin extends AbstractLanguagePlugin {
             buildProject.fireBuildFinished(null);
 
             return new CompileResult(0,
-                Files.readAllBytes(buildLog.toPath()),
-                Files.readAllBytes(errorLog.toPath()));
+                    Files.readAllBytes(buildLog.toPath()),
+                    Files.readAllBytes(errorLog.toPath()));
 
         } catch (BuildException e) {
             try {
                 buildProject.fireBuildFinished(e);
 
                 return new CompileResult(1,
-                    Files.readAllBytes(buildLog.toPath()),
-                    Files.readAllBytes(errorLog.toPath()));
+                        Files.readAllBytes(buildLog.toPath()),
+                        Files.readAllBytes(errorLog.toPath()));
             } catch (IOException ex) {
                 throw Throwables.propagate(e);
             }

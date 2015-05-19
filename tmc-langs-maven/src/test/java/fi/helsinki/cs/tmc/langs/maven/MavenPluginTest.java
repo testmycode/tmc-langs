@@ -66,62 +66,62 @@ public class MavenPluginTest {
         RunResult runResult = mavenPlugin.runTests(TestUtils.getPath(getClass(), "failing_maven_exercise"));
         assertEquals(RunResult.Status.COMPILE_FAILED, runResult.status);
     }
-    
+
     @Test
     public void testMavenProjectWithFailingTestsCompilesAndFailsTests() {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
-        
+
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
     }
-    
+
     @Test
     public void testFailingMavenProjectHasOneFailedTest() {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
-        
+
         assertEquals(1, result.testResults.size());
         assertEquals(false, result.testResults.get(0).passed);
     }
-    
+
     @Test
     public void testFailingMavenProjectHasCorrectError() {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
-        
+
         assertEquals("ComparisonFailure: expected:\u003c[Hello Maven!\n]\u003e but was:\u003c[]\u003e", result.testResults.get(0).errorMessage);
     }
-    
+
     @Test
     public void testFailingMavenProjectHasStackTrace() {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
-        
+
         assertTrue(result.testResults.get(0).backtrace.size() > 0);
     }
-    
+
     @Test
     public void testMavenProjectWithPassingTestsCompilesAndPassesTests() {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
-        
+
         assertEquals(RunResult.Status.PASSED, result.status);
     }
-    
+
     @Test
     public void testPassingMavenProjectHasOnePassingTest() {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
-        
+
         assertEquals(1, result.testResults.size());
         assertEquals(true, result.testResults.get(0).passed);
     }
-    
+
     @Test
     public void testPassingMavenProjectHasNoError() {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
-        
+
         assertEquals("", result.testResults.get(0).errorMessage);
     }
 }

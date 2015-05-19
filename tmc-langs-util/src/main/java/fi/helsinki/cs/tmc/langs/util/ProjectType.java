@@ -7,6 +7,7 @@ import fi.helsinki.cs.tmc.langs.ant.AntPlugin;
  * All the possible project types
  */
 public enum ProjectType {
+
     JAVA_ANT(new AntPlugin());
 
     private final LanguagePlugin languagePlugin;

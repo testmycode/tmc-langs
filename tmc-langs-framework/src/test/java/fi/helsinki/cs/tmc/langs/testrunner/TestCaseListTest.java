@@ -2,12 +2,16 @@ package fi.helsinki.cs.tmc.langs.testrunner;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.TestDesc;
+
 import java.util.ArrayList;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
+
+import static org.junit.Assert.*;
 
 public class TestCaseListTest {
 

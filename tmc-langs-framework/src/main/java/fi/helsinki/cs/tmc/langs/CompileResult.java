@@ -1,15 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fi.helsinki.cs.tmc.langs;
 
-/**
- *
- * @author ville
- */
 public class CompileResult {
+
     private int statusCode;
     private byte[] stdout;
     private byte[] stderr;
@@ -19,7 +11,6 @@ public class CompileResult {
         this.stdout = stdout;
         this.stderr = stderr;
     }
-    
 
     public int getStatusCode() {
         return statusCode;
@@ -44,6 +35,5 @@ public class CompileResult {
     public void setStderr(byte[] stderr) {
         this.stderr = stderr;
     }
-    
-    
+
 }

@@ -82,7 +82,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
 
         TestCaseList cases = runTestscanner(projectRootPath);
         RunResult runResult = runTestrunner(projectRootPath, cases);
-        
+
         return runResult;
     }
 
@@ -97,7 +97,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
                     resultFile.getAbsolutePath(),
                     cases);
             cases.writeToJsonFile(resultFile);
-            
+
         } catch (IOException | MavenInvocationException ex) {
             Logger.getLogger(MavenPlugin.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -106,7 +106,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
         }
         return result;
     }
-    
+
     protected TestCaseList runTestscanner(Path projectRoot) {
         Optional<ExerciseDesc> exercise = scanExercise(projectRoot, "");
         return TestCaseList.fromExerciseDesc(exercise);

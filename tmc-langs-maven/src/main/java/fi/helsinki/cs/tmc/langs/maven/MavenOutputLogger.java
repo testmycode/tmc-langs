@@ -17,14 +17,14 @@ public class MavenOutputLogger implements InvocationOutputHandler {
     public List<String> getLines() {
         return lines;
     }
-    
+
     public byte[] toByteArray() {
         StringBuilder builder = new StringBuilder();
         for (String line : lines) {
             builder.append(line);
             builder.append('\n');
         }
-        
+
         return builder.toString().getBytes();
     }
 }

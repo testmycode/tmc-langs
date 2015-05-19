@@ -1,11 +1,6 @@
 package fi.helsinki.cs.tmc.langs.testrunner;
 
 import fi.helsinki.cs.tmc.langs.PluginImplLanguagePlugin;
-import fi.helsinki.cs.tmc.langs.utils.TestUtils;
-import java.io.File;
-import java.nio.file.Path;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class TestRunnerMainTest {
 

@@ -9,6 +9,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public final class TestUtils {
+
     public static Path getPath(Class clazz, String location) {
         try {
             URL url = clazz.getResource("/" + location);

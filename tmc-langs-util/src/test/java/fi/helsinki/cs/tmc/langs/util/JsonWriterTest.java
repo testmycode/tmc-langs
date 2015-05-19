@@ -44,6 +44,7 @@ public class JsonWriterTest {
     }
 
     private class MockClass {
+
         private ArrayList<Integer> arr = new ArrayList<>();
         private String name;
 

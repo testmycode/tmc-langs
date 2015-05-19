@@ -8,7 +8,9 @@ import com.google.common.collect.ImmutableMap;
  * The result of running an exercise's test suite against a submission.
  */
 public class RunResult {
+
     public static enum Status {
+
         /**
          * The submission and tests compiled and all tests passed.
          */

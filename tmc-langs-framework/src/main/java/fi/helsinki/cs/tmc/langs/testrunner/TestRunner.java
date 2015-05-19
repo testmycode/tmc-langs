@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.testrunner;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
@@ -17,7 +18,7 @@ import org.junit.runners.model.InitializationError;
 public class TestRunner {
 
     private final ClassLoader testClassLoader;
-    
+
     // `cases`, `currentCase` and `threadException` are accessed by the thread
     // and shall be synchronized on `lock`. The thread shall not
     // modify them after it has been interrupted.
@@ -25,16 +26,16 @@ public class TestRunner {
     private TestCaseList cases;
     private int currentCaseIndex;
     private Throwable threadException;
-    
+
     public TestRunner(ClassLoader testClassLoader) {
         this.testClassLoader = testClassLoader;
     }
-    
+
     public synchronized void runTests(TestCaseList cases, int suiteTimeout) {
-        this.cases = cases;                    
+        this.cases = cases;
         this.currentCaseIndex = 0;
         this.threadException = null;
-        
+
         Thread thread = createTestThread();
         thread.start();
         try {
@@ -42,8 +43,8 @@ public class TestRunner {
         } catch (InterruptedException e) {
             // Ok, we'll stop.
         }
-        
-        synchronized(lock) {
+
+        synchronized (lock) {
             thread.interrupt();  // The thread should now no longer mutate anything.
             if (currentCaseIndex < cases.size()) {
                 TestCase currentCase = cases.get(this.currentCaseIndex);
@@ -56,14 +57,15 @@ public class TestRunner {
             }
         }
     }
-    
+
     private Thread createTestThread() {
         Thread thread = new Thread(new TestingRunnable(), "TestRunner thread");
         thread.setDaemon(true);
         return thread;
     }
-    
+
     private class TestingRunnable implements Runnable {
+
         @Override
         public void run() {
             try {
@@ -74,7 +76,7 @@ public class TestRunner {
                 }
             }
         }
-        
+
         private void doRun() {
             TestCase currentCase;
             while (true) {
@@ -120,41 +122,41 @@ public class TestRunner {
                 }
             }
         }
-        
+
         private void runTestCase(TestCase currentCase)
                 throws NoTestsRemainException, InitializationError {
             Class<?> testClass = loadTestClass(currentCase.className);
             ParentRunner<?> runner = createRunner(testClass);
-            
+
             runner.filter(new MethodFilter(currentCase.methodName));
-            
+
             RunNotifier notifier = new RunNotifier();
             notifier.addFirstListener(new TestListener(currentCase));
 
             runner.run(notifier);
         }
-        
+
         private ParentRunner<?> createRunner(Class<?> testClass) throws InitializationError {
             RunWith rw = testClass.getAnnotation(RunWith.class);
             if (rw == null) {
                 return new BlockJUnit4ClassRunner(testClass);
             }
-            
+
             Class<? extends Runner> runnerCls = rw.value();
             if (!ParentRunner.class.isAssignableFrom(runnerCls)) {
                 throw new InitializationError("TMC requires @RunWith to specify a class inheriting org.junit.runners.ParentRunner");
             }
             // Could check the type parameter too, but the code to do that would be very complex it seems.
-            
+
             Constructor<? extends Runner> ctor;
             try {
                 ctor = runnerCls.getConstructor(Class.class);
             } catch (NoSuchMethodException ex) {
                 throw new InitializationError("Runner specified with @RunWith lacks a public constructor taking a test class");
             }
-            
+
             try {
-                return ((ParentRunner<?>)ctor.newInstance(testClass));
+                return ((ParentRunner<?>) ctor.newInstance(testClass));
             } catch (InstantiationException ex) {
                 throw new InitializationError("Failed to initialize test runner specified with @RunWith: " + ex.getMessage());
             } catch (IllegalAccessException ex) {
@@ -164,21 +166,26 @@ public class TestRunner {
             }
         }
     }
-    
-    
+
     private class TestListener extends RunListener {
+
         private final TestCase testCase;
 
         public TestListener(TestCase testCase) {
             this.testCase = testCase;
         }
-        
+
         @Override
-        public void testRunStarted(Description description) throws Exception {}
+        public void testRunStarted(Description description) throws Exception {
+        }
+
         @Override
-        public void testRunFinished(Result result) throws Exception {}
+        public void testRunFinished(Result result) throws Exception {
+        }
+
         @Override
-        public void testIgnored(Description description) throws Exception {}
+        public void testIgnored(Description description) throws Exception {
+        }
 
         @Override
         public void testStarted(Description desc) throws Exception {
@@ -207,14 +214,13 @@ public class TestRunner {
             }
         }
     }
-    
-    
+
     public TestCase getCurrentCase() {
-        synchronized(lock) {
+        synchronized (lock) {
             return cases.get(this.currentCaseIndex);
         }
     }
-    
+
     private Class<?> loadTestClass(String className) {
         try {
             return testClassLoader.loadClass(className);

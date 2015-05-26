@@ -6,8 +6,6 @@ import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import org.apache.maven.shared.invoker.MavenInvocationException;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -15,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class MavenClassPathTest {
 
     @Test
-    public void addsAllDependeciesToClassPath() throws IOException, MavenInvocationException {
+    public void addsAllDependeciesToClassPath() throws IOException {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
         ClassPath classPath = MavenClassPathBuilder.fromProjectBasePath(path);
 

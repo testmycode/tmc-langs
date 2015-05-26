@@ -14,8 +14,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.shared.invoker.MavenInvocationException;
-
 import static org.junit.Assert.*;
 
 public class MavenPluginTest {
@@ -50,13 +48,13 @@ public class MavenPluginTest {
     }
 
     @Test
-    public void testPassingMavenBuild() throws IOException, MavenInvocationException {
+    public void testPassingMavenBuild() throws IOException {
         CompileResult result = mavenPlugin.buildMaven(TestUtils.getPath(getClass(), "maven_exercise"));
         assertEquals("Compile status should be 0 when build passes", 0, result.getStatusCode());
     }
 
     @Test
-    public void testFailingMavenBuild() throws IOException, MavenInvocationException {
+    public void testFailingMavenBuild() throws IOException {
         CompileResult result = mavenPlugin.buildMaven(TestUtils.getPath(getClass(), "failing_maven_exercise"));
         assertEquals("Compile status should be 1 when build fails", 1, result.getStatusCode());
     }

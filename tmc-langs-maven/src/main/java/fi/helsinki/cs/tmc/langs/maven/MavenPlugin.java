@@ -11,23 +11,19 @@ import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.cli.MavenCli;
 
 public class MavenPlugin extends AbstractLanguagePlugin {
 
@@ -59,7 +55,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
         ClassPath classPath;
         try {
             classPath = MavenClassPathBuilder.fromProjectBasePath(path);
-        } catch (MavenInvocationException | IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(MavenPlugin.class.getName()).log(Level.SEVERE, null, ex);
             return Optional.absent();
         }
@@ -70,14 +66,9 @@ public class MavenPlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path projectRootPath) {
-        try {
-            CompileResult compileResult = buildMaven(projectRootPath);
-            if (compileResult.getStatusCode() != 0) {
-                return runResultFromFailedCompilation(compileResult);
-            }
-        } catch (MavenInvocationException ex) {
-            Logger.getLogger(MavenPlugin.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+        CompileResult compileResult = buildMaven(projectRootPath);
+        if (compileResult.getStatusCode() != 0) {
+            return runResultFromFailedCompilation(compileResult);
         }
 
         TestCaseList cases = runTestscanner(projectRootPath);
@@ -98,7 +89,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
                     cases);
             cases.writeToJsonFile(resultFile);
 
-        } catch (IOException | MavenInvocationException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(MavenPlugin.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             result = resultParser.parseTestResult(resultFile);
@@ -112,7 +103,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
         return TestCaseList.fromExerciseDesc(exercise);
     }
 
-    protected ClassPath getTestClassPathForProject(Path projectRoot) throws IOException, MavenInvocationException {
+    protected ClassPath getTestClassPathForProject(Path projectRoot) throws IOException {
         ClassPath testClassPath = MavenClassPathBuilder.fromProjectBasePath(projectRoot);
         testClassPath.add(Paths.get(projectRoot.toString() + File.separatorChar + "target" + File.separatorChar + "classes"));
         testClassPath.add(Paths.get(projectRoot.toString() + File.separatorChar + "target" + File.separatorChar + "test-classes"));
@@ -128,26 +119,15 @@ public class MavenPlugin extends AbstractLanguagePlugin {
                 ImmutableMap.copyOf(logs));
     }
 
-    protected CompileResult buildMaven(Path path) throws MavenInvocationException {
-        MavenOutputLogger err = new MavenOutputLogger();
-        MavenOutputLogger out = new MavenOutputLogger();
+    protected CompileResult buildMaven(Path path) {
+        MavenCli maven = new MavenCli();
 
-        int result = runMaven(path, out, err, "clean", "compile", "test-compile");
+        ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
+        ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
-        return new CompileResult(result, out.toByteArray(), err.toByteArray());
-    }
+        int compileResult = maven.doMain(new String[]{"clean", "compile", "test-compile"}, path.toAbsolutePath().toString(),
+                new PrintStream(outBuf), new PrintStream(errBuf));
 
-    protected int runMaven(Path projectRoot, MavenOutputLogger outputLogger, MavenOutputLogger errorLogger, String... goals) throws MavenInvocationException {
-        InvocationRequest request = new DefaultInvocationRequest();
-        request.setPomFile(new File(projectRoot.toString() + POM_LOCATION));
-        request.setGoals(new ArrayList<>(Arrays.asList(goals)));
-        request.setErrorHandler(errorLogger);
-        request.setOutputHandler(outputLogger);
-        request.setShowErrors(true);
-
-        Invoker invoker = new DefaultInvoker();
-        InvocationResult result = invoker.execute(request);
-
-        return result.getExitCode();
+        return new CompileResult(compileResult, outBuf.toByteArray(), errBuf.toByteArray());
     }
 }

@@ -18,7 +18,7 @@ public class ProjectTypeHandler {
      */
     static ProjectType getProjectType(Path path) throws NoLanguagePluginFoundException {
         for (ProjectType type : ProjectType.values()) {
-            if (type.getLanguagePlugin().scanExercise(path, "") != null) {
+            if (type.getLanguagePlugin().scanExercise(path, "").isPresent()) {
                 return type;
             }
         }

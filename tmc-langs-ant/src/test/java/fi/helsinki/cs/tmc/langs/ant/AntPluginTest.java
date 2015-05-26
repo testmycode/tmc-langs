@@ -65,7 +65,7 @@ public class AntPluginTest {
 
     @Test
     public void testScanExerciseReturnsNullWhenWrongProjectType() {
-        assertNull(antPlugin.scanExercise(TestUtils.getPath(getClass(), "non_ant_project"), "Dummy"));
+        assertFalse(antPlugin.scanExercise(TestUtils.getPath(getClass(), "non_ant_project"), "Dummy").isPresent());
     }
 
     @Test

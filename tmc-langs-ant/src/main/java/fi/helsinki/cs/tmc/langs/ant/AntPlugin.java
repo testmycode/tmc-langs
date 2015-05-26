@@ -42,7 +42,7 @@ public class AntPlugin extends AbstractLanguagePlugin {
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         if (!isExerciseTypeCorrect(path)) {
-            return null;
+            return Optional.absent();
         }
 
         TestScanner scanner = new TestScanner();

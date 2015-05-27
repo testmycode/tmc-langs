@@ -43,7 +43,7 @@ public class TestScanner {
                 fileManager.getJavaFileObjectsFromFiles(sourceFiles.getSources()));
 
         TestMethodAnnotationProcessor processor = new TestMethodAnnotationProcessor();
-        task.setProcessors(Arrays.asList(processor));
+        task.setProcessors(Collections.singletonList(processor));
         if (!task.call()) {
             throw new RuntimeException("Compilation failed");
         }

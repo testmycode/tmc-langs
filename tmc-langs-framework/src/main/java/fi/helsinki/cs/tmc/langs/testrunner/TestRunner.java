@@ -39,7 +39,7 @@ public class TestRunner {
         Thread thread = createTestThread();
         thread.start();
         try {
-            thread.join(suiteTimeout * 1000l);
+            thread.join(suiteTimeout * 1000L);
         } catch (InterruptedException e) {
             // Ok, we'll stop.
         }

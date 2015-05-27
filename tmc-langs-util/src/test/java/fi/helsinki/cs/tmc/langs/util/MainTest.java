@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
@@ -11,8 +13,6 @@ import fi.helsinki.cs.tmc.langs.TestDesc;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.Assertion;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import org.mockito.Mockito;
 
@@ -21,7 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.contrib.java.lang.system.Assertion;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 public class MainTest {
 
@@ -32,7 +33,7 @@ public class MainTest {
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     private String expectedMessage = "";
-    private final String HELP_TEXT = Main.HELP_TEXT + "\n";
+    private final String helpText = Main.HELP_TEXT + "\n";
     private final TaskExecutor executor = Mockito.mock(TaskExecutor.class);
     private Main mainClass;
 
@@ -51,7 +52,7 @@ public class MainTest {
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
                 assertEquals("Error output should be clean.", "", mio.getSysErr());
-                assertEquals(HELP_TEXT, mio.getSysOut());
+                assertEquals(helpText, mio.getSysOut());
             }
         });
         Main.main(args);
@@ -66,7 +67,7 @@ public class MainTest {
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
                 assertEquals("Error output should be clean.", "", mio.getSysErr());
-                assertEquals(HELP_TEXT, mio.getSysOut());
+                assertEquals(helpText, mio.getSysOut());
             }
         });
         Main.main(args);
@@ -81,7 +82,7 @@ public class MainTest {
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
                 assertEquals("Error output should be clean.", "", mio.getSysErr());
-                assertEquals(HELP_TEXT, mio.getSysOut());
+                assertEquals(helpText, mio.getSysOut());
             }
         });
         Main.main(args);
@@ -96,7 +97,7 @@ public class MainTest {
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
                 assertEquals("Error output should be clean.", "", mio.getSysErr());
-                assertEquals(HELP_TEXT, mio.getSysOut());
+                assertEquals(helpText, mio.getSysOut());
             }
         });
         Main.main(args);
@@ -106,10 +107,9 @@ public class MainTest {
     public void testScanExercise() throws NoLanguagePluginFoundException {
         final String exercisePath = getTargetPath("arith_funcs");
         final String outputPath = exercisePath + "/checkstyle.txt";
-        String[] args = {"scan-exercise", exercisePath, outputPath};
+
         Mockito.when(executor.scanExercise(Paths.get(exercisePath), "arith_funcs"))
                 .thenReturn(Optional.of(new ExerciseDesc("Name", ImmutableList.copyOf(new ArrayList<TestDesc>()))));
-
         exit.expectSystemExitWithStatus(0);
         exit.checkAssertionAfterwards(new Assertion() {
             @Override
@@ -119,6 +119,7 @@ public class MainTest {
                 assertEquals("Error output should be clean.", "", mio.getSysErr());
             }
         });
+        String[] args = {"scan-exercise", exercisePath, outputPath};
         Main.main(args);
     }
 
@@ -131,7 +132,7 @@ public class MainTest {
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
                 assertEquals("Error output wasn't what was expected", "ERROR: Given test path is not a directory.\n", mio.getSysErr());
-                assertEquals("System output wasn't what was expected", HELP_TEXT, mio.getSysOut());
+                assertEquals("System output wasn't what was expected", helpText, mio.getSysOut());
             }
         });
         Main.main(args);
@@ -145,7 +146,7 @@ public class MainTest {
             @Override
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
-                assertEquals(HELP_TEXT, mio.getSysOut());
+                assertEquals(helpText, mio.getSysOut());
                 assertEquals("ERROR: wrong argument count for scan-exercise expected 2 got 0\n", mio.getSysErr());
             }
         });
@@ -160,7 +161,7 @@ public class MainTest {
             @Override
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
-                assertEquals("System output should contain help text", HELP_TEXT, mio.getSysOut());
+                assertEquals("System output should contain help text", helpText, mio.getSysOut());
                 assertEquals("Error output should contain the error message", "ERROR: wrong argument count for scan-exercise expected 2 got 1\n", mio.getSysErr());
             }
         });

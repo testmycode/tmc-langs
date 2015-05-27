@@ -1,10 +1,9 @@
-
 package fi.helsinki.cs.tmc.langs.testrunner;
+
+import static org.junit.Assert.fail;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.fail;
 
 @Ignore
 public class TestRunnerTestSubject {

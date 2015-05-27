@@ -1,5 +1,8 @@
 package fi.helsinki.cs.tmc.langs.maven;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import fi.helsinki.cs.tmc.langs.CompileResult;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
@@ -13,8 +16,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 public class MavenPluginTest {
 

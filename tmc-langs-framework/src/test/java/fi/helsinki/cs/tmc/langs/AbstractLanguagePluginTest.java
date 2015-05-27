@@ -1,5 +1,8 @@
 package fi.helsinki.cs.tmc.langs;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.ImmutableList;
 
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
@@ -12,8 +15,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 public class AbstractLanguagePluginTest {
 

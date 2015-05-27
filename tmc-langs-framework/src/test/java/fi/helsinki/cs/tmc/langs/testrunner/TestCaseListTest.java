@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.testrunner;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
@@ -10,8 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestCaseListTest {
 

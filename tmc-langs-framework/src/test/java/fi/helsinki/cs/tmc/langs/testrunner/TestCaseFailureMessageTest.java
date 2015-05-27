@@ -1,11 +1,12 @@
 package fi.helsinki.cs.tmc.langs.testrunner;
 
+
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestCaseFailureMessageTest {
 
@@ -16,8 +17,8 @@ public class TestCaseFailureMessageTest {
         this.testCase = new TestCase("foo", "bar", new String[]{"pt1", "pt2"});
     }
 
-    private Failure makeFailure(Throwable t) {
-        return new Failure(Description.EMPTY, t);
+    private Failure makeFailure(Throwable throwable) {
+        return new Failure(Description.EMPTY, throwable);
     }
 
     @Test

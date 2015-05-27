@@ -1,12 +1,12 @@
 package fi.helsinki.cs.tmc.langs.testrunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import com.google.gson.JsonElement;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class StackTraceSerializerTest {
 

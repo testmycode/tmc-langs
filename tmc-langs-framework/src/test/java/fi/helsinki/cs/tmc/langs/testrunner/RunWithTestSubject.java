@@ -1,10 +1,10 @@
 package fi.helsinki.cs.tmc.langs.testrunner;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertTrue;
 
 @Ignore
 @RunWith(MockRunner.class)

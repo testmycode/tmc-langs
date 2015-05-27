@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.maven;
 
+import static org.junit.Assert.assertTrue;
+
 import fi.helsinki.cs.tmc.langs.ClassPath;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
@@ -7,8 +9,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
-
-import static org.junit.Assert.assertTrue;
 
 public class MavenClassPathTest {
 

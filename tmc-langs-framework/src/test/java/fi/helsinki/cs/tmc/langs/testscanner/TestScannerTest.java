@@ -1,5 +1,9 @@
 package fi.helsinki.cs.tmc.langs.testscanner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
@@ -15,8 +19,6 @@ import org.junit.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-
-import static org.junit.Assert.*;
 
 public class TestScannerTest {
 

@@ -1,5 +1,10 @@
 package fi.helsinki.cs.tmc.langs.ant;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.ImmutableList;
 
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
@@ -18,8 +23,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class AntPluginTest {
 

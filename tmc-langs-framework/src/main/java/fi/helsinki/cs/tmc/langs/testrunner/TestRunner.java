@@ -2,8 +2,8 @@ package fi.helsinki.cs.tmc.langs.testrunner;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
-import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
+import org.junit.runner.RunWith;
 import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;

@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.junit.Assert.assertEquals;
 
 public class JsonWriterTest {
 
@@ -35,9 +35,9 @@ public class JsonWriterTest {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Scanner s = new Scanner(outputFile);
-            assertEquals(s.nextLine(), "{\"arr\":[0,1,2,3,4,5,6,7,8,9],\"name\":\"test\"}");
-            s.close();
+            Scanner scanner = new Scanner(outputFile);
+            assertEquals(scanner.nextLine(), "{\"arr\":[0,1,2,3,4,5,6,7,8,9],\"name\":\"test\"}");
+            scanner.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JsonWriterTest.class.getName()).log(Level.SEVERE, null, ex);
         }

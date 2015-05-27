@@ -160,11 +160,6 @@ public class AntPlugin extends AbstractLanguagePlugin {
         return classPath;
     }
 
-    private boolean endorsedLibsExists(Path path) {
-        File endorsedDir = createPath(path, "lib", "endorsed").toFile();
-        return endorsedDir.exists() && endorsedDir.isDirectory();
-    }
-
     private Path createPath(Path basePath, String... subDirs) {
         String path = basePath.toAbsolutePath().toString();
 

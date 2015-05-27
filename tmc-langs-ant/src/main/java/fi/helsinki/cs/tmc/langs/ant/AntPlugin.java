@@ -5,8 +5,14 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import fi.helsinki.cs.tmc.langs.*;
+import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
+import fi.helsinki.cs.tmc.langs.ClassPath;
+import fi.helsinki.cs.tmc.langs.CompileResult;
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
+import fi.helsinki.cs.tmc.langs.SpecialLogs;
+import fi.helsinki.cs.tmc.langs.TestResult;
 import fi.helsinki.cs.tmc.langs.testrunner.TestCaseList;
 import fi.helsinki.cs.tmc.langs.testrunner.TestRunnerMain;
 import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;

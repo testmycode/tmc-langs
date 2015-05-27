@@ -1,10 +1,11 @@
 package fi.helsinki.cs.tmc.langs.maven;
 
 import fi.helsinki.cs.tmc.langs.ClassPath;
-import fi.helsinki.cs.tmc.langs.CompileResult;
+
 import org.apache.maven.cli.MavenCli;
 
 import java.io.ByteArrayOutputStream;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;

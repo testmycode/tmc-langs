@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TestCaseFailureMessageTest {
 

@@ -3,10 +3,10 @@ package fi.helsinki.cs.tmc.langs.maven;
 import fi.helsinki.cs.tmc.langs.ClassPath;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.nio.file.Path;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 

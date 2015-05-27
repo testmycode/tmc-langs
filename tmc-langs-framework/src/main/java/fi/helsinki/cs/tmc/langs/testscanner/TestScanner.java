@@ -6,12 +6,13 @@ import fi.helsinki.cs.tmc.langs.ClassPath;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class TestScanner {
 

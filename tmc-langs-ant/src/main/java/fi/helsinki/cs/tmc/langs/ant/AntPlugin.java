@@ -38,7 +38,7 @@ public class AntPlugin extends AbstractLanguagePlugin {
 
     private final String testDir = File.separatorChar + "test";
     private final String resultsFile = File.separatorChar + "results.txt";
-    private TestResultParser resultParser = new TestResultParser();
+    private final TestResultParser resultParser = new TestResultParser();
 
     @Override
     public String getLanguageName() {

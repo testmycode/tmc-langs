@@ -16,8 +16,8 @@ import javax.tools.ToolProvider;
 
 public class TestScanner {
 
-    private JavaCompiler compiler;
-    private StandardJavaFileManager fileManager;
+    private final JavaCompiler compiler;
+    private final StandardJavaFileManager fileManager;
 
     public TestScanner() {
         compiler = ToolProvider.getSystemJavaCompiler();

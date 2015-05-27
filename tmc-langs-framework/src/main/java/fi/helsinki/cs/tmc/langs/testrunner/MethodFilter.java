@@ -5,7 +5,7 @@ import org.junit.runner.manipulation.Filter;
 
 public class MethodFilter extends Filter {
 
-    private String methodName;
+    private final String methodName;
 
     public MethodFilter(String methodName) {
         this.methodName = methodName;

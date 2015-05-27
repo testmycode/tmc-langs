@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ClassPath {
 
-    private List<Path> subPaths = new ArrayList<>();
+    private final List<Path> subPaths = new ArrayList<>();
 
     public ClassPath(Path... paths) {
         for (Path path : paths) {

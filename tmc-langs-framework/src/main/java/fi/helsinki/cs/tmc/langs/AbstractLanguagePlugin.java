@@ -19,7 +19,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * Exercisebuilder uses an instance because it is somewhat likely that it
      * will need some language specific configuration
      */
-    private ExerciseBuilder exerciseBuilder = new ExerciseBuilder();
+    private final ExerciseBuilder exerciseBuilder = new ExerciseBuilder();
 
     private static final Logger log = Logger.getLogger(AbstractLanguagePlugin.class.getName());
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SourceFiles {
 
-    private List<File> sourceFiles;
+    private final List<File> sourceFiles;
 
     public SourceFiles(Path... paths) {
         sourceFiles = new ArrayList<>();

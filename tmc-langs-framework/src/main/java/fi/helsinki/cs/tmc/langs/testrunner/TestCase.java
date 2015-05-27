@@ -9,9 +9,9 @@ public class TestCase {
         PASSED, FAILED, RUNNING, NOT_STARTED
     }
 
-    public String className;
-    public String methodName;
-    public String[] pointNames;
+    public final String className;
+    public final String methodName;
+    public final String[] pointNames;
     public String message;
     public CaughtException exception;
     public Status status;

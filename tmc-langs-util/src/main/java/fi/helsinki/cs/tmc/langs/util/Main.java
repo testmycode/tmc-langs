@@ -18,8 +18,8 @@ import java.util.logging.Logger;
 
 public class Main {
 
-    final static String EXERCISE_PATH = "exercisePath";
-    final static String OUTPUT_PATH = "outputPath";
+    private static final String EXERCISE_PATH = "exercisePath";
+    private static final String OUTPUT_PATH = "outputPath";
     private static TaskExecutor executor = new TaskExecutorImpl();
     final public static String HELP_TEXT = "\n"
             + " Usage: Main <command> [<command-arguments>] \n\n"

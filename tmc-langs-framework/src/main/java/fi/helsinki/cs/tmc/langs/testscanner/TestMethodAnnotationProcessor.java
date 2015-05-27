@@ -32,7 +32,7 @@ import javax.lang.model.element.TypeElement;
 @SupportedAnnotationTypes(value = {"fi.helsinki.cs.tmc.testrunner.Exercise", "org.junit.Test"})
 class TestMethodAnnotationProcessor extends AbstractProcessor {
 
-    private List<TestDesc> testDescs = new ArrayList<>();
+    private final List<TestDesc> testDescs = new ArrayList<>();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {

@@ -39,7 +39,7 @@ public class MainTest {
     @Before
     public void setUp() {
         mainClass = new Main();
-        mainClass.setExecutor(executor);
+        Main.setExecutor(executor);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class MainTest {
                 assertEquals(HELP_TEXT, mio.getSysOut());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class MainTest {
                 assertEquals(HELP_TEXT, mio.getSysOut());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class MainTest {
                 assertEquals(HELP_TEXT, mio.getSysOut());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class MainTest {
                 assertEquals(HELP_TEXT, mio.getSysOut());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class MainTest {
                 assertEquals("Error output should be clean.", "", mio.getSysErr());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -149,7 +149,7 @@ public class MainTest {
                 assertEquals("ERROR: wrong argument count for scan-exercise expected 2 got 0\n", mio.getSysErr());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class MainTest {
                 assertEquals("Error output should contain the error message", "ERROR: wrong argument count for scan-exercise expected 2 got 1\n", mio.getSysErr());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -182,7 +182,7 @@ public class MainTest {
                 assertEquals("Error output should be empty.", "", mio.getSysErr());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -200,7 +200,7 @@ public class MainTest {
                 assertEquals("Error output should be empty.", "", mio.getSysErr());
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -215,7 +215,7 @@ public class MainTest {
                 Mockito.verify(executor).prepareStub(stubPath);
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     @Test
@@ -230,7 +230,7 @@ public class MainTest {
                 Mockito.verify(executor).prepareSolution(solutionPath);
             }
         });
-        mainClass.main(args);
+        Main.main(args);
     }
 
     /**

@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public class RunResult {
 
-    public static enum Status {
+    public enum Status {
 
         /**
          * The submission and tests compiled and all tests passed.

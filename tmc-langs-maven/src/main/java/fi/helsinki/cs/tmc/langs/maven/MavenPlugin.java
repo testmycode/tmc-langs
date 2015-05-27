@@ -82,7 +82,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
         return runTestrunner(projectRootPath, cases);
     }
 
-    protected RunResult runTestrunner(Path projectRootPath, TestCaseList cases) {
+    private RunResult runTestrunner(Path projectRootPath, TestCaseList cases) {
         File resultFile = new File(projectRootPath.toString() + RESULT_FILE);
         RunResult result;
         try {
@@ -103,7 +103,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
         return result;
     }
 
-    protected TestCaseList runTestscanner(Path projectRoot) {
+    private TestCaseList runTestscanner(Path projectRoot) {
         Optional<ExerciseDesc> exercise = scanExercise(projectRoot, "");
         return TestCaseList.fromExerciseDesc(exercise);
     }
@@ -115,7 +115,7 @@ public class MavenPlugin extends AbstractLanguagePlugin {
         return testClassPath;
     }
 
-    protected RunResult runResultFromFailedCompilation(CompileResult compileResult) {
+    private RunResult runResultFromFailedCompilation(CompileResult compileResult) {
         Map<String, byte[]> logs = new HashMap<>();
         logs.put(SpecialLogs.STDOUT, compileResult.getStdout());
         logs.put(SpecialLogs.STDERR, compileResult.getStderr());

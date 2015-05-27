@@ -39,9 +39,9 @@ public class StackTraceSerializer implements InstanceCreator<StackTraceElement>,
     }
 
     private String getStringOrNull(JsonObject obj, String property) {
-        JsonElement e = obj.get(property);
-        if (e != null && !e.isJsonNull()) {
-            return e.getAsString();
+        JsonElement element = obj.get(property);
+        if (element != null && !element.isJsonNull()) {
+            return element.getAsString();
         } else {
             return null;
         }

@@ -39,10 +39,10 @@ public class TestRunnerMain {
     private ClassLoader getTestClassLoader() {
         try {
             URL[] urls = new URL[testClassPath.getPaths().size()];
-            int i = 0;
+            int index = 0;
             for (Path path : testClassPath.getPaths()) {
-                urls[i] = new File(path.toString()).toURI().toURL();
-                i++;
+                urls[index] = new File(path.toString()).toURI().toURL();
+                index++;
             }
 
             return new URLClassLoader(urls);

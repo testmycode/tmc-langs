@@ -20,10 +20,10 @@ public class TestCaseList extends ArrayList<TestCase> {
 
     public static TestCaseList fromExerciseDesc(Optional<ExerciseDesc> methods) {
         TestCaseList result = new TestCaseList();
-        for (TestDesc m : methods.get().tests) {
+        for (TestDesc method : methods.get().tests) {
 
-            TestCase c = new TestCase(getClassName(m.name), getMethodName(m.name), pointsAsArray(m));
-            result.add(c);
+            TestCase testCase = new TestCase(getClassName(method.name), getMethodName(method.name), pointsAsArray(method));
+            result.add(testCase);
         }
         return result;
     }
@@ -38,12 +38,12 @@ public class TestCaseList extends ArrayList<TestCase> {
         return names[0];
     }
 
-    private static String[] pointsAsArray(TestDesc m) {
-        String[] points = new String[m.points.size()];
+    private static String[] pointsAsArray(TestDesc testDesc) {
+        String[] points = new String[testDesc.points.size()];
 
         int index = 0;
-        for (String thi : m.points) {
-            points[index] = thi;
+        for (String pointName : testDesc.points) {
+            points[index] = pointName;
             index++;
         }
         return points;
@@ -51,9 +51,9 @@ public class TestCaseList extends ArrayList<TestCase> {
 
     public TestCaseList findByMethodName(String methodName) {
         TestCaseList result = new TestCaseList();
-        for (TestCase t : this) {
-            if (t.methodName.equals(methodName)) {
-                result.add(t);
+        for (TestCase testCase : this) {
+            if (testCase.methodName.equals(methodName)) {
+                result.add(testCase);
             }
         }
         return result;
@@ -61,33 +61,33 @@ public class TestCaseList extends ArrayList<TestCase> {
 
     public TestCaseList findByPointName(String pointName) {
         TestCaseList result = new TestCaseList();
-        for (TestCase t : this) {
-            if (Arrays.asList(t.pointNames).contains(pointName)) {
-                result.add(t);
+        for (TestCase testCase : this) {
+            if (Arrays.asList(testCase.pointNames).contains(pointName)) {
+                result.add(testCase);
             }
         }
         return result;
     }
 
     public void writeToJsonFile(File file) throws IOException {
-        Writer w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), "UTF-8");
-        writeToJson(w);
-        w.close();
+        Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), "UTF-8");
+        writeToJson(writer);
+        writer.close();
     }
 
-    private void writeToJson(Writer w) throws IOException {
+    private void writeToJson(Writer writer) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(StackTraceElement.class, new StackTraceSerializer())
                 .create();
-        gson.toJson(this, w);
+        gson.toJson(this, writer);
     }
 
     @Override
     public TestCaseList clone() {
         TestCaseList clone = new TestCaseList();
 
-        for (TestCase t : this) {
-            clone.add(new TestCase(t));
+        for (TestCase testCase : this) {
+            clone.add(new TestCase(testCase));
         }
 
         return clone;

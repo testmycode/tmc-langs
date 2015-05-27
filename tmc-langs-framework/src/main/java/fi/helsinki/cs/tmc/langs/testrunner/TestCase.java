@@ -25,13 +25,18 @@ public class TestCase {
         this.exception = null;
     }
 
-    public TestCase(TestCase aTestCase) {
-        this.methodName = aTestCase.methodName;
-        this.className = aTestCase.className;
-        this.message = aTestCase.message;
-        this.status = aTestCase.status;
-        this.pointNames = aTestCase.pointNames.clone();
-        this.exception = aTestCase.exception.clone();
+    /**
+     * Creates a new TestCase based on the provided TestCase.
+     *
+     * @param testCase TestCase to copy values from
+     */
+    public TestCase(TestCase testCase) {
+        this.methodName = testCase.methodName;
+        this.className = testCase.className;
+        this.message = testCase.message;
+        this.status = testCase.status;
+        this.pointNames = testCase.pointNames.clone();
+        this.exception = testCase.exception.clone();
     }
 
     public void testStarted() {
@@ -44,23 +49,28 @@ public class TestCase {
         }
     }
 
-    public void testFailed(Failure f) {
-        this.message = failureMessage(f);
+    /**
+     * Mark the test as failed.
+     *
+     * @param failure The Failure that caused the test to fail
+     */
+    public void testFailed(Failure failure) {
+        this.message = failureMessage(failure);
         this.status = Status.FAILED;
 
-        Throwable ex = f.getException();
+        Throwable ex = failure.getException();
         if (ex != null) {
             this.exception = new CaughtException(ex);
         }
     }
 
-    private String failureMessage(Failure f) {
-        if (f.getException() == null) { // Not sure if this is possible
+    private String failureMessage(Failure failure) {
+        if (failure.getException() == null) { // Not sure if this is possible
             return null;
         }
 
-        String exceptionClass = f.getException().getClass().getSimpleName();
-        String exMsg = f.getException().getMessage();
+        String exceptionClass = failure.getException().getClass().getSimpleName();
+        String exMsg = failure.getException().getMessage();
         if (exceptionClass.equals("AssertionError")) {
             if (exMsg != null) {
                 return exMsg;

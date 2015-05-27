@@ -36,6 +36,12 @@ public class TestResultParser {
         }
     }
 
+    /**
+     * Parse run results from a JSON string.
+     *
+     * @param resultsJson   A JSON representation of the test results.
+     * @return              Parsed RunResult
+     */
     public RunResult parseTestResult(String resultsJson) {
         List<TestResult> testResults = new ArrayList<>();
         Map<String, byte[]> logs = new HashMap<>();

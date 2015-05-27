@@ -80,9 +80,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * contains a build file, the directory is added to the list.
      *
      * @param file The current file path to search in
-     * @param listBuilder
-     * @return a list of all directories that contain build files for this
-     * language.
+     * @param listBuilder a listBuilder the found exercises should be appended to
+     * @return a list of all directories that contain build files for this language.
      */
     private ImmutableList<Path> searchForExercises(File file, ImmutableList.Builder<Path> listBuilder) {
         Stack<File> stack = new Stack<>();

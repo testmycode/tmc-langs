@@ -16,6 +16,13 @@ public class TestCase {
     public CaughtException exception;
     public Status status;
 
+    /**
+     * Creates a new TestCase with given parameters.
+     *
+     * @param className     Test class' name
+     * @param methodName    Test method's name
+     * @param pointNames    List of point names associated with this method
+     */
     public TestCase(String className, String methodName, String[] pointNames) {
         this.methodName = methodName;
         this.className = className;
@@ -39,10 +46,20 @@ public class TestCase {
         this.exception = testCase.exception.clone();
     }
 
+    /**
+     * Marks the test case as running.
+     */
     public void testStarted() {
         this.status = Status.RUNNING;
     }
 
+    /**
+     * Marks a test as finished.
+     *
+     * <p>
+     * If the test status was previously non-failed, the test is interpreted
+     * as having passed.
+     */
     public void testFinished() {
         if (this.status != Status.FAILED) {
             this.status = Status.PASSED;

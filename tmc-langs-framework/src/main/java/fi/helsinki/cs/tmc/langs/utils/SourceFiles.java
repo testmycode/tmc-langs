@@ -10,6 +10,11 @@ public class SourceFiles {
 
     private final List<File> sourceFiles;
 
+    /**
+     * Creates a new SourceFiles that is initialized with a set of paths.
+     *
+     * @param paths Paths to include
+     */
     public SourceFiles(Path... paths) {
         sourceFiles = new ArrayList<>();
         for (Path path : paths) {
@@ -17,6 +22,11 @@ public class SourceFiles {
         }
     }
 
+    /**
+     * Add a file or directory to the source files.
+     *
+     * @param fileOrDir File or directory to be added
+     */
     public void addSource(File fileOrDir) {
         if (fileOrDir.isDirectory()) {
             for (File entry : fileOrDir.listFiles()) {

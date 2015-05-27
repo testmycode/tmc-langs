@@ -5,7 +5,7 @@ import fi.helsinki.cs.tmc.langs.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.maven.MavenPlugin;
 
 /**
- * All the possible project types
+ * All the possible project types.
  */
 public enum ProjectType {
 

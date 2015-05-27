@@ -157,12 +157,10 @@ public class TestRunner {
 
             try {
                 return ((ParentRunner<?>) ctor.newInstance(testClass));
-            } catch (InstantiationException ex) {
+            } catch (InstantiationException | InvocationTargetException ex) {
                 throw new InitializationError("Failed to initialize test runner specified with @RunWith: " + ex.getMessage());
             } catch (IllegalAccessException ex) {
                 throw new InitializationError(ex);
-            } catch (InvocationTargetException ex) {
-                throw new InitializationError("Failed to initialize test runner specified with @RunWith: " + ex.getMessage());
             }
         }
     }

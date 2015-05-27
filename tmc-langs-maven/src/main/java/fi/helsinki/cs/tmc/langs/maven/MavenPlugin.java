@@ -78,9 +78,8 @@ public class MavenPlugin extends AbstractLanguagePlugin {
         }
 
         TestCaseList cases = runTestscanner(projectRootPath);
-        RunResult runResult = runTestrunner(projectRootPath, cases);
 
-        return runResult;
+        return runTestrunner(projectRootPath, cases);
     }
 
     protected RunResult runTestrunner(Path projectRootPath, TestCaseList cases) {

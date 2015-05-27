@@ -85,7 +85,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * language.
      */
     private ImmutableList<Path> searchForExercises(File file, ImmutableList.Builder<Path> listBuilder) {
-        Stack<File> stack = new Stack();
+        Stack<File> stack = new Stack<>();
         // Push the initial directory onto the stack.
         stack.push(file);
         // Walk the directories that get added onto the stack.

@@ -31,7 +31,7 @@ public interface LanguagePlugin {
      *
      * @return The name of the language supported by this plug-in.
      */
-    public String getLanguageName();
+    String getLanguageName();
 
     /**
      * Returns a list of all directories that contain an exercise in this
@@ -44,7 +44,7 @@ public interface LanguagePlugin {
      * @param basePath The directory to search in.
      * @return A list of subdirectories. Never null.
      */
-    public ImmutableList<Path> findExercises(Path basePath);
+    ImmutableList<Path> findExercises(Path basePath);
 
     /**
      * Produces an exercise description of an exercise directory.
@@ -62,7 +62,7 @@ public interface LanguagePlugin {
      * exercise.
      * @return The exercise description, or Optional absent if none.
      */
-    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName);
+    Optional<ExerciseDesc> scanExercise(Path path, String exerciseName);
 
     /**
      * Runs the tests for the exercise.
@@ -70,7 +70,7 @@ public interface LanguagePlugin {
      * @param path The path to the exercise directory.
      * @return The results of the run. Never null.
      */
-    public RunResult runTests(Path path);
+    RunResult runTests(Path path);
 
     /**
      * Prepares a submission for processing in the sandbox.
@@ -91,7 +91,7 @@ public interface LanguagePlugin {
      * @param destPath A path to a directory where the original exercise has
      * been copied and where parts of the submission are to be copied.
      */
-    public void prepareSubmission(Path submissionPath, Path destPath);
+    void prepareSubmission(Path submissionPath, Path destPath);
 
     /**
      * Prepares a stub exercise from the original.
@@ -103,7 +103,7 @@ public interface LanguagePlugin {
      * @param path A path to a directory where the original exercise has been
      * copied. This method should modify the contents of this directory.
      */
-    public void prepareStub(Path path);
+    void prepareStub(Path path);
 
     /**
      * Prepares a presentable solution from the original.
@@ -114,7 +114,7 @@ public interface LanguagePlugin {
      * @param path A path to a directory where the original exercise has been
      * copied. This method should modify the contents of this directory.
      */
-    public void prepareSolution(Path path);
+    void prepareSolution(Path path);
 
     /**
      * Run checkstyle or similar plugin to project if applicable
@@ -123,5 +123,5 @@ public interface LanguagePlugin {
      * @return Validation result of the checkstyle ran, or null if not
      * applicable
      */
-    public ValidationResult checkCodeStyle(Path path);
+    ValidationResult checkCodeStyle(Path path);
 }

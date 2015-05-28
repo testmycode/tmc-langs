@@ -9,11 +9,16 @@ import fi.helsinki.cs.tmc.langs.utils.TestResultParser;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MakePlugin extends AbstractLanguagePlugin {
+
+    private static final Logger log = Logger.getLogger(MakePlugin.class.getName());
 
     private static final String MAVEN_TEST_RUN_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test";
     private final String testDir = File.separatorChar + "test";
@@ -41,6 +46,15 @@ public class MakePlugin extends AbstractLanguagePlugin {
         String goal = MAVEN_TEST_RUN_GOAL;
         Map<String, String> props = new HashMap<String, String>();
         List<String> jvmOpts = new ArrayList<String>();
+
+        String[] command;
+
+        command = new String[]{projectDir.getAbsolutePath() + File.separatorChar +
+                "test" + File.separatorChar +
+                "test"};
+        log.log(Level.INFO, "Running tests with command {0}",
+                new Object[]{Arrays.deepToString(command)});
+
 
         return null;
     }

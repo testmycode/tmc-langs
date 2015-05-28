@@ -135,5 +135,6 @@
         <module>tmc-langs-util</module>
         <!-- TODO: add plugins and support libraries here -->
         <module>tmc-langs-java</module>
+        <module>tmc-langs-make</module>
     </modules>
 </project>

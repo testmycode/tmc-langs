@@ -99,7 +99,7 @@ public class MakePluginTest {
 
     @Test
     public void testmakeProjectWithPassingTestsCompilesAndPassesTests() {
-        Path path = TestUtils.getPath(getClass(), "passing_make_exercise");
+        Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);
 
         assertEquals(RunResult.Status.PASSED, result.status);
@@ -107,7 +107,7 @@ public class MakePluginTest {
 
     @Test
     public void testPassingmakeProjectHasOnePassingTest() {
-        Path path = TestUtils.getPath(getClass(), "passing_make_exercise");
+        Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);
 
         assertEquals(1, result.testResults.size());
@@ -116,7 +116,7 @@ public class MakePluginTest {
 
     @Test
     public void testPassingmakeProjectHasNoError() {
-        Path path = TestUtils.getPath(getClass(), "passing_make_exercise");
+        Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);
 
         assertEquals("", result.testResults.get(0).errorMessage);

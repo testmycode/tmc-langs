@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.maven;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.CompileResult;

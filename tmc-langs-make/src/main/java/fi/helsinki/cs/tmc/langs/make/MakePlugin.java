@@ -46,13 +46,11 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        final File projectDir = new File(testDir);
+        final File projectDir = new File(String.valueOf(path));
 
         String[] command;
 
-        command = new String[]{projectDir.getAbsolutePath() + File.separatorChar +
-                "test" + File.separatorChar +
-                "test"};
+        command = new String[]{"make", "run-test"};
         log.log(Level.INFO, "Running tests with command {0}",
                 new Object[]{Arrays.deepToString(command)});
 
@@ -66,7 +64,8 @@ public class MakePlugin extends AbstractLanguagePlugin {
             log.log(Level.INFO, "Exception while running tests, kinda wanted. {0}", e.getMessage());
         }
 
-        File resultsFile = new File(projectDir.getAbsolutePath() + "/tmc_test_results.xml");
+        File resultsFile = new File(projectDir.getAbsolutePath() + File.separatorChar + "test" + File.separatorChar +
+                "/tmc_test_results.xml");
 
         log.info("Locating exercise");
 

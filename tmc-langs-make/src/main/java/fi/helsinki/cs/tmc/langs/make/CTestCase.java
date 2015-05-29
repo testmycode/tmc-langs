@@ -1,7 +1,13 @@
 package fi.helsinki.cs.tmc.langs.make;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.TestResult;
 import fi.helsinki.cs.tmc.langs.make.Exercise;
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,7 +49,7 @@ public class CTestCase {
         return false;
     }
 
-    public TestCaseResult createTestCaseResult() {
+    public TestResult getTestResult() {
         String msg = message;
 
         boolean valgrindFailed = failedDueToValgrind(valgrindTrace);
@@ -54,8 +60,8 @@ public class CTestCase {
             msg += " - Failed due to errors in valgrind log; see log below. Try submitting to server, some leaks might be platform dependent";
         }
 
-
-        return new TestCaseResult(name, successful, msg, valgrindTrace, failedOnlyBecauseOfValgrind);
+        return new TestResult(name, successful, ImmutableList.copyOf(new ArrayList<String>()), msg, ImmutableList
+                .copyOf(new ArrayList<String>()));
     }
 
     public String getName() {

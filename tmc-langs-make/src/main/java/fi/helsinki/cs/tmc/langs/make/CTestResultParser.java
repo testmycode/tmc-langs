@@ -43,12 +43,24 @@ public class CTestResultParser {
         this.valgrindOutput = valgrindOutput;
         this.valgrindStrategy = valgrindStrategy;
         this.tests = new ArrayList<CTestCase>();
+        parseTestOutput();
+
     }
 
-    public void parseTestOutput() throws Exception {
-        this.tests = parseTestCases(testResults);
+    public void parseTestOutput() {
+        try {
+            this.tests = parseTestCases(testResults);
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (valgrindOutput != null) {
-            addValgrindOutput();
+            try {
+                addValgrindOutput();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         } else {
             addWarningToValgrindOutput();
         }
@@ -59,19 +71,20 @@ public class CTestResultParser {
         return this.tests;
     }
 
-    public List<TestCaseResult> getTestCaseResults() {
-        log.log(INFO, "Creating TestCaseResults.");
-        List<TestCaseResult> tcaseResults = new ArrayList<TestCaseResult>();
-        for (CTestCase test : tests) {
-            tcaseResults.add(test.createTestCaseResult());
+    public List<TestResult> getTestResults() {
+        ArrayList<TestResult> testResults = new ArrayList<>();
+        for (CTestCase testCase : this.tests) {
+            testResults.add(testCase.getTestResult());
         }
-        log.log(INFO, "Created TestCaseResults.");
-        return tcaseResults;
+        return testResults;
     }
 
     public Status getResultStatus() {
-        for (TestCaseResult result : getTestCaseResults()) {
-            if (!result.isSuccessful()) {
+        if (!testResults.exists()) {
+            return Status.COMPILE_FAILED;
+        }
+        for (TestResult result : getTestResults()) {
+            if (!result.passed) {
                 return Status.TESTS_FAILED;
             }
         }
@@ -113,6 +126,9 @@ public class CTestResultParser {
             String result = node.getAttribute("result");
             String name = node.getElementsByTagName("description").item(0).getTextContent();
             String message = node.getElementsByTagName("message").item(0).getTextContent();
+            if (message.equals("Passed")) {
+                message = "";
+            }
             cases.add(new CTestCase(name, result, message, valgrindStrategy));
         }
         log.log(INFO, "C testcases parsed.");
@@ -212,7 +228,8 @@ public class CTestResultParser {
     }
 
     public RunResult result() {
-        return new RunResult(getResultStatus(), ImmutableList.copyOf(new ArrayList<TestResult>()),
+
+        return new RunResult(getResultStatus(), ImmutableList.copyOf(getTestResults()),
                 new ImmutableMap.Builder<String, byte[]>().build());
     }
 }

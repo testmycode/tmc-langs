@@ -21,5 +21,9 @@ run-main:
 
 run-test:
 	$(MAKE) -C $(TEST_DIR) run
+
+run-test-with-valgrind:
+	$(MAKE) -C $(TEST_DIR) run-valgrind
+
 get-points:
 	$(MAKE) -C $(TEST_DIR) get-points

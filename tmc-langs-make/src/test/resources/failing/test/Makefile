@@ -12,5 +12,9 @@ clean:
 
 run: test
 	./test
+
+run-valgrind: test
+	valgrind --track-origins=yes --leak-check=full --log-file=valgrind.log ./test
+
 get-points:
 	./test --print-available-points

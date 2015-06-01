@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MakePluginTest {
 
@@ -86,10 +87,10 @@ public class MakePluginTest {
 
     @Test
     public void testFailingmakeProjectHasStackTrace() {
-//        Path path = TestUtils.getPath(getClass(), "failing");
-//        RunResult result = makePlugin.runTests(path);
-//
-//        assertTrue(result.testResults.get(0).backtrace.size() > 0);
+        Path path = TestUtils.getPath(getClass(), "failing");
+        RunResult result = makePlugin.runTests(path);
+
+        assertTrue(result.testResults.get(0).backtrace.size() > 3);
     }
 
     @Test

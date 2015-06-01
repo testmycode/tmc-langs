@@ -47,29 +47,42 @@ public class MakePlugin extends AbstractLanguagePlugin {
     @Override
     public RunResult runTests(Path path) {
         final File projectDir = new File(String.valueOf(path));
-
-        String[] command;
-
-        command = new String[]{"make", "run-test"};
-        log.log(Level.INFO, "Running tests with command {0}",
-                new Object[]{Arrays.deepToString(command)});
-
-        ProcessRunner runner = new ProcessRunner(command, projectDir);
+        boolean withValgrind = true;
 
         try {
-            log.info("Preparing to run tests");
-            runner.call();
-            log.info("Running tests completed");
+            runTests(projectDir, withValgrind);
         } catch (Exception e) {
-            log.log(Level.INFO, "Exception while running tests, kinda wanted. {0}", e.getMessage());
+            withValgrind = false;
+
+            try {
+                runTests(projectDir, withValgrind);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
         }
 
+        File valgrindLog = withValgrind ? new File(projectDir.getAbsolutePath() + File.separatorChar + "test" +
+                File.separatorChar + "valgrind.log") : null;
         File resultsFile = new File(projectDir.getAbsolutePath() + File.separatorChar + "test" + File.separatorChar +
                 "/tmc_test_results.xml");
 
         log.info("Locating exercise");
 
-        return new CTestResultParser(resultsFile, null, null).result();
+        return new CTestResultParser(resultsFile, valgrindLog, null).result();
+    }
+
+    private void runTests(File dir, boolean withValgrind) throws Exception {
+        String[] command;
+
+        String target = withValgrind ? "run-test-with-valgrind" : "run-test";
+        command = new String[]{"make", target};
+
+        log.log(Level.INFO, "Running tests with command {0}",
+                new Object[]{Arrays.deepToString(command)});
+
+        ProcessRunner runner = new ProcessRunner(command, dir);
+
+        runner.call();
     }
 
     private ClassPath generateClassPath(Path path) {

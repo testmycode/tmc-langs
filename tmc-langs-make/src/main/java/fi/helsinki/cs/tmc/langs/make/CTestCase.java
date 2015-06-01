@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.make;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -60,8 +61,14 @@ public class CTestCase {
             msg += " - Failed due to errors in valgrind log; see log below. Try submitting to server, some leaks might be platform dependent";
         }
 
+        ArrayList<String> trace = new ArrayList<>();
+
+        if (!successful && valgrindTrace != null) {
+            trace.addAll(Arrays.asList(valgrindTrace.split("\\n")));
+        }
+
         return new TestResult(name, successful, ImmutableList.copyOf(new ArrayList<String>()), msg, ImmutableList
-                .copyOf(new ArrayList<String>()));
+                .copyOf(trace));
     }
 
     public String getName() {

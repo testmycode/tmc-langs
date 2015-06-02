@@ -1,16 +1,13 @@
 package fi.helsinki.cs.tmc.langs.make;
 
+import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.langs.TestResult;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import fi.helsinki.cs.tmc.langs.TestResult;
-import fi.helsinki.cs.tmc.langs.make.Exercise;
-import org.apache.commons.lang3.StringUtils;
 
 public class CTestCase {
 
@@ -19,13 +16,14 @@ public class CTestCase {
     private String name;
     private String result;
     private String message;
-    private String points;
+    private List<String> points;
     private String valgrindTrace;
     private Exercise.ValgrindStrategy valgrindStrategy;
     private boolean checkedForMemoryLeaks;
     private int maxBytesAllocated = -1;
 
-    public CTestCase(String name, String result, String message, String points, String valgrindTrace, Exercise.ValgrindStrategy valgrindStrategy) {
+    public CTestCase(String name, String result, String message, List<String> points, String valgrindTrace, Exercise
+            .ValgrindStrategy valgrindStrategy) {
         this(name);
         this.result = result;
         this.message = message;
@@ -35,8 +33,9 @@ public class CTestCase {
         this.checkedForMemoryLeaks = false;
     }
 
-    public CTestCase(String name, String result, String message, Exercise.ValgrindStrategy valgrindStrategy) {
-        this(name, result, message, null, null, valgrindStrategy);
+    public CTestCase(String name, String result, String message, List<String> points, Exercise.ValgrindStrategy
+            valgrindStrategy) {
+        this(name, result, message, points, null, valgrindStrategy);
     }
 
     public CTestCase(String name) {
@@ -67,7 +66,7 @@ public class CTestCase {
             trace.addAll(Arrays.asList(valgrindTrace.split("\\n")));
         }
 
-        return new TestResult(name, successful, ImmutableList.copyOf(new ArrayList<String>()), msg, ImmutableList
+        return new TestResult(name, successful, ImmutableList.copyOf(points), msg, ImmutableList
                 .copyOf(trace));
     }
 
@@ -95,11 +94,11 @@ public class CTestCase {
         this.message = message;
     }
 
-    public String getPoints() {
+    public List<String> getPoints() {
         return this.points;
     }
 
-    public void setPoints(String points) {
+    public void setPoints(List<String> points) {
         this.points = points;
     }
 

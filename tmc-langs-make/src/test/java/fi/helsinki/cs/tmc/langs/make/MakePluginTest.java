@@ -9,6 +9,7 @@ import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 public class MakePluginTest {
 
@@ -23,36 +24,6 @@ public class MakePluginTest {
     @Test
     public void testGetLanguageName() {
         assertEquals("make", makePlugin.getLanguageName());
-    }
-
-//    @Test
-//    public void testCheckCodeStyle() {
-//        ValidationResult result = makePlugin.checkCodeStyle(TestUtils.getPath(getClass(), "most_errors"));
-//        Map<File, List<ValidationError>> res = result.getValidationErrors();
-//        assertEquals("Should be one erroneous file", 1, res.size());
-//        for (File file : res.keySet()) {
-//            List<ValidationError> errors = res.get(file);
-//            assertEquals("Should return the right amount of errors", 23, errors.size());
-//        }
-//    }
-//
-//    @Test
-//    public void testCheckCodeStyleWithUntestableProject() {
-//        File projectToTest = new File("src/test/resources/arith_funcs/");
-//        ValidationResult result = makePlugin.checkCodeStyle(projectToTest.toPath());
-//        assertNull(result);
-//    }
-
-    @Test
-    public void testPassingmakeBuild() throws IOException {
-        //CompileResult result = makePlugin.buildmake(TestUtils.getPath(getClass(), "failing"));
-        //assertEquals("Compile status should be 0 when build passes", 0, result.getStatusCode());
-    }
-
-    @Test
-    public void testFailingmakeBuild() throws IOException {
-//        CompileResult result = makePlugin.buildmake(TestUtils.getPath(getClass(), "build-failing"));
-//        assertEquals("Compile status should be 1 when build fails", 1, result.getStatusCode());
     }
 
     @Test
@@ -70,7 +41,7 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testFailingmakeProjectHasOneFailedTest() {
+    public void testFailingMakeProjectHasOneFailedTest() {
         Path path = TestUtils.getPath(getClass(), "failing");
         RunResult result = makePlugin.runTests(path);
 
@@ -79,7 +50,7 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testFailingmakeProjectHasCorrectError() {
+    public void testFailingMakeProjectHasCorrectError() {
         Path path = TestUtils.getPath(getClass(), "failing");
         RunResult result = makePlugin.runTests(path);
 
@@ -88,7 +59,7 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testFailingmakeProjectHasStackTrace() {
+    public void testFailingMakeProjectHasStackTrace() {
         Path path = TestUtils.getPath(getClass(), "failing");
         RunResult result = makePlugin.runTests(path);
 
@@ -112,10 +83,27 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testPassingmakeProjectHasNoError() {
+    public void testPassingMakeProjectHasNoError() {
         Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);
 
         assertEquals("", result.testResults.get(0).errorMessage);
+    }
+
+    @Test
+    public void testPassingMakeProjectHasCorrectPoints() {
+        Path path = TestUtils.getPath(getClass(), "passing");
+        RunResult result = makePlugin.runTests(path);
+
+        assertEquals("1.1", result.testResults.get(0).points.get(0));
+        assertEquals(1, result.testResults.get(0).points.size());
+    }
+
+    @Test
+    public void testFailingMakeProjectHasCorrectPoints() {
+        Path path = TestUtils.getPath(getClass(), "failing");
+        RunResult result = makePlugin.runTests(path);
+
+        assertEquals(0, result.testResults.get(0).points.size());
     }
 }

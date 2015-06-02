@@ -70,11 +70,11 @@ public class MakePlugin extends AbstractLanguagePlugin {
         File valgrindLog = withValgrind ? new File(projectDir.getAbsolutePath() + File.separatorChar + "test" +
                 File.separatorChar + "valgrind.log") : null;
         File resultsFile = new File(projectDir.getAbsolutePath() + File.separatorChar + "test" + File.separatorChar +
-                "/tmc_test_results.xml");
+                "tmc_test_results.xml");
 
         log.info("Locating exercise");
 
-        return new CTestResultParser(resultsFile, valgrindLog, null).result();
+        return new CTestResultParser(resultsFile, valgrindLog, null, projectDir).result();
     }
 
     private boolean builds(File dir) {

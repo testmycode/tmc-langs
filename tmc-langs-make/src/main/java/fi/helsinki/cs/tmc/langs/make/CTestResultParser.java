@@ -1,5 +1,19 @@
 package fi.helsinki.cs.tmc.langs.make;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.RunResult;
+import fi.helsinki.cs.tmc.langs.RunResult.Status;
+import fi.helsinki.cs.tmc.langs.TestResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,27 +22,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-import static java.util.logging.Level.INFO;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.RunResult.Status;
-import fi.helsinki.cs.tmc.langs.SpecialLogs;
-import fi.helsinki.cs.tmc.langs.TestResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import static java.util.logging.Level.INFO;
 
 public class CTestResultParser {
     protected static final Logger log = Logger.getLogger(CTestResultParser.class.getName());
@@ -37,14 +39,15 @@ public class CTestResultParser {
     private File valgrindOutput;
     private Exercise.ValgrindStrategy valgrindStrategy;
     private ArrayList<CTestCase> tests;
+    private File projectDir;
 
-    public CTestResultParser(File testResults, File valgrindOutput, Exercise.ValgrindStrategy valgrindStrategy) {
+    public CTestResultParser(File testResults, File valgrindOutput, Exercise.ValgrindStrategy valgrindStrategy, File projectDir) {
         this.testResults = testResults;
         this.valgrindOutput = valgrindOutput;
         this.valgrindStrategy = valgrindStrategy;
         this.tests = new ArrayList<CTestCase>();
+        this.projectDir = projectDir;
         parseTestOutput();
-
     }
 
     public void parseTestOutput() {
@@ -119,6 +122,7 @@ public class CTestResultParser {
 
         doc.getDocumentElement().normalize();
 
+        Map<String, List<String>> idsToPoints = mapIdsToPoints();
         NodeList nodeList = doc.getElementsByTagName("test");
         ArrayList<CTestCase> cases = new ArrayList<CTestCase>();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -126,13 +130,50 @@ public class CTestResultParser {
             String result = node.getAttribute("result");
             String name = node.getElementsByTagName("description").item(0).getTextContent();
             String message = node.getElementsByTagName("message").item(0).getTextContent();
+            String id = node.getElementsByTagName("id").item(0).getTextContent();
+            List<String> points = new ArrayList<>();
             if (message.equals("Passed")) {
                 message = "";
+                points = idsToPoints.get(id);
             }
-            cases.add(new CTestCase(name, result, message, valgrindStrategy));
+
+            CTestCase testCase = new CTestCase(name, result, message, points, valgrindStrategy);
+
+            cases.add(testCase);
         }
         log.log(INFO, "C testcases parsed.");
         return cases;
+    }
+
+    private Map<String, List<String>> mapIdsToPoints() {
+        File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar + "test" + File
+                .separatorChar + "tmc_available_points.txt");
+        Scanner scanner;
+        try {
+            scanner = new Scanner(availablePoints);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return new HashMap<>();
+        }
+
+        Map<String, List<String>> idsToPoints = new HashMap<>();
+        while(scanner.hasNextLine()) {
+            String row = scanner.nextLine();
+            String[] parts = row.split("\\[|\\]| ");
+
+            String key = parts[parts.length - 3];
+            String value = parts[parts.length - 1];
+            addPointsToId(idsToPoints, key, value);
+        }
+
+        return idsToPoints;
+    }
+
+    private void addPointsToId(Map<String, List<String>> idsToPoints, String key, String value) {
+        if (!idsToPoints.containsKey(key)) {
+            idsToPoints.put(key, new ArrayList<String>());
+        }
+        idsToPoints.get(key).add(value);
     }
 
     private void addWarningToValgrindOutput() {

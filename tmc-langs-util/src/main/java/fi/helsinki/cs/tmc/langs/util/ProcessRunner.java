@@ -48,7 +48,9 @@ public class ProcessRunner implements Callable<ProcessResult> {
             throw e;
         }
 
-        return new ProcessResult(statusCode, out.toString(), err.toString());
+        String output = out.toString();
+        String errorOutput = err.toString();
+        return new ProcessResult(statusCode, output, errorOutput);
     }
 
     private String[] makeEnvp(Map<String, String>... envs) {
@@ -87,16 +89,4 @@ public class ProcessRunner implements Callable<ProcessResult> {
         return thread;
     }
 
-}
-
-final class ProcessResult {
-    public final int statusCode;
-    public final String output;
-    public final String errorOutput;
-
-    public ProcessResult(int statusCode, String output, String errorOutput) {
-        this.statusCode = statusCode;
-        this.output = output;
-        this.errorOutput = errorOutput;
-    }
 }

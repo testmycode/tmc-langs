@@ -18,6 +18,8 @@ public class MakePluginTest {
         makePlugin = new MakePlugin();
     }
 
+
+
     @Test
     public void testGetLanguageName() {
         assertEquals("make", makePlugin.getLanguageName());

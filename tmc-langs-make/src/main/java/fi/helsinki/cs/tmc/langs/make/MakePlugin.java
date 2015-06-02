@@ -1,17 +1,18 @@
 package fi.helsinki.cs.tmc.langs.make;
 
 import com.google.common.base.Optional;
-import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
-import fi.helsinki.cs.tmc.langs.ClassPath;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
+import fi.helsinki.cs.tmc.langs.util.ProcessResult;
 import fi.helsinki.cs.tmc.langs.util.ProcessRunner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,6 +50,11 @@ public class MakePlugin extends AbstractLanguagePlugin {
         final File projectDir = new File(String.valueOf(path));
         boolean withValgrind = true;
 
+        if (!builds(projectDir)) {
+            return new RunResult(RunResult.Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
+                    new ImmutableMap.Builder<String, byte[]>().build());
+        }
+
         try {
             runTests(projectDir, withValgrind);
         } catch (Exception e) {
@@ -69,6 +75,23 @@ public class MakePlugin extends AbstractLanguagePlugin {
         log.info("Locating exercise");
 
         return new CTestResultParser(resultsFile, valgrindLog, null).result();
+    }
+
+    private boolean builds(File dir) {
+        String[] command;
+        command = new String[]{"make", "test"};
+        ProcessRunner runner = new ProcessRunner(command, dir);
+
+        try {
+            ProcessResult result = runner.call();
+            int ret = result.statusCode;
+            if (ret != 0) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     private void runTests(File dir, boolean withValgrind) throws Exception {

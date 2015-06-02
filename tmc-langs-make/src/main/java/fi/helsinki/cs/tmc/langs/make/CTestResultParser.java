@@ -198,10 +198,6 @@ public class CTestResultParser {
         scanner.close();
 
         for (int i = 0; i < outputs.length; i++) {
-            if (errors[i] == 0) {
-                // Workaround for a bug where any valgrind output is considered a potential error.
-                outputs[i] = null;
-            }
             tests.get(i).setValgrindTrace(outputs[i]);
         }
     }

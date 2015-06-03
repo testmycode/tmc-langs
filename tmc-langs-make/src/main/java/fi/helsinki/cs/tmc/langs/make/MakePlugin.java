@@ -8,6 +8,7 @@ import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.util.ProcessResult;
 import fi.helsinki.cs.tmc.langs.util.ProcessRunner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
+import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -75,6 +76,11 @@ public class MakePlugin extends AbstractLanguagePlugin {
         log.info("Locating exercise");
 
         return new CTestResultParser(resultsFile, valgrindLog, null, projectDir).result();
+    }
+
+    @Override
+    public ValidationResult checkCodeStyle(Path path) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private boolean builds(File dir) {

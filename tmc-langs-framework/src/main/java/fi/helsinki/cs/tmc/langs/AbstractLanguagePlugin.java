@@ -62,18 +62,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         }
     }
 
-    @Override
-    public ValidationResult checkCodeStyle(Path path) {
-        try {
-            System.out.println(path.toString());
-            CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), new Locale("fi"));
-
-            return runner.run();
-        } catch (TMCCheckstyleException ex) {
-            log.log(Level.SEVERE, "Error running checkstyle:", ex);
-            return null;
-        }
-    }
+    public abstract ValidationResult checkCodeStyle(Path path);
 
     /**
      * Search a directory and its subdirectories for build files. If a directory

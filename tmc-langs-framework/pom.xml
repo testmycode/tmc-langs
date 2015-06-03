@@ -33,21 +33,10 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>fi.helsinki.cs.tmc</groupId>
-            <artifactId>edu-test-utils</artifactId>
-            <version>0.4.2</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>14.0</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>fi.helsinki.cs.tmc</groupId>
-            <artifactId>tmc-junit-runner</artifactId>
-            <version>0.2.5</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

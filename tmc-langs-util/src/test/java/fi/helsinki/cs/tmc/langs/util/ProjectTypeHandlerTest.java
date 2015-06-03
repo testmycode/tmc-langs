@@ -4,10 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
-import fi.helsinki.cs.tmc.langs.ant.AntPlugin;
+import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

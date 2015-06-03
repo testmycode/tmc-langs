@@ -119,9 +119,8 @@
     <modules>
         <module>build-tools</module>
         <module>tmc-langs-framework</module>
-        <!-- TODO: add plugins and support libraries here -->
-        <module>tmc-langs-ant</module>
         <module>tmc-langs-util</module>
-        <module>tmc-langs-maven</module>
+        <!-- TODO: add plugins and support libraries here -->
+        <module>tmc-langs-java</module>
     </modules>
 </project>

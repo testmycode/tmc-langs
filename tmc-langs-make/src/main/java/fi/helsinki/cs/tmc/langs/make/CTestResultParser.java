@@ -56,7 +56,12 @@ public class CTestResultParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //if (getResultStatus())
+
+        Status status = getResultStatus();
+        if (getResultStatus() != Status.TESTS_FAILED) {
+            return;
+        }
+
         if (valgrindOutput != null) {
             try {
                 addValgrindOutput();
@@ -66,7 +71,6 @@ public class CTestResultParser {
         } else {
             addWarningToValgrindOutput();
         }
-
     }
 
     public List<CTestCase> getTestCases() {

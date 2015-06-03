@@ -37,14 +37,12 @@ public class CTestResultParser {
 
     private File testResults;
     private File valgrindOutput;
-    private Exercise.ValgrindStrategy valgrindStrategy;
     private ArrayList<CTestCase> tests;
     private File projectDir;
 
-    public CTestResultParser(File testResults, File valgrindOutput, Exercise.ValgrindStrategy valgrindStrategy, File projectDir) {
+    public CTestResultParser(File testResults, File valgrindOutput, File projectDir) {
         this.testResults = testResults;
         this.valgrindOutput = valgrindOutput;
-        this.valgrindStrategy = valgrindStrategy;
         this.tests = new ArrayList<CTestCase>();
         this.projectDir = projectDir;
         parseTestOutput();
@@ -58,6 +56,7 @@ public class CTestResultParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //if (getResultStatus())
         if (valgrindOutput != null) {
             try {
                 addValgrindOutput();
@@ -137,7 +136,7 @@ public class CTestResultParser {
                 points = idsToPoints.get(id);
             }
 
-            CTestCase testCase = new CTestCase(name, result, message, points, valgrindStrategy);
+            CTestCase testCase = new CTestCase(name, result, message, points);
 
             cases.add(testCase);
         }

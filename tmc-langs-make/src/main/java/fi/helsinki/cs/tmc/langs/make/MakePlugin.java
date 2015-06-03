@@ -75,7 +75,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
         log.info("Locating exercise");
 
-        return new CTestResultParser(resultsFile, valgrindLog, null, projectDir).result();
+        return new CTestResultParser(resultsFile, valgrindLog, projectDir).result();
     }
 
     @Override

@@ -18,24 +18,20 @@ public class CTestCase {
     private String message;
     private List<String> points;
     private String valgrindTrace;
-    private Exercise.ValgrindStrategy valgrindStrategy;
     private boolean checkedForMemoryLeaks;
     private int maxBytesAllocated = -1;
 
-    public CTestCase(String name, String result, String message, List<String> points, String valgrindTrace, Exercise
-            .ValgrindStrategy valgrindStrategy) {
+    public CTestCase(String name, String result, String message, List<String> points, String valgrindTrace) {
         this(name);
         this.result = result;
         this.message = message;
         this.points = points;
         this.valgrindTrace = valgrindTrace;
-        this.valgrindStrategy = valgrindStrategy;
         this.checkedForMemoryLeaks = false;
     }
 
-    public CTestCase(String name, String result, String message, List<String> points, Exercise.ValgrindStrategy
-            valgrindStrategy) {
-        this(name, result, message, points, null, valgrindStrategy);
+    public CTestCase(String name, String result, String message, List<String> points) {
+        this(name, result, message, points, null);
     }
 
     public CTestCase(String name) {
@@ -43,10 +39,7 @@ public class CTestCase {
     }
 
     private boolean failedDueToValgrind(String valgrindTrace) {
-        if (Exercise.ValgrindStrategy.FAIL == valgrindStrategy) {
-            return StringUtils.isNotBlank(valgrindTrace);
-        }
-        return false;
+        return StringUtils.isNotBlank(valgrindTrace);
     }
 
     public TestResult getTestResult() {

@@ -18,8 +18,10 @@ import java.nio.file.Paths;
 public class MavenPlugin extends AbstractJavaPlugin {
 
     private static final String POM_LOCATION = File.separatorChar + "pom.xml";
-    private static final String RESULT_FILE = File.separatorChar + "target" + File.separatorChar + "test_output.txt";
+    private static final String RESULT_FILE = File.separatorChar + "target" + File.separatorChar
+            + "test_output.txt";
     private static final String TEST_FOLDER = File.separatorChar + "src";
+    private static final String TEST_RUNNER_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test";
 
     public MavenPlugin() {
         super(TEST_FOLDER);
@@ -38,8 +40,10 @@ public class MavenPlugin extends AbstractJavaPlugin {
     @Override
     protected ClassPath getProjectClassPath(Path projectRoot) throws IOException {
         ClassPath testClassPath = MavenClassPathBuilder.fromProjectBasePath(projectRoot);
-        testClassPath.add(Paths.get(projectRoot.toString() + File.separatorChar + "target" + File.separatorChar + "classes"));
-        testClassPath.add(Paths.get(projectRoot.toString() + File.separatorChar + "target" + File.separatorChar + "test-classes"));
+        testClassPath.add(Paths.get(projectRoot.toString() + File.separatorChar + "target"
+                + File.separatorChar + "classes"));
+        testClassPath.add(Paths.get(projectRoot.toString() + File.separatorChar + "target"
+                + File.separatorChar + "test-classes"));
         return testClassPath;
     }
 
@@ -50,8 +54,10 @@ public class MavenPlugin extends AbstractJavaPlugin {
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
-        int compileResult = maven.doMain(new String[]{"clean", "compile", "test-compile"}, path.toAbsolutePath().toString(),
-                new PrintStream(outBuf), new PrintStream(errBuf));
+        int compileResult = maven.doMain(new String[]{"clean", "compile", "test-compile"},
+                path.toAbsolutePath().toString(),
+                new PrintStream(outBuf),
+                new PrintStream(errBuf));
 
         return new CompileResult(compileResult, outBuf.toByteArray(), errBuf.toByteArray());
     }
@@ -63,8 +69,10 @@ public class MavenPlugin extends AbstractJavaPlugin {
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
-        int compileResult = maven.doMain(new String[]{"fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test"}, path.toAbsolutePath().toString(),
-                new PrintStream(outBuf), new PrintStream(errBuf));
+        int compileResult = maven.doMain(new String[]{TEST_RUNNER_GOAL},
+                path.toAbsolutePath().toString(),
+                new PrintStream(outBuf),
+                new PrintStream(errBuf));
 
         if (compileResult != 0) {
             throw new TestRunnerException();

@@ -1,9 +1,9 @@
 package fi.helsinki.cs.tmc.langs.java.testscanner;
 
+import fi.helsinki.cs.tmc.langs.TestDesc;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
-import fi.helsinki.cs.tmc.langs.TestDesc;
 
 import org.junit.Test;
 
@@ -39,7 +39,9 @@ class TestMethodAnnotationProcessor extends AbstractProcessor {
         for (Element element : roundEnv.getElementsAnnotatedWith(Test.class)) {
             if (element.getKind() == ElementKind.METHOD) {
                 String methodName = element.getSimpleName().toString();
-                String className = ((TypeElement) (element.getEnclosingElement())).getQualifiedName().toString();
+                String className = ((TypeElement) (element.getEnclosingElement()))
+                        .getQualifiedName()
+                        .toString();
                 List<String> points = pointsOfTestCase(element);
                 if (!points.isEmpty()) {
                     String testName = className + " " + methodName;
@@ -52,7 +54,9 @@ class TestMethodAnnotationProcessor extends AbstractProcessor {
 
     private List<String> pointsOfTestCase(Element method) {
         List<String> pointNames = new ArrayList<>();
-        Optional<String> classAnnotation = getPointsAnnotationValueIfAny(method.getEnclosingElement());
+        Optional<String> classAnnotation = getPointsAnnotationValueIfAny(
+                method.getEnclosingElement()
+        );
         if (classAnnotation.isPresent()) {
             String annotation = classAnnotation.get();
             pointNames.addAll(Arrays.asList(annotation.split(" +")));
@@ -79,7 +83,8 @@ class TestMethodAnnotationProcessor extends AbstractProcessor {
     }
 
     private String getAnnotationValue(AnnotationMirror am) {
-        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> e : am.getElementValues().entrySet()) {
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> e
+                : am.getElementValues().entrySet()) {
             if (e.getKey().getSimpleName().contentEquals("value")) {
                 Object value = e.getValue().getValue();
                 if (value instanceof String) {

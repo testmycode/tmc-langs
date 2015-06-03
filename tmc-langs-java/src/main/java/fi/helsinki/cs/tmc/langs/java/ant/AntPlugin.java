@@ -1,14 +1,14 @@
 package fi.helsinki.cs.tmc.langs.java.ant;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Throwables;
-
+import fi.helsinki.cs.tmc.langs.CompileResult;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
-import fi.helsinki.cs.tmc.langs.CompileResult;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Throwables;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
@@ -28,6 +28,9 @@ public class AntPlugin extends AbstractJavaPlugin {
     private static final String TEST_DIR = File.separatorChar + "test";
     private static final String RESULT_FILE = File.separatorChar + "results.txt";
 
+    /**
+     * Create a new AntPlugin.
+     */
     public AntPlugin() {
         super(TEST_DIR);
     }
@@ -110,8 +113,10 @@ public class AntPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    protected File createRunResultFile(Path projectBasePath) throws TestRunnerException, TestScannerException {
-        Optional<ExerciseDesc> exercise = scanExercise(projectBasePath, projectBasePath.toString() + TEST_DIR);
+    protected File createRunResultFile(Path projectBasePath)
+            throws TestRunnerException, TestScannerException {
+        Optional<ExerciseDesc> exercise = scanExercise(projectBasePath,
+                                                       projectBasePath.toString() + TEST_DIR);
         if (!exercise.isPresent()) {
             throw new TestScannerException();
         }

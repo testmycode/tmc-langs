@@ -2,13 +2,13 @@ package fi.helsinki.cs.tmc.langs.util;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-
 import fi.helsinki.cs.tmc.edutestutils.MockStdio;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.TestDesc;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -109,13 +109,17 @@ public class MainTest {
         final String outputPath = exercisePath + "/checkstyle.txt";
 
         Mockito.when(executor.scanExercise(Paths.get(exercisePath), "arith_funcs"))
-                .thenReturn(Optional.of(new ExerciseDesc("Name", ImmutableList.copyOf(new ArrayList<TestDesc>()))));
+                .thenReturn(Optional.of(new ExerciseDesc("Name",
+                        ImmutableList.copyOf(new ArrayList<TestDesc>()))));
         exit.expectSystemExitWithStatus(0);
         exit.checkAssertionAfterwards(new Assertion() {
             @Override
             public void checkAssertion() throws Exception {
                 Mockito.verify(executor).scanExercise(Paths.get(exercisePath), "arith_funcs");
-                assertEquals("Exercises scanned successfully, results can be found in " + outputPath + "\n", mio.getSysOut());
+                assertEquals("Exercises scanned successfully, results can be found in "
+                        + outputPath
+                        + "\n",
+                        mio.getSysOut());
                 assertEquals("Error output should be clean.", "", mio.getSysErr());
             }
         });
@@ -131,8 +135,12 @@ public class MainTest {
             @Override
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
-                assertEquals("Error output wasn't what was expected", "ERROR: Given test path is not a directory.\n", mio.getSysErr());
-                assertEquals("System output wasn't what was expected", helpText, mio.getSysOut());
+                assertEquals("Error output wasn't what was expected",
+                        "ERROR: Given test path is not a directory.\n",
+                        mio.getSysErr());
+                assertEquals("System output wasn't what was expected",
+                        helpText,
+                        mio.getSysOut());
             }
         });
         Main.main(args);
@@ -147,7 +155,8 @@ public class MainTest {
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
                 assertEquals(helpText, mio.getSysOut());
-                assertEquals("ERROR: wrong argument count for scan-exercise expected 2 got 0\n", mio.getSysErr());
+                assertEquals("ERROR: wrong argument count for scan-exercise expected 2 got 0\n",
+                        mio.getSysErr());
             }
         });
         Main.main(args);
@@ -161,8 +170,12 @@ public class MainTest {
             @Override
             public void checkAssertion() throws Exception {
                 Mockito.verifyZeroInteractions(executor);
-                assertEquals("System output should contain help text", helpText, mio.getSysOut());
-                assertEquals("Error output should contain the error message", "ERROR: wrong argument count for scan-exercise expected 2 got 1\n", mio.getSysErr());
+                assertEquals("System output should contain help text",
+                        helpText,
+                        mio.getSysOut());
+                assertEquals("Error output should contain the error message",
+                        "ERROR: wrong argument count for scan-exercise expected 2 got 1\n",
+                        mio.getSysErr());
             }
         });
         Main.main(args);
@@ -179,7 +192,8 @@ public class MainTest {
             @Override
             public void checkAssertion() throws Exception {
                 Mockito.verify(executor).runTests(Paths.get(exercisePath));
-                assertEquals("Test results can be found in " + outputPath + "\n", mio.getSysOut());
+                assertEquals("Test results can be found in " + outputPath + "\n",
+                        mio.getSysOut());
                 assertEquals("Error output should be empty.", "", mio.getSysErr());
             }
         });
@@ -197,7 +211,8 @@ public class MainTest {
             @Override
             public void checkAssertion() throws Exception {
                 Mockito.verify(executor).runCheckCodeStyle(Paths.get(exercisePath));
-                assertEquals("Codestyle report can be found at " + outputPath + "\n", mio.getSysOut());
+                assertEquals("Codestyle report can be found at " + outputPath + "\n",
+                        mio.getSysOut());
                 assertEquals("Error output should be empty.", "", mio.getSysErr());
             }
         });

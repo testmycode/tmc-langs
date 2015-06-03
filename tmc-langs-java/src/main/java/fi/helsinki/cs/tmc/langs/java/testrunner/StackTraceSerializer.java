@@ -11,7 +11,9 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-public class StackTraceSerializer implements InstanceCreator<StackTraceElement>, JsonSerializer<StackTraceElement>, JsonDeserializer<StackTraceElement> {
+public class StackTraceSerializer implements InstanceCreator<StackTraceElement>,
+        JsonSerializer<StackTraceElement>,
+        JsonDeserializer<StackTraceElement> {
 
     @Override
     public StackTraceElement createInstance(Type type) {
@@ -29,7 +31,9 @@ public class StackTraceSerializer implements InstanceCreator<StackTraceElement>,
     }
 
     @Override
-    public StackTraceElement deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
+    public StackTraceElement deserialize(JsonElement je,
+                                         Type type,
+                                         JsonDeserializationContext jdc) throws JsonParseException {
         JsonObject obj = je.getAsJsonObject();
         String declaringClass = getStringOrNull(obj, "declaringClass");
         String methodName = getStringOrNull(obj, "methodName");

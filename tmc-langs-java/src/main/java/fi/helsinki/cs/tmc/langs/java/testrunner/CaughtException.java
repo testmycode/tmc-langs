@@ -13,6 +13,9 @@ public class CaughtException implements Cloneable {
     public CaughtException() {
     }
 
+    /**
+     * Creates a CaughtException encapsulating the given Throwable.
+     */
     public CaughtException(Throwable ex) {
         this.className = ex.getClass().getName();
         this.message = ex.getMessage();

@@ -60,7 +60,9 @@ public class ExerciseBuilderTest {
             for (int i = 0; i < expectedLines.size(); ++i) {
                 String expectedLine = expectedLines.get(i);
                 String actualLine = actualLines.get(i);
-                assertEquals("Line in file " + fileName + " did not match ", expectedLine, actualLine);
+                assertEquals("Line in file " + fileName + " did not match ",
+                        expectedLine,
+                        actualLine);
             }
 
         }

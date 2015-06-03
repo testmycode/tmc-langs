@@ -6,6 +6,9 @@ public class CompileResult {
     private byte[] stdout;
     private byte[] stderr;
 
+    /**
+     * Represents the result of an attempt to compile a project.
+     */
     public CompileResult(int statusCode, byte[] stdout, byte[] stderr) {
         this.statusCode = statusCode;
         this.stdout = stdout;

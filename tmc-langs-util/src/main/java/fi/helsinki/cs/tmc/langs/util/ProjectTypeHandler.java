@@ -34,7 +34,8 @@ public class ProjectTypeHandler {
      * @param path The path to the exercise directory.
      * @return LanguagePlugin that is responsible for the exercise.
      */
-    public static LanguagePlugin getLanguagePlugin(Path path) throws NoLanguagePluginFoundException {
+    public static LanguagePlugin getLanguagePlugin(Path path)
+            throws NoLanguagePluginFoundException {
         return getProjectType(path).getLanguagePlugin();
     }
 

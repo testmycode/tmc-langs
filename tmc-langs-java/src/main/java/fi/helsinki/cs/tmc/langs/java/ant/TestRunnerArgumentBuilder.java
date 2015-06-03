@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Builds the argument list needed to run TMC TestRunner.
+ */
 public class TestRunnerArgumentBuilder {
 
     private static final String JAVA_RUNTIME = "java";
@@ -21,7 +24,14 @@ public class TestRunnerArgumentBuilder {
 
     private List<String> arguments;
 
-    public TestRunnerArgumentBuilder(Path projectBasePath, Path testDirectory, Path resultFile, ClassPath classPath, ExerciseDesc exercise) {
+    /**
+     * Create TestRunnerArguments with all the necessary information for creating an argument list.
+     */
+    public TestRunnerArgumentBuilder(Path projectBasePath,
+                                     Path testDirectory,
+                                     Path resultFile,
+                                     ClassPath classPath,
+                                     ExerciseDesc exercise) {
         arguments = new ArrayList<>();
         arguments.add(JAVA_RUNTIME);
         arguments.add(TEST_DIRECTORY_PARAM_PREFIX + testDirectory.toString());
@@ -57,7 +67,7 @@ public class TestRunnerArgumentBuilder {
             sb.append("{");
             for (int i = 0; i < desc.points.size(); i++) {
                 sb.append(desc.points.get(i));
-                if(i < desc.points.size() - 1) {
+                if (i < desc.points.size() - 1) {
                     sb.append(",");
                 }
             }
@@ -69,7 +79,10 @@ public class TestRunnerArgumentBuilder {
         return testCases;
     }
 
+    /**
+     * Get the arguments as a list of Strings, usable with ProcessBuilder.
+     */
     public List<String> getArguments() {
         return arguments;
     }
- }
+}

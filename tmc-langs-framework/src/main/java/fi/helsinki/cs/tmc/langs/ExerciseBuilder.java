@@ -20,8 +20,7 @@ public class ExerciseBuilder {
     /**
      * Prepares a stub exercise from the original.
      *
-     * <p>
-     * Implements LanguagePlugin.prepareStub
+     * <p>Implements LanguagePlugin.prepareStub
      */
     public void prepareStub(Path path) {
         File projectRoot = path.resolve(sourceFolderName).toFile();
@@ -54,7 +53,8 @@ public class ExerciseBuilder {
             }
             Files.write(file.toPath(), filteredLines, charset);
         } catch (IOException ex) {
-            throw new RuntimeException("Unexpected IOException, preparation of file {" + file.getAbsolutePath() + "} interrupted", ex);
+            throw new RuntimeException("Unexpected IOException, preparation of file {"
+                    + file.getAbsolutePath() + "} interrupted", ex);
         }
     }
 
@@ -77,8 +77,7 @@ public class ExerciseBuilder {
     /**
      * Prepares a presentable solution from the original.
      *
-     * <p>
-     * Implements LanguagePlugin.preparaSolution
+     * <p>Implements LanguagePlugin.preparaSolution
      */
     public void prepareSolution(Path path) {
         File projectRoot = path.resolve(sourceFolderName).toFile();
@@ -94,14 +93,17 @@ public class ExerciseBuilder {
             List<String> lines = Files.readAllLines(file.toPath(), charset);
             List<String> filteredLines = new ArrayList<>();
             for (String line : lines) {
-                if (line.contains(beginSolution) || line.contains(endSolution) || line.contains(stubMarker)) {
+                if (line.contains(beginSolution)
+                        || line.contains(endSolution)
+                        || line.contains(stubMarker)) {
                     continue;
                 }
                 filteredLines.add(line);
             }
             Files.write(file.toPath(), filteredLines, charset);
         } catch (IOException ex) {
-            throw new RuntimeException("Unexpected IOException, preparation of file {" + file.getAbsolutePath() + "} interrupted", ex);
+            throw new RuntimeException("Unexpected IOException, preparation of file {"
+                    + file.getAbsolutePath() + "} interrupted", ex);
         }
     }
 

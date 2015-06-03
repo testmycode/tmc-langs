@@ -5,13 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableList;
-
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
+import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.io.FileUtils;
 
@@ -46,14 +46,16 @@ public class AntPluginTest {
     @Test
     public void testScanExerciseReturnExerciseDesc() {
         String name = "Ant Test";
-        ExerciseDesc description = antPlugin.scanExercise(TestUtils.getPath(getClass(), "ant_arith_funcs"), name).get();
+        Path project = TestUtils.getPath(getClass(), "ant_arith_funcs");
+        ExerciseDesc description = antPlugin.scanExercise(project, name).get();
         assertEquals(name, description.name);
         assertEquals(4, description.tests.size());
     }
 
     @Test
     public void testScanExerciseReturnsCorrectTests() {
-        ExerciseDesc description = antPlugin.scanExercise(TestUtils.getPath(getClass(), "ant_arith_funcs"), "AntTestSubject").get();
+        Path project = TestUtils.getPath(getClass(), "ant_arith_funcs");
+        ExerciseDesc description = antPlugin.scanExercise(project, "AntTestSubject").get();
         assertEquals(4, description.tests.size());
 
         TestDesc test = description.tests.get(0);
@@ -68,7 +70,8 @@ public class AntPluginTest {
 
     @Test
     public void testScanExerciseReturnsNullWhenWrongProjectType() {
-        assertFalse(antPlugin.scanExercise(TestUtils.getPath(getClass(), "non_ant_project"), "Dummy").isPresent());
+        Path project = TestUtils.getPath(getClass(), "non_ant_project");
+        assertFalse(antPlugin.scanExercise(project, "Dummy").isPresent());
     }
 
     @Test
@@ -81,7 +84,8 @@ public class AntPluginTest {
 
     @Test
     public void testRunTestsAwardsCorrectPoints() throws IOException {
-        ImmutableList<TestResult> testResults = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs")).testResults;
+        Path project = TestUtils.getPath(getClass(), "ant_arith_funcs");
+        ImmutableList<TestResult> testResults = antPlugin.runTests(project).testResults;
         assertEquals(4, testResults.size());
         assertTrue(testResults.get(0).passed);
         assertFalse(testResults.get(3).passed);
@@ -102,18 +106,27 @@ public class AntPluginTest {
         TestResult testResult = runResult.testResults.get(0);
         assertTestResult(testResult, "", "TrivialTest testF", true);
         assertEquals("trivial", testResult.points.get(0));
-        assertEquals("When all tests pass backtrace should be empty.", 0, testResult.backtrace.size());
+        assertEquals("When all tests pass backtrace should be empty.",
+                0,
+                testResult.backtrace.size());
     }
 
     @Test
     public void testRunTestsReturnsCompileFailedCorrectly() throws IOException {
-        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "failing_trivial"));
-        assertEquals("When the build fails the returned status should report it.", RunResult.Status.COMPILE_FAILED, runResult.status);
-        assertTrue("When the build fails no test results should be returned", runResult.testResults.isEmpty());
+        Path project = TestUtils.getPath(getClass(), "failing_trivial");
+        RunResult runResult = antPlugin.runTests(project);
+        assertEquals("When the build fails the returned status should report it.",
+                RunResult.Status.COMPILE_FAILED,
+                runResult.status);
+        assertTrue("When the build fails no test results should be returned",
+                runResult.testResults.isEmpty());
         assertFalse(runResult.logs.isEmpty());
     }
 
-    private void assertTestResult(TestResult testResult, String expectedErrorMessage, String expectedName, boolean expectedPassed) {
+    private void assertTestResult(TestResult testResult,
+                                  String expectedErrorMessage,
+                                  String expectedName,
+                                  boolean expectedPassed) {
         assertEquals(expectedErrorMessage, testResult.errorMessage);
         assertEquals(expectedName, testResult.name);
         assertEquals(expectedPassed, testResult.passed);

@@ -1,11 +1,11 @@
 package fi.helsinki.cs.tmc.langs.util;
 
-import com.google.common.base.Optional;
-
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+
+import com.google.common.base.Optional;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,17 +20,27 @@ public class Main {
 
     private static final String EXERCISE_PATH = "exercisePath";
     private static final String OUTPUT_PATH = "outputPath";
-    private static TaskExecutor executor = new TaskExecutorImpl();
-    final public static String HELP_TEXT = "\n"
+    public static final String HELP_TEXT = "\n"
             + " Usage: Main <command> [<command-arguments>] \n\n"
             + " Commands:\n"
-            + " checkstyle <exercise path> <output path>     Run checkstyle or similar plugin to project if applicable.\n"
-            + " help                                         Display help information.\n"
-            + " prepare-solution <exercise path>             Prepare a presentable solution from the original.\n"
-            + " prepare-stub <exercise path>                 Prepare a stub exercise from the original.\n"
-            + " run-tests <exercise path> <output path>      Run the tests for the exercise.\n"
-            + " scan-exercise <exercise path> <output path>  Produce an exercise description of an exercise directory.";
+            + " checkstyle <exercise path> <output path>"
+            + "     Run checkstyle or similar plugin to project if applicable.\n"
+            + " help"
+            + "                                         Display help information.\n"
+            + " prepare-solution <exercise path>"
+            + "             Prepare a presentable solution from the original.\n"
+            + " prepare-stub <exercise path>"
+            + "                 Prepare a stub exercise from the original.\n"
+            + " run-tests <exercise path> <output path>"
+            + "      Run the tests for the exercise.\n"
+            + " scan-exercise <exercise path> <output path>"
+            + "  Produce an exercise description of an exercise directory.";
 
+    private static TaskExecutor executor = new TaskExecutorImpl();
+
+    /**
+     * Main entry point for the CLI.
+     */
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
             printHelpAndExit();
@@ -110,14 +120,16 @@ public class Main {
         try {
             validationResult = executor.runCheckCodeStyle(paths.get(EXERCISE_PATH));
         } catch (NoLanguagePluginFoundException e) {
-            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise "
+                    + "path.");
         }
 
         try {
             JsonWriter.writeObjectIntoJsonFormat(validationResult, paths.get(OUTPUT_PATH));
             System.out.println("Codestyle report can be found at " + paths.get(OUTPUT_PATH));
         } catch (IOException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not write result into given output file", e);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not write result "
+                    + "into given output file", e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
     }
@@ -133,14 +145,18 @@ public class Main {
                 printErrAndExit("ERROR: Could not scan the exercises.");
             }
         } catch (NoLanguagePluginFoundException e) {
-            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given "
+                    + "exercise path.");
         }
 
         try {
             JsonWriter.writeObjectIntoJsonFormat(exerciseDesc.get(), paths.get(OUTPUT_PATH));
-            System.out.println("Exercises scanned successfully, results can be found in " + paths.get(OUTPUT_PATH).toString());
+            System.out.println("Exercises scanned successfully, results can be found in "
+                    + paths.get(OUTPUT_PATH).toString());
         } catch (IOException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not write result into given output file", e);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
+                    "Could not write result into given output file",
+                    e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
     }
@@ -150,14 +166,16 @@ public class Main {
         try {
             runResult = executor.runTests(paths.get(EXERCISE_PATH));
         } catch (NoLanguagePluginFoundException e) {
-            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given "
+                    + "exercise path.");
         }
 
         try {
             JsonWriter.writeObjectIntoJsonFormat(runResult, paths.get(OUTPUT_PATH));
             System.out.println("Test results can be found in " + paths.get(OUTPUT_PATH));
         } catch (IOException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not write result into given output file", e);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not write result "
+                    + "into given output file", e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
     }
@@ -166,7 +184,8 @@ public class Main {
         try {
             executor.prepareStub(paths.get(EXERCISE_PATH));
         } catch (NoLanguagePluginFoundException e) {
-            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given "
+                    + "exercise path.");
         }
     }
 
@@ -174,7 +193,8 @@ public class Main {
         try {
             executor.prepareSolution(paths.get(EXERCISE_PATH));
         } catch (NoLanguagePluginFoundException e) {
-            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given "
+                    + "exercise path.");
         }
     }
 

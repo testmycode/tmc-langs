@@ -1,27 +1,34 @@
 package fi.helsinki.cs.tmc.langs;
 
-import com.google.common.collect.ImmutableList;
-
-import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
-import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+
+import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Locale;
 import java.util.Stack;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class AbstractLanguagePlugin implements LanguagePlugin {
 
+    private static final Logger log = Logger.getLogger(AbstractLanguagePlugin.class.getName());
+
     /**
      * Exercisebuilder uses an instance because it is somewhat likely that it
-     * will need some language specific configuration
+     * will need some language specific configuration.
      */
     private final ExerciseBuilder exerciseBuilder = new ExerciseBuilder();
 
-    private static final Logger log = Logger.getLogger(AbstractLanguagePlugin.class.getName());
+    /**
+     * Check if the exercise's project type corresponds with the language plugin
+     * type.
+     *
+     * @param path The path to the exercise directory.
+     * @return True if given path is valid directory for this language plugin
+     */
+    protected abstract boolean isExerciseTypeCorrect(Path path);
+
+    public abstract ValidationResult checkCodeStyle(Path path);
 
     @Override
     public void prepareSubmission(Path submissionPath, Path destPath) {
@@ -39,15 +46,6 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     /**
-     * Check if the exercise's project type corresponds with the language plugin
-     * type.
-     *
-     * @param path The path to the exercise directory.
-     * @return True if given path is valid directory for this language plugin
-     */
-    protected abstract boolean isExerciseTypeCorrect(Path path);
-
-    /**
      * @param basePath The file path to search in.
      * @return A list of directories that contain a build file in this language.
      */
@@ -62,8 +60,6 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         }
     }
 
-    public abstract ValidationResult checkCodeStyle(Path path);
-
     /**
      * Search a directory and its subdirectories for build files. If a directory
      * contains a build file, the directory is added to the list.
@@ -72,7 +68,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @param listBuilder a listBuilder the found exercises should be appended to
      * @return a list of all directories that contain build files for this language.
      */
-    private ImmutableList<Path> searchForExercises(File file, ImmutableList.Builder<Path> listBuilder) {
+    private ImmutableList<Path> searchForExercises(File file,
+                                                   ImmutableList.Builder<Path> listBuilder) {
         Stack<File> stack = new Stack<>();
         // Push the initial directory onto the stack.
         stack.push(file);

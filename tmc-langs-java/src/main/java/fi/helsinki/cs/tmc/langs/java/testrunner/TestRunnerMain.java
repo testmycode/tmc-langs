@@ -20,6 +20,9 @@ public class TestRunnerMain {
     public TestRunnerMain() {
     }
 
+    /**
+     * Runs tests for a given exercise and writes the results to a file as JSON.
+     */
     public void run(String testDir, ClassPath classPath,
             String resultsDir, TestCaseList cases) throws IOException {
 

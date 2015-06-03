@@ -1,11 +1,11 @@
 package fi.helsinki.cs.tmc.langs.java.testrunner;
 
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.TestDesc;
+
 import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.TestDesc;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -18,11 +18,16 @@ import java.util.Arrays;
 
 public class TestCaseList extends ArrayList<TestCase> {
 
+    /**
+     * Creates a TestCaseList from a given ExerciseDesc.
+     */
     public static TestCaseList fromExerciseDesc(Optional<ExerciseDesc> methods) {
         TestCaseList result = new TestCaseList();
         for (TestDesc method : methods.get().tests) {
 
-            TestCase testCase = new TestCase(getClassName(method.name), getMethodName(method.name), pointsAsArray(method));
+            TestCase testCase = new TestCase(getClassName(method.name),
+                                             getMethodName(method.name),
+                                             pointsAsArray(method));
             result.add(testCase);
         }
         return result;
@@ -49,6 +54,9 @@ public class TestCaseList extends ArrayList<TestCase> {
         return points;
     }
 
+    /**
+     * Returns all TestCases that match the given method name.
+     */
     public TestCaseList findByMethodName(String methodName) {
         TestCaseList result = new TestCaseList();
         for (TestCase testCase : this) {
@@ -59,6 +67,9 @@ public class TestCaseList extends ArrayList<TestCase> {
         return result;
     }
 
+    /**
+     * Returns all TestCases that match the given point name.
+     */
     public TestCaseList findByPointName(String pointName) {
         TestCaseList result = new TestCaseList();
         for (TestCase testCase : this) {
@@ -69,8 +80,12 @@ public class TestCaseList extends ArrayList<TestCase> {
         return result;
     }
 
+    /**
+     * Writes this TestCaseList to a file as JSON.
+     */
     public void writeToJsonFile(File file) throws IOException {
-        Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), "UTF-8");
+        Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)),
+                                               "UTF-8");
         writeToJson(writer);
         writer.close();
     }

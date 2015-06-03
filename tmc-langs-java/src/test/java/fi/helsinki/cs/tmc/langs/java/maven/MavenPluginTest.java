@@ -34,7 +34,8 @@ public class MavenPluginTest {
 
     @Test
     public void testCheckCodeStyle() {
-        ValidationResult result = mavenPlugin.checkCodeStyle(TestUtils.getPath(getClass(), "most_errors"));
+        Path project = TestUtils.getPath(getClass(), "most_errors");
+        ValidationResult result = mavenPlugin.checkCodeStyle(project);
         Map<File, List<ValidationError>> res = result.getValidationErrors();
         assertEquals("Should be one erroneous file", 1, res.size());
         for (File file : res.keySet()) {
@@ -52,19 +53,22 @@ public class MavenPluginTest {
 
     @Test
     public void testPassingMavenBuild() throws IOException {
-        CompileResult result = mavenPlugin.build(TestUtils.getPath(getClass(), "maven_exercise"));
+        Path project = TestUtils.getPath(getClass(), "maven_exercise");
+        CompileResult result = mavenPlugin.build(project);
         assertEquals("Compile status should be 0 when build passes", 0, result.getStatusCode());
     }
 
     @Test
     public void testFailingMavenBuild() throws IOException {
-        CompileResult result = mavenPlugin.build(TestUtils.getPath(getClass(), "failing_maven_exercise"));
+        Path project = TestUtils.getPath(getClass(), "failing_maven_exercise");
+        CompileResult result = mavenPlugin.build(project);
         assertEquals("Compile status should be 1 when build fails", 1, result.getStatusCode());
     }
 
     @Test
     public void testRunTestsWhenBuildFailing() {
-        RunResult runResult = mavenPlugin.runTests(TestUtils.getPath(getClass(), "failing_maven_exercise"));
+        Path project = TestUtils.getPath(getClass(), "failing_maven_exercise");
+        RunResult runResult = mavenPlugin.runTests(project);
         assertEquals(RunResult.Status.COMPILE_FAILED, runResult.status);
     }
 
@@ -90,7 +94,8 @@ public class MavenPluginTest {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
 
-        assertEquals("ComparisonFailure: expected:\u003c[Hello Maven!\n]\u003e but was:\u003c[]\u003e", result.testResults.get(0).errorMessage);
+        assertEquals("ComparisonFailure: expected:\u003c[Hello Maven!\n]\u003e but "
+                + "was:\u003c[]\u003e", result.testResults.get(0).errorMessage);
     }
 
     @Test

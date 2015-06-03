@@ -23,9 +23,6 @@ public class JsonWriterTest {
         outputFile = Files.createTempFile("test", "json").toFile();
     }
 
-    /**
-     * Test of writeObjectIntoJsonFormat method, of class JsonWriter.
-     */
     @Test
     public void testWriteObjectIntoJsonFormat() {
         try {

@@ -11,8 +11,7 @@ public final class ExerciseDesc {
     /**
      * The name of the exercise to be shown to the user.
      *
-     * <p>
-     * Does not necessarily match or even contain the directory name.
+     * <p>Does not necessarily match or even contain the directory name.
      */
     public final String name;
 
@@ -21,6 +20,9 @@ public final class ExerciseDesc {
      */
     public final ImmutableList<TestDesc> tests;
 
+    /**
+     * Create a new ExerciseDesc comprising of a name and a list of tests.
+     */
     public ExerciseDesc(String name, ImmutableList<TestDesc> tests) {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(tests);

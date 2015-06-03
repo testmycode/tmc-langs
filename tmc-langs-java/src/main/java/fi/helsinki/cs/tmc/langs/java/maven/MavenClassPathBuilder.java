@@ -12,11 +12,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+/**
+ * Creates a complete ClassPath for a Maven project by calling the dependency:build-classpath goal.
+ */
 public class MavenClassPathBuilder {
 
-    private static final String CLASS_PATH_GOAL = "org.apache.maven.plugins:maven-dependency-plugin:2.10:build-classpath";
+    private static final String CLASS_PATH_GOAL =
+            "org.apache.maven.plugins:maven-dependency-plugin:2.10:build-classpath";
     private static final String OUTPUT_FILE_PARAM_PREFIX = "-Dmdep.outputFile=";
 
+    /**
+     * Create a complete ClassPath for the given Maven project.
+     */
     public static ClassPath fromProjectBasePath(Path projectPath) throws IOException {
 
         File outputFile = File.createTempFile("tmc-classpath", ".tmp");
@@ -28,8 +35,10 @@ public class MavenClassPathBuilder {
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
-        int compileResult = maven.doMain(new String[]{CLASS_PATH_GOAL, outputParameter, "-e"}, projectPath.toAbsolutePath().toString(),
-                new PrintStream(outBuf), new PrintStream(errBuf));
+        int compileResult = maven.doMain(new String[]{CLASS_PATH_GOAL, outputParameter, "-e"},
+                                         projectPath.toAbsolutePath().toString(),
+                                         new PrintStream(outBuf),
+                                         new PrintStream(errBuf));
         
         Scanner scanner = new Scanner(outputFile);
         String classPathString = scanner.nextLine();

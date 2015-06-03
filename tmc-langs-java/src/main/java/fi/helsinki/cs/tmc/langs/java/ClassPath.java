@@ -18,24 +18,36 @@ public class ClassPath {
 
     private final List<Path> subPaths = new ArrayList<>();
 
+    /**
+     * Create a ClassPath where each provided Path is a component.
+     */
     public ClassPath(Path... paths) {
         for (Path path : paths) {
             add(path);
         }
     }
 
+    /**
+     * Add a given Path to the ClassPath.
+     */
     public void add(Path path) {
         if (!subPaths.contains(path)) {
             subPaths.add(path);
         }
     }
 
+    /**
+     * Add the contents of a given ClassPath to this ClassPath.
+     */
     public void add(ClassPath path) {
         for (Path subPath : path.subPaths) {
             add(subPath);
         }
     }
 
+    /**
+     * Returns the contents of this ClassPath as Path objects.
+     */
     public List<Path> getPaths() {
         return Collections.unmodifiableList(subPaths);
     }

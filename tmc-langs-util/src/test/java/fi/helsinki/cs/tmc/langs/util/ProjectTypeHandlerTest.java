@@ -11,6 +11,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.nio.file.Path;
+
 public class ProjectTypeHandlerTest {
 
     @Rule
@@ -19,7 +21,8 @@ public class ProjectTypeHandlerTest {
     @Test
     public void testProjectTypeOnJavaAntExercise() {
         try {
-            ProjectType projectType = ProjectTypeHandler.getProjectType(TestUtils.getPath(getClass(), "arith_funcs"));
+            Path project = TestUtils.getPath(getClass(), "arith_funcs");
+            ProjectType projectType = ProjectTypeHandler.getProjectType(project);
             assertEquals(ProjectType.JAVA_ANT, projectType);
         } catch (NoLanguagePluginFoundException e) {
             fail("Couldn't identify arith_funcs project type, expected JAVA_ANT");
@@ -29,7 +32,8 @@ public class ProjectTypeHandlerTest {
     @Test
     public void testLanguagePluginOnJavaAntExercise() {
         try {
-            ProjectType projectType = ProjectTypeHandler.getProjectType(TestUtils.getPath(getClass(), "arith_funcs"));
+            Path project = TestUtils.getPath(getClass(), "arith_funcs");
+            ProjectType projectType = ProjectTypeHandler.getProjectType(project);
             assertEquals(AntPlugin.class, projectType.getLanguagePlugin().getClass());
         } catch (NoLanguagePluginFoundException e) {
             fail("Couldn't identify arith_funcs exercise language, expected Ant");

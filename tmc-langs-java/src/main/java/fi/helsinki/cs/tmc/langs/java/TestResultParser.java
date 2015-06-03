@@ -1,5 +1,12 @@
 package fi.helsinki.cs.tmc.langs.java;
 
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.RunResult;
+import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.java.testrunner.TestCase;
+import fi.helsinki.cs.tmc.langs.java.testrunner.TestCaseList;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -7,13 +14,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.TestDesc;
-import fi.helsinki.cs.tmc.langs.TestResult;
-import fi.helsinki.cs.tmc.langs.java.testrunner.TestCase;
-import fi.helsinki.cs.tmc.langs.java.testrunner.TestCaseList;
 
 import org.apache.commons.io.FileUtils;
 
@@ -83,9 +83,16 @@ public class TestResultParser {
         boolean passed = testCase.status == TestCase.Status.PASSED;
         String message = testCase.message == null ? "" : testCase.message;
 
-        return new TestResult(name, passed, ImmutableList.copyOf(points), message, ImmutableList.copyOf(exception));
+        return new TestResult(name,
+                             passed,
+                             ImmutableList.copyOf(points),
+                             message,
+                             ImmutableList.copyOf(exception));
     }
 
+    /**
+     * Parses a given standard output String to an ExerciseDesc.
+     */
     public ExerciseDesc parseScannerOutput(String output, String exerciseName) {
         List<TestDesc> tests = new ArrayList<>();
         JsonElement data = new JsonParser().parse(output);
@@ -98,6 +105,7 @@ public class TestResultParser {
 
         return new ExerciseDesc(exerciseName, ImmutableList.<TestDesc>copyOf(tests));
     }
+
 
     private String parseTestName(JsonElement test) {
         String testName = test.getAsJsonObject().get("className").getAsString();

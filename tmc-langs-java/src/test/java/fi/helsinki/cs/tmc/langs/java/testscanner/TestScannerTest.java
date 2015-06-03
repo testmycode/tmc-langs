@@ -4,14 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-
-import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class TestScannerTest {
     private Optional<ExerciseDesc> opDesc;
 
     @Before
-    public void setUp() {
+    public void setup() {
         scanner = new TestScanner();
         opDesc = createExerciseDesc();
     }
@@ -36,7 +36,9 @@ public class TestScannerTest {
         Path path = TestUtils.getPath(getClass(), "ant_arith_funcs").toAbsolutePath();
         SourceFiles sourceFiles = new SourceFiles();
 
-        ClassPath classPath = new ClassPath(Paths.get(path + "/build/test/classes"), Paths.get(path + "/build/classes"));
+        Path testClassesPath = Paths.get(path + "/build/test/classes");
+        Path normalClassesPath = Paths.get(path + "/build/classes");
+        ClassPath classPath = new ClassPath(testClassesPath, normalClassesPath);
         classPath.addDirAndContents(Paths.get(path + "/lib"));
         Optional<ExerciseDesc> absDesc = scanner.findTests(classPath, sourceFiles, "exercise");
         assertEquals(absDesc, Optional.absent());
@@ -67,7 +69,9 @@ public class TestScannerTest {
         SourceFiles sourceFiles = new SourceFiles();
         sourceFiles.addSource(Paths.get(path + "/test").toFile());
 
-        ClassPath classPath = new ClassPath(Paths.get(path + "/build/test/classes"), Paths.get(path + "/build/classes"));
+        Path testClassesPath = Paths.get(path + "/build/test/classes");
+        Path normalClassesPath = Paths.get(path + "/build/classes");
+        ClassPath classPath = new ClassPath(testClassesPath, normalClassesPath);
         classPath.addDirAndContents(Paths.get(path + "/lib"));
         return scanner.findTests(classPath, sourceFiles, "exercise");
     }

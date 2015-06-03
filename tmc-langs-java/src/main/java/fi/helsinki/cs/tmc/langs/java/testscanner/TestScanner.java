@@ -1,10 +1,10 @@
 package fi.helsinki.cs.tmc.langs.java.testscanner;
 
-import com.google.common.base.Optional;
-
-import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
+
+import com.google.common.base.Optional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,12 @@ public class TestScanner {
         fileManager = compiler.getStandardFileManager(null, null, null);
     }
 
-    public Optional<ExerciseDesc> findTests(ClassPath classPath, SourceFiles sourceFiles, String exerciseName) {
+    /**
+     * Finds all tests for a given exercise.
+     */
+    public Optional<ExerciseDesc> findTests(ClassPath classPath,
+                                            SourceFiles sourceFiles,
+                                            String exerciseName) {
         if (sourceFiles.isEmpty()) {
             return Optional.absent();
         }

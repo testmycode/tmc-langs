@@ -1,9 +1,5 @@
 package fi.helsinki.cs.tmc.langs.java;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.CompileResult;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
@@ -17,6 +13,10 @@ import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +39,13 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         this.testFolderPath = testFolderPath;
     }
 
+    protected abstract ClassPath getProjectClassPath(Path path) throws IOException;
+
+    protected abstract CompileResult build(Path projectRootPath);
+
+    protected abstract File createRunResultFile(Path path)
+            throws TestRunnerException, TestScannerException;
+
     @Override
     public ValidationResult checkCodeStyle(Path path) {
         try {
@@ -50,12 +57,6 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             return null;
         }
     }
-
-    protected abstract ClassPath getProjectClassPath(Path path) throws IOException;
-
-    protected abstract CompileResult build(Path projectRootPath);
-
-    protected abstract File createRunResultFile(Path path) throws TestRunnerException, TestScannerException;
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
@@ -104,7 +105,8 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         logs.put(SpecialLogs.STDOUT, compileResult.getStdout());
         logs.put(SpecialLogs.STDERR, compileResult.getStderr());
 
-        return new RunResult(RunResult.Status.COMPILE_FAILED, ImmutableList.copyOf(new ArrayList<TestResult>()),
+        return new RunResult(RunResult.Status.COMPILE_FAILED,
+                ImmutableList.copyOf(new ArrayList<TestResult>()),
                 ImmutableMap.copyOf(logs));
     }
 }

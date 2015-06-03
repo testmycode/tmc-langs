@@ -14,6 +14,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 public final class TestUtils {
 
+    /**
+     * Returns a path to a resource residing in the ResourceDir of the given class.
+     */
     public static Path getPath(Class clazz, String location) {
         try {
             URL url = clazz.getResource("/" + location);
@@ -28,6 +31,9 @@ public final class TestUtils {
         }
     }
 
+    /**
+     * Removes a directory and all its files recursively.
+     */
     public static void removeDirRecursively(Path path) throws IOException {
         if (path == null) {
             return;
@@ -35,7 +41,8 @@ public final class TestUtils {
 
         Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                    throws IOException {
                 Files.delete(file);
                 return FileVisitResult.CONTINUE;
             }
@@ -58,6 +65,9 @@ public final class TestUtils {
         });
     }
 
+    /**
+     * Removes class Resource directory recursively.
+     */
     public static void removeDirRecursively(Class clazz, String location) throws IOException {
         removeDirRecursively(getPath(clazz, location));
     }

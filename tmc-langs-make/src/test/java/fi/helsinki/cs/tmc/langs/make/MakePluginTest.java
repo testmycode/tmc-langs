@@ -54,14 +54,6 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testFailingMakeProjectHasStackTrace() {
-        Path path = TestUtils.getPath(getClass(), "failing");
-        RunResult result = makePlugin.runTests(path);
-
-        assertTrue(result.testResults.get(0).backtrace.size() > 3);
-    }
-
-    @Test
     public void testmakeProjectWithPassingTestsCompilesAndPassesTests() {
         Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);

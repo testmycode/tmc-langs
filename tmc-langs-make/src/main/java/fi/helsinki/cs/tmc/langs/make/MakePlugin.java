@@ -4,19 +4,15 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
-import fi.helsinki.cs.tmc.langs.ClassPath;
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestResult;
-import fi.helsinki.cs.tmc.langs.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.util.ProcessResult;
 import fi.helsinki.cs.tmc.langs.util.ProcessRunner;
-import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -39,10 +35,10 @@ public class MakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        TestScanner scanner = new TestScanner();
-        SourceFiles sourceFiles = new SourceFiles();
-        sourceFiles.addSource(createPath(path.toAbsolutePath(), testDir).toFile());
-        return scanner.findTests(generateClassPath(path), sourceFiles, exerciseName);
+//        TestScanner scanner = new TestScanner();
+//        SourceFiles sourceFiles = new SourceFiles();
+//        sourceFiles.addSource(createPath(path.toAbsolutePath(), testDir).toFile());
+        return null;
     }
 
     @Override
@@ -116,24 +112,5 @@ public class MakePlugin extends AbstractLanguagePlugin {
         ProcessRunner runner = new ProcessRunner(command, dir);
 
         runner.call();
-    }
-
-    private ClassPath generateClassPath(Path path) {
-        ClassPath classPath = new ClassPath(path.toAbsolutePath());
-        classPath.addDirAndContents(createPath(path, "lib"));
-        classPath.add(createPath(path, "build", "test", "classes"));
-        classPath.add(createPath(path, "build", "classes"));
-
-        return classPath;
-    }
-
-    private Path createPath(Path basePath, String... subDirs) {
-        String path = basePath.toAbsolutePath().toString();
-
-        for (String subDir : subDirs) {
-            path += File.separatorChar + subDir;
-        }
-
-        return Paths.get(path);
     }
 }

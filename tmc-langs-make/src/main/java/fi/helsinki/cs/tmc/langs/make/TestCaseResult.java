@@ -1,8 +1,7 @@
 package fi.helsinki.cs.tmc.langs.make;
 
-import fi.helsinki.cs.tmc.testrunner.CaughtException;
-import fi.helsinki.cs.tmc.testrunner.TestCase;
-import static fi.helsinki.cs.tmc.testrunner.TestCase.Status.*;
+import fi.helsinki.cs.tmc.langs.java.testrunner.CaughtException;
+import fi.helsinki.cs.tmc.langs.java.testrunner.TestCase;
 
 public class TestCaseResult {
 
@@ -58,7 +57,7 @@ public class TestCaseResult {
     public static TestCaseResult fromTestCaseRecord(TestCase tc) {
         TestCaseResult tcr = new TestCaseResult();
         tcr.name = tc.className + " " + tc.methodName;
-        tcr.successful = (tc.status == PASSED);
+        tcr.successful = (tc.status == tc.status.PASSED);
         tcr.message = tc.message;
         tcr.exception = tc.exception;
         return tcr;

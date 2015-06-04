@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.NoSuchElementException;
 
 public class MavenClassPathBuilderTest {
 
@@ -31,7 +30,7 @@ public class MavenClassPathBuilderTest {
     }
 
     @Test(expected = IOException.class)
-    public void throwsIOExceptionOnFailure() throws IOException {
+    public void throwsIoExceptionOnFailure() throws IOException {
         Path path = TestUtils.getPath(getClass(), "non_ant_project");
         ClassPath classPath = MavenClassPathBuilder.fromProjectBasePath(path);
     }

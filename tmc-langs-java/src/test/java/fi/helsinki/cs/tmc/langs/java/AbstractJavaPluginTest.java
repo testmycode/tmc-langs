@@ -41,7 +41,8 @@ public class AbstractJavaPluginTest {
         }
 
         @Override
-        protected File createRunResultFile(Path path) throws TestRunnerException, TestScannerException {
+        protected File createRunResultFile(Path path)
+                throws TestRunnerException, TestScannerException {
             return null;
         }
 

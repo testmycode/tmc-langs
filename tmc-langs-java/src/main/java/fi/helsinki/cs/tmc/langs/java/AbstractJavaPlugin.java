@@ -71,7 +71,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         try {
             classPath = getProjectClassPath(path);
         } catch (IOException ex) {
-            Logger.getLogger(AbstractJavaPlugin.class.getName()).log(Level.SEVERE, null, ex);
+            log.log(Level.SEVERE, null, ex);
             return Optional.absent();
         }
 

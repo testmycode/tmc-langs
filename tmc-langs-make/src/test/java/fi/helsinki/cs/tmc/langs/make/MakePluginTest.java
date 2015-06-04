@@ -4,12 +4,9 @@ import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class MakePluginTest {
 
@@ -103,5 +100,16 @@ public class MakePluginTest {
         RunResult result = makePlugin.runTests(path);
 
         assertEquals(0, result.testResults.get(0).points.size());
+    }
+
+    @Test
+    public void testPassingMakeProjectWillFailWithValgrindFailure() {
+        Path path = TestUtils.getPath(getClass(), "valgrind-failing");
+        RunResult result = makePlugin.runTests(path);
+
+        assertTrue(result.testResults.get(0).passed);
+        assertFalse(result.testResults.get(1).passed);
+        assertTrue(result.testResults.get(0).backtrace.size() == 0);
+        assertTrue(result.testResults.get(1).backtrace.size() > 0);
     }
 }

@@ -43,7 +43,7 @@ public class CTestResultParser {
     public CTestResultParser(File testResults, File valgrindOutput, File projectDir) {
         this.testResults = testResults;
         this.valgrindOutput = valgrindOutput;
-        this.tests = new ArrayList<CTestCase>();
+        this.tests = new ArrayList<>();
         this.projectDir = projectDir;
         parseTestOutput();
     }

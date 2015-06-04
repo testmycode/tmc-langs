@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -39,11 +40,17 @@ public class MavenClassPathBuilder {
                                          projectPath.toAbsolutePath().toString(),
                                          new PrintStream(outBuf),
                                          new PrintStream(errBuf));
-        
-        Scanner scanner = new Scanner(outputFile);
-        String classPathString = scanner.nextLine();
 
-        outputFile.delete();
+        Scanner scanner = new Scanner(outputFile);
+
+        String classPathString;
+        try {
+            classPathString = scanner.nextLine();
+        } catch (NoSuchElementException exception) {
+            throw new IOException("Class path  output file is empty");
+        } finally {
+            outputFile.delete();
+        }
 
         ClassPath classPath = new ClassPath();
         for (String part : classPathString.split(File.pathSeparator)) {

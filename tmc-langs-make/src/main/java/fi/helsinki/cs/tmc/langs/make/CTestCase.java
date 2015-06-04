@@ -59,7 +59,13 @@ public class CTestCase {
             trace.addAll(Arrays.asList(valgrindTrace.split("\\n")));
         }
 
-        return new TestResult(name, successful, ImmutableList.copyOf(points), msg, ImmutableList
+        ImmutableList<String> points;
+        if (this.points == null) {
+            points = ImmutableList.copyOf(new ArrayList<String>());
+        } else {
+            points = ImmutableList.copyOf(this.points);
+        }
+        return new TestResult(name, successful, points, msg, ImmutableList
                 .copyOf(trace));
     }
 

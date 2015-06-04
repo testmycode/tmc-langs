@@ -57,11 +57,6 @@ public class CTestResultParser {
             e.printStackTrace();
         }
 
-        Status status = getResultStatus();
-        if (getResultStatus() != Status.TESTS_FAILED) {
-            return;
-        }
-
         if (valgrindOutput != null) {
             try {
                 addValgrindOutput();
@@ -149,6 +144,9 @@ public class CTestResultParser {
     }
 
     private Map<String, List<String>> mapIdsToPoints() {
+        if (projectDir == null) {
+            return new HashMap<>();
+        }
         File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar + "test" + File
                 .separatorChar + "tmc_available_points.txt");
         Scanner scanner;
@@ -242,6 +240,10 @@ public class CTestResultParser {
         scanner.close();
 
         for (int i = 0; i < outputs.length; i++) {
+            if (errors[i] == 0) {
+                // Workaround for a bug where any valgrind output is considered a potential error.
+                outputs[i] = null;
+            }
             tests.get(i).setValgrindTrace(outputs[i]);
         }
     }

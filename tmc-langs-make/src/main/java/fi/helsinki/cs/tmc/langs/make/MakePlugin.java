@@ -3,18 +3,15 @@ package fi.helsinki.cs.tmc.langs.make;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.*;
 import fi.helsinki.cs.tmc.langs.util.ProcessResult;
 import fi.helsinki.cs.tmc.langs.util.ProcessRunner;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,11 +32,93 @@ public class MakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-//        TestScanner scanner = new TestScanner();
-//        SourceFiles sourceFiles = new SourceFiles();
-//        sourceFiles.addSource(createPath(path.toAbsolutePath(), testDir).toFile());
-        return null;
+        final File projectDir = new File(String.valueOf(path));
+        try {
+            runTests(projectDir, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.absent();
+        }
+
+        final File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar + "test" + File.separatorChar +
+                "tmc_available_points.txt");
+
+        if (!availablePoints.exists()) {
+            return Optional.absent();
+        }
+
+        return Optional.of(parseExerciseDesc(availablePoints));
     }
+
+    private ExerciseDesc parseExerciseDesc(File availablePoints) {
+        Scanner scanner;
+        try {
+            scanner = new Scanner(availablePoints);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Map<String, List<String>> idsToPoints = mapIdsToPoints(availablePoints);
+        List<TestDesc> tests = new ArrayList<>();
+        List<String> addedTests = new ArrayList<>();
+
+        while(scanner.hasNextLine()) {
+            String row = scanner.nextLine();
+            String[] parts = row.split("\\[|\\]| ");
+
+            String testClass = parts[1];
+            String testMethod = parts[parts.length - 3];
+            String testName = testClass + "." + testMethod;
+
+            List<String> points = idsToPoints.get(testMethod);
+
+            if (!addedTests.contains(testName)) {
+                tests.add(new TestDesc(testName, ImmutableList.copyOf(points)));
+                addedTests.add(testName);
+            }
+        }
+
+        String exerciseName = parseExerciseName(availablePoints);
+
+        return new ExerciseDesc(exerciseName, ImmutableList.copyOf(tests));
+    }
+
+    private String parseExerciseName(File availablePoints) {
+        String[] pathParts = availablePoints.getAbsolutePath().split(File.separatorChar + "");
+        String name = pathParts[pathParts.length - 3];
+        return name;
+    }
+
+    private Map<String, List<String>> mapIdsToPoints(File availablePoints) {
+        Scanner scanner;
+        try {
+            scanner = new Scanner(availablePoints);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return new HashMap<>();
+        }
+
+        Map<String, List<String>> idsToPoints = new HashMap<>();
+        while(scanner.hasNextLine()) {
+            String row = scanner.nextLine();
+            String[] parts = row.split("\\[|\\]| ");
+
+            String key = parts[parts.length - 3];
+            String value = parts[parts.length - 1];
+            addPointsToId(idsToPoints, key, value);
+        }
+
+        return idsToPoints;
+    }
+
+    private void addPointsToId(Map<String, List<String>> idsToPoints, String key, String value) {
+        if (!idsToPoints.containsKey(key)) {
+            idsToPoints.put(key, new ArrayList<String>());
+        }
+        idsToPoints.get(key).add(value);
+    }
+
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {

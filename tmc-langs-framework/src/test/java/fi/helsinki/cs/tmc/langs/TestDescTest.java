@@ -1,9 +1,9 @@
 package fi.helsinki.cs.tmc.langs;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
+
 import org.junit.Test;
 
 public class TestDescTest {

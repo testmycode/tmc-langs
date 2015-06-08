@@ -1,12 +1,8 @@
-package fi.helsinki.cs.tmc.langs.util;
+package fi.helsinki.cs.tmc.langs.utils;
 
 import org.openide.filesystems.FileUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Map;
 import java.util.concurrent.Callable;
 

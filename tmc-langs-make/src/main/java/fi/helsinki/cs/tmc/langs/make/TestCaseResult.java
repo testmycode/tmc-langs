@@ -1,7 +1,7 @@
 package fi.helsinki.cs.tmc.langs.make;
 
-import fi.helsinki.cs.tmc.langs.java.testrunner.CaughtException;
-import fi.helsinki.cs.tmc.langs.java.testrunner.TestCase;
+import fi.helsinki.cs.tmc.langs.CaughtException;
+import fi.helsinki.cs.tmc.langs.TestCase;
 
 public class TestCaseResult {
 

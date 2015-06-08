@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs.util;
+package fi.helsinki.cs.tmc.langs.utils;
 
 public final class ProcessResult {
     public final int statusCode;

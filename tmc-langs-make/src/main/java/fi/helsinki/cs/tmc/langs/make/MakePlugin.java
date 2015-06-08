@@ -3,15 +3,24 @@ package fi.helsinki.cs.tmc.langs.make;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import fi.helsinki.cs.tmc.langs.*;
-import fi.helsinki.cs.tmc.langs.util.ProcessResult;
-import fi.helsinki.cs.tmc.langs.util.ProcessRunner;
+import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.RunResult;
+import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
+import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

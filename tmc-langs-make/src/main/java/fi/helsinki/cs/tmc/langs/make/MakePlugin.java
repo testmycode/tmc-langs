@@ -155,6 +155,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
                 runTests(projectDir, withValgrind);
             } catch (Exception e1) {
                 e1.printStackTrace();
+                throw new RuntimeException("Failed to run tests.");
             }
         }
 

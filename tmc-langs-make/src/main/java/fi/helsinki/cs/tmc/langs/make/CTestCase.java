@@ -1,7 +1,9 @@
 package fi.helsinki.cs.tmc.langs.make;
 
-import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.TestResult;
+
+import com.google.common.collect.ImmutableList;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -21,7 +23,11 @@ public class CTestCase {
     private boolean checkedForMemoryLeaks;
     private int maxBytesAllocated = -1;
 
-    public CTestCase(String name, String result, String message, List<String> points, String valgrindTrace) {
+    /**
+    * Create a test case for C-tests.
+    */
+    public CTestCase(String name, String result, String message, List<String> points,
+        String valgrindTrace) {
         this(name);
         this.result = result;
         this.message = message;
@@ -42,6 +48,9 @@ public class CTestCase {
         return StringUtils.isNotBlank(valgrindTrace);
     }
 
+    /**
+    * Get the test result of this test case.
+    */
     public TestResult getTestResult() {
         String msg = message;
 
@@ -50,7 +59,8 @@ public class CTestCase {
         boolean successful = resultsSuccessful && !valgrindFailed;
         boolean failedOnlyBecauseOfValgrind = resultsSuccessful && valgrindFailed;
         if (failedOnlyBecauseOfValgrind) {
-            msg += " - Failed due to errors in valgrind log; see log below. Try submitting to server, some leaks might be platform dependent";
+            msg += " - Failed due to errors in valgrind log; see log below. "
+                + "Try submitting to server, some leaks might be platform dependent";
         }
 
         ArrayList<String> trace = new ArrayList<>();

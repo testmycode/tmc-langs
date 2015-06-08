@@ -1,25 +1,26 @@
 package fi.helsinki.cs.tmc.langs.make;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import static java.util.logging.Level.INFO;
+
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.TestResult;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +31,9 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.logging.Level.INFO;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class CTestResultParser {
     protected static final Logger log = Logger.getLogger(CTestResultParser.class.getName());
@@ -40,6 +43,9 @@ public class CTestResultParser {
     private ArrayList<CTestCase> tests;
     private File projectDir;
 
+    /**
+    * Create a parser that will parse test results from a file.
+    */
     public CTestResultParser(File testResults, File valgrindOutput, File projectDir) {
         this.testResults = testResults;
         this.valgrindOutput = valgrindOutput;
@@ -48,6 +54,9 @@ public class CTestResultParser {
         parseTestOutput();
     }
 
+    /**
+    * Parse the output of tests.
+    */
     public void parseTestOutput() {
         try {
             this.tests = parseTestCases(testResults);
@@ -72,6 +81,9 @@ public class CTestResultParser {
         return this.tests;
     }
 
+    /**
+    * Returns the test results of the tests in this file.
+    */
     public List<TestResult> getTestResults() {
         ArrayList<TestResult> testResults = new ArrayList<>();
         for (CTestCase testCase : this.tests) {
@@ -80,6 +92,9 @@ public class CTestResultParser {
         return testResults;
     }
 
+    /**
+    * Returns the combined status of the tests in this file.
+    */
     public Status getResultStatus() {
         if (!testResults.exists()) {
             return Status.COMPILE_FAILED;
@@ -93,11 +108,12 @@ public class CTestResultParser {
     }
 
 
-    private ArrayList<CTestCase> parseTestCases(File testOutput) throws ParserConfigurationException, IOException {
+    private ArrayList<CTestCase> parseTestCases(File testOutput)
+        throws ParserConfigurationException, IOException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        dBuilder.setErrorHandler(null); // Silence logging
+        DocumentBuilder documentBuilder = dbFactory.newDocumentBuilder();
+        documentBuilder.setErrorHandler(null); // Silence logging
         dbFactory.setValidating(false);
         Document doc = null;
 
@@ -107,7 +123,7 @@ public class CTestResultParser {
         is.setEncoding("UTF-8");
 
         try {
-            doc = dBuilder.parse(is);
+            doc = documentBuilder.parse(is);
         } catch (SAXException ex) {
             log.info("SAX parser error ocurred");
             log.info(ex.toString());
@@ -147,8 +163,8 @@ public class CTestResultParser {
         if (projectDir == null) {
             return new HashMap<>();
         }
-        File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar + "test" + File
-                .separatorChar + "tmc_available_points.txt");
+        File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar + "test"
+            + File.separatorChar + "tmc_available_points.txt");
         Scanner scanner;
         try {
             scanner = new Scanner(availablePoints);
@@ -158,7 +174,7 @@ public class CTestResultParser {
         }
 
         Map<String, List<String>> idsToPoints = new HashMap<>();
-        while(scanner.hasNextLine()) {
+        while (scanner.hasNextLine()) {
             String row = scanner.nextLine();
             String[] parts = row.split("\\[|\\]| ");
 
@@ -181,9 +197,11 @@ public class CTestResultParser {
         String message;
         String platform = System.getProperty("os.name").toLowerCase();
         if (platform.contains("linux")) {
-            message = "Please install valgrind. For Debian-based distributions, run `sudo apt-get install valgrind`.";
+            message = "Please install valgrind. For Debian-based distributions, "
+                + "run `sudo apt-get install valgrind`.";
         } else if (platform.contains("mac")) {
-            message = "Please install valgrind. For OS X we recommend using homebrew (http://mxcl.github.com/homebrew/) and `brew install valgrind`.";
+            message = "Please install valgrind. For OS X we recommend using homebrew "
+                + "(http://mxcl.github.com/homebrew/) and `brew install valgrind`.";
         } else if (platform.contains("windows")) {
             message = "Windows doesn't support valgrind yet.";
         } else {
@@ -193,13 +211,16 @@ public class CTestResultParser {
             tests.get(i).setValgrindTrace(
                     "Warning, valgrind not available - unable to run local memory tests\n"
                             + message
-                            + "\nYou may also submit the exercise to the server to have it memory-tested.");
+                            + "\nYou may also submit the exercise to the server to have it "
+                            + "memory-tested.");
         }
     }
 
     private void addValgrindOutput() throws FileNotFoundException {
         Scanner scanner = new Scanner(valgrindOutput, "UTF-8");
-        String parentOutput = ""; // Contains total amount of memory used and such things. Useful if we later want to add support for testing memory usage
+        // Contains total amount of memory used and such things.
+        // Useful if we later want to add support for testing memory usage
+        String parentOutput = "";
         String[] outputs = new String[tests.size()];
         int[] pids = new int[tests.size()];
         int[] errors = new int[tests.size()];
@@ -210,30 +231,31 @@ public class CTestResultParser {
         Pattern errorPattern = Pattern.compile("==[0-9]+== ERROR SUMMARY: ([0-9]+)");
 
         String line = scanner.nextLine();
-        int firstPID = parsePID(line);
+        int firstPid = parsePid(line);
         parentOutput += "\n" + line;
         boolean warningLogged = false;
         while (scanner.hasNextLine()) {
             line = scanner.nextLine();
-            int pid = parsePID(line);
+            int pid = parsePid(line);
             if (pid == -1) {
                 continue;
             }
-            if (pid == firstPID) {
+            if (pid == firstPid) {
                 parentOutput += "\n" + line;
             } else {
                 int outputIndex = findIndex(pid, pids);
                 if (outputIndex == -1) {
                     if (!warningLogged) {
-                        log.warning("Valgrind output has more PIDs than the expected (# of test cases + 1).");
+                        log.warning("Valgrind output has more PIDs than the expected "
+                            + "(# of test cases + 1).");
                         warningLogged = true;
                     }
                     continue;
                 }
                 outputs[outputIndex] += "\n" + line;
-                Matcher m = errorPattern.matcher(line);
-                if (m.find()) {
-                    errors[outputIndex] = Integer.parseInt(m.group(1));
+                Matcher matcher = errorPattern.matcher(line);
+                if (matcher.find()) {
+                    errors[outputIndex] = Integer.parseInt(matcher.group(1));
                 }
             }
         }
@@ -261,7 +283,7 @@ public class CTestResultParser {
         return -1;
     }
 
-    private int parsePID(String line) {
+    private int parsePid(String line) {
         try {
             return Integer.parseInt(line.split(" ")[0].replaceAll("(==|--)", ""));
         } catch (Exception e) {
@@ -269,8 +291,10 @@ public class CTestResultParser {
         }
     }
 
+    /**
+    * Returns the run result of this file.
+    */
     public RunResult result() {
-
         return new RunResult(getResultStatus(), ImmutableList.copyOf(getTestResults()),
                 new ImmutableMap.Builder<String, byte[]>().build());
     }

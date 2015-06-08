@@ -1,7 +1,5 @@
 package fi.helsinki.cs.tmc.langs.make;
 
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -17,11 +15,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.helsinki.cs.tmc.langs.TestResult;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 public class CTestResultParserTest {
 
     private ArrayList<CTestCase> oneOfEachTest;
@@ -36,7 +29,7 @@ public class CTestResultParserTest {
         oneOfEachTest.add(new CTestCase("failing", "failure", "This test should've failed", null));
     }
 
-    @Test(expected=IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void testParsingWithNoTests() throws Exception {
         CTestResultParser cpar = null;
         File tmp = mkTempFile("test_output", ".xml");
@@ -88,8 +81,8 @@ public class CTestResultParserTest {
         assertEquals("There should only be one test result", 1, results.size());
         TestResult result = results.get(0);
         assertFalse("The test should not be successful", result.passed);
-        assertEquals("The test should contain the message: This test should've failed", "This test should've failed",
-                result.errorMessage);
+        assertEquals("The test should contain the message: This test should've failed",
+            "This test should've failed", result.errorMessage);
         assertEquals("The name of the test should be \"failing\"", "failing", result.name);
     }
 
@@ -118,10 +111,10 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<CTestCase>();
             testCases.add(oneOfEachTest.get(1));
             File ttmp = constructTestOutput(testCases);
-            File vtmp = constructNotMemoryFailingValgrindOutput(testCases);
             cpar = new CTestResultParser(ttmp, null, null);
             cpar.parseTestOutput();
             ttmp.delete();
+            File vtmp = constructNotMemoryFailingValgrindOutput(testCases);
             vtmp.delete();
 
         } catch (Exception e) {
@@ -131,8 +124,8 @@ public class CTestResultParserTest {
         assertEquals("There should only be one test result", 1, results.size());
         TestResult result = results.get(0);
         assertFalse("The test should not be successful", result.passed);
-        assertEquals("The test should contain the message: This test should've failed", "This test should've failed",
-                result.errorMessage);
+        assertEquals("The test should contain the message: This test should've failed",
+            "This test should've failed", result.errorMessage);
         assertEquals("The name of the test should be \"failing\"", "failing", result.name);
     }
 
@@ -186,7 +179,8 @@ public class CTestResultParserTest {
         File tmp = mkTempFile("test_memory", ".txt");
         PrintWriter pw = new PrintWriter(tmp, "UTF-8");
         for (CTestCase t : testCases) {
-            pw.println(t.getName() + " " + (t.isCheckedForMemoryLeaks() ? "1" : "0") + " " + t.getMaxBytesAllocated());
+            pw.println(t.getName() + " " + (t.isCheckedForMemoryLeaks() ? "1" : "0") + " "
+                + t.getMaxBytesAllocated());
         }
         pw.close();
         return tmp;
@@ -219,18 +213,19 @@ public class CTestResultParserTest {
         return tmp;
     }
 
-    private File constructNotMemoryFailingValgrindOutput(ArrayList<CTestCase> testCases) throws IOException {
+    private File constructNotMemoryFailingValgrindOutput(ArrayList<CTestCase> testCases)
+        throws IOException {
         File tmp = mkTempFile("valgrind", ".log");
         PrintWriter pw = new PrintWriter(tmp);
         pw.println("==" + testCases.size() * 2 + 1 + "== Main process");
-        int i = 2;
+        int counter = 2;
         for (CTestCase t : testCases) {
-            pw.println("==" + i * 2 + "== " + (i - 1));
+            pw.println("==" + counter * 2 + "== " + (counter - 1));
             pw.println("Some crap that should be ignored");
-            pw.println("==" + i * 2 + "== ERROR SUMMARY: 0 errors from 0 contexts");
-            pw.println("==" + i * 2 + "== LEAK SUMMARY:");
-            pw.println("==" + i * 2 + "==   definitely lost: 0 bytes in 0 blocks");
-            i++;
+            pw.println("==" + counter * 2 + "== ERROR SUMMARY: 0 errors from 0 contexts");
+            pw.println("==" + counter * 2 + "== LEAK SUMMARY:");
+            pw.println("==" + counter * 2 + "==   definitely lost: 0 bytes in 0 blocks");
+            counter++;
         }
         pw.println("==" + testCases.size() * 2 + 1 + "== Done");
 

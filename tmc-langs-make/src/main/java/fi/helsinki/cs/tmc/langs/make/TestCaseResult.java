@@ -15,13 +15,20 @@ public class TestCaseResult {
     public TestCaseResult() {
     }
 
+    /**
+     * Create a result of a test case.
+     */
     public TestCaseResult(String name, boolean successful, String message) {
         this.name = name;
         this.successful = successful;
         this.message = message;
     }
 
-    public TestCaseResult(String name, boolean successful, String message, String valgrindTrace, boolean valgrindFailed) {
+    /**
+     * Create a result of a test case including Valgrind information.
+     */
+    public TestCaseResult(String name, boolean successful, String message, String valgrindTrace,
+        boolean valgrindFailed) {
         this(name, successful, message);
         this.detailedMessage = valgrindTrace;
         this.valgrindFailed = valgrindFailed;
@@ -52,7 +59,8 @@ public class TestCaseResult {
     }
 
     /**
-     * Creates a TestCaseResult from a TestCase probably returned by a local run of tmc-junit-runner.
+     * Creates a TestCaseResult from a TestCase probably returned by a local run of
+     * tmc-junit-runner.
      */
     public static TestCaseResult fromTestCaseRecord(TestCase tc) {
         TestCaseResult tcr = new TestCaseResult();

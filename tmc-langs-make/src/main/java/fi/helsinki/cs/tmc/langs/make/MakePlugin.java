@@ -42,7 +42,8 @@ public class MakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        final File projectDir = new File(String.valueOf(path));
+        final File projectDir = path.toFile();
+
         try {
             runTests(projectDir, false);
         } catch (Exception e) {
@@ -50,8 +51,9 @@ public class MakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        final File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar
-            + "test" + File.separatorChar + "tmc_available_points.txt");
+        String availablePointsPath = File.separatorChar + "tmc_available_points.txt";
+        final File availablePoints = new File(projectDir.getAbsolutePath() + testDir
+            + availablePointsPath);
 
         if (!availablePoints.exists()) {
             return Optional.absent();
@@ -61,21 +63,25 @@ public class MakePlugin extends AbstractLanguagePlugin {
     }
 
     private ExerciseDesc parseExerciseDesc(File availablePoints) {
-        Scanner scanner;
-        try {
-            scanner = new Scanner(availablePoints);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        Scanner scanner = initFileScanner(availablePoints);
+        if (scanner == null) {
             return null;
         }
 
         Map<String, List<String>> idsToPoints = mapIdsToPoints(availablePoints);
+        List<TestDesc> tests = createTestDescs(idsToPoints, scanner);
+
+        String exerciseName = parseExerciseName(availablePoints);
+
+        return new ExerciseDesc(exerciseName, ImmutableList.copyOf(tests));
+    }
+
+    private List<TestDesc> createTestDescs(Map<String, List<String>> idsToPoints, Scanner scanner) {
         List<TestDesc> tests = new ArrayList<>();
         List<String> addedTests = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
-            String row = scanner.nextLine();
-            String[] parts = row.split("\\[|\\]| ");
+            String[] parts = rowParts(scanner);
 
             String testClass = parts[1];
             String testMethod = parts[parts.length - 3];
@@ -89,9 +95,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
             }
         }
 
-        String exerciseName = parseExerciseName(availablePoints);
-
-        return new ExerciseDesc(exerciseName, ImmutableList.copyOf(tests));
+        return tests;
     }
 
     private String parseExerciseName(File availablePoints) {
@@ -100,19 +104,25 @@ public class MakePlugin extends AbstractLanguagePlugin {
         return name;
     }
 
+    private String[] rowParts(Scanner scanner) {
+        String row = scanner.nextLine();
+        String[] parts = row.split("\\[|\\]| ");
+
+        String testClass = parts[1];
+        String testMethod = parts[parts.length - 3];
+
+        return new String[]{testClass, testMethod};
+    }
+
     private Map<String, List<String>> mapIdsToPoints(File availablePoints) {
-        Scanner scanner;
-        try {
-            scanner = new Scanner(availablePoints);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        Scanner scanner = initFileScanner(availablePoints);
+        if (scanner == null) {
             return new HashMap<>();
         }
 
         Map<String, List<String>> idsToPoints = new HashMap<>();
         while (scanner.hasNextLine()) {
-            String row = scanner.nextLine();
-            String[] parts = row.split("\\[|\\]| ");
+            String[] parts = rowParts(scanner);
 
             String key = parts[parts.length - 3];
             String value = parts[parts.length - 1];
@@ -120,6 +130,17 @@ public class MakePlugin extends AbstractLanguagePlugin {
         }
 
         return idsToPoints;
+    }
+
+    private Scanner initFileScanner(File file) {
+        Scanner scanner;
+        try {
+            scanner = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return scanner;
     }
 
     private void addPointsToId(Map<String, List<String>> idsToPoints, String key, String value) {
@@ -137,13 +158,12 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        final File projectDir = new File(String.valueOf(path));
+        final File projectDir = path.toFile();
         boolean withValgrind = true;
 
         if (!builds(projectDir)) {
             return new RunResult(RunResult.Status.COMPILE_FAILED,
-                ImmutableList.copyOf(new ArrayList<TestResult>()),
-                new ImmutableMap.Builder<String, byte[]>().build());
+                ImmutableList.<TestResult>of(), new ImmutableMap.Builder<String, byte[]>().build());
         }
 
         try {
@@ -159,10 +179,9 @@ public class MakePlugin extends AbstractLanguagePlugin {
             }
         }
 
-        File valgrindLog = withValgrind ? new File(projectDir.getAbsolutePath() + File.separatorChar
-            + "test" + File.separatorChar + "valgrind.log") : null;
-        File resultsFile = new File(projectDir.getAbsolutePath() + File.separatorChar + "test"
-            + File.separatorChar + "tmc_test_results.xml");
+        String baseTestPath = projectDir.getAbsolutePath() + testDir + File.separatorChar;
+        File valgrindLog = withValgrind ? new File(baseTestPath + "valgrind.log") : null;
+        File resultsFile = new File(baseTestPath + "tmc_test_results.xml");
 
         log.info("Locating exercise");
 
@@ -170,10 +189,8 @@ public class MakePlugin extends AbstractLanguagePlugin {
     }
 
     private void runTests(File dir, boolean withValgrind) throws Exception {
-        String[] command;
-
         String target = withValgrind ? "run-test-with-valgrind" : "run-test";
-        command = new String[]{"make", target};
+        String[] command = new String[]{"make", target};
 
         log.log(Level.INFO, "Running tests with command {0}",
                 new Object[]{Arrays.deepToString(command)});
@@ -189,8 +206,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
     }
 
     private boolean builds(File dir) {
-        String[] command;
-        command = new String[]{"make", "test"};
+        String[] command = new String[]{"make", "test"};
         ProcessRunner runner = new ProcessRunner(command, dir);
 
         try {

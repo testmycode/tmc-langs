@@ -25,8 +25,20 @@ import java.util.List;
 
 public class AntPlugin extends AbstractJavaPlugin {
 
-    private static final String TEST_DIR = File.separatorChar + "test";
-    private static final String RESULT_FILE = File.separatorChar + "results.txt";
+    private static final String TEST_DIR = "test";
+    private static final String RESULT_FILE = "results.txt";
+    private static final String BUILD_FILE = "build.xml";
+    private static final String BUILD_LOG_FILE = "build_log.txt";
+    private static final String BUILD_ERROR_LOG_FILE = "build_errors.txt";
+
+    private static final String ANT_BUILD_FILE_PROPERTY = "ant.file";
+    private static final String ANT_JAVAC_FORK_PROPERTY = "javac.fork";
+    private static final String ANT_JAVAC_FORK_VALUE = "true";
+    private static final String ANT_PROJECT_HELPER_PROPERTY = "ant.projectHelper";
+    private static final String ANT_COMPILE_TEST_TARGET = "compile-test";
+
+    private static final int STATUS_CODE_SUCCESS = 0;
+    private static final int STATUS_CODE_ERROR = 1;
 
     /**
      * Create a new AntPlugin.
@@ -42,7 +54,7 @@ public class AntPlugin extends AbstractJavaPlugin {
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
-        return new File(path.toString() + File.separatorChar + "build.xml").exists();
+        return path.resolve(BUILD_FILE).toFile().exists();
     }
 
     /**
@@ -53,15 +65,15 @@ public class AntPlugin extends AbstractJavaPlugin {
      */
     @Override
     protected CompileResult build(Path path) {
-        File buildFile = new File(path.toString() + File.separatorChar + "build.xml");
+        File buildFile = path.resolve(BUILD_FILE).toFile();
         Project buildProject = new Project();
-        buildProject.setUserProperty("ant.file", buildFile.getAbsolutePath());
-        buildProject.setProperty("javac.fork", "true");
+        buildProject.setUserProperty(ANT_BUILD_FILE_PROPERTY, buildFile.getAbsolutePath());
+        buildProject.setProperty(ANT_JAVAC_FORK_PROPERTY, ANT_JAVAC_FORK_VALUE);
         buildProject.init();
         buildProject.setBaseDir(path.toAbsolutePath().toFile());
 
-        File buildLog = new File(path.toString(), "build_log.txt");
-        File errorLog = new File(path.toString(), "build_errors.txt");
+        File buildLog = path.resolve(BUILD_LOG_FILE).toFile();
+        File errorLog = path.resolve(BUILD_ERROR_LOG_FILE).toFile();
 
         DefaultLogger logger = new DefaultLogger();
         try {
@@ -76,28 +88,28 @@ public class AntPlugin extends AbstractJavaPlugin {
             buildProject.addBuildListener(logger);
             buildProject.fireBuildStarted();
             ProjectHelper helper = ProjectHelper.getProjectHelper();
-            buildProject.addReference("ant.projectHelper", helper);
+            buildProject.addReference(ANT_PROJECT_HELPER_PROPERTY, helper);
             helper.parse(buildProject, buildFile);
-            buildProject.executeTarget("compile-test");
+            buildProject.executeTarget(ANT_COMPILE_TEST_TARGET);
             buildProject.fireBuildFinished(null);
 
-            return new CompileResult(0,
+            return new CompileResult(STATUS_CODE_SUCCESS,
                     Files.readAllBytes(buildLog.toPath()),
                     Files.readAllBytes(errorLog.toPath()));
 
-        } catch (BuildException e) {
+        } catch (BuildException buildException) {
             try {
-                buildProject.fireBuildFinished(e);
+                buildProject.fireBuildFinished(buildException);
 
-                return new CompileResult(1,
+                return new CompileResult(STATUS_CODE_ERROR,
                         Files.readAllBytes(buildLog.toPath()),
                         Files.readAllBytes(errorLog.toPath()));
-            } catch (IOException ex) {
-                throw Throwables.propagate(e);
+            } catch (IOException ioException) {
+                throw Throwables.propagate(buildException);
             }
 
-        } catch (IOException e) {
-            throw Throwables.propagate(e);
+        } catch (IOException ioException) {
+            throw Throwables.propagate(ioException);
         }
     }
 
@@ -105,9 +117,9 @@ public class AntPlugin extends AbstractJavaPlugin {
     @Override
     protected ClassPath getProjectClassPath(Path path) {
         ClassPath classPath = new ClassPath(path.toAbsolutePath());
-        classPath.addDirAndContents(Paths.get(path.toString(), "lib"));
-        classPath.add(Paths.get(path.toString(), "build", "test", "classes"));
-        classPath.add(Paths.get(path.toString(), "build", "classes"));
+        classPath.addDirAndContents(path.resolve("lib"));
+        classPath.add(path.resolve(Paths.get("build", "test", "classes")));
+        classPath.add(path.resolve(Paths.get("build", "classes")));
 
         return classPath;
     }
@@ -121,8 +133,8 @@ public class AntPlugin extends AbstractJavaPlugin {
             throw new TestScannerException();
         }
 
-        Path testDir = Paths.get(projectBasePath.toString() + TEST_DIR);
-        Path resultFile = Paths.get(projectBasePath.toString() + RESULT_FILE);
+        Path testDir = projectBasePath.resolve(TEST_DIR);
+        Path resultFile = projectBasePath.resolve(RESULT_FILE);
         ClassPath classPath = getProjectClassPath(projectBasePath);
         TestRunnerArgumentBuilder argumentBuilder =  new TestRunnerArgumentBuilder(
                 projectBasePath,
@@ -139,6 +151,6 @@ public class AntPlugin extends AbstractJavaPlugin {
             throw new TestRunnerException(e);
         }
 
-        return new File(projectBasePath.toString() + RESULT_FILE);
+        return resultFile.toFile();
     }
 }

@@ -14,7 +14,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     private static final Logger log = Logger.getLogger(AbstractLanguagePlugin.class.getName());
 
     /**
-     * Exercisebuilder uses an instance because it is somewhat likely that it
+     * ExerciseBuilder uses an instance because it is somewhat likely that it
      * will need some language specific configuration.
      */
     private final ExerciseBuilder exerciseBuilder;
@@ -65,7 +65,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      */
     @Override
     public ImmutableList<Path> findExercises(Path basePath) {
-        File searchPath = new File(basePath.toString());
+        File searchPath = basePath.toFile();
         ImmutableList.Builder<Path> listBuilder = new ImmutableList.Builder<>();
         if (searchPath.exists() && searchPath.isDirectory()) {
             return searchForExercises(searchPath, listBuilder);

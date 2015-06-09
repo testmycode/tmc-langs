@@ -138,9 +138,12 @@ public class AntPluginTest {
     @Test
     public void testAntCompileGivesOutputLogging() throws IOException {
         TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
-        File expected = new File("src/test/resources/arith_funcs_build.log");
-        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
-        File actual = new File("target/test-classes/ant_arith_funcs/build_log.txt");
+        Path resourcesDir = TestUtils.getPath(getClass(), "");
+        File expected = resourcesDir.resolve("arith_funcs_build.log").toFile();
+
+        antPlugin.runTests(resourcesDir.resolve("ant_arith_funcs"));
+
+        File actual = resourcesDir.resolve(Paths.get("ant_arith_funcs", "build_log.txt")).toFile();
         assertFileLines(expected, actual);
     }
 

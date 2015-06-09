@@ -65,7 +65,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         }
 
         SourceFiles sourceFiles = new SourceFiles();
-        sourceFiles.addSource(new File(path.toString() + testFolderPath));
+        sourceFiles.addSource(path.resolve(testFolderPath).toFile());
 
         ClassPath classPath;
         try {

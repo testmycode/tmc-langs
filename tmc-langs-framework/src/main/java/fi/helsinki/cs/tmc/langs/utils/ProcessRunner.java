@@ -1,13 +1,11 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
-import org.openide.filesystems.FileUtil;
+import org.apache.commons.io.IOUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
+import java.io.StringWriter;
 import java.util.concurrent.Callable;
 
 /**
@@ -28,67 +26,54 @@ public class ProcessRunner implements Callable<ProcessResult> {
 
     @Override
     public ProcessResult call() throws Exception {
-        @SuppressWarnings("unchecked")
-        String[] envp = makeEnvp(System.getenv());
-
-        Process process = Runtime.getRuntime().exec(command, envp, workDir);
-
-        int statusCode;
-
-        OutputStream out = new ByteArrayOutputStream();
-        OutputStream err = new ByteArrayOutputStream();
-
+        Process process = null;
         try {
-            startReaderThread(process.getInputStream(), out);
-            startReaderThread(process.getErrorStream(), err);
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.directory(workDir);
+            process = processBuilder.start();
 
-            statusCode = process.waitFor();
-        } catch (InterruptedException e) {
-            process.destroy();
-            throw e;
-        }
+            StringWriter stdoutWriter = new StringWriter();
+            StringWriter stderrWriter = new StringWriter();
 
-        String output = out.toString();
-        String errorOutput = err.toString();
-        return new ProcessResult(statusCode, output, errorOutput);
-    }
+            Thread stdoutReaderThread = startReadingThread(process.getInputStream(), stdoutWriter);
+            Thread stderrReaderThread = startReadingThread(process.getErrorStream(), stderrWriter);
 
-    private String[] makeEnvp(Map<String, String>... envs) {
-        int totalEntries = 0;
-        for (Map<String, String> env : envs) {
-            totalEntries += env.size();
-        }
+            int statusCode = process.waitFor();
+            stdoutReaderThread.join();
+            stderrReaderThread.join();
 
-        String[] envp = new String[totalEntries];
-        int counter = 0;
-        for (Map<String, String> env : envs) {
-            for (Map.Entry<String, String> envEntry : env.entrySet()) {
-                envp[counter++] = envEntry.getKey() + "=" + envEntry.getValue();
+            return new ProcessResult(statusCode, stdoutWriter.toString(), stderrWriter.toString());
+        } finally {
+            if (process != null) {
+                process.destroy();
             }
         }
-
-        return envp;
     }
 
-    private Thread startReaderThread(final InputStream is, final OutputStream os) {
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    FileUtil.copy(is, os);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.setDaemon(true);
-        thread.start();
+    private Thread startReadingThread(InputStream inputStream, StringWriter stringWriter) {
+        Thread thread = new Thread(new ProcessOutputReader(inputStream, stringWriter));
+        thread.run();
         return thread;
     }
 
+    private class ProcessOutputReader implements Runnable {
+
+        private InputStream inputStream;
+        private StringWriter stringWriter;
+
+        public ProcessOutputReader(InputStream inputStream, StringWriter stringWriter) {
+            this.inputStream = inputStream;
+            this.stringWriter = stringWriter;
+        }
+
+        @Override
+        public void run() {
+            try {
+                IOUtils.copy(inputStream, stringWriter, "UTF-8");
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

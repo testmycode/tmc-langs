@@ -9,8 +9,11 @@ import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
+import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.io.FileUtils;
@@ -146,6 +149,19 @@ public class AntPluginTest {
         Path project = TestUtils.getPath(getClass(), "reflection_utils_ant_test_case");
         RunResult result = antPlugin.runTests(project);
         assertEquals(RunResult.Status.PASSED, result.status);
+    }
+
+    @Test(expected = TestScannerException.class)
+    public void createRunResultFileThrowsTestScannerExceptionOnTestScannerFailure()
+            throws TestScannerException, TestRunnerException {
+        AntPlugin plugin = new AntPlugin() {
+            @Override
+            public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+                return Optional.absent();
+            }
+        };
+
+        plugin.createRunResultFile(Paths.get(""));
     }
 
     private void assertFileLines(File expected, File actual) throws IOException {

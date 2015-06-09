@@ -1,8 +1,6 @@
 package fi.helsinki.cs.tmc.langs.java;
 
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.TestResult;
 import fi.helsinki.cs.tmc.langs.java.testrunner.TestCase;
 import fi.helsinki.cs.tmc.langs.java.testrunner.TestCaseList;
@@ -11,9 +9,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import org.apache.commons.io.FileUtils;
 
@@ -88,38 +83,5 @@ public class TestResultParser {
                              ImmutableList.copyOf(points),
                              message,
                              ImmutableList.copyOf(exception));
-    }
-
-    /**
-     * Parses a given standard output String to an ExerciseDesc.
-     */
-    public ExerciseDesc parseScannerOutput(String output, String exerciseName) {
-        List<TestDesc> tests = new ArrayList<>();
-        JsonElement data = new JsonParser().parse(output);
-
-        for (JsonElement test : data.getAsJsonArray()) {
-            String testName = parseTestName(test);
-            JsonArray points = test.getAsJsonObject().get("points").getAsJsonArray();
-            tests.add(generateTestDesc(testName, points));
-        }
-
-        return new ExerciseDesc(exerciseName, ImmutableList.<TestDesc>copyOf(tests));
-    }
-
-
-    private String parseTestName(JsonElement test) {
-        String testName = test.getAsJsonObject().get("className").getAsString();
-        return testName + " " + test.getAsJsonObject().get("methodName").getAsString();
-    }
-
-    private TestDesc generateTestDesc(String name, JsonArray pointsArray) {
-        List<String> points = new ArrayList<>();
-
-        for (int i = 0; i < pointsArray.size(); i++) {
-            points.add(pointsArray.get(i).getAsString());
-        }
-
-        ImmutableList<String> immutablePoints = ImmutableList.copyOf(points);
-        return new TestDesc(name, immutablePoints);
     }
 }

@@ -2,7 +2,11 @@ package fi.helsinki.cs.tmc.langs.utils;
 
 import org.openide.filesystems.FileUtil;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -56,10 +60,10 @@ public class ProcessRunner implements Callable<ProcessResult> {
         }
 
         String[] envp = new String[totalEntries];
-        int i = 0;
+        int counter = 0;
         for (Map<String, String> env : envs) {
             for (Map.Entry<String, String> envEntry : env.entrySet()) {
-                envp[i++] = envEntry.getKey() + "=" + envEntry.getValue();
+                envp[counter++] = envEntry.getKey() + "=" + envEntry.getValue();
             }
         }
 
@@ -73,10 +77,12 @@ public class ProcessRunner implements Callable<ProcessResult> {
                 try {
                     FileUtil.copy(is, os);
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 try {
                     os.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         };

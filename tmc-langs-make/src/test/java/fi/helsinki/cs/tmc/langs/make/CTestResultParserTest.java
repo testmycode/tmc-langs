@@ -34,7 +34,7 @@ public class CTestResultParserTest {
         CTestResultParser cpar = null;
         File tmp = mkTempFile("test_output", ".xml");
         try {
-            cpar = new CTestResultParser(tmp, null, null);
+            cpar = new CTestResultParser(null, tmp, null);
             cpar.parseTestOutput();
         } finally {
             tmp.delete();
@@ -46,10 +46,10 @@ public class CTestResultParserTest {
     public void testParsingWithOneSuccessfulTest() {
         CTestResultParser cpar = null;
         try {
-            ArrayList<CTestCase> testCases = new ArrayList<CTestCase>();
+            ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(0));
             File tmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmp, emptyValgrindOutput(), tmpFolder());
+            cpar = new CTestResultParser(tmpFolder(), tmp, emptyValgrindOutput());
             cpar.parseTestOutput();
             tmp.delete();
 
@@ -67,10 +67,10 @@ public class CTestResultParserTest {
     public void testParsingWithOneFailedTest() {
         CTestResultParser cpar = null;
         try {
-            ArrayList<CTestCase> testCases = new ArrayList<CTestCase>();
+            ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
             File tmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmp, null, null);
+            cpar = new CTestResultParser(tmpFolder(), tmp, null);
             cpar.parseTestOutput();
             tmp.delete();
 
@@ -91,7 +91,7 @@ public class CTestResultParserTest {
         CTestResultParser cpar = null;
         try {
             File tmp = constructTestOutput(oneOfEachTest);
-            cpar = new CTestResultParser(tmp, emptyValgrindOutput(), tmpFolder());
+            cpar = new CTestResultParser(tmpFolder(), tmp, emptyValgrindOutput());
             cpar.parseTestOutput();
             tmp.delete();
 
@@ -108,10 +108,10 @@ public class CTestResultParserTest {
     public void testParsingWithEmptyValgrindOutput() {
         CTestResultParser cpar = null;
         try {
-            ArrayList<CTestCase> testCases = new ArrayList<CTestCase>();
+            ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
             File ttmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(ttmp, null, null);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, null);
             cpar.parseTestOutput();
             ttmp.delete();
             File vtmp = constructNotMemoryFailingValgrindOutput(testCases);
@@ -136,7 +136,7 @@ public class CTestResultParserTest {
             File ttmp = constructTestOutput(oneOfEachTest);
             File vtmp = constructMemoryFailingValgrindOutput();
 
-            cpar = new CTestResultParser(ttmp, vtmp, null);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp);
             cpar.parseTestOutput();
             vtmp.delete();
             ttmp.delete();
@@ -160,7 +160,7 @@ public class CTestResultParserTest {
             File ttmp = constructTestOutput(oneOfEachTest);
             File vtmp = constructNotMemoryFailingValgrindOutput(oneOfEachTest);
 
-            cpar = new CTestResultParser(ttmp, vtmp, null);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp);
             cpar.parseTestOutput();
             vtmp.delete();
             ttmp.delete();

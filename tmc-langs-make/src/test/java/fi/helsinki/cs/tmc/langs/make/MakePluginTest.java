@@ -65,7 +65,7 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testPassingmakeProjectHasOnePassingTest() {
+    public void testPassingMakeProjectHasOnePassingTest() {
         Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);
         assertEquals(1, result.testResults.size());

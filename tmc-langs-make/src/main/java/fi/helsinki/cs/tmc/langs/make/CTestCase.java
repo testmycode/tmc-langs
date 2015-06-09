@@ -20,17 +20,12 @@ public class CTestCase {
     /**
     * Create a test case for C-tests.
     */
-    public CTestCase(String name, String result, String message, List<String> points,
-        String valgrindTrace) {
+    public CTestCase(String name, String result, String message, List<String> points) {
         this(name);
         this.result = result;
         this.message = message;
         this.points = points;
-        this.valgrindTrace = valgrindTrace;
-    }
-
-    public CTestCase(String name, String result, String message, List<String> points) {
-        this(name, result, message, points, null);
+        this.valgrindTrace = null;
     }
 
     public CTestCase(String name) {
@@ -51,6 +46,7 @@ public class CTestCase {
         boolean resultsSuccessful = result.equals("success");
         boolean successful = resultsSuccessful && !valgrindFailed;
         boolean failedOnlyBecauseOfValgrind = resultsSuccessful && valgrindFailed;
+
         if (failedOnlyBecauseOfValgrind) {
             msg += " - Failed due to errors in valgrind log; see log below. "
                 + "Try submitting to server, some leaks might be platform dependent";

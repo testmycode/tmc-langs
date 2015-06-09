@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -38,19 +37,19 @@ import javax.xml.parsers.ParserConfigurationException;
 public class CTestResultParser {
     protected static final Logger log = Logger.getLogger(CTestResultParser.class.getName());
 
+    private File projectDir;
     private File testResults;
     private File valgrindOutput;
-    private ArrayList<CTestCase> tests;
-    private File projectDir;
+    private List<CTestCase> tests;
 
     /**
     * Create a parser that will parse test results from a file.
     */
-    public CTestResultParser(File testResults, File valgrindOutput, File projectDir) {
+    public CTestResultParser(File projectDir, File testResults, File valgrindOutput) {
+        this.projectDir = projectDir;
         this.testResults = testResults;
         this.valgrindOutput = valgrindOutput;
         this.tests = new ArrayList<>();
-        this.projectDir = projectDir;
         parseTestOutput();
     }
 
@@ -58,27 +57,87 @@ public class CTestResultParser {
     * Parse the output of tests.
     */
     public void parseTestOutput() {
+        parseTestCases();
+        addValgrindOutputs();
+    }
+
+    private void parseTestCases() {
         try {
             this.tests = parseTestCases(testResults);
-        } catch (ParserConfigurationException e) {
+        } catch (ParserConfigurationException | IOException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (valgrindOutput != null) {
-            try {
-                addValgrindOutput();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            addWarningToValgrindOutput();
         }
     }
 
-    public List<CTestCase> getTestCases() {
-        return this.tests;
+    private List<CTestCase> parseTestCases(File testOutput)
+            throws IOException, ParserConfigurationException {
+        Document doc = prepareDocument(testOutput);
+
+        File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar + "test"
+                + File.separatorChar + "tmc_available_points.txt");
+        Map<String, List<String>> idsToPoints = new MakeUtils().mapIdsToPoints(availablePoints);
+
+        NodeList nodeList = doc.getElementsByTagName("test");
+        List<CTestCase> cases = createCTestCases(nodeList, idsToPoints);
+
+        log.log(INFO, "C test cases parsed.");
+        return cases;
+    }
+
+    private Document prepareDocument(File testOutput)
+            throws ParserConfigurationException, IOException {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
+        DocumentBuilder documentBuilder = dbFactory.newDocumentBuilder();
+        documentBuilder.setErrorHandler(null); // Silence logging
+        dbFactory.setValidating(false);
+
+        InputStream inputStream = new FileInputStream(testOutput);
+        Reader reader = new InputStreamReader(inputStream, "UTF-8");
+        InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+
+        Document doc = null;
+        try {
+            doc = documentBuilder.parse(is);
+        } catch (SAXException ex) {
+            log.info("SAX parser error occured");
+            log.info(ex.toString());
+        }
+
+        if (doc == null) {
+            log.log(INFO, "doc cannot be null - can't parse test results :(");
+            throw new IllegalStateException("doc cannot be null - can't parse test results :(");
+        }
+
+        doc.getDocumentElement().normalize();
+
+        return doc;
+    }
+
+    private List<CTestCase> createCTestCases(NodeList nodeList,
+                                             Map<String, List<String>> idsToPoints) {
+        List<CTestCase> cases = new ArrayList<>();
+
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Element node = (Element) nodeList.item(i);
+            String result = node.getAttribute("result");
+            String name = node.getElementsByTagName("description").item(0).getTextContent();
+            String message = node.getElementsByTagName("message").item(0).getTextContent();
+            String id = node.getElementsByTagName("id").item(0).getTextContent();
+            List<String> points = new ArrayList<>();
+
+            if (message.equals("Passed")) {
+                message = "";
+                points = idsToPoints.get(id);
+            }
+
+            CTestCase testCase = new CTestCase(name, result, message, points);
+
+            cases.add(testCase);
+        }
+
+        return cases;
     }
 
     /**
@@ -107,95 +166,22 @@ public class CTestResultParser {
         return Status.PASSED;
     }
 
-
-    private ArrayList<CTestCase> parseTestCases(File testOutput)
-        throws ParserConfigurationException, IOException {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-
-        DocumentBuilder documentBuilder = dbFactory.newDocumentBuilder();
-        documentBuilder.setErrorHandler(null); // Silence logging
-        dbFactory.setValidating(false);
-        Document doc = null;
-
-        InputStream inputStream = new FileInputStream(testOutput);
-        Reader reader = new InputStreamReader(inputStream, "UTF-8");
-        InputSource is = new InputSource(reader);
-        is.setEncoding("UTF-8");
-
-        try {
-            doc = documentBuilder.parse(is);
-        } catch (SAXException ex) {
-            log.info("SAX parser error ocurred");
-            log.info(ex.toString());
-        }
-
-        if (doc == null) {
-            log.log(INFO, "doc cannot be null - can't parse test results :(");
-            throw new IllegalStateException("doc cannot be null - can't parse test results :(");
-        }
-
-        doc.getDocumentElement().normalize();
-
-        Map<String, List<String>> idsToPoints = mapIdsToPoints();
-        NodeList nodeList = doc.getElementsByTagName("test");
-        ArrayList<CTestCase> cases = new ArrayList<CTestCase>();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Element node = (Element) nodeList.item(i);
-            String result = node.getAttribute("result");
-            String name = node.getElementsByTagName("description").item(0).getTextContent();
-            String message = node.getElementsByTagName("message").item(0).getTextContent();
-            String id = node.getElementsByTagName("id").item(0).getTextContent();
-            List<String> points = new ArrayList<>();
-            if (message.equals("Passed")) {
-                message = "";
-                points = idsToPoints.get(id);
+    private void addValgrindOutputs() {
+        if (valgrindOutput != null) {
+            try {
+                addValgrindOutput();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
-
-            CTestCase testCase = new CTestCase(name, result, message, points);
-
-            cases.add(testCase);
+        } else {
+            addWarningToValgrindOutput();
         }
-        log.log(INFO, "C testcases parsed.");
-        return cases;
-    }
-
-    private Map<String, List<String>> mapIdsToPoints() {
-        if (projectDir == null) {
-            return new HashMap<>();
-        }
-        File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar + "test"
-            + File.separatorChar + "tmc_available_points.txt");
-        Scanner scanner;
-        try {
-            scanner = new Scanner(availablePoints);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return new HashMap<>();
-        }
-
-        Map<String, List<String>> idsToPoints = new HashMap<>();
-        while (scanner.hasNextLine()) {
-            String row = scanner.nextLine();
-            String[] parts = row.split("\\[|\\]| ");
-
-            String key = parts[parts.length - 3];
-            String value = parts[parts.length - 1];
-            addPointsToId(idsToPoints, key, value);
-        }
-
-        return idsToPoints;
-    }
-
-    private void addPointsToId(Map<String, List<String>> idsToPoints, String key, String value) {
-        if (!idsToPoints.containsKey(key)) {
-            idsToPoints.put(key, new ArrayList<String>());
-        }
-        idsToPoints.get(key).add(value);
     }
 
     private void addWarningToValgrindOutput() {
         String message;
         String platform = System.getProperty("os.name").toLowerCase();
+
         if (platform.contains("linux")) {
             message = "Please install valgrind. For Debian-based distributions, "
                 + "run `sudo apt-get install valgrind`.";
@@ -207,8 +193,9 @@ public class CTestResultParser {
         } else {
             message = "Please install valgrind if possible.";
         }
-        for (int i = 0; i < tests.size(); i++) {
-            tests.get(i).setValgrindTrace(
+
+        for (CTestCase test : tests) {
+            test.setValgrindTrace(
                     "Warning, valgrind not available - unable to run local memory tests\n"
                             + message
                             + "\nYou may also submit the exercise to the server to have it "

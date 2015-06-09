@@ -14,11 +14,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -29,7 +27,13 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
     private static final Logger log = Logger.getLogger(MakePlugin.class.getName());
 
-    private final String testDir = File.separatorChar + "test";
+    private static final String testDir = File.separatorChar + "test";
+
+    private MakeUtils makeUtils;
+
+    public MakePlugin() {
+        this.makeUtils = new MakeUtils();
+    }
 
     @Override
     public String getLanguageName() {
@@ -52,7 +56,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
         }
 
         String availablePointsPath = File.separatorChar + "tmc_available_points.txt";
-        final File availablePoints = new File(projectDir.getAbsolutePath() + testDir
+        final File availablePoints = new File(projectDir.getAbsolutePath() + this.testDir
             + availablePointsPath);
 
         if (!availablePoints.exists()) {
@@ -63,12 +67,12 @@ public class MakePlugin extends AbstractLanguagePlugin {
     }
 
     private ExerciseDesc parseExerciseDesc(File availablePoints) {
-        Scanner scanner = initFileScanner(availablePoints);
+        Scanner scanner = this.makeUtils.initFileScanner(availablePoints);
         if (scanner == null) {
             return null;
         }
 
-        Map<String, List<String>> idsToPoints = mapIdsToPoints(availablePoints);
+        Map<String, List<String>> idsToPoints = this.makeUtils.mapIdsToPoints(availablePoints);
         List<TestDesc> tests = createTestDescs(idsToPoints, scanner);
 
         String exerciseName = parseExerciseName(availablePoints);
@@ -81,10 +85,10 @@ public class MakePlugin extends AbstractLanguagePlugin {
         List<String> addedTests = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
-            String[] parts = rowParts(scanner);
+            String[] parts = this.makeUtils.rowParts(scanner);
 
-            String testClass = parts[1];
-            String testMethod = parts[parts.length - 3];
+            String testClass = parts[0];
+            String testMethod = parts[1];
             String testName = testClass + "." + testMethod;
 
             List<String> points = idsToPoints.get(testMethod);
@@ -100,56 +104,8 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
     private String parseExerciseName(File availablePoints) {
         String[] pathParts = availablePoints.getAbsolutePath().split(File.separatorChar + "");
-        String name = pathParts[pathParts.length - 3];
-        return name;
+        return pathParts[pathParts.length - 3];
     }
-
-    private String[] rowParts(Scanner scanner) {
-        String row = scanner.nextLine();
-        String[] parts = row.split("\\[|\\]| ");
-
-        String testClass = parts[1];
-        String testMethod = parts[parts.length - 3];
-
-        return new String[]{testClass, testMethod};
-    }
-
-    private Map<String, List<String>> mapIdsToPoints(File availablePoints) {
-        Scanner scanner = initFileScanner(availablePoints);
-        if (scanner == null) {
-            return new HashMap<>();
-        }
-
-        Map<String, List<String>> idsToPoints = new HashMap<>();
-        while (scanner.hasNextLine()) {
-            String[] parts = rowParts(scanner);
-
-            String key = parts[parts.length - 3];
-            String value = parts[parts.length - 1];
-            addPointsToId(idsToPoints, key, value);
-        }
-
-        return idsToPoints;
-    }
-
-    private Scanner initFileScanner(File file) {
-        Scanner scanner;
-        try {
-            scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return scanner;
-    }
-
-    private void addPointsToId(Map<String, List<String>> idsToPoints, String key, String value) {
-        if (!idsToPoints.containsKey(key)) {
-            idsToPoints.put(key, new ArrayList<String>());
-        }
-        idsToPoints.get(key).add(value);
-    }
-
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
@@ -179,13 +135,13 @@ public class MakePlugin extends AbstractLanguagePlugin {
             }
         }
 
-        String baseTestPath = projectDir.getAbsolutePath() + testDir + File.separatorChar;
-        File valgrindLog = withValgrind ? new File(baseTestPath + "valgrind.log") : null;
-        File resultsFile = new File(baseTestPath + "tmc_test_results.xml");
+        String baseTestPath = projectDir.getAbsolutePath() + this.testDir + File.separatorChar;
+        File testResults = new File(baseTestPath + "tmc_test_results.xml");
+        File valgrindOutput = withValgrind ? new File(baseTestPath + "valgrind.log") : null;
 
         log.info("Locating exercise");
 
-        return new CTestResultParser(resultsFile, valgrindLog, projectDir).result();
+        return new CTestResultParser(projectDir, testResults, valgrindOutput).result();
     }
 
     private void runTests(File dir, boolean withValgrind) throws Exception {

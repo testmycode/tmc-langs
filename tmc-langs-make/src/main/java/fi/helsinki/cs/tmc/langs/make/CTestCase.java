@@ -9,19 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class CTestCase {
-
-    private static final Logger log = Logger.getLogger(CTestCase.class.getName());
-
     private String name;
     private String result;
     private String message;
     private List<String> points;
     private String valgrindTrace;
-    private boolean checkedForMemoryLeaks;
-    private int maxBytesAllocated = -1;
 
     /**
     * Create a test case for C-tests.
@@ -33,7 +27,6 @@ public class CTestCase {
         this.message = message;
         this.points = points;
         this.valgrindTrace = valgrindTrace;
-        this.checkedForMemoryLeaks = false;
     }
 
     public CTestCase(String name, String result, String message, List<String> points) {
@@ -69,10 +62,8 @@ public class CTestCase {
             trace.addAll(Arrays.asList(valgrindTrace.split("\\n")));
         }
 
-        ImmutableList<String> points;
-        if (this.points == null) {
-            points = ImmutableList.copyOf(new ArrayList<String>());
-        } else {
+        ImmutableList<String> points = ImmutableList.of();
+        if (this.points != null) {
             points = ImmutableList.copyOf(this.points);
         }
         return new TestResult(name, successful, points, msg, ImmutableList
@@ -83,60 +74,15 @@ public class CTestCase {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getResult() {
         return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public List<String> getPoints() {
-        return this.points;
-    }
-
-    public void setPoints(List<String> points) {
-        this.points = points;
-    }
-
-    public String getValgrindTrace() {
-        return valgrindTrace;
-    }
-
     public void setValgrindTrace(String valgrindTrace) {
         this.valgrindTrace = valgrindTrace;
     }
-
-    public boolean isCheckedForMemoryLeaks() {
-        return checkedForMemoryLeaks;
-    }
-
-    public boolean isCheckedForMemoryUsage() {
-        return this.maxBytesAllocated >= 0;
-    }
-
-    public int getMaxBytesAllocated() {
-        return maxBytesAllocated;
-    }
-
-    public void setMaxBytesAllocated(int maxAllocations) {
-        this.maxBytesAllocated = maxAllocations;
-    }
-
-    public void setCheckedForMemoryLeaks(boolean checkedForMemoryLeaks) {
-        this.checkedForMemoryLeaks = checkedForMemoryLeaks;
-    }
-
 }

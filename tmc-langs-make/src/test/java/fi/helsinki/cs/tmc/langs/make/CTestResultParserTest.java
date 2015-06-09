@@ -24,7 +24,7 @@ public class CTestResultParserTest {
 
     @Before
     public void setUp() {
-        oneOfEachTest = new ArrayList<CTestCase>();
+        oneOfEachTest = new ArrayList<>();
         oneOfEachTest.add(new CTestCase("passing", "success", "Passed", null));
         oneOfEachTest.add(new CTestCase("failing", "failure", "This test should've failed", null));
     }
@@ -173,17 +173,6 @@ public class CTestResultParserTest {
             assertEquals("Valgrind output should be empty when there was no error", 0,
                     r.backtrace.size());
         }
-    }
-
-    private File constructMemoryTestOutput(ArrayList<CTestCase> testCases) throws IOException {
-        File tmp = mkTempFile("test_memory", ".txt");
-        PrintWriter pw = new PrintWriter(tmp, "UTF-8");
-        for (CTestCase t : testCases) {
-            pw.println(t.getName() + " " + (t.isCheckedForMemoryLeaks() ? "1" : "0") + " "
-                + t.getMaxBytesAllocated());
-        }
-        pw.close();
-        return tmp;
     }
 
     private File constructTestOutput(ArrayList<CTestCase> testCases) throws IOException {

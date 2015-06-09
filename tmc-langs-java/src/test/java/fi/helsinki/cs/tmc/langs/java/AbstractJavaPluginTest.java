@@ -64,27 +64,6 @@ public class AbstractJavaPluginTest {
     }
 
     @Test
-    public void findExercisesReturnsAListOfExerciseDirectories() {
-        Path project = TestUtils.getPath(getClass(), "ant_project");
-        ImmutableList<Path> dirs = pluginImpl.findExercises(project);
-        Path pathOne = TestUtils.getPath(getClass(), "ant_project");
-        Path pathTwo = TestUtils.getPath(getClass(), "ant_project/ant_sub_project");
-        assertTrue(dirs.contains(pathOne) && dirs.contains(pathTwo));
-    }
-
-    @Test
-    public void findExercisesReturnsAnEmptyListWhenInvalidPath() {
-        Path buildFile = TestUtils.getPath(getClass(), "ant_project/build.xml");
-        assertTrue(pluginImpl.findExercises(buildFile).isEmpty());
-    }
-
-    @Test
-    public void findExercisesReturnsAnEmptyListWhenNoExercisesFound() {
-        Path project = TestUtils.getPath(getClass(), "dummy_project");
-        assertTrue(pluginImpl.findExercises(project).isEmpty());
-    }
-
-    @Test
     public void testCheckCodeStyle() {
         Path project = TestUtils.getPath(getClass(), "most_errors");
         ValidationResult result = pluginImpl.checkCodeStyle(project);

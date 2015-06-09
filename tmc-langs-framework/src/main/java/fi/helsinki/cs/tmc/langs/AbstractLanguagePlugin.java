@@ -17,7 +17,21 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * Exercisebuilder uses an instance because it is somewhat likely that it
      * will need some language specific configuration.
      */
-    private final ExerciseBuilder exerciseBuilder = new ExerciseBuilder();
+    private final ExerciseBuilder exerciseBuilder;
+
+    /**
+     * Instantiates a new AbstractLanguagePlugin with a default ExerciseBuilder.
+     */
+    public AbstractLanguagePlugin() {
+        this(new ExerciseBuilder());
+    }
+
+    /**
+     * Instantiates a new AbstractLanguagePlugin with the specified ExerciseBuilder.
+     */
+    public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder) {
+        this.exerciseBuilder = exerciseBuilder;
+    }
 
     /**
      * Check if the exercise's project type corresponds with the language plugin

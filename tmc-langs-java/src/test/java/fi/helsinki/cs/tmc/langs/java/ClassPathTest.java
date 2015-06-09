@@ -85,4 +85,10 @@ public class ClassPathTest {
         cp.addDirAndContents(path);
         assertEquals("Subpaths size shouldn't change", 1, cp.getPaths().size());
     }
+
+    @Test
+    public void toStringReturnsEmptyStringWhenClassPathContainsNoSubPaths() {
+        ClassPath classPath = new ClassPath();
+        assertEquals("", classPath.toString());
+    }
 }

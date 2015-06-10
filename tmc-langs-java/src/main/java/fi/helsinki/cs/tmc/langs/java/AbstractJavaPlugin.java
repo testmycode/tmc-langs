@@ -9,6 +9,7 @@ import fi.helsinki.cs.tmc.langs.TestResult;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
+import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
@@ -35,7 +36,8 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     private final TestResultParser resultParser = new TestResultParser();
     private final String testFolderPath;
 
-    public AbstractJavaPlugin(String testFolderPath) {
+    public AbstractJavaPlugin(String testFolderPath, SubmissionProcessor submissionProcessor) {
+        super(submissionProcessor);
         this.testFolderPath = testFolderPath;
     }
 

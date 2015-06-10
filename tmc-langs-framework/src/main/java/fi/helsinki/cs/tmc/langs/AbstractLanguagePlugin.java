@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs;
 
+import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.collect.ImmutableList;
@@ -18,20 +19,34 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * will need some language specific configuration.
      */
     private final ExerciseBuilder exerciseBuilder;
+    private final SubmissionProcessor submissionProcessor;
+
 
     /**
-     * Instantiates a new AbstractLanguagePlugin with a default ExerciseBuilder.
+     * Instantiates a new AbstractLanguagePlugin with a default ExerciseBuilder and a
+     * default {@link SubmissionProcessor}.
      */
     public AbstractLanguagePlugin() {
-        this(new ExerciseBuilder());
+        this(new ExerciseBuilder(), new SubmissionProcessor());
     }
 
     /**
-     * Instantiates a new AbstractLanguagePlugin with the specified ExerciseBuilder.
+     * Instantiates a new AbstractLanguagePlugin with a default ExerciseBuilder and the specified
+     * {@link SubmissionProcessor}.
      */
-    public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder) {
-        this.exerciseBuilder = exerciseBuilder;
+    public AbstractLanguagePlugin(SubmissionProcessor submissionProcessor) {
+        this(new ExerciseBuilder(), submissionProcessor);
     }
+
+    /**
+     * Instantiates a new AbstractLanguagePlugin with the specified ExerciseBuilder and the
+     * specified {@link SubmissionProcessor}.
+     */
+    public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder, SubmissionProcessor submissionProcessor) {
+        this.exerciseBuilder = exerciseBuilder;
+        this.submissionProcessor = submissionProcessor;
+    }
+
 
     /**
      * Check if the exercise's project type corresponds with the language plugin
@@ -46,7 +61,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
 
     @Override
     public void prepareSubmission(Path submissionPath, Path destPath) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        submissionProcessor.moveFiles(submissionPath, destPath);
     }
 
     @Override

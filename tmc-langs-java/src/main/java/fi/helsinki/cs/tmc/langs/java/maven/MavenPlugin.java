@@ -5,6 +5,7 @@ import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
+import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 
 import org.apache.maven.cli.MavenCli;
 
@@ -24,7 +25,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
     private static final String TEST_RUNNER_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test";
 
     public MavenPlugin() {
-        super(TEST_FOLDER);
+        super(TEST_FOLDER, new SubmissionProcessor(new MavenFileMovingPolicy()));
     }
 
     @Override

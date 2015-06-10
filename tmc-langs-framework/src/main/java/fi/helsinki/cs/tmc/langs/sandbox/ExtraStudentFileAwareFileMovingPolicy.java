@@ -9,10 +9,10 @@ import java.util.List;
  * ExtraStudentFiles</a> to make a decision on whether to move a file or not.
  *
  * <p>For any {@link FileMovingPolicy} that extends this class, a file is moved if either
- * {@link StudentFileAwareFileMovingPolicy#isExtraStudentFile(Path)} or
- * {@link StudentFileAwareFileMovingPolicy#shouldMoveFile(Path)} returns {@code True}.
+ * {@link ExtraStudentFileAwareFileMovingPolicy#isExtraStudentFile(Path)} or
+ * {@link ExtraStudentFileAwareFileMovingPolicy#shouldMoveFile(Path)} returns {@code True}.
  */
-public abstract class StudentFileAwareFileMovingPolicy implements FileMovingPolicy {
+public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovingPolicy {
 
     private List<Path> extraStudentFiles;
 

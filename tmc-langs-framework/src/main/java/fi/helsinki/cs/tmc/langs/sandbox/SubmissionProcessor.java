@@ -1,17 +1,21 @@
 package fi.helsinki.cs.tmc.langs.sandbox;
 
+import javax.naming.OperationNotSupportedException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Moves files from a directory containing an unzipped student submission to a TMC-sandbox.
  */
 public class SubmissionProcessor {
 
+    private static final Logger log = Logger.getLogger(SubmissionProcessor.class.getName());
     private FileMovingPolicy fileMovingPolicy;
-
 
     /**
      * Creates a new SubmissionProcessor that moves all files.
@@ -40,22 +44,31 @@ public class SubmissionProcessor {
      * @param target    Directory to which the source files are moved to.
      */
     public void moveFiles(Path source, Path target) {
-        try {
-            DirectoryStream<Path> stream = Files.newDirectoryStream(source);
+        try(DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
             for (Path sourceFile : stream) {
                 if (fileMovingPolicy.shouldMove(sourceFile)) {
-                    moveFile(sourceFile, target);
+                    Path absoluteTargetPath = getAbsoluteTargetPath(source, target, sourceFile);
+                    try {
+                        moveFile(sourceFile.toAbsolutePath(), absoluteTargetPath);
+                    } catch (IOException exception) {
+                        log.log(Level.WARNING, null, exception);
+                    }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            log.log(Level.WARNING, null, exception);
+            return;
         }
     }
 
-
-    private void moveFile(Path sourceFile, Path target) {
-
+    protected Path getAbsoluteTargetPath(Path sourceRootPath,
+                                         Path targetRootPath,
+                                         Path sourceFilePath) {
+        Path relativeFilePath = sourceRootPath.relativize(sourceFilePath.toAbsolutePath());
+        return targetRootPath.resolve(relativeFilePath);
     }
 
-
+    protected void moveFile(Path source, Path target) throws IOException {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -1,10 +1,10 @@
 package fi.helsinki.cs.tmc.langs.java.ant;
 
-import fi.helsinki.cs.tmc.langs.sandbox.StudentFileAwareFileMovingPolicy;
+import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
 
 import java.nio.file.Path;
 
-public class AntFileMovingPolicy extends StudentFileAwareFileMovingPolicy {
+public class AntFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy {
 
     /**
      * Returns {@code True} for all files in the <tt>projectRoot/src</tt> directory and other
@@ -12,7 +12,7 @@ public class AntFileMovingPolicy extends StudentFileAwareFileMovingPolicy {
      *
      * <p>Will NOT return {@code True} for any test files. If test file modification are part
      * of the exercise, those test files are whitelisted as <tt>ExtraStudentFiles</tt> and the
-     * decision to move them is made by {@link StudentFileAwareFileMovingPolicy}.
+     * decision to move them is made by {@link ExtraStudentFileAwareFileMovingPolicy}.
      */
     @Override
     protected boolean shouldMoveFile(Path path) {

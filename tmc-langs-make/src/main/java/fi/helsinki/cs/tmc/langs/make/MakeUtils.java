@@ -69,7 +69,10 @@ public class MakeUtils {
         if (!idsToPoints.containsKey(key)) {
             idsToPoints.put(key, new ArrayList<String>());
         }
-        idsToPoints.get(key).add(value);
+        String[] points = value.split(" ");
+        for(String point : points) {
+            idsToPoints.get(key).add(point);
+        }
     }
 
     private String[] removeFirstCharacters(String[] array, String character) {

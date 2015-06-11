@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import fi.helsinki.cs.tmc.langs.CompileResult;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
+import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
@@ -27,7 +28,7 @@ public class AbstractJavaPluginTest {
     private class StubLanguagePlugin extends AbstractJavaPlugin {
 
         public StubLanguagePlugin(String testFolderPath) {
-            super(testFolderPath);
+            super(testFolderPath, new SubmissionProcessor());
         }
 
         @Override

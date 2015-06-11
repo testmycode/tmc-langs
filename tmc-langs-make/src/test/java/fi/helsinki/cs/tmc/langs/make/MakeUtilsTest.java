@@ -17,12 +17,12 @@ import java.util.Scanner;
 
 public class MakeUtilsTest {
 
-    MakeUtils makeUtils;
-    File correctFile;
-    File incorrectFile;
+    private MakeUtils makeUtils;
+    private File correctFile;
+    private File incorrectFile;
 
     public MakeUtilsTest() {
-        makeUtils = new MakeUtils();
+        this.makeUtils = new MakeUtils();
     }
 
     @Before

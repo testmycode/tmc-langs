@@ -1,11 +1,9 @@
 package fi.helsinki.cs.tmc.langs.sandbox;
 
-import javax.naming.OperationNotSupportedException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +47,7 @@ public class SubmissionProcessor {
                 if (fileMovingPolicy.shouldMove(sourceFile)) {
                     Path absoluteTargetPath = getAbsoluteTargetPath(source, target, sourceFile);
                     try {
-                        moveFile(sourceFile.toAbsolutePath(), absoluteTargetPath);
+                        moveFile(source, sourceFile.toAbsolutePath(), absoluteTargetPath);
                     } catch (IOException exception) {
                         log.log(Level.WARNING, null, exception);
                     }
@@ -68,7 +66,10 @@ public class SubmissionProcessor {
         return targetRootPath.resolve(relativeFilePath);
     }
 
-    protected void moveFile(Path source, Path target) throws IOException {
-        throw new UnsupportedOperationException();
+    protected void moveFile(Path sourceRoot, Path sourceFile, Path target) throws IOException {
+        Path relative = sourceRoot.relativize(sourceFile);
+        Path targetFile = target.resolve(relative);
+        Files.createDirectories(targetFile.getParent());
+        Files.move(sourceFile, targetFile);
     }
 }

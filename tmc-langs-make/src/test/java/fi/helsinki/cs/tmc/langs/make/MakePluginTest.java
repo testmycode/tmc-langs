@@ -107,4 +107,24 @@ public class MakePluginTest {
         assertTrue(result.testResults.get(0).backtrace.size() == 0);
         assertTrue(result.testResults.get(1).backtrace.size() > 0);
     }
+
+    @Test
+    public void testSuitePointsWithPassingSuite() {
+        Path path = TestUtils.getPath(getClass(), "passing-suite");
+        RunResult result = makePlugin.runTests(path);
+
+        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(3, result.testResults.size());
+        assertEquals("1.3", result.testResults.get(2).points.get(0));
+    }
+
+    @Test
+    public void testSuitePointsWithFailingSuite() {
+        Path path = TestUtils.getPath(getClass(), "failing-suite");
+        RunResult result = makePlugin.runTests(path);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(3, result.testResults.size());
+        assertEquals("1.3", result.testResults.get(2).points.get(0));
+    }
 }

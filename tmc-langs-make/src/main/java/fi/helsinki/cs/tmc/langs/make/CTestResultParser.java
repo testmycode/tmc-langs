@@ -118,6 +118,7 @@ public class CTestResultParser {
     private List<CTestCase> createCTestCases(NodeList nodeList,
                                              Map<String, List<String>> idsToPoints) {
         List<CTestCase> cases = new ArrayList<>();
+        List<String> addedCases = new ArrayList<>();
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             Element node = (Element) nodeList.item(i);
@@ -132,12 +133,27 @@ public class CTestResultParser {
                 points = idsToPoints.get(id);
             }
 
+            addedCases.add(id);
+
             CTestCase testCase = new CTestCase(name, result, message, points);
 
             cases.add(testCase);
         }
 
+        cases.addAll(suiteCases(idsToPoints, addedCases));
+
         return cases;
+    }
+
+    private List<CTestCase> suiteCases(Map<String, List<String>> idsToPoints, List<String> addedCases) {
+        List<CTestCase> suiteCases = new ArrayList<>();
+
+        for (String key : idsToPoints.keySet()) {
+            if (!addedCases.contains(key)) {
+                suiteCases.add(new CTestCase("suite", "success", "", idsToPoints.get(key)));
+            }
+        }
+        return suiteCases;
     }
 
     /**

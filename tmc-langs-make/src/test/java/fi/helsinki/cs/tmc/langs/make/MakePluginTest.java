@@ -4,8 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
+import com.google.common.base.Optional;
 
 import org.junit.Test;
 
@@ -126,5 +129,54 @@ public class MakePluginTest {
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
         assertEquals(3, result.testResults.size());
         assertEquals("1.3", result.testResults.get(2).points.get(0));
+    }
+
+    @Test
+    public void testIsExerciseTypeCorrect() {
+        Path path = TestUtils.getPath(getClass(), "passing");
+        assertTrue(makePlugin.isExerciseTypeCorrect(path));
+
+        path = TestUtils.getPath(getClass(), "failing");
+        assertTrue(makePlugin.isExerciseTypeCorrect(path));
+
+        path = TestUtils.getPath(getClass(), "build-failing");
+        assertTrue(makePlugin.isExerciseTypeCorrect(path));
+
+        path = TestUtils.getPath(getClass(), "valgrind-failing");
+        assertTrue(makePlugin.isExerciseTypeCorrect(path));
+
+        path = TestUtils.getPath(getClass(), "passing-suite");
+        assertTrue(makePlugin.isExerciseTypeCorrect(path));
+
+        path = TestUtils.getPath(getClass(), "failing-suite");
+        assertTrue(makePlugin.isExerciseTypeCorrect(path));
+
+        path = TestUtils.getPath(getClass(), "nonexistent");
+        assertFalse(makePlugin.isExerciseTypeCorrect(path));
+    }
+
+    @Test
+    public void testScanExerciseWithPassing() {
+        Path path = TestUtils.getPath(getClass(), "passing");
+        Optional<ExerciseDesc> optional = makePlugin.scanExercise(path, "");
+        assertTrue(optional.isPresent());
+
+        ExerciseDesc desc = optional.get();
+
+        assertEquals("passing", desc.name);
+
+        assertEquals(1, desc.tests.size());
+        assertEquals("test.test_one", desc.tests.get(0).name);
+
+        assertEquals(1, desc.tests.get(0).points.size());
+        assertEquals("1.1", desc.tests.get(0).points.get(0));
+    }
+
+    @Test
+    public void testScanExerciseWithNonexistentProject() {
+        Path path = TestUtils.getPath(getClass(), "nonexistent");
+        Optional<ExerciseDesc> optional = makePlugin.scanExercise(path, "");
+
+        assertFalse(optional.isPresent());
     }
 }

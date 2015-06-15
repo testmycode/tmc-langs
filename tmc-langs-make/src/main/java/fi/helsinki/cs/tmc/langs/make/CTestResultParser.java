@@ -145,7 +145,8 @@ public class CTestResultParser {
         return cases;
     }
 
-    private List<CTestCase> suiteCases(Map<String, List<String>> idsToPoints, List<String> addedCases) {
+    private List<CTestCase> suiteCases(Map<String, List<String>> idsToPoints,
+                                       List<String> addedCases) {
         List<CTestCase> suiteCases = new ArrayList<>();
 
         for (String key : idsToPoints.keySet()) {

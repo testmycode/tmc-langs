@@ -70,7 +70,7 @@ public class MakeUtils {
             idsToPoints.put(key, new ArrayList<String>());
         }
         String[] points = value.split(" ");
-        for(String point : points) {
+        for (String point : points) {
             idsToPoints.get(key).add(point);
         }
     }

@@ -50,7 +50,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * Instantiates a new AbstractLanguagePlugin with the specified ExerciseBuilder and the
      * specified {@link SubmissionProcessor}.
      */
-    public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder, SubmissionProcessor submissionProcessor) {
+    public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder,
+                                  SubmissionProcessor submissionProcessor) {
         this.exerciseBuilder = exerciseBuilder;
         this.submissionProcessor = submissionProcessor;
     }

@@ -23,7 +23,7 @@ public class SubmissionProcessor {
     }
 
     /**
-     * Creates a new SubmissionProcessor that uses a provided FileMovingPolicy to decide what
+     * Creates a new SubmissionProcessor that uses a provided FileMovingPolicy to decide which
      * files to move.
      */
     public SubmissionProcessor(FileMovingPolicy fileMovingPolicy) {
@@ -31,7 +31,7 @@ public class SubmissionProcessor {
     }
 
     /**
-     * Moves the some of the contents of <tt>source</tt> to <tt>target</tt> based on the decisions
+     * Moves some of the contents of <tt>source</tt> to <tt>target</tt> based on the decisions
      * of the {@link FileMovingPolicy} that was given when constructing this SubmissionProcessor.
      *
      * <p>As an end result, a file with the path <tt>source/foo.java</tt> will be in path
@@ -42,7 +42,7 @@ public class SubmissionProcessor {
      * @param target    Directory to which the source files are moved to.
      */
     public void moveFiles(Path source, Path target) {
-        try(DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
             for (Path sourceFile : stream) {
                 if (fileMovingPolicy.shouldMove(sourceFile)) {
                     Path absoluteTargetPath = getAbsoluteTargetPath(source, target, sourceFile);

@@ -54,7 +54,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
     /**
      * Loads the <tt>ExtraStudentFiles</tt> of the project specified during construction.
      *
-     * <p>More specifically, this read the <tt>.tmcproject.yml</tt> file from the project root
+     * <p>More specifically, this reads the <tt>.tmcproject.yml</tt> file from the project root
      * and parses it for the necessary information.
      */
     private void loadExtraStudentFileList() {

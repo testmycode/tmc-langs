@@ -1,9 +1,7 @@
 package fi.helsinki.cs.tmc.langs.sandbox;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,7 +10,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 
 public class SubmissionProcessorTest {
 
@@ -37,6 +34,9 @@ public class SubmissionProcessorTest {
         subSourceFile = Files.createTempFile(subSourceDir, "subfile", ".tmp");
     }
 
+    /**
+     * Delete files after tests are run.
+     */
     @After
     public void tearDown() {
         rootPath.toFile().delete();
@@ -48,7 +48,7 @@ public class SubmissionProcessorTest {
     }
 
     @Test
-    public void getAbsoluteTargetPathSolvesCorrectTargetPathFoorDirectChildOfRoot() {
+    public void getAbsoluteTargetPathSolvesCorrectTargetPathForDirectChildOfRoot() {
         Path result = processor.getAbsoluteTargetPath(sourceDir, targetDir, sourceFile);
         Path correct = targetDir.resolve(sourceFile.getFileName());
 

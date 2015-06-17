@@ -21,6 +21,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
 
     private List<Path> extraStudentFiles;
     private Path rootPath;
+    private Path target;
 
     /**
      * Determines whether a file should be moved even if it is not an <tt>ExtraStudentFile</tt>.
@@ -28,7 +29,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
     protected abstract boolean shouldMoveFile(Path path);
     
     @Override
-    public boolean shouldMove(Path path, Path rootPath) {
+    public boolean shouldMove(Path path, Path rootPath, Path target) {
         if (!path.toFile().exists()) {
             return false;
         }
@@ -37,7 +38,12 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
             return false;
         }
 
+        if (path.toString().endsWith(".tmcproject.yml")) {
+            return false;
+        }
+
         this.rootPath = rootPath;
+        this.target = target;
         
         return isExtraStudentFile(path) || shouldMoveFile(path);
     }
@@ -68,7 +74,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
     private void loadExtraStudentFileList() {
         extraStudentFiles = new ArrayList<>();
 
-        File tmcprojectyml = new File(this.rootPath.toAbsolutePath().toString()
+        File tmcprojectyml = new File(this.target.toAbsolutePath().toString()
                 + File.separatorChar + ".tmcproject.yml");
         Scanner scanner = initFileScanner(tmcprojectyml);
 

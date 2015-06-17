@@ -48,7 +48,7 @@ public class SubmissionProcessor {
             Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (fileMovingPolicy.shouldMove(file, source)) {
+                    if (fileMovingPolicy.shouldMove(file, source, target)) {
                         Path absoluteTargetPath = getAbsoluteTargetPath(source, target, file);
                         try {
                             moveFile(source, file.toAbsolutePath(), absoluteTargetPath);

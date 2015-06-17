@@ -27,9 +27,9 @@ public class MakeFileMovingPolicyTest {
     }
 
     @Test
-    public void testItMovesMakefiles() {
+    public void testItDoesNotMoveMakefiles() {
         Path makefile = Paths.get("Makefile");
-        assertTrue(makeFileMovingPolicy.shouldMoveFile(makefile));
+        assertFalse(makeFileMovingPolicy.shouldMoveFile(makefile));
     }
 
     @Test
@@ -39,8 +39,9 @@ public class MakeFileMovingPolicyTest {
 
         collectPaths(path, toBeMoved);
 
-        assertEquals(5, toBeMoved.size());
-        assertTrue(toBeMoved.contains("src/Makefile"));
+        assertEquals(3, toBeMoved.size());
+        // Should not move Makefile in source
+        assertFalse(toBeMoved.contains("src/Makefile"));
         assertTrue(toBeMoved.contains("src/main.c"));
         assertTrue(toBeMoved.contains("src/source.c"));
         assertTrue(toBeMoved.contains("src/source.h"));
@@ -53,7 +54,7 @@ public class MakeFileMovingPolicyTest {
 
         collectPaths(path, toBeMoved);
 
-        assertEquals(5, toBeMoved.size());
+        assertEquals(3, toBeMoved.size());
         assertFalse(toBeMoved.contains("test/test_source.c"));
         assertFalse(toBeMoved.contains("test/tmc-check.h"));
         assertFalse(toBeMoved.contains("test/tmc-check.c"));

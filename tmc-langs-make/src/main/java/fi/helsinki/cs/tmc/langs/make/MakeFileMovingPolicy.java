@@ -15,7 +15,7 @@ public class MakeFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy 
      * decision to move them is made by {@link ExtraStudentFileAwareFileMovingPolicy}.
      */
     @Override
-    protected boolean shouldMoveFile(Path path) {
-        return path.toString().startsWith("src") || path.toString().equals("Makefile");
+    public boolean shouldMoveFile(Path path) {
+        return !path.endsWith("Makefile") && path.toString().startsWith("src/");
     }
 }

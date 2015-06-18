@@ -6,7 +6,7 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.Zipper;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 
 import com.google.common.collect.ImmutableList;
 

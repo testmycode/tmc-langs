@@ -2,7 +2,7 @@ package fi.helsinki.cs.tmc.langs;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

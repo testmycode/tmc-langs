@@ -23,19 +23,24 @@
     <dependencies>
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
-            <artifactId>tmc-checkstyle-runner</artifactId>
-            <version>1.0.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.puppycrawl.tools</groupId>
-                    <artifactId>checkstyle</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>tmc-langs-abstraction</artifactId>
+            <version>1.0.0</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
             <version>1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.16</version>
         </dependency>
     </dependencies>
     <build>

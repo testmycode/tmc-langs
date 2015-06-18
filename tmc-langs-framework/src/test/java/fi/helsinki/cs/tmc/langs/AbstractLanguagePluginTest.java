@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
@@ -21,8 +22,9 @@ public class AbstractLanguagePluginTest {
 
     private class StubLanguagePlugin extends AbstractLanguagePlugin {
 
-        public StubLanguagePlugin(ExerciseBuilder exerciseBuilder) {
-            super(exerciseBuilder);
+        public StubLanguagePlugin(ExerciseBuilder exerciseBuilder,
+                                  SubmissionProcessor submissionProcessor) {
+            super(exerciseBuilder, submissionProcessor);
         }
 
         @Override
@@ -53,11 +55,13 @@ public class AbstractLanguagePluginTest {
 
     private LanguagePlugin plugin;
     private ExerciseBuilder exerciseBuilder;
+    private SubmissionProcessor submissionProcessor;
 
     @Before
     public void setUp() {
         exerciseBuilder = mock(ExerciseBuilder.class);
-        plugin = new StubLanguagePlugin(exerciseBuilder);
+        submissionProcessor = mock(SubmissionProcessor.class);
+        plugin = new StubLanguagePlugin(exerciseBuilder, submissionProcessor);
     }
 
     @Test
@@ -110,4 +114,12 @@ public class AbstractLanguagePluginTest {
         verify(exerciseBuilder).prepareSolution(path);
     }
 
+    @Test
+    public void prepareSubmissionDelegatesRequestToSubmissionProcessor() {
+        Path source = Paths.get("source");
+        Path target = Paths.get("target");
+
+        plugin.prepareSubmission(source, target);
+        verify(submissionProcessor).moveFiles(source, target);
+    }
 }

@@ -35,10 +35,17 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
     private final TestResultParser resultParser = new TestResultParser();
     private final String testFolderPath;
+    private final TestScanner testScanner;
 
-    public AbstractJavaPlugin(String testFolderPath, SubmissionProcessor submissionProcessor) {
+    /**
+     * Creates a new AbstractJavaPlugin.
+     */
+    public AbstractJavaPlugin(String testFolderPath,
+                              SubmissionProcessor submissionProcessor,
+                              TestScanner testScanner) {
         super(submissionProcessor);
         this.testFolderPath = testFolderPath;
+        this.testScanner = testScanner;
     }
 
     protected abstract ClassPath getProjectClassPath(Path path) throws IOException;
@@ -77,8 +84,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        TestScanner scanner = new TestScanner();
-        return scanner.findTests(classPath, sourceFiles, exerciseName);
+        return testScanner.findTests(classPath, sourceFiles, exerciseName);
     }
 
     @Override

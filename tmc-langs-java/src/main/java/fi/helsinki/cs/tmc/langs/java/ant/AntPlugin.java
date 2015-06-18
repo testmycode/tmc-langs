@@ -6,6 +6,7 @@ import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
+import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 
 import com.google.common.base.Optional;
@@ -45,7 +46,9 @@ public class AntPlugin extends AbstractJavaPlugin {
      * Create a new AntPlugin.
      */
     public AntPlugin() {
-        super(TEST_DIR, new SubmissionProcessor(new AntFileMovingPolicy()));
+        super(TEST_DIR,
+                new SubmissionProcessor(new AntFileMovingPolicy()),
+                new TestScanner());
     }
 
     @Override

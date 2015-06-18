@@ -6,6 +6,7 @@ import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -16,7 +17,43 @@ import java.util.Map;
 
 public class ExerciseBuilderTest {
 
-    public ExerciseBuilderTest() {
+    private ExerciseBuilder exerciseBuilder;
+
+    @Before
+    public void setUp() {
+        exerciseBuilder = new ExerciseBuilder();
+    }
+
+    @Test
+    public void testPrepareStub() throws IOException {
+        File originProject = new File("src/test/resources/arith_funcs/");
+        File targetFolder = createTemporaryCopyOf(originProject);
+        File expectedFolder = new File("src/test/resources/arith_funcs_stub/src");
+        File outputFolder = new File(targetFolder.getAbsolutePath() + "/src");
+
+        exerciseBuilder.prepareStub(targetFolder.toPath());
+
+        assertFileLines(expectedFolder, outputFolder);
+
+    }
+
+    @Test
+    public void testPrepareSolution() throws IOException {
+        File originProject = new File("src/test/resources/arith_funcs/");
+        File targetFolder = createTemporaryCopyOf(originProject);
+        File expectedFolder = new File("src/test/resources/arith_funcs_solution/src");
+        File outputFolder = new File(targetFolder.getAbsolutePath() + "/src");
+
+        exerciseBuilder.prepareSolution(targetFolder.toPath());
+
+        assertFileLines(expectedFolder, outputFolder);
+    }
+
+    @Test
+    public void prepareSolutionHandlesNonFolderPath() {
+        File originProject = new File("src/test/resources/arith_funcs/build.xml");
+
+        exerciseBuilder.prepareSolution(originProject.toPath());
     }
 
     private File createTemporaryCopyOf(File file) throws IOException {
@@ -24,23 +61,6 @@ public class ExerciseBuilderTest {
         FileUtils.copyDirectory(file, tempFolder);
         tempFolder.deleteOnExit();
         return tempFolder;
-    }
-
-    @Test
-    public void testPrepareStub() throws IOException {
-        System.out.println("prepareStub");
-        File originProject = new File("src/test/resources/arith_funcs/");
-
-        File targetFolder = createTemporaryCopyOf(originProject);
-        ExerciseBuilder instance = new ExerciseBuilder();
-
-        File expectedFolder = new File("src/test/resources/arith_funcs_stub/src");
-        File outputFolder = new File(targetFolder.getAbsolutePath() + "/src");
-
-        instance.prepareStub(targetFolder.toPath());
-
-        assertFileLines(expectedFolder, outputFolder);
-
     }
 
     private String getFileName(String parentDir, File file) {
@@ -81,21 +101,6 @@ public class ExerciseBuilderTest {
             result.put(getFileName(folder.getAbsolutePath(), file), file);
         }
         return result;
-    }
-
-    @Test
-    public void testPrepareSolution() throws IOException {
-        File originProject = new File("src/test/resources/arith_funcs/");
-
-        File targetFolder = createTemporaryCopyOf(originProject);
-        ExerciseBuilder instance = new ExerciseBuilder();
-
-        instance.prepareSolution(targetFolder.toPath());
-
-        File expectedFolder = new File("src/test/resources/arith_funcs_solution/src");
-        File outputFolder = new File(targetFolder.getAbsolutePath() + "/src");
-
-        assertFileLines(expectedFolder, outputFolder);
     }
 
 }

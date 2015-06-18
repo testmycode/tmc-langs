@@ -34,7 +34,7 @@ public class ExerciseBuilderTest {
         File expectedFolder = new File("src"
                 + File.separator + "test"
                 + File.separator + "resources"
-                + File.separator + "arith_funcs"
+                + File.separator + "arith_funcs_stub"
                 + File.separator + "src");
         File outputFolder = new File(targetFolder.getAbsolutePath() + File.separator + "src");
 
@@ -54,7 +54,7 @@ public class ExerciseBuilderTest {
         File expectedFolder = new File("src"
                 + File.separator + "test"
                 + File.separator + "resources"
-                + File.separator + "arith_funcs"
+                + File.separator + "arith_funcs_solution"
                 + File.separator + "src");
         File outputFolder = new File(targetFolder.getAbsolutePath() + File.separator + "src");
 

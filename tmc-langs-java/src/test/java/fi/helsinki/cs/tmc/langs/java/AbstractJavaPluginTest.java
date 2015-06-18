@@ -5,18 +5,27 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import fi.helsinki.cs.tmc.langs.CompileResult;
+import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Optional;
 
 import org.junit.Test;
+
+import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,5 +141,34 @@ public class AbstractJavaPluginTest {
         };
 
         assertNull(plugin.runTests(null));
+    }
+
+    @Test
+    public void scanExerciseReturnsAbsentOnInvalidProject() {
+        AbstractJavaPlugin plugin = new StubLanguagePlugin("");
+        Optional<ExerciseDesc> result = plugin.scanExercise(null, "");
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void scanExerciseAddsSourceFilesFromProject() {
+        Path path = TestUtils.getPath(getClass(), "trivial");
+        TestScanner scanner = mock(TestScanner.class);
+        AbstractJavaPlugin plugin = new StubLanguagePlugin("", new SubmissionProcessor(), scanner) {
+            protected boolean isExerciseTypeCorrect(Path path) {
+                return true;
+            }
+        };
+        ArgumentCaptor<SourceFiles> sourceFilesCaptor = ArgumentCaptor.forClass(SourceFiles.class);
+        File expected = TestUtils.getPath(getClass(), "trivial/test/TrivialTest.java").toFile();
+
+        plugin.scanExercise(path, "trivial");
+
+        verify(scanner).findTests(any(ClassPath.class), sourceFilesCaptor.capture(), anyString());
+
+        SourceFiles sourceFiles = sourceFilesCaptor.getValue();
+
+        assertFalse(sourceFiles.getSources().isEmpty());
+        assertTrue(sourceFiles.getSources().contains(expected));
     }
 }

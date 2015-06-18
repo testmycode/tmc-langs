@@ -25,6 +25,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour for Java projects
+ * that use Apache Ant.
+ */
 public class AntPlugin extends AbstractJavaPlugin {
 
     private static final String TEST_DIR = "test";

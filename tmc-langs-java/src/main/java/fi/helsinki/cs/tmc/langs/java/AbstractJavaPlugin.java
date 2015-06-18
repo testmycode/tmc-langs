@@ -29,6 +29,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * An abstract extension of {@link AbstractLanguagePlugin} that implements features common to all
+ * Java language plugins.
+ */
 public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
     private static final Logger log = Logger.getLogger(AbstractJavaPlugin.class.getName());

@@ -1,15 +1,14 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
+import static org.junit.Assert.assertFalse;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static org.junit.Assert.assertFalse;
 
 public class TestUtilsTest {
 

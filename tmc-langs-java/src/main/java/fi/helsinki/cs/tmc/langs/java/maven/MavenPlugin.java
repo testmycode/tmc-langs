@@ -17,6 +17,10 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour for Java projects
+ * that use Apache Maven.
+ */
 public class MavenPlugin extends AbstractJavaPlugin {
 
     private static final String POM_LOCATION = File.separatorChar + "pom.xml";
@@ -25,6 +29,9 @@ public class MavenPlugin extends AbstractJavaPlugin {
     private static final String TEST_FOLDER = File.separatorChar + "src";
     private static final String TEST_RUNNER_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test";
 
+    /**
+     * Creates a new MavenPlugin.
+     */
     public MavenPlugin() {
         super(TEST_FOLDER,
                 new SubmissionProcessor(new MavenFileMovingPolicy()),

@@ -60,7 +60,6 @@ public class ExerciseBuilder {
 
     private List<File> getFileList(File folder) {
         if (!folder.isDirectory()) {
-            System.out.println("No files found");
             return new ArrayList<>();
         }
         ArrayList<File> result = new ArrayList<>();

@@ -26,10 +26,17 @@ public class ExerciseBuilderTest {
 
     @Test
     public void testPrepareStub() throws IOException {
-        File originProject = new File("src/test/resources/arith_funcs/");
+        File originProject = new File("src"
+                + File.separator + "test"
+                + File.separator + "resources"
+                + File.separator + "arith_funcs" + File.separator);
         File targetFolder = createTemporaryCopyOf(originProject);
-        File expectedFolder = new File("src/test/resources/arith_funcs_stub/src");
-        File outputFolder = new File(targetFolder.getAbsolutePath() + "/src");
+        File expectedFolder = new File("src"
+                + File.separator + "test"
+                + File.separator + "resources"
+                + File.separator + "arith_funcs"
+                + File.separator + "src");
+        File outputFolder = new File(targetFolder.getAbsolutePath() + File.separator + "src");
 
         exerciseBuilder.prepareStub(targetFolder.toPath());
 
@@ -39,10 +46,17 @@ public class ExerciseBuilderTest {
 
     @Test
     public void testPrepareSolution() throws IOException {
-        File originProject = new File("src/test/resources/arith_funcs/");
+        File originProject = new File("src"
+                + File.separator + "test"
+                + File.separator + "resources"
+                + File.separator + "arith_funcs" + File.separator);
         File targetFolder = createTemporaryCopyOf(originProject);
-        File expectedFolder = new File("src/test/resources/arith_funcs_solution/src");
-        File outputFolder = new File(targetFolder.getAbsolutePath() + "/src");
+        File expectedFolder = new File("src"
+                + File.separator + "test"
+                + File.separator + "resources"
+                + File.separator + "arith_funcs"
+                + File.separator + "src");
+        File outputFolder = new File(targetFolder.getAbsolutePath() + File.separator + "src");
 
         exerciseBuilder.prepareSolution(targetFolder.toPath());
 
@@ -51,7 +65,11 @@ public class ExerciseBuilderTest {
 
     @Test
     public void prepareSolutionHandlesNonFolderPath() {
-        File originProject = new File("src/test/resources/arith_funcs/build.xml");
+        File originProject = new File("src"
+                + File.separator + "test"
+                + File.separator + "resources"
+                + File.separator + "arith_funcs"
+                + File.separator + "build.xml");
 
         exerciseBuilder.prepareSolution(originProject.toPath());
     }

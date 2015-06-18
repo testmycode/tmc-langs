@@ -1,12 +1,16 @@
 package fi.helsinki.cs.tmc.langs.sandbox;
 
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.Yaml;
+
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
 
 /**
  * An abstract {@link FileMovingPolicy} that also uses
@@ -77,48 +81,52 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
         extraStudentFiles = new ArrayList<>();
 
         File tmcprojectyml = this.target.toAbsolutePath().resolve(TMC_PROJECT_YML).toFile();
-        Scanner scanner = initFileScanner(tmcprojectyml);
 
-        if (scanner == null) {
+        if (tmcprojectyml.exists()) {
+            parseExtraStudentFiles(tmcprojectyml);
+        }
+    }
+
+    private void parseExtraStudentFiles(File file) {
+        String fileContents = initFileContents(file);
+        Yaml yaml = new Yaml();
+        Object yamlSpecifications = yaml.load(fileContents);
+
+        if (!(yamlSpecifications instanceof Map)) {
             return;
         }
 
-        parseExtraStudentFiles(scanner);
+        Map<?, ?> specsAsMap = (Map<?, ?>) yamlSpecifications;
+        Object files = specsAsMap.get("extra_student_files");
+        addFiles(files);
     }
 
-    // TODO: replace with YAML parser
-    private void parseExtraStudentFiles(Scanner scanner) {
-        boolean parseFiles = false;
-        while (scanner.hasNextLine()) {
-            String row = scanner.nextLine();
+    private void addFiles(Object files) {
+        addAllIfList(files);
+        addIfString(files);
+    }
 
-            if (row.startsWith("extra_student_files:")) {
-                parseFiles = true;
-            }
-
-            if (!parseFiles) {
-                continue;
-            }
-
-            if (row.startsWith("  - ")) {
-                String relativePath = row.substring(4);
-                extraStudentFiles.add(Paths.get(this.rootPath.toAbsolutePath() + relativePath));
-            } else {
-                parseFiles = false;
+    private void addAllIfList(Object files) {
+        if (files instanceof List) {
+            for (Object value : (List<?>) files) {
+                addIfString(value);
             }
         }
     }
 
-    private Scanner initFileScanner(File file) {
-        Scanner scanner;
+    private void addIfString(Object value) {
+        if (value instanceof String) {
+            String path = this.rootPath.toAbsolutePath() + (String) value;
+            extraStudentFiles.add(Paths.get(path));
+        }
+    }
 
+    private String initFileContents(File file) {
         try {
-            scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
+            return FileUtils.readFileToString(file);
+        } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return "";
         }
-
-        return scanner;
     }
 }

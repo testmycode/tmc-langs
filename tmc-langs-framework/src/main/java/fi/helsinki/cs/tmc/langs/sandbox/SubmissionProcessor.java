@@ -50,9 +50,8 @@ public class SubmissionProcessor {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     if (fileMovingPolicy.shouldMove(file, source, target)) {
-                        Path absoluteTargetPath = getAbsoluteTargetPath(source, target, file);
                         try {
-                            moveFile(source, file.toAbsolutePath(), absoluteTargetPath);
+                            moveFile(source, file, target);
                         } catch (IOException exception) {
                             log.log(Level.WARNING, null, exception);
                         }
@@ -77,13 +76,6 @@ public class SubmissionProcessor {
             log.log(Level.WARNING, null, exception);
             return;
         }
-    }
-
-    protected Path getAbsoluteTargetPath(Path sourceRootPath,
-                                         Path targetRootPath,
-                                         Path sourceFilePath) {
-        Path relativeFilePath = sourceRootPath.relativize(sourceFilePath.toAbsolutePath());
-        return targetRootPath.resolve(relativeFilePath);
     }
 
     protected void moveFile(Path sourceRoot, Path sourceFile, Path target) throws IOException {

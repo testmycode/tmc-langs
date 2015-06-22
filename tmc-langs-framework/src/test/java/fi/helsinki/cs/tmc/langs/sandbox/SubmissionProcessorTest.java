@@ -49,23 +49,6 @@ public class SubmissionProcessorTest {
     }
 
     @Test
-    public void getAbsoluteTargetPathSolvesCorrectTargetPathForDirectChildOfRoot() {
-        Path result = processor.getAbsoluteTargetPath(sourceDir, targetDir, sourceFile);
-        Path correct = targetDir.resolve(sourceFile.getFileName());
-
-        assertEquals(correct.toAbsolutePath(), result.toAbsolutePath());
-    }
-
-    @Test
-    public void getAbsoluteTargetPathSolvesCorrectTargetPathForSubPath() {
-        Path result = processor.getAbsoluteTargetPath(sourceDir, targetDir, subSourceFile);
-        Path correct = targetDir.resolve(subSourceDir.getFileName())
-                                .resolve(subSourceFile.getFileName());
-
-        assertEquals(correct.toAbsolutePath(), result.toAbsolutePath());
-    }
-
-    @Test
     public void moveFileMovesFiles() throws IOException {
         processor.moveFile(sourceDir, sourceFile, targetDir);
 
@@ -101,5 +84,16 @@ public class SubmissionProcessorTest {
 
         path.toFile().delete();
         newFile.toFile().delete();
+    }
+
+    @Test
+    public void moveFilesMovesAllFilesInDirectory() {
+        processor.moveFiles(sourceDir, targetDir);
+
+        Path targetFile = targetDir.resolve(sourceFile.getFileName());
+        Path targetSubFile = targetDir.resolve(sourceDir.relativize(subSourceFile));
+
+        assertTrue(Files.exists(targetFile));
+        assertTrue(Files.exists(targetSubFile));
     }
 }

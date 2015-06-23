@@ -16,7 +16,7 @@ import java.nio.file.Path;
 
 public class MakePluginTest {
 
-    MakePlugin makePlugin;
+    private MakePlugin makePlugin;
 
     public MakePluginTest() {
         makePlugin = new MakePlugin();

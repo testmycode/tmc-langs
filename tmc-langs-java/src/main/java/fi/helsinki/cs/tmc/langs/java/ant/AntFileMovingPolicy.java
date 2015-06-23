@@ -16,6 +16,6 @@ public class AntFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy {
      */
     @Override
     public boolean shouldMoveFile(Path path) {
-        throw new UnsupportedOperationException();
+        return path.toString().startsWith("src/");
     }
 }

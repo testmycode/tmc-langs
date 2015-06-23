@@ -16,6 +16,6 @@ public class MavenFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy
      */
     @Override
     public boolean shouldMoveFile(Path path) {
-        return path.toString().startsWith("src/main");
+        return path.toString().startsWith("src/main/");
     }
 }

@@ -23,7 +23,7 @@ public class MavenFileMovingPolicyTest {
     }
 
     @Test
-    public void testItDoesNotMovePom() throws IOException {
+    public void testItDoesNotMovePomXml() throws IOException {
         Path pom = Paths.get("pom.xml");
         assertFalse(mavenFileMovingPolicy.shouldMoveFile(pom));
     }

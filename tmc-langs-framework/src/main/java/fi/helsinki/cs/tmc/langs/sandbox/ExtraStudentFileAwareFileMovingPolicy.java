@@ -68,7 +68,8 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
     private void loadExtraStudentFileList() {
         extraStudentFiles = new ArrayList<>();
 
-        File tmcprojectyml = new File(this.rootPath.toAbsolutePath().toString() + File.separatorChar + ".tmcproject.yml");
+        File tmcprojectyml = new File(this.rootPath.toAbsolutePath().toString()
+                + File.separatorChar + ".tmcproject.yml");
         Scanner scanner = initFileScanner(tmcprojectyml);
 
         if (scanner == null) {

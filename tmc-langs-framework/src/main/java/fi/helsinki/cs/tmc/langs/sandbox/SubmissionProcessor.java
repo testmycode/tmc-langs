@@ -1,9 +1,11 @@
 package fi.helsinki.cs.tmc.langs.sandbox;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,18 +43,35 @@ public class SubmissionProcessor {
      *                  moved.
      * @param target    Directory to which the source files are moved to.
      */
-    public void moveFiles(Path source, Path target) {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
-            for (Path sourceFile : stream) {
-                if (fileMovingPolicy.shouldMove(sourceFile, source)) {
-                    Path absoluteTargetPath = getAbsoluteTargetPath(source, target, sourceFile);
-                    try {
-                        moveFile(source, sourceFile.toAbsolutePath(), absoluteTargetPath);
-                    } catch (IOException exception) {
+    public void moveFiles(final Path source, final Path target) {
+        try {
+            Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (fileMovingPolicy.shouldMove(file, source)) {
+                        Path absoluteTargetPath = getAbsoluteTargetPath(source, target, file);
+                        try {
+                            moveFile(source, file.toAbsolutePath(), absoluteTargetPath);
+                        } catch (IOException exception) {
+                            log.log(Level.WARNING, null, exception);
+                        }
+                    }
+
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exception)
+                        throws IOException {
+                    if (exception == null) {
+                        return FileVisitResult.CONTINUE;
+                    } else {
+                        // directory iteration failed
                         log.log(Level.WARNING, null, exception);
+                        throw exception;
                     }
                 }
-            }
+            });
         } catch (IOException exception) {
             log.log(Level.WARNING, null, exception);
             return;

@@ -19,6 +19,8 @@ import java.util.Scanner;
  */
 public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovingPolicy {
 
+    private static final String TMC_PROJECT_YML = ".tmcproject.yml";
+
     private List<Path> extraStudentFiles;
     private Path rootPath;
     private Path target;
@@ -38,7 +40,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
             return false;
         }
 
-        if (path.toString().endsWith(".tmcproject.yml")) {
+        if (path.toString().endsWith(TMC_PROJECT_YML)) {
             return false;
         }
 
@@ -74,8 +76,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
     private void loadExtraStudentFileList() {
         extraStudentFiles = new ArrayList<>();
 
-        File tmcprojectyml = new File(this.target.toAbsolutePath().toString()
-                + File.separatorChar + ".tmcproject.yml");
+        File tmcprojectyml = this.target.toAbsolutePath().resolve(TMC_PROJECT_YML).toFile();
         Scanner scanner = initFileScanner(tmcprojectyml);
 
         if (scanner == null) {
@@ -85,6 +86,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
         parseExtraStudentFiles(scanner);
     }
 
+    // TODO: replace with YAML parser
     private void parseExtraStudentFiles(Scanner scanner) {
         boolean parseFiles = false;
         while (scanner.hasNextLine()) {

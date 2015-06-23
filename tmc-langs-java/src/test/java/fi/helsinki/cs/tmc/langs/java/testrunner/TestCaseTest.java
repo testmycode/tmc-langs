@@ -2,7 +2,7 @@ package fi.helsinki.cs.tmc.langs.java.testrunner;
 
 import static org.junit.Assert.assertEquals;
 
-import fi.helsinki.cs.tmc.langs.java.testrunner.TestCase.Status;
+import fi.helsinki.cs.tmc.langs.TestCase.Status;
 
 import org.junit.Test;
 import org.junit.runner.notification.Failure;

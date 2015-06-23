@@ -3,6 +3,7 @@ package fi.helsinki.cs.tmc.langs.java.maven;
 import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MavenFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy {
 
@@ -16,6 +17,6 @@ public class MavenFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy
      */
     @Override
     public boolean shouldMoveFile(Path path) {
-        return path.toString().startsWith("src/main/");
+        return path.startsWith(Paths.get("src", "main"));
     }
 }

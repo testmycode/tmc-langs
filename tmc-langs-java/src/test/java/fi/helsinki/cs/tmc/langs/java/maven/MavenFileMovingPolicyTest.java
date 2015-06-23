@@ -8,6 +8,7 @@ import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +37,14 @@ public class MavenFileMovingPolicyTest {
         TestUtils.collectPaths(path, toBeMoved, mavenFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
-        assertTrue(toBeMoved.contains("src/main/java/fi/helsinki/cs/maventest/App.java"));
+        assertTrue(toBeMoved.contains("src"
+                + File.separatorChar + "main"
+                + File.separatorChar + "java"
+                + File.separatorChar + "fi"
+                + File.separatorChar + "helsinki"
+                + File.separatorChar + "cs"
+                + File.separatorChar + "maventest"
+                + File.separatorChar + "App.java"));
     }
 
     @Test
@@ -47,7 +55,14 @@ public class MavenFileMovingPolicyTest {
         TestUtils.collectPaths(path, toBeMoved, mavenFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
-        assertFalse(toBeMoved.contains("src/test/java/fi/helsinki/cs/maventest/AppTest.java"));
+        assertFalse(toBeMoved.contains("src"
+                + File.separatorChar + "test"
+                + File.separatorChar + "java"
+                + File.separatorChar + "fi"
+                + File.separatorChar + "helsinki"
+                + File.separatorChar + "cs"
+                + File.separatorChar + "maventest"
+                + File.separatorChar + "AppTest.java"));
     }
 
     @Test
@@ -58,9 +73,13 @@ public class MavenFileMovingPolicyTest {
         TestUtils.collectPaths(path, toBeMoved, mavenFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
-        assertFalse(toBeMoved.contains("lib/testrunner/gson-2.2.4.jar"));
-        assertFalse(toBeMoved.contains("lib/testrunner/hamcrest-core-1.3.jar"));
-        assertFalse(toBeMoved.contains("lib/testrunner/junit-4.11.jar"));
-        assertFalse(toBeMoved.contains("lib/testrunner/tmc-junit-runner.jar"));
+        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"
+                + File.separatorChar + "gson-2.2.4.jar"));
+        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"
+                + File.separatorChar + "hamcrest-core-1.3.jar"));
+        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"
+                + File.separatorChar + "junit-4.11.jar"));
+        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"
+                + File.separatorChar + "tmc-junit-runner.jar"));
     }
 }

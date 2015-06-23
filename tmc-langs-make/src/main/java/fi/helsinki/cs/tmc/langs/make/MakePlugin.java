@@ -5,6 +5,7 @@ import fi.helsinki.cs.tmc.langs.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
@@ -32,6 +33,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
     private MakeUtils makeUtils;
 
     public MakePlugin() {
+        super(new SubmissionProcessor(new MakeFileMovingPolicy()));
         this.makeUtils = new MakeUtils();
     }
 

@@ -8,6 +8,7 @@ import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
@@ -41,10 +42,10 @@ public class MakeFileMovingPolicyTest {
 
         assertEquals(3, toBeMoved.size());
         // Should not move Makefile in source
-        assertFalse(toBeMoved.contains("src/Makefile"));
-        assertTrue(toBeMoved.contains("src/main.c"));
-        assertTrue(toBeMoved.contains("src/source.c"));
-        assertTrue(toBeMoved.contains("src/source.h"));
+        assertFalse(toBeMoved.contains("src" + File.separatorChar + "Makefile"));
+        assertTrue(toBeMoved.contains("src" + File.separatorChar + "main.c"));
+        assertTrue(toBeMoved.contains("src" + File.separatorChar + "source.c"));
+        assertTrue(toBeMoved.contains("src" + File.separatorChar + "source.h"));
     }
 
     @Test
@@ -55,11 +56,11 @@ public class MakeFileMovingPolicyTest {
         collectPaths(path, toBeMoved);
 
         assertEquals(3, toBeMoved.size());
-        assertFalse(toBeMoved.contains("test/test_source.c"));
-        assertFalse(toBeMoved.contains("test/tmc-check.h"));
-        assertFalse(toBeMoved.contains("test/tmc-check.c"));
-        assertFalse(toBeMoved.contains("test/Makefile"));
-        assertFalse(toBeMoved.contains("test/checkhelp.c"));
+        assertFalse(toBeMoved.contains("test" + File.separatorChar + "test_source.c"));
+        assertFalse(toBeMoved.contains("test" + File.separatorChar + "tmc-check.h"));
+        assertFalse(toBeMoved.contains("test" + File.separatorChar + "tmc-check.c"));
+        assertFalse(toBeMoved.contains("test" + File.separatorChar + "Makefile"));
+        assertFalse(toBeMoved.contains("test" + File.separatorChar + "checkhelp.c"));
     }
 
     private void collectPaths(final Path path, final List<String> toBeMoved)

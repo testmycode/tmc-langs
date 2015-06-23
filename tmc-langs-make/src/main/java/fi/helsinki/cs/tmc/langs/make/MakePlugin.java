@@ -26,9 +26,14 @@ import java.util.logging.Logger;
 
 public class MakePlugin extends AbstractLanguagePlugin {
 
-    private static final Logger log = Logger.getLogger(MakePlugin.class.getName());
+    private static final String TEST_DIR = File.separatorChar + "test";
+    private static final String AVAILABLE_POINTS = File.separatorChar + "tmc_available_points.txt";
+    private static final String MAKEFILE = File.separatorChar + "Makefile";
+    private static final String TEST_FAIL_MESSAGE = "Failed to run tests.";
+    private static final String TMC_TEST_RESULTS = File.separatorChar + "tmc_test_results.xml";
+    private static final String VALGRIND_LOG = File.separatorChar + "valgrind.log";
 
-    private static final String testDir = File.separatorChar + "test";
+    private static final Logger log = Logger.getLogger(MakePlugin.class.getName());
 
     private MakeUtils makeUtils;
 
@@ -57,9 +62,8 @@ public class MakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        String availablePointsPath = File.separatorChar + "tmc_available_points.txt";
-        final File availablePoints = new File(projectDir.getAbsolutePath() + this.testDir
-            + availablePointsPath);
+        final File availablePoints = new File(projectDir.getAbsolutePath() + TEST_DIR
+            + AVAILABLE_POINTS);
 
         if (!availablePoints.exists()) {
             return Optional.absent();
@@ -113,7 +117,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
     protected boolean isExerciseTypeCorrect(Path path) {
         File makefile;
         try {
-            makefile = new File(path.toString() + File.separatorChar + "Makefile");
+            makefile = new File(path.toString() + MAKEFILE);
         } catch (Exception e) {
             return false;
         }
@@ -139,13 +143,13 @@ public class MakePlugin extends AbstractLanguagePlugin {
                 runTests(projectDir, withValgrind);
             } catch (Exception e1) {
                 e1.printStackTrace();
-                throw new RuntimeException("Failed to run tests.");
+                throw new RuntimeException(TEST_FAIL_MESSAGE);
             }
         }
 
-        String baseTestPath = projectDir.getAbsolutePath() + this.testDir + File.separatorChar;
-        File testResults = new File(baseTestPath + "tmc_test_results.xml");
-        File valgrindOutput = withValgrind ? new File(baseTestPath + "valgrind.log") : null;
+        String baseTestPath = projectDir.getAbsolutePath() + TEST_DIR;
+        File testResults = new File(baseTestPath + TMC_TEST_RESULTS);
+        File valgrindOutput = withValgrind ? new File(baseTestPath + VALGRIND_LOG) : null;
 
         log.info("Locating exercise");
 

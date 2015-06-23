@@ -3,6 +3,7 @@ package fi.helsinki.cs.tmc.langs.make;
 import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MakeFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy {
 
@@ -16,6 +17,6 @@ public class MakeFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy 
      */
     @Override
     public boolean shouldMoveFile(Path path) {
-        return !path.endsWith("Makefile") && path.toString().startsWith("src/");
+        return !path.endsWith("Makefile") && path.startsWith(Paths.get("src"));
     }
 }

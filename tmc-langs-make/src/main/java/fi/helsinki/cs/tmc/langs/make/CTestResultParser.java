@@ -35,6 +35,28 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class CTestResultParser {
+
+    private static final String AVAILABLE_POINTS = File.separatorChar + "tmc_available_points.txt";
+    private static final String TEST_DIR = File.separatorChar + "test";
+    private static final String VALGRIND_PID_WARNING = "Valgrind output has more PIDs than "
+            + "the expected (# of test cases + 1).";
+    private static final String VALGRIND_ERROR_SUMMARY_PATTERN =
+            "==[0-9]+== ERROR SUMMARY: ([0-9]+)";
+    private static final String LINUX_VALGRIND_WARNING = "Please install valgrind. "
+            + "For Debian-based distributions, run `sudo apt-get install valgrind`.";
+    private static final String OSX_VALGRIND_WARNING = "Please install valgrind. For OS X "
+            + "we recommend using homebrew (http://mxcl.github.com/homebrew/) and `brew install valgrind`.";
+    private static final String WINDOWS_VALGRIND_WARNING = "Windows doesn't support valgrind yet.";
+    private static final String OTHER_VALGRIND_WARNING = "Please install valgrind if possible.";
+    private static final String NO_VALGRIND_MESSAGE = "Warning, valgrind not available - "
+            + "unable to run local memory tests\n";
+    private static final String VALGRIND_SUBMIT_MESSAGE = "\nYou may also submit the exercise "
+            + "to the server to have it memory-tested.";
+    private static final String DOC_NULL_ERROR_MESSAGE = "doc cannot be null "
+            + "- can't parse test results :(";
+    private static final String SAX_PARSER_ERROR = "SAX parser error occured";
+    private static final String PARSING_DONE_MESSAGE = "C test cases parsed.";
+
     protected static final Logger log = Logger.getLogger(CTestResultParser.class.getName());
 
     private File projectDir;
@@ -73,14 +95,14 @@ public class CTestResultParser {
             throws IOException, ParserConfigurationException {
         Document doc = prepareDocument(testOutput);
 
-        File availablePoints = new File(projectDir.getAbsolutePath() + File.separatorChar + "test"
-                + File.separatorChar + "tmc_available_points.txt");
+        File availablePoints = new File(projectDir.getAbsolutePath() + TEST_DIR
+                + AVAILABLE_POINTS);
         Map<String, List<String>> idsToPoints = new MakeUtils().mapIdsToPoints(availablePoints);
 
         NodeList nodeList = doc.getElementsByTagName("test");
         List<CTestCase> cases = createCTestCases(nodeList, idsToPoints);
 
-        log.log(INFO, "C test cases parsed.");
+        log.log(INFO, PARSING_DONE_MESSAGE);
         return cases;
     }
 
@@ -101,13 +123,13 @@ public class CTestResultParser {
         try {
             doc = documentBuilder.parse(is);
         } catch (SAXException ex) {
-            log.info("SAX parser error occured");
+            log.info(SAX_PARSER_ERROR);
             log.info(ex.toString());
         }
 
         if (doc == null) {
-            log.log(INFO, "doc cannot be null - can't parse test results :(");
-            throw new IllegalStateException("doc cannot be null - can't parse test results :(");
+            log.log(INFO, DOC_NULL_ERROR_MESSAGE);
+            throw new IllegalStateException(DOC_NULL_ERROR_MESSAGE);
         }
 
         doc.getDocumentElement().normalize();
@@ -200,23 +222,17 @@ public class CTestResultParser {
         String platform = System.getProperty("os.name").toLowerCase();
 
         if (platform.contains("linux")) {
-            message = "Please install valgrind. For Debian-based distributions, "
-                + "run `sudo apt-get install valgrind`.";
+            message = LINUX_VALGRIND_WARNING;
         } else if (platform.contains("mac")) {
-            message = "Please install valgrind. For OS X we recommend using homebrew "
-                + "(http://mxcl.github.com/homebrew/) and `brew install valgrind`.";
+            message = OSX_VALGRIND_WARNING;
         } else if (platform.contains("windows")) {
-            message = "Windows doesn't support valgrind yet.";
+            message = WINDOWS_VALGRIND_WARNING;
         } else {
-            message = "Please install valgrind if possible.";
+            message = OTHER_VALGRIND_WARNING;
         }
 
         for (CTestCase test : tests) {
-            test.setValgrindTrace(
-                    "Warning, valgrind not available - unable to run local memory tests\n"
-                            + message
-                            + "\nYou may also submit the exercise to the server to have it "
-                            + "memory-tested.");
+            test.setValgrindTrace(NO_VALGRIND_MESSAGE + message + VALGRIND_SUBMIT_MESSAGE);
         }
     }
 
@@ -232,7 +248,7 @@ public class CTestResultParser {
             outputs[i] = "";
         }
 
-        Pattern errorPattern = Pattern.compile("==[0-9]+== ERROR SUMMARY: ([0-9]+)");
+        Pattern errorPattern = Pattern.compile(VALGRIND_ERROR_SUMMARY_PATTERN);
 
         String line = scanner.nextLine();
         int firstPid = parsePid(line);
@@ -250,8 +266,7 @@ public class CTestResultParser {
                 int outputIndex = findIndex(pid, pids);
                 if (outputIndex == -1) {
                     if (!warningLogged) {
-                        log.warning("Valgrind output has more PIDs than the expected "
-                            + "(# of test cases + 1).");
+                        log.warning(VALGRIND_PID_WARNING);
                         warningLogged = true;
                     }
                     continue;

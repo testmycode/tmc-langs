@@ -11,6 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CTestCase {
+
+    private static final String VALGRIND_FAIL_MESSAGE =
+              " - Failed due to errors in valgrind log; see log below. "
+            + "Try submitting to server, some leaks might be platform dependent";
+    private static final String SUCCESS = "success";
+
     private String name;
     private String result;
     private String message;
@@ -43,13 +49,12 @@ public class CTestCase {
         String msg = message;
 
         boolean valgrindFailed = failedDueToValgrind(valgrindTrace);
-        boolean resultsSuccessful = result.equals("success");
+        boolean resultsSuccessful = result.equals(SUCCESS);
         boolean successful = resultsSuccessful && !valgrindFailed;
         boolean failedOnlyBecauseOfValgrind = resultsSuccessful && valgrindFailed;
 
         if (failedOnlyBecauseOfValgrind) {
-            msg += " - Failed due to errors in valgrind log; see log below. "
-                + "Try submitting to server, some leaks might be platform dependent";
+            msg += VALGRIND_FAIL_MESSAGE;
         }
 
         ArrayList<String> trace = new ArrayList<>();

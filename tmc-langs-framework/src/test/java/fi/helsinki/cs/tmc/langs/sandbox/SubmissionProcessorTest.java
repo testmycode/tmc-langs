@@ -3,6 +3,7 @@ package fi.helsinki.cs.tmc.langs.sandbox;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,5 +79,27 @@ public class SubmissionProcessorTest {
 
         Path targetFile = targetDir.resolve(sourceDir.relativize(subSourceFile));
         assertTrue(Files.exists(targetFile));
+    }
+
+    @Test
+    public void moveFileReplacesExistingFiles() throws IOException {
+        Path path = targetDir.resolve("temp");
+        Files.createFile(path);
+        FileUtils.write(path.toFile(), "Initial content");
+
+        assertTrue(Files.exists(path));
+        assertEquals("Initial content", FileUtils.readFileToString(path.toFile()));
+
+        Path newFile = sourceDir.resolve("temp");
+        Files.createFile(newFile);
+        FileUtils.write(newFile.toFile(), "New content");
+
+        processor.moveFile(sourceDir, newFile, targetDir);
+
+        assertTrue(Files.exists(path));
+        assertEquals("New content", FileUtils.readFileToString(path.toFile()));
+
+        path.toFile().delete();
+        newFile.toFile().delete();
     }
 }

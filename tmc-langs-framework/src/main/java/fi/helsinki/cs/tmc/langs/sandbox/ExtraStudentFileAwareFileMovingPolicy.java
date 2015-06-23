@@ -44,7 +44,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
             return false;
         }
 
-        if (path.toString().endsWith(TMC_PROJECT_YML)) {
+        if (path.endsWith(TMC_PROJECT_YML)) {
             return false;
         }
 
@@ -116,8 +116,8 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
 
     private void addIfString(Object value) {
         if (value instanceof String) {
-            String path = this.rootPath.toAbsolutePath() + (String) value;
-            extraStudentFiles.add(Paths.get(path));
+            Path path = this.rootPath.resolve((String) value);
+            extraStudentFiles.add(path);
         }
     }
 

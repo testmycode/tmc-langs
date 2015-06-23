@@ -4,7 +4,9 @@ import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
 
 import com.google.common.base.Throwables;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -104,5 +106,29 @@ public final class TestUtils {
                 }
             }
         });
+    }
+
+    /**
+     * Initializes a temporary file with content.
+     */
+    public static File initTempFileWithContent(String prefix, String suffix, String content)
+            throws IOException {
+        return initTempFileWithContent(prefix, suffix, null, content);
+    }
+
+    /**
+     * Initializes a temporary file in a specific directory with content.
+     */
+    public static File initTempFileWithContent(String prefix, String suffix, File directory,
+                                               String content) throws IOException {
+        File file = File.createTempFile(prefix, suffix, directory);
+        file.deleteOnExit();
+
+        PrintWriter pw = new PrintWriter(file, "UTF-8");
+        pw.println(content);
+        pw.flush();
+        pw.close();
+
+        return file;
     }
 }

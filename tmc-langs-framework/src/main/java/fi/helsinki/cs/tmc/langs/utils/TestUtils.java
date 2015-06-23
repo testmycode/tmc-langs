@@ -121,7 +121,8 @@ public final class TestUtils {
      */
     public static File initTempFileWithContent(String prefix, String suffix, File directory,
                                                String content) throws IOException {
-        File file = File.createTempFile(prefix, suffix, directory);
+        String suffixWithDot = "." + suffix;
+        File file = File.createTempFile(prefix, suffixWithDot, directory);
         file.deleteOnExit();
 
         PrintWriter pw = new PrintWriter(file, "UTF-8");

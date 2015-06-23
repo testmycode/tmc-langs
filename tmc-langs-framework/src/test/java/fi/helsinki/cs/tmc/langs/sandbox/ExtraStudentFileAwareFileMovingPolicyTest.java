@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.FileUtils;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -133,7 +134,7 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
     }
 
     @Test
-    public void doesNotMoveTMCProjectYML() throws IOException {
+    public void doesNotMoveTmcProjectYml() throws IOException {
         Path path = targetDir.resolve(".tmcproject.yml");
         Files.createFile(path);
         FileUtils.write(path.toFile(), "extra_student_files:\n  - .tmcproject.yml");
@@ -149,7 +150,10 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
         Path targetTemp = targetDir.resolve(sourceDir.relativize(temp));
 
         assertTrue(Files.exists(targetTemp));
-        assertEquals("extra_student_files:\n  - .tmcproject.yml", FileUtils.readFileToString(targetTemp.toFile()));
+        assertEquals(
+                "extra_student_files:\n  - .tmcproject.yml",
+                FileUtils.readFileToString(targetTemp.toFile())
+        );
 
         path.toFile().delete();
         temp.toFile().delete();

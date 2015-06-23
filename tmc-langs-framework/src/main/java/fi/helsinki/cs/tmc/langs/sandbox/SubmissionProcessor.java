@@ -44,7 +44,7 @@ public class SubmissionProcessor {
     public void moveFiles(Path source, Path target) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
             for (Path sourceFile : stream) {
-                if (fileMovingPolicy.shouldMove(sourceFile)) {
+                if (fileMovingPolicy.shouldMove(sourceFile, source)) {
                     Path absoluteTargetPath = getAbsoluteTargetPath(source, target, sourceFile);
                     try {
                         moveFile(source, sourceFile.toAbsolutePath(), absoluteTargetPath);

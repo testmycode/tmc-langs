@@ -8,7 +8,7 @@ import java.nio.file.Path;
 public class DefaultFileMovingPolicy implements FileMovingPolicy {
 
     @Override
-    public boolean shouldMove(Path path) {
+    public boolean shouldMove(Path path, Path rootPath) {
         return true;
     }
 }

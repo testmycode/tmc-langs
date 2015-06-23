@@ -1,7 +1,12 @@
 package fi.helsinki.cs.tmc.langs.sandbox;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * An abstract {@link FileMovingPolicy} that also uses
@@ -15,6 +20,7 @@ import java.util.List;
 public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovingPolicy {
 
     private List<Path> extraStudentFiles;
+    private Path rootPath;
 
     /**
      * Determines whether a file should be moved even if it is not an <tt>ExtraStudentFile</tt>.
@@ -22,7 +28,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
     protected abstract boolean shouldMoveFile(Path path);
     
     @Override
-    public boolean shouldMove(Path path) {
+    public boolean shouldMove(Path path, Path rootPath) {
         if (!path.toFile().exists()) {
             return false;
         }
@@ -30,6 +36,8 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
         if (path.toFile().isDirectory()) {
             return false;
         }
+
+        this.rootPath = rootPath;
         
         return isExtraStudentFile(path) || shouldMoveFile(path);
     }
@@ -58,6 +66,50 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
      * and parses it for the necessary information.
      */
     private void loadExtraStudentFileList() {
+        extraStudentFiles = new ArrayList<>();
 
+        File tmcprojectyml = new File(this.rootPath.toAbsolutePath().toString() + File.separatorChar + ".tmcproject.yml");
+        Scanner scanner = initFileScanner(tmcprojectyml);
+
+        if (scanner == null) {
+            return;
+        }
+
+        parseExtraStudentFiles(scanner);
+    }
+
+    private void parseExtraStudentFiles(Scanner scanner) {
+        boolean parseFiles = false;
+        while (scanner.hasNextLine()) {
+            String row = scanner.nextLine();
+
+            if (row.startsWith("extra_student_files:")) {
+                parseFiles = true;
+            }
+
+            if (!parseFiles) {
+                continue;
+            }
+
+            if (row.startsWith("  - ")) {
+                String relativePath = row.substring(4);
+                extraStudentFiles.add(Paths.get(this.rootPath.toAbsolutePath() + relativePath));
+            } else {
+                parseFiles = false;
+            }
+        }
+    }
+
+    private Scanner initFileScanner(File file) {
+        Scanner scanner;
+
+        try {
+            scanner = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return scanner;
     }
 }

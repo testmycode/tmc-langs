@@ -1,5 +1,8 @@
 package fi.helsinki.cs.tmc.langs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -16,6 +19,8 @@ public class ExerciseBuilder {
     private final String stubMarker = "// STUB:";
     private final String sourceFolderName = "src";
     private final Charset charset = StandardCharsets.UTF_8;
+
+    private Logger log = LoggerFactory.getLogger(ExerciseBuilder.class);
 
     /**
      * Prepares a stub exercise from the original.
@@ -53,6 +58,9 @@ public class ExerciseBuilder {
             }
             Files.write(file.toPath(), filteredLines, charset);
         } catch (IOException ex) {
+            log.error("Unexpected IOException, preparation of file {} was interrupted",
+                    file.getAbsolutePath(),
+                    ex);
             throw new RuntimeException("Unexpected IOException, preparation of file {"
                     + file.getAbsolutePath() + "} interrupted", ex);
         }
@@ -101,6 +109,9 @@ public class ExerciseBuilder {
             }
             Files.write(file.toPath(), filteredLines, charset);
         } catch (IOException ex) {
+            log.error("Unexpected IOException, preparation of file {} was interrupted",
+                    file.getAbsolutePath(),
+                    ex);
             throw new RuntimeException("Unexpected IOException, preparation of file {"
                     + file.getAbsolutePath() + "} interrupted", ex);
         }

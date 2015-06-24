@@ -19,6 +19,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,8 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * An abstract extension of {@link AbstractLanguagePlugin} that implements features common to all
@@ -35,7 +36,7 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
-    private static final Logger log = Logger.getLogger(AbstractJavaPlugin.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(AbstractJavaPlugin.class);
 
     private final TestResultParser resultParser = new TestResultParser();
     private final String testFolderPath;
@@ -66,7 +67,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
             return runner.run();
         } catch (TMCCheckstyleException ex) {
-            log.log(Level.SEVERE, "Error running checkstyle:", ex);
+            log.error("Unable to run checkCodeStyle", ex);
             return null;
         }
     }
@@ -84,7 +85,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         try {
             classPath = getProjectClassPath(path);
         } catch (IOException ex) {
-            log.log(Level.SEVERE, null, ex);
+            log.error("Unable to get classpath", ex);
             return Optional.absent();
         }
 
@@ -102,7 +103,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         try {
             resultFile = createRunResultFile(projectRootPath);
         } catch (TestRunnerException | TestScannerException ex) {
-            log.log(Level.WARNING, null, ex);
+            log.error("Unable to create run result file", ex);
             return null;
         }
 

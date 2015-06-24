@@ -4,6 +4,9 @@ import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
 
 import com.google.common.base.Throwables;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,6 +22,8 @@ import java.util.List;
 
 public final class TestUtils {
 
+    private static Logger log = LoggerFactory.getLogger(TestUtils.class);
+
     /**
      * Returns a path to a resource residing in the ResourceDir of the given class.
      */
@@ -32,6 +37,7 @@ public final class TestUtils {
 
             return null;
         } catch (URISyntaxException e) {
+            log.error("Unable to get path for requested resource", e);
             throw Throwables.propagate(e);
         }
     }

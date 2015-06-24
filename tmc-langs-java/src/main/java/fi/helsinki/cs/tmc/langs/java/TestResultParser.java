@@ -12,6 +12,9 @@ import com.google.gson.Gson;
 
 import org.apache.commons.io.FileUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 public class TestResultParser {
+
+    Logger log = LoggerFactory.getLogger(TestResultParser.class);
 
     /**
      * Parse tmc-testrunner output file for RunResult information.
@@ -32,6 +37,7 @@ public class TestResultParser {
         try {
             return parseTestResult(FileUtils.readFileToString(resultsFile, "UTF-8"));
         } catch (IOException e) {
+            log.error("Unable to parse test results from {}", resultsFile, e);
             throw Throwables.propagate(e);
         }
     }

@@ -2,6 +2,9 @@ package fi.helsinki.cs.tmc.langs.java;
 
 import com.google.common.base.Throwables;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -17,6 +20,8 @@ import java.util.List;
 public class ClassPath {
 
     private final List<Path> subPaths = new ArrayList<>();
+
+    private Logger log = LoggerFactory.getLogger(ClassPath.class);
 
     /**
      * Create a ClassPath where each provided Path is a component.
@@ -76,6 +81,7 @@ public class ClassPath {
                 }
             }
         } catch (IOException e) {
+            log.error("IOException while adding a file from directory {} to classpath", basePath);
             throw Throwables.propagate(e);
         }
     }

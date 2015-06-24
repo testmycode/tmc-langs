@@ -7,14 +7,15 @@ import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.base.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
 
@@ -37,6 +38,8 @@ public class Main {
             + "  Produce an exercise description of an exercise directory.";
 
     private static TaskExecutor executor = new TaskExecutorImpl();
+
+    private static Logger log = LoggerFactory.getLogger(Main.class);
 
     /**
      * Main entry point for the CLI.
@@ -73,6 +76,10 @@ public class Main {
         } else if (!pathsCount.equals(args.length - 1)) {
             System.err.println("ERROR: wrong argument count for " + command
                     + " expected " + pathsCount + " got " + (args.length - 1));
+            log.error("Wrong argument count for {}. Expected {}, got {}",
+                    command,
+                    pathsCount,
+                    args.length - 1);
             printHelpAndExit();
         }
 
@@ -120,6 +127,9 @@ public class Main {
         try {
             validationResult = executor.runCheckCodeStyle(paths.get(EXERCISE_PATH));
         } catch (NoLanguagePluginFoundException e) {
+            log.error("Could not find a language plugin for the project at {}",
+                    paths.get(EXERCISE_PATH),
+                    e);
             printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise "
                     + "path.");
         }
@@ -128,8 +138,9 @@ public class Main {
             JsonWriter.writeObjectIntoJsonFormat(validationResult, paths.get(OUTPUT_PATH));
             System.out.println("Codestyle report can be found at " + paths.get(OUTPUT_PATH));
         } catch (IOException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not write result "
-                    + "into given output file", e);
+            log.error("Could not write result into {}",
+                    paths.get(OUTPUT_PATH),
+                    e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
     }
@@ -142,9 +153,13 @@ public class Main {
             exerciseDesc = executor.scanExercise(paths.get(EXERCISE_PATH), exerciseName);
 
             if (!exerciseDesc.isPresent()) {
+                log.error("Absent exercise description after running scanExercise");
                 printErrAndExit("ERROR: Could not scan the exercises.");
             }
         } catch (NoLanguagePluginFoundException e) {
+            log.error("No suitable language plugin for project at {}",
+                    paths.get(EXERCISE_PATH),
+                    e);
             printErrAndExit("ERROR: Could not find suitable language plugin for the given "
                     + "exercise path.");
         }
@@ -154,8 +169,8 @@ public class Main {
             System.out.println("Exercises scanned successfully, results can be found in "
                     + paths.get(OUTPUT_PATH).toString());
         } catch (IOException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE,
-                    "Could not write result into given output file",
+            log.error("Could not write output to {}",
+                    Paths.get(OUTPUT_PATH),
                     e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
@@ -166,6 +181,9 @@ public class Main {
         try {
             runResult = executor.runTests(paths.get(EXERCISE_PATH));
         } catch (NoLanguagePluginFoundException e) {
+            log.error("No suitable language plugin for project at {}",
+                    paths.get(EXERCISE_PATH),
+                    e);
             printErrAndExit("ERROR: Could not find suitable language plugin for the given "
                     + "exercise path.");
         }
@@ -174,8 +192,9 @@ public class Main {
             JsonWriter.writeObjectIntoJsonFormat(runResult, paths.get(OUTPUT_PATH));
             System.out.println("Test results can be found in " + paths.get(OUTPUT_PATH));
         } catch (IOException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Could not write result "
-                    + "into given output file", e);
+            log.error("Could not write output to {}",
+                    Paths.get(OUTPUT_PATH),
+                    e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
     }
@@ -184,6 +203,9 @@ public class Main {
         try {
             executor.prepareStub(paths.get(EXERCISE_PATH));
         } catch (NoLanguagePluginFoundException e) {
+            log.error("No suitable language plugin for project at {}",
+                    paths.get(EXERCISE_PATH),
+                    e);
             printErrAndExit("ERROR: Could not find suitable language plugin for the given "
                     + "exercise path.");
         }
@@ -193,6 +215,9 @@ public class Main {
         try {
             executor.prepareSolution(paths.get(EXERCISE_PATH));
         } catch (NoLanguagePluginFoundException e) {
+            log.error("No suitable language plugin for project at {}",
+                    paths.get(EXERCISE_PATH),
+                    e);
             printErrAndExit("ERROR: Could not find suitable language plugin for the given "
                     + "exercise path.");
         }
@@ -200,6 +225,8 @@ public class Main {
 
     private static void checkTestPath(Path exercisePath) {
         if (!exercisePath.toFile().isDirectory()) {
+            log.error("checkTestPath was given a non directory path {}",
+                    exercisePath);
             System.err.println("ERROR: Given test path is not a directory.");
             printHelpAndExit();
         }
@@ -221,6 +248,7 @@ public class Main {
     }
 
     private static void printErrAndExit(String errorText) {
+        log.error("Exiting");
         System.err.println(errorText);
         System.exit(1);
     }

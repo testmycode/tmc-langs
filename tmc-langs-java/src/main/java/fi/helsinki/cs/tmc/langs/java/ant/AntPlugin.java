@@ -17,6 +17,9 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -46,6 +49,8 @@ public class AntPlugin extends AbstractJavaPlugin {
     private static final int STATUS_CODE_SUCCESS = 0;
     private static final int STATUS_CODE_ERROR = 1;
 
+    private Logger log = LoggerFactory.getLogger(AntPlugin.class);
+
     /**
      * Create a new AntPlugin.
      */
@@ -73,6 +78,9 @@ public class AntPlugin extends AbstractJavaPlugin {
      */
     @Override
     protected CompileResult build(Path path) {
+
+        log.info("Building project at {}", path);
+
         File buildFile = path.resolve(BUILD_FILE).toFile();
         Project buildProject = new Project();
         buildProject.setUserProperty(ANT_BUILD_FILE_PROPERTY, buildFile.getAbsolutePath());
@@ -101,11 +109,14 @@ public class AntPlugin extends AbstractJavaPlugin {
             buildProject.executeTarget(ANT_COMPILE_TEST_TARGET);
             buildProject.fireBuildFinished(null);
 
+            log.info("Successfully built project at {}", path);
+
             return new CompileResult(STATUS_CODE_SUCCESS,
                     Files.readAllBytes(buildLog.toPath()),
                     Files.readAllBytes(errorLog.toPath()));
 
         } catch (BuildException buildException) {
+            log.info("Error building project at {}", path, buildException);
             try {
                 buildProject.fireBuildFinished(buildException);
 
@@ -113,10 +124,12 @@ public class AntPlugin extends AbstractJavaPlugin {
                         Files.readAllBytes(buildLog.toPath()),
                         Files.readAllBytes(errorLog.toPath()));
             } catch (IOException ioException) {
+                log.error("Unable to fire build finisher", ioException);
                 throw Throwables.propagate(buildException);
             }
 
         } catch (IOException ioException) {
+            log.info("Error building project at {}", path, ioException);
             throw Throwables.propagate(ioException);
         }
     }
@@ -135,9 +148,13 @@ public class AntPlugin extends AbstractJavaPlugin {
     @Override
     protected File createRunResultFile(Path projectBasePath)
             throws TestRunnerException, TestScannerException {
+
+        log.info("Running tests for project at {}", projectBasePath);
+
         Optional<ExerciseDesc> exercise = scanExercise(projectBasePath,
                                                        projectBasePath.toString() + TEST_DIR);
         if (!exercise.isPresent()) {
+            log.error("Unable to create run result file due to absent ExerciseDesc");
             throw new TestScannerException();
         }
 
@@ -156,8 +173,11 @@ public class AntPlugin extends AbstractJavaPlugin {
             Process process = new ProcessBuilder(testRunnerArguments).start();
             process.waitFor();
         } catch (InterruptedException | IOException e) {
+            log.error("Failed to run tests", e);
             throw new TestRunnerException(e);
         }
+
+        log.info("Successfully ran tests for project at {}", projectBasePath);
 
         return resultFile.toFile();
     }

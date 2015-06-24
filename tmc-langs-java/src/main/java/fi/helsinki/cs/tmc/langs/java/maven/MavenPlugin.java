@@ -10,6 +10,9 @@ import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 
 import org.apache.maven.cli.MavenCli;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +31,8 @@ public class MavenPlugin extends AbstractJavaPlugin {
             + "test_output.txt";
     private static final String TEST_FOLDER = File.separatorChar + "src";
     private static final String TEST_RUNNER_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test";
+
+    private Logger log = LoggerFactory.getLogger(MavenPlugin.class);
 
     /**
      * Creates a new MavenPlugin.
@@ -60,6 +65,9 @@ public class MavenPlugin extends AbstractJavaPlugin {
 
     @Override
     protected CompileResult build(Path path) {
+
+        log.info("Building maven project at {}", path);
+
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -70,11 +78,21 @@ public class MavenPlugin extends AbstractJavaPlugin {
                 new PrintStream(outBuf),
                 new PrintStream(errBuf));
 
+        if (compileResult == 0) {
+            log.info("Built maven project at {}", path);
+        } else {
+            log.info("Failed to build maven project at {}", path);
+        }
+
+
         return new CompileResult(compileResult, outBuf.toByteArray(), errBuf.toByteArray());
     }
 
     @Override
     protected File createRunResultFile(Path path) throws TestRunnerException, TestScannerException {
+
+        log.info("Running tests for maven project at {}", path);
+
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -86,9 +104,11 @@ public class MavenPlugin extends AbstractJavaPlugin {
                 new PrintStream(errBuf));
 
         if (compileResult != 0) {
+            log.error("Could not run tests for maven project at {}", path);
             throw new TestRunnerException();
         }
 
+        log.info("Successfully ran tests for maven project at {}", path);
         return new File(path.toString() + RESULT_FILE);
     }
 }

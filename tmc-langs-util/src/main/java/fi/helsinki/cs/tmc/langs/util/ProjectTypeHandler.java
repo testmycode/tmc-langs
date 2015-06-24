@@ -3,9 +3,14 @@ package fi.helsinki.cs.tmc.langs.util;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.file.Path;
 
 public class ProjectTypeHandler {
+
+    private static Logger log = LoggerFactory.getLogger(ProjectTypeHandler.class);
 
     /**
      * Recognizes the project type.
@@ -17,12 +22,15 @@ public class ProjectTypeHandler {
      * @return The project type that recognizes the project.
      */
     static ProjectType getProjectType(Path path) throws NoLanguagePluginFoundException {
+        log.info("Finding plugin for {}", path);
         for (ProjectType type : ProjectType.values()) {
             if (type.getLanguagePlugin().scanExercise(path, "").isPresent()) {
+                log.info("Detected project as {}", type.getLanguagePlugin().getLanguageName());
                 return type;
             }
         }
 
+        log.error("No suitable language plugin found for project at {}", path);
         throw new NoLanguagePluginFoundException("No suitable language plugin found.");
     }
 

@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovingPolicy {
 
-    private static final String TMC_PROJECT_YML = ".tmcproject.yml";
+    private static final Path TMC_PROJECT_YML = Paths.get(".tmcproject.yml");
 
     private List<Path> extraStudentFiles;
     private Path rootPath;
@@ -44,7 +44,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
             return false;
         }
 
-        if (path.endsWith(TMC_PROJECT_YML)) {
+        if (path.getFileName().equals(TMC_PROJECT_YML)) {
             return false;
         }
 

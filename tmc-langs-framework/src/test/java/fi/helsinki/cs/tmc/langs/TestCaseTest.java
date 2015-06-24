@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs;
 
 import static org.junit.Assert.assertEquals;
 
-import fi.helsinki.cs.tmc.langs.TestCase;
 import fi.helsinki.cs.tmc.langs.TestCase.Status;
 
 import org.junit.Test;

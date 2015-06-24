@@ -170,7 +170,7 @@ public class Main {
                     + paths.get(OUTPUT_PATH).toString());
         } catch (IOException e) {
             log.error("Could not write output to {}",
-                    Paths.get(OUTPUT_PATH),
+                    paths.get(OUTPUT_PATH),
                     e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
@@ -193,7 +193,7 @@ public class Main {
             System.out.println("Test results can be found in " + paths.get(OUTPUT_PATH));
         } catch (IOException e) {
             log.error("Could not write output to {}",
-                    Paths.get(OUTPUT_PATH),
+                    paths.get(OUTPUT_PATH),
                     e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }

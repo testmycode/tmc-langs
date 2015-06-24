@@ -15,7 +15,7 @@ public class AntFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy {
      * decision to move them is made by {@link ExtraStudentFileAwareFileMovingPolicy}.
      */
     @Override
-    protected boolean shouldMoveFile(Path path) {
+    public boolean shouldMoveFile(Path path) {
         throw new UnsupportedOperationException();
     }
 }

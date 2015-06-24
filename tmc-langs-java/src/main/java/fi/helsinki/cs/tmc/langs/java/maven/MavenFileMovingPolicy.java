@@ -15,7 +15,7 @@ public class MavenFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy
      * decision to move them is made by {@link ExtraStudentFileAwareFileMovingPolicy}.
      */
     @Override
-    protected boolean shouldMoveFile(Path path) {
-        throw new UnsupportedOperationException();
+    public boolean shouldMoveFile(Path path) {
+        return path.toString().startsWith("src/main");
     }
 }

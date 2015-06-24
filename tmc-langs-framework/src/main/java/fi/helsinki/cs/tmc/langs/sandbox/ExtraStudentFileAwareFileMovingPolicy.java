@@ -26,7 +26,7 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
     /**
      * Determines whether a file should be moved even if it is not an <tt>ExtraStudentFile</tt>.
      */
-    protected abstract boolean shouldMoveFile(Path path);
+    public abstract boolean shouldMoveFile(Path path);
     
     @Override
     public boolean shouldMove(Path path, Path rootPath, Path target) {

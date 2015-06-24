@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,6 +90,6 @@ public class SubmissionProcessor {
         Path relative = sourceRoot.relativize(sourceFile);
         Path targetFile = target.resolve(relative);
         Files.createDirectories(targetFile.getParent());
-        Files.move(sourceFile, targetFile);
+        Files.move(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
     }
 }

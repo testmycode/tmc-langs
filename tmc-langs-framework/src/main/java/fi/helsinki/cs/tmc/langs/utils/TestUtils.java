@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
+import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
+
 import com.google.common.base.Throwables;
 
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 public final class TestUtils {
 
@@ -70,5 +73,36 @@ public final class TestUtils {
      */
     public static void removeDirRecursively(Class clazz, String location) throws IOException {
         removeDirRecursively(getPath(clazz, location));
+    }
+
+    /**
+     * Collects a list of paths that are to be moved with the provided file moving policy.
+     */
+    public static void collectPaths(final Path path,
+                                    final List<String> toBeMoved,
+                                    final ExtraStudentFileAwareFileMovingPolicy fileMovingPolicy)
+            throws IOException {
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                    throws IOException {
+                if (fileMovingPolicy.shouldMoveFile(path.relativize(file))) {
+                    toBeMoved.add(path.relativize(file).toString());
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exception)
+                    throws IOException {
+                if (exception == null) {
+                    return FileVisitResult.CONTINUE;
+                } else {
+                    // directory iteration failed
+                    throw exception;
+                }
+            }
+        });
     }
 }

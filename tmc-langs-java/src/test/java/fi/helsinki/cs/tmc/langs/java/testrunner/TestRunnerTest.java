@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import fi.helsinki.cs.tmc.langs.TestCase;
+
 import org.junit.Test;
 
 public class TestRunnerTest {

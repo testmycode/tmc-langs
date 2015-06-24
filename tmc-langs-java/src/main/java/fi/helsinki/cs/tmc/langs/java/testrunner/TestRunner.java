@@ -1,5 +1,8 @@
 package fi.helsinki.cs.tmc.langs.java.testrunner;
 
+import fi.helsinki.cs.tmc.langs.CaughtException;
+import fi.helsinki.cs.tmc.langs.TestCase;
+
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.Runner;

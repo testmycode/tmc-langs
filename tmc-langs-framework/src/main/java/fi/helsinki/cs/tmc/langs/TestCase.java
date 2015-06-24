@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs.java.testrunner;
+package fi.helsinki.cs.tmc.langs;
 
 import org.junit.runner.notification.Failure;
 

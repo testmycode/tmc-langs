@@ -17,6 +17,7 @@ public class ExerciseBuilder {
     private final String beginSolution = "// BEGIN SOLUTION";
     private final String endSolution = "// END SOLUTION";
     private final String stubMarker = "// STUB:";
+    private final String solutionFile = "// SOLUTION FILE";
     private final String sourceFolderName = "src";
     private final Charset charset = StandardCharsets.UTF_8;
 
@@ -36,7 +37,6 @@ public class ExerciseBuilder {
         }
     }
 
-    // TODO: exclude files containing '// SOLUTION FILE'
     private void prepareStubFile(File file) {
 
         try {
@@ -44,6 +44,10 @@ public class ExerciseBuilder {
             List<String> filteredLines = new ArrayList<>();
             boolean skipLine = false;
             for (String line : lines) {
+                if (line.contains(solutionFile)) {
+                    Files.deleteIfExists(file.toPath());
+                    return;
+                }
                 if (line.contains(beginSolution)) {
                     skipLine = true;
                 } else if (skipLine && line.contains(endSolution)) {
@@ -84,7 +88,7 @@ public class ExerciseBuilder {
     /**
      * Prepares a presentable solution from the original.
      *
-     * <p>Implements LanguagePlugin.preparaSolution
+     * <p>Implements LanguagePlugin.prepareSolution
      */
     public void prepareSolution(Path path) {
         File projectRoot = path.resolve(sourceFolderName).toFile();
@@ -102,7 +106,8 @@ public class ExerciseBuilder {
             for (String line : lines) {
                 if (line.contains(beginSolution)
                         || line.contains(endSolution)
-                        || line.contains(stubMarker)) {
+                        || line.contains(stubMarker)
+                        || line.contains(solutionFile)) {
                     continue;
                 }
                 filteredLines.add(line);

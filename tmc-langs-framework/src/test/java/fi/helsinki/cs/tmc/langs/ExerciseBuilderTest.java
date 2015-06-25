@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import com.google.common.io.Files;
 
@@ -11,6 +12,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +75,27 @@ public class ExerciseBuilderTest {
                 + File.separator + "build.xml");
 
         exerciseBuilder.prepareSolution(originProject.toPath());
+    }
+
+    @Test
+    public void solutionFileLinesAreCorrectlyPrepared() throws IOException {
+        Path p = Paths.get("src", "test", "resources", "arith_funcs_solution_file");
+        File temp = createTemporaryCopyOf(p.toFile());
+        temp.deleteOnExit();
+        exerciseBuilder.prepareSolution(temp.toPath());
+        Path solutionFile = temp.toPath().resolve(Paths.get("src", "SolutionFile.java"));
+        int size = java.nio.file.Files.readAllLines(solutionFile).size();
+        assertEquals(2, size);
+    }
+
+    @Test
+    public void solutionFilesAreIgnoredFromStub() throws IOException {
+        Path p = Paths.get("src", "test", "resources", "arith_funcs_solution_file");
+        File temp = createTemporaryCopyOf(p.toFile());
+        temp.deleteOnExit();
+        exerciseBuilder.prepareStub(temp.toPath());
+        Path solutionFile = temp.toPath().resolve(Paths.get("src", "SolutionFile.java"));
+        assertFalse(solutionFile.toFile().exists());
     }
 
     private File createTemporaryCopyOf(File file) throws IOException {

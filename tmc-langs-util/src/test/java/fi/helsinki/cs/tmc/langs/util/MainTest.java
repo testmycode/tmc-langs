@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.util;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.edutestutils.MockStdio;

@@ -122,4 +122,94 @@ public class AbstractLanguagePluginTest {
         plugin.prepareSubmission(source, target);
         verify(submissionProcessor).moveFiles(source, target);
     }
+
+    @Test
+    public void hasConstructorWithNoArguments() {
+        new AbstractLanguagePlugin() {
+            @Override
+            protected boolean isExerciseTypeCorrect(Path path) {
+                return false;
+            }
+
+            @Override
+            public String getLanguageName() {
+                return null;
+            }
+
+            @Override
+            public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+                return null;
+            }
+
+            @Override
+            public RunResult runTests(Path path) {
+                return null;
+            }
+
+            @Override
+            public ValidationResult checkCodeStyle(Path path) {
+                return null;
+            }
+        };
+    }
+
+    @Test
+    public void hasConstructorThatTakesOnlyAnExerciseBuilderAsParameter() {
+        new AbstractLanguagePlugin(new ExerciseBuilder()) {
+            @Override
+            protected boolean isExerciseTypeCorrect(Path path) {
+                return false;
+            }
+
+            @Override
+            public String getLanguageName() {
+                return null;
+            }
+
+            @Override
+            public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+                return null;
+            }
+
+            @Override
+            public RunResult runTests(Path path) {
+                return null;
+            }
+
+            @Override
+            public ValidationResult checkCodeStyle(Path path) {
+                return null;
+            }
+        };
+    }
+
+    @Test
+    public void hasConstructorThatTakesOnlyAnSubmissionProcessorAsParameter() {
+        new AbstractLanguagePlugin(new SubmissionProcessor()) {
+            @Override
+            protected boolean isExerciseTypeCorrect(Path path) {
+                return false;
+            }
+
+            @Override
+            public String getLanguageName() {
+                return null;
+            }
+
+            @Override
+            public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+                return null;
+            }
+
+            @Override
+            public RunResult runTests(Path path) {
+                return null;
+            }
+
+            @Override
+            public ValidationResult checkCodeStyle(Path path) {
+                return null;
+            }
+        };
+    }
 }

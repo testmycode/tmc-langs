@@ -18,7 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,12 +29,13 @@ import java.util.Scanner;
 
 public class MakePlugin extends AbstractLanguagePlugin {
 
-    private static final String TEST_DIR = File.separatorChar + "test";
-    private static final String AVAILABLE_POINTS = File.separatorChar + "tmc_available_points.txt";
-    private static final String MAKEFILE = File.separatorChar + "Makefile";
+    private static final Path TEST_DIR = Paths.get("test");
+    private static final Path AVAILABLE_POINTS = Paths.get("tmc_available_points.txt");
+    private static final Path MAKEFILE = Paths.get("Makefile");
+    private static final Path TMC_TEST_RESULTS = Paths.get("tmc_test_results.xml");
+    private static final Path VALGRIND_LOG = Paths.get("valgrind.log");
+
     private static final String TEST_FAIL_MESSAGE = "Failed to run tests.";
-    private static final String TMC_TEST_RESULTS = File.separatorChar + "tmc_test_results.xml";
-    private static final String VALGRIND_LOG = File.separatorChar + "valgrind.log";
 
     private static final Logger log = LoggerFactory.getLogger(MakePlugin.class);
 
@@ -53,33 +56,29 @@ public class MakePlugin extends AbstractLanguagePlugin {
         if (!isExerciseTypeCorrect(path)) {
             return Optional.absent();
         }
-
-        final File projectDir = path.toFile();
-
         try {
-            runTests(projectDir, false);
+            runTests(path, false);
         } catch (Exception e) {
             e.printStackTrace();
             return Optional.absent();
         }
 
-        final File availablePoints = new File(projectDir.getAbsolutePath() + TEST_DIR
-            + AVAILABLE_POINTS);
+        final Path availablePoints = path.toAbsolutePath().resolve(TEST_DIR).resolve(AVAILABLE_POINTS);
 
-        if (!availablePoints.exists()) {
+        if (!Files.exists(availablePoints)) {
             return Optional.absent();
         }
 
         return Optional.of(parseExerciseDesc(availablePoints));
     }
 
-    private ExerciseDesc parseExerciseDesc(File availablePoints) {
-        Scanner scanner = this.makeUtils.initFileScanner(availablePoints);
+    private ExerciseDesc parseExerciseDesc(Path availablePoints) {
+        Scanner scanner = this.makeUtils.initFileScanner(availablePoints.toFile());
         if (scanner == null) {
             return null;
         }
 
-        Map<String, List<String>> idsToPoints = this.makeUtils.mapIdsToPoints(availablePoints);
+        Map<String, List<String>> idsToPoints = this.makeUtils.mapIdsToPoints(availablePoints.toFile());
         List<TestDesc> tests = createTestDescs(idsToPoints, scanner);
 
         String exerciseName = parseExerciseName(availablePoints);
@@ -109,55 +108,47 @@ public class MakePlugin extends AbstractLanguagePlugin {
         return tests;
     }
 
-    private String parseExerciseName(File availablePoints) {
-        String[] pathParts = availablePoints.getAbsolutePath().split(File.separatorChar + "");
-        return pathParts[pathParts.length - 3];
+    private String parseExerciseName(Path availablePoints) {
+        return availablePoints.getParent().getParent().getFileName().toString();
     }
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
-        File makefile;
-        try {
-            makefile = new File(path.toString() + MAKEFILE);
-        } catch (Exception e) {
-            return false;
-        }
-        return makefile.exists();
+        return Files.exists(path.resolve(MAKEFILE));
     }
 
     @Override
     public RunResult runTests(Path path) {
-        final File projectDir = path.toFile();
         boolean withValgrind = true;
 
-        if (!builds(projectDir)) {
+        if (!builds(path)) {
             return new RunResult(RunResult.Status.COMPILE_FAILED,
                 ImmutableList.<TestResult>of(), new ImmutableMap.Builder<String, byte[]>().build());
         }
 
         try {
-            runTests(projectDir, withValgrind);
+            runTests(path, withValgrind);
         } catch (Exception e) {
             withValgrind = false;
 
             try {
-                runTests(projectDir, withValgrind);
+                runTests(path, withValgrind);
             } catch (Exception e1) {
                 e1.printStackTrace();
                 throw new RuntimeException(TEST_FAIL_MESSAGE);
             }
         }
 
-        String baseTestPath = projectDir.getAbsolutePath() + TEST_DIR;
-        File testResults = new File(baseTestPath + TMC_TEST_RESULTS);
-        File valgrindOutput = withValgrind ? new File(baseTestPath + VALGRIND_LOG) : null;
+        Path baseTestPath = path.toAbsolutePath().resolve(TEST_DIR);
+        Path testResults = baseTestPath.resolve(TMC_TEST_RESULTS);
+        File valgrindOutput = withValgrind ? baseTestPath.resolve(VALGRIND_LOG).toFile() : null;
 
         log.info("Locating exercise");
 
-        return new CTestResultParser(projectDir, testResults, valgrindOutput).result();
+        return new CTestResultParser(path.toFile(), testResults.toFile(), valgrindOutput).result();
     }
 
-    private void runTests(File dir, boolean withValgrind) throws Exception {
+    private void runTests(Path dir, boolean withValgrind) throws Exception {
         String target = withValgrind ? "run-test-with-valgrind" : "run-test";
         String[] command = new String[]{"make", target};
 
@@ -174,7 +165,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private boolean builds(File dir) {
+    private boolean builds(Path dir) {
         String[] command = new String[]{"make", "test"};
         ProcessRunner runner = new ProcessRunner(command, dir);
 

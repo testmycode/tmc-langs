@@ -2,10 +2,10 @@ package fi.helsinki.cs.tmc.langs.utils;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 /**
@@ -17,9 +17,9 @@ import java.util.concurrent.Callable;
 public class ProcessRunner implements Callable<ProcessResult> {
 
     private final String[] command;
-    private final File workDir;
+    private final Path workDir;
 
-    public ProcessRunner(String[] command, File workDir) {
+    public ProcessRunner(String[] command, Path workDir) {
         this.command = command;
         this.workDir = workDir;
     }
@@ -29,7 +29,7 @@ public class ProcessRunner implements Callable<ProcessResult> {
         Process process = null;
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command);
-            processBuilder.directory(workDir);
+            processBuilder.directory(workDir.toFile());
             process = processBuilder.start();
 
             StringWriter stdoutWriter = new StringWriter();

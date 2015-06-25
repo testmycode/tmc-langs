@@ -10,7 +10,7 @@ public class CaughtException implements Cloneable {
     public StackTraceElement[] stackTrace;
     public CaughtException cause; // May be null
 
-    public CaughtException() {
+    private CaughtException() {
     }
 
     /**
@@ -28,10 +28,13 @@ public class CaughtException implements Cloneable {
     @Override
     public CaughtException clone() {
         CaughtException clone = new CaughtException();
+
         clone.className = this.className;
         clone.message = this.message;
         clone.stackTrace = this.stackTrace.clone();
-        clone.cause = this.cause.clone();
+        if (this.cause != null) {
+            clone.cause = this.cause.clone();
+        }
         return clone;
     }
 

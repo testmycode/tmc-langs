@@ -5,12 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -27,7 +28,7 @@ public class MakeUtilsTest {
 
     @Before
     public void setup() throws IOException {
-        correctFile = initTempFileWithContent(
+        correctFile = TestUtils.initTempFileWithContent(
                 "tmc_available_points",
                 "txt",
                 "[test] [test_one] 1.1"
@@ -48,7 +49,7 @@ public class MakeUtilsTest {
 
     @Test
     public void testMapIdsToPointsWithCorrectFileAndMultiplePoints() throws IOException {
-        correctFile = initTempFileWithContent(
+        correctFile = TestUtils.initTempFileWithContent(
                 "tmc_available_points",
                 "txt",
                 "[test] [test_one] 1.1\n[test] [test_one] 1.2"
@@ -64,7 +65,7 @@ public class MakeUtilsTest {
 
     @Test
     public void testMapIdsToPointsWithCorrectFileAndMultipleTestMethods() throws IOException {
-        correctFile = initTempFileWithContent(
+        correctFile = TestUtils.initTempFileWithContent(
                 "tmc_available_points",
                 "txt",
                 "[test] [test_one] 1.1\n[test] [test_two] 1.2"
@@ -119,18 +120,5 @@ public class MakeUtilsTest {
         String[] rowParts = this.makeUtils.rowParts(scanner);
 
         assertEquals(0, rowParts.length);
-    }
-
-    private File initTempFileWithContent(String prefix, String suffix, String content)
-            throws IOException {
-        File file = File.createTempFile(prefix, suffix);
-        file.deleteOnExit();
-
-        PrintWriter pw = new PrintWriter(file, "UTF-8");
-        pw.println(content);
-        pw.flush();
-        pw.close();
-
-        return file;
     }
 }

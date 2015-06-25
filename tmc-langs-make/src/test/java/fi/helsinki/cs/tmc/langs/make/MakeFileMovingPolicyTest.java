@@ -10,12 +10,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +34,7 @@ public class MakeFileMovingPolicyTest {
         final Path path = TestUtils.getPath(getClass(), "passing");
         final List<String> toBeMoved = new ArrayList<>();
 
-        collectPaths(path, toBeMoved);
+        TestUtils.collectPaths(path, toBeMoved, makeFileMovingPolicy);
 
         assertEquals(3, toBeMoved.size());
         // Should not move Makefile in source
@@ -53,7 +49,7 @@ public class MakeFileMovingPolicyTest {
         final Path path = TestUtils.getPath(getClass(), "passing");
         final List<String> toBeMoved = new ArrayList<>();
 
-        collectPaths(path, toBeMoved);
+        TestUtils.collectPaths(path, toBeMoved, makeFileMovingPolicy);
 
         assertEquals(3, toBeMoved.size());
         assertFalse(toBeMoved.contains("test" + File.separatorChar + "test_source.c"));
@@ -62,32 +58,4 @@ public class MakeFileMovingPolicyTest {
         assertFalse(toBeMoved.contains("test" + File.separatorChar + "Makefile"));
         assertFalse(toBeMoved.contains("test" + File.separatorChar + "checkhelp.c"));
     }
-
-    private void collectPaths(final Path path, final List<String> toBeMoved)
-            throws IOException {
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                    throws IOException {
-                if (makeFileMovingPolicy.shouldMoveFile(path.relativize(file))) {
-                    toBeMoved.add(path.relativize(file).toString());
-                }
-
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exception)
-                    throws IOException {
-                if (exception == null) {
-                    return FileVisitResult.CONTINUE;
-                } else {
-                    // directory iteration failed
-                    throw exception;
-                }
-            }
-        });
-    }
-
-
 }

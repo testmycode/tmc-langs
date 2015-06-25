@@ -55,11 +55,6 @@
             <scope>test</scope>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
-            <artifactId>openide</artifactId>
-            <version>4.0</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -1,7 +1,5 @@
 package fi.helsinki.cs.tmc.langs.make;
 
-import static java.util.logging.Level.INFO;
-
 import fi.helsinki.cs.tmc.langs.RunResult;
 import fi.helsinki.cs.tmc.langs.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.TestResult;
@@ -9,9 +7,13 @@ import fi.helsinki.cs.tmc.langs.TestResult;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -26,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,7 +58,7 @@ public class CTestResultParser {
     private static final String SAX_PARSER_ERROR = "SAX parser error occured";
     private static final String PARSING_DONE_MESSAGE = "C test cases parsed.";
 
-    protected static final Logger log = Logger.getLogger(CTestResultParser.class.getName());
+    protected static final Logger log = LoggerFactory.getLogger(CTestResultParser.class);
 
     private File projectDir;
     private File testResults;
@@ -102,7 +103,7 @@ public class CTestResultParser {
         NodeList nodeList = doc.getElementsByTagName("test");
         List<CTestCase> cases = createCTestCases(nodeList, idsToPoints);
 
-        log.log(INFO, PARSING_DONE_MESSAGE);
+        log.info(PARSING_DONE_MESSAGE);
         return cases;
     }
 
@@ -128,7 +129,7 @@ public class CTestResultParser {
         }
 
         if (doc == null) {
-            log.log(INFO, DOC_NULL_ERROR_MESSAGE);
+            log.info(DOC_NULL_ERROR_MESSAGE);
             throw new IllegalStateException(DOC_NULL_ERROR_MESSAGE);
         }
 
@@ -266,7 +267,7 @@ public class CTestResultParser {
                 int outputIndex = findIndex(pid, pids);
                 if (outputIndex == -1) {
                     if (!warningLogged) {
-                        log.warning(VALGRIND_PID_WARNING);
+                        log.warn(VALGRIND_PID_WARNING);
                         warningLogged = true;
                     }
                     continue;

@@ -14,6 +14,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -21,8 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MakePlugin extends AbstractLanguagePlugin {
 
@@ -33,7 +34,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
     private static final String TMC_TEST_RESULTS = File.separatorChar + "tmc_test_results.xml";
     private static final String VALGRIND_LOG = File.separatorChar + "valgrind.log";
 
-    private static final Logger log = Logger.getLogger(MakePlugin.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(MakePlugin.class);
 
     private MakeUtils makeUtils;
 
@@ -160,7 +161,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
         String target = withValgrind ? "run-test-with-valgrind" : "run-test";
         String[] command = new String[]{"make", target};
 
-        log.log(Level.INFO, "Running tests with command {0}",
+        log.info("Running tests with command {0}",
                 new Object[]{Arrays.deepToString(command)});
 
         ProcessRunner runner = new ProcessRunner(command, dir);

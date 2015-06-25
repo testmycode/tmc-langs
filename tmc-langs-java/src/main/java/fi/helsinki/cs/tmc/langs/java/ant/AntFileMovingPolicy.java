@@ -3,6 +3,7 @@ package fi.helsinki.cs.tmc.langs.java.ant;
 import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class AntFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy {
 
@@ -15,7 +16,7 @@ public class AntFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy {
      * decision to move them is made by {@link ExtraStudentFileAwareFileMovingPolicy}.
      */
     @Override
-    protected boolean shouldMoveFile(Path path) {
-        throw new UnsupportedOperationException();
+    public boolean shouldMoveFile(Path path) {
+        return path.startsWith(Paths.get("src"));
     }
 }

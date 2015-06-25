@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.java.testrunner;
 
 import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.TestCase;
 import fi.helsinki.cs.tmc.langs.TestDesc;
 
 import com.google.common.base.Optional;

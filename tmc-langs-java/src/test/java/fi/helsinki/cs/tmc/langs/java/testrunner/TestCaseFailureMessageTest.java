@@ -2,6 +2,8 @@ package fi.helsinki.cs.tmc.langs.java.testrunner;
 
 import static org.junit.Assert.assertEquals;
 
+import fi.helsinki.cs.tmc.langs.TestCase;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;

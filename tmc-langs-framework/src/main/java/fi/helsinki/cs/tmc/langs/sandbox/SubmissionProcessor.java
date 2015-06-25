@@ -1,9 +1,12 @@
 package fi.helsinki.cs.tmc.langs.sandbox;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,35 +44,44 @@ public class SubmissionProcessor {
      *                  moved.
      * @param target    Directory to which the source files are moved to.
      */
-    public void moveFiles(Path source, Path target) {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
-            for (Path sourceFile : stream) {
-                if (fileMovingPolicy.shouldMove(sourceFile)) {
-                    Path absoluteTargetPath = getAbsoluteTargetPath(source, target, sourceFile);
-                    try {
-                        moveFile(source, sourceFile.toAbsolutePath(), absoluteTargetPath);
-                    } catch (IOException exception) {
+    public void moveFiles(final Path source, final Path target) {
+        try {
+            Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (fileMovingPolicy.shouldMove(file, source, target)) {
+                        try {
+                            moveFile(source, file, target);
+                        } catch (IOException exception) {
+                            log.log(Level.WARNING, null, exception);
+                        }
+                    }
+
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exception)
+                        throws IOException {
+                    if (exception == null) {
+                        return FileVisitResult.CONTINUE;
+                    } else {
+                        // directory iteration failed
                         log.log(Level.WARNING, null, exception);
+                        throw exception;
                     }
                 }
-            }
+            });
         } catch (IOException exception) {
             log.log(Level.WARNING, null, exception);
             return;
         }
     }
 
-    protected Path getAbsoluteTargetPath(Path sourceRootPath,
-                                         Path targetRootPath,
-                                         Path sourceFilePath) {
-        Path relativeFilePath = sourceRootPath.relativize(sourceFilePath.toAbsolutePath());
-        return targetRootPath.resolve(relativeFilePath);
-    }
-
     protected void moveFile(Path sourceRoot, Path sourceFile, Path target) throws IOException {
         Path relative = sourceRoot.relativize(sourceFile);
         Path targetFile = target.resolve(relative);
         Files.createDirectories(targetFile.getParent());
-        Files.move(sourceFile, targetFile);
+        Files.move(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
     }
 }

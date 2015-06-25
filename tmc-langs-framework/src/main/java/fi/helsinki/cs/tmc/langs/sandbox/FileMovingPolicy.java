@@ -11,5 +11,5 @@ public interface FileMovingPolicy {
     /**
      * Answers whether a single file should be moved.
      */
-    boolean shouldMove(Path path);
+    boolean shouldMove(Path path, Path rootPath, Path target);
 }

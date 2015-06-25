@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class MavenPluginTest {
 
-    MavenPlugin mavenPlugin;
+    private MavenPlugin mavenPlugin;
 
     public MavenPluginTest() {
         mavenPlugin = new MavenPlugin();

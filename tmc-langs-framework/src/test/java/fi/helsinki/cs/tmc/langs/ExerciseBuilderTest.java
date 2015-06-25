@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -29,39 +30,24 @@ public class ExerciseBuilderTest {
 
     @Test
     public void testPrepareStub() throws IOException {
-        File originProject = new File("src"
-                + File.separator + "test"
-                + File.separator + "resources"
-                + File.separator + "arith_funcs" + File.separator);
-        File targetFolder = createTemporaryCopyOf(originProject);
-        File expectedFolder = new File("src"
-                + File.separator + "test"
-                + File.separator + "resources"
-                + File.separator + "arith_funcs_stub"
-                + File.separator + "src");
-        File outputFolder = new File(targetFolder.getAbsolutePath() + File.separator + "src");
+        Path originProject = Paths.get("src", "test", "resources", "arith_funcs");
+        Path targetFolder = createTemporaryCopyOf(originProject);
+        Path expectedFolder = Paths.get("src", "test", "resources", "arith_funcs_stub", "src");
+        Path outputFolder = targetFolder.toAbsolutePath().resolve("src");
 
-        exerciseBuilder.prepareStub(targetFolder.toPath());
+        exerciseBuilder.prepareStub(targetFolder);
 
         assertFileLines(expectedFolder, outputFolder);
-
     }
 
     @Test
     public void testPrepareSolution() throws IOException {
-        File originProject = new File("src"
-                + File.separator + "test"
-                + File.separator + "resources"
-                + File.separator + "arith_funcs" + File.separator);
-        File targetFolder = createTemporaryCopyOf(originProject);
-        File expectedFolder = new File("src"
-                + File.separator + "test"
-                + File.separator + "resources"
-                + File.separator + "arith_funcs_solution"
-                + File.separator + "src");
-        File outputFolder = new File(targetFolder.getAbsolutePath() + File.separator + "src");
+        Path originProject = Paths.get("src", "test", "resources", "arith_funcs");
+        Path targetFolder = createTemporaryCopyOf(originProject);
+        Path expectedFolder = Paths.get("src", "test", "resources", "arith_funcs_solution", "src");
+        Path outputFolder = targetFolder.toAbsolutePath().resolve("src");
 
-        exerciseBuilder.prepareSolution(targetFolder.toPath());
+        exerciseBuilder.prepareSolution(targetFolder);
 
         assertFileLines(expectedFolder, outputFolder);
     }
@@ -79,46 +65,41 @@ public class ExerciseBuilderTest {
 
     @Test
     public void solutionFileLinesAreCorrectlyPrepared() throws IOException {
-        Path p = Paths.get("src", "test", "resources", "arith_funcs_solution_file");
-        File temp = createTemporaryCopyOf(p.toFile());
-        temp.deleteOnExit();
-        exerciseBuilder.prepareSolution(temp.toPath());
-        Path solutionFile = temp.toPath().resolve(Paths.get("src", "SolutionFile.java"));
-        int size = java.nio.file.Files.readAllLines(solutionFile).size();
+        Path path = Paths.get("src", "test", "resources", "arith_funcs_solution_file");
+        Path temp = createTemporaryCopyOf(path);
+        temp.toFile().deleteOnExit();
+        exerciseBuilder.prepareSolution(temp);
+        Path solutionFile = temp.resolve(Paths.get("src", "SolutionFile.java"));
+        int size = java.nio.file.Files.readAllLines(solutionFile, Charset.defaultCharset()).size();
         assertEquals(2, size);
     }
 
     @Test
     public void solutionFilesAreIgnoredFromStub() throws IOException {
-        Path p = Paths.get("src", "test", "resources", "arith_funcs_solution_file");
-        File temp = createTemporaryCopyOf(p.toFile());
-        temp.deleteOnExit();
-        exerciseBuilder.prepareStub(temp.toPath());
-        Path solutionFile = temp.toPath().resolve(Paths.get("src", "SolutionFile.java"));
+        Path path = Paths.get("src", "test", "resources", "arith_funcs_solution_file");
+        Path temp = createTemporaryCopyOf(path);
+        temp.toFile().deleteOnExit();
+        exerciseBuilder.prepareStub(temp);
+        Path solutionFile = temp.resolve(Paths.get("src", "SolutionFile.java"));
         assertFalse(solutionFile.toFile().exists());
     }
 
-    private File createTemporaryCopyOf(File file) throws IOException {
+    private Path createTemporaryCopyOf(Path path) throws IOException {
         File tempFolder = Files.createTempDir();
-        FileUtils.copyDirectory(file, tempFolder);
+        FileUtils.copyDirectory(path.toFile(), tempFolder);
         tempFolder.deleteOnExit();
-        return tempFolder;
+        return tempFolder.toPath();
     }
 
-    private String getFileName(String parentDir, File file) {
-        return file.getAbsolutePath().substring(parentDir.length() + 1);
-    }
-
-    private void assertFileLines(File expectedFolder, File outputFolder) throws IOException {
-
-        Map<String, File> expectedFiles = getFileMap(expectedFolder);
-        Map<String, File> actualFiles = getFileMap(outputFolder);
+    private void assertFileLines(Path expectedFolder, Path outputFolder) throws IOException {
+        Map<String, Path> expectedFiles = getFileMap(expectedFolder);
+        Map<String, Path> actualFiles = getFileMap(outputFolder);
 
         for (String fileName : expectedFiles.keySet()) {
-            File expected = expectedFiles.get(fileName);
-            File actual = actualFiles.get(fileName);
-            List<String> expectedLines = FileUtils.readLines(expected);
-            List<String> actualLines = FileUtils.readLines(actual);
+            Path expected = expectedFiles.get(fileName);
+            Path actual = actualFiles.get(fileName);
+            List<String> expectedLines = FileUtils.readLines(expected.toFile());
+            List<String> actualLines = FileUtils.readLines(actual.toFile());
             for (int i = 0; i < expectedLines.size(); ++i) {
                 String expectedLine = expectedLines.get(i);
                 String actualLine = actualLines.get(i);
@@ -130,17 +111,17 @@ public class ExerciseBuilderTest {
         }
     }
 
-    private Map<String, File> getFileMap(File folder) throws IOException {
-        if (!folder.isDirectory()) {
+    private Map<String, Path> getFileMap(Path folder) throws IOException {
+        if (!folder.toFile().isDirectory()) {
             throw new IOException("Supplied path was not a directory");
         }
-        Map<String, File> result = new HashMap<>();
-        for (File file : folder.listFiles()) {
+        Map<String, Path> result = new HashMap<>();
+        for (File file : folder.toFile().listFiles()) {
             if (file.isDirectory()) {
-                result.putAll(getFileMap(file));
+                result.putAll(getFileMap(file.toPath()));
                 continue;
             }
-            result.put(getFileName(folder.getAbsolutePath(), file), file);
+            result.put(file.toPath().getFileName().toString(), file.toPath());
         }
         return result;
     }

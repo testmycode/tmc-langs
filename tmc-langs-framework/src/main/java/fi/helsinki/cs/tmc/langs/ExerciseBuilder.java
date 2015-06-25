@@ -3,7 +3,6 @@ package fi.helsinki.cs.tmc.langs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -29,23 +28,22 @@ public class ExerciseBuilder {
      * <p>Implements LanguagePlugin.prepareStub
      */
     public void prepareStub(Path path) {
-        File projectRoot = path.resolve(sourceFolderName).toFile();
-        List<File> projectFiles = getFileList(projectRoot);
+        Path projectRoot = path.resolve(sourceFolderName);
+        List<Path> projectFiles = getFileList(projectRoot);
 
-        for (File projectFile : projectFiles) {
+        for (Path projectFile : projectFiles) {
             prepareStubFile(projectFile);
         }
     }
 
-    private void prepareStubFile(File file) {
-
+    private void prepareStubFile(Path file) {
         try {
-            List<String> lines = Files.readAllLines(file.toPath(), charset);
+            List<String> lines = Files.readAllLines(file, charset);
             List<String> filteredLines = new ArrayList<>();
             boolean skipLine = false;
             for (String line : lines) {
                 if (line.contains(solutionFile)) {
-                    Files.deleteIfExists(file.toPath());
+                    Files.deleteIfExists(file);
                     return;
                 }
                 if (line.contains(beginSolution)) {
@@ -60,27 +58,31 @@ public class ExerciseBuilder {
                     filteredLines.add(line);
                 }
             }
-            Files.write(file.toPath(), filteredLines, charset);
+            Files.write(file, filteredLines, charset);
         } catch (IOException ex) {
             log.error("Unexpected IOException, preparation of file {} was interrupted",
-                    file.getAbsolutePath(),
+                    file.toAbsolutePath().toString(),
                     ex);
-            throw new RuntimeException("Unexpected IOException, preparation of file {"
-                    + file.getAbsolutePath() + "} interrupted", ex);
         }
     }
 
-    private List<File> getFileList(File folder) {
-        if (!folder.isDirectory()) {
+    private List<Path> getFileList(Path folder) {
+        if (!folder.toFile().isDirectory()) {
             return new ArrayList<>();
         }
-        ArrayList<File> result = new ArrayList<>();
-        for (File file : folder.listFiles()) {
-            if (file.isDirectory()) {
-                result.addAll(getFileList(file));
-                continue;
+        ArrayList<Path> result = new ArrayList<>();
+        try {
+            for (Path file : Files.newDirectoryStream(folder)) {
+                if (file.toFile().isDirectory()) {
+                    result.addAll(getFileList(file));
+                    continue;
+                }
+                result.add(file);
             }
-            result.add(file);
+        } catch (IOException e) {
+            log.error("Unexpected IOException, getting file list of {} was interrupted",
+                    folder.toAbsolutePath().toString(),
+                    e);
         }
         return result;
     }
@@ -91,17 +93,17 @@ public class ExerciseBuilder {
      * <p>Implements LanguagePlugin.prepareSolution
      */
     public void prepareSolution(Path path) {
-        File projectRoot = path.resolve(sourceFolderName).toFile();
-        List<File> projectFiles = getFileList(projectRoot);
+        Path projectRoot = path.resolve(sourceFolderName);
+        List<Path> projectFiles = getFileList(projectRoot);
 
-        for (File projectFile : projectFiles) {
+        for (Path projectFile : projectFiles) {
             prepareSolutionFile(projectFile);
         }
     }
 
-    private void prepareSolutionFile(File file) {
+    private void prepareSolutionFile(Path file) {
         try {
-            List<String> lines = Files.readAllLines(file.toPath(), charset);
+            List<String> lines = Files.readAllLines(file, charset);
             List<String> filteredLines = new ArrayList<>();
             for (String line : lines) {
                 if (line.contains(beginSolution)
@@ -112,13 +114,11 @@ public class ExerciseBuilder {
                 }
                 filteredLines.add(line);
             }
-            Files.write(file.toPath(), filteredLines, charset);
+            Files.write(file, filteredLines, charset);
         } catch (IOException ex) {
             log.error("Unexpected IOException, preparation of file {} was interrupted",
-                    file.getAbsolutePath(),
+                    file.toAbsolutePath().toString(),
                     ex);
-            throw new RuntimeException("Unexpected IOException, preparation of file {"
-                    + file.getAbsolutePath() + "} interrupted", ex);
         }
     }
 

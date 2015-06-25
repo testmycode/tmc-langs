@@ -43,7 +43,9 @@ public class TestCase {
         this.message = testCase.message;
         this.status = testCase.status;
         this.pointNames = testCase.pointNames.clone();
-        this.exception = testCase.exception.clone();
+        if (testCase.exception != null) {
+            this.exception = testCase.exception.clone();
+        }
     }
 
     /**

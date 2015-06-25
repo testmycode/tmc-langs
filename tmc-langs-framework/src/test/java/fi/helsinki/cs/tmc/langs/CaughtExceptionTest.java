@@ -2,8 +2,6 @@ package fi.helsinki.cs.tmc.langs;
 
 import static org.junit.Assert.assertEquals;
 
-import fi.helsinki.cs.tmc.langs.CaughtException;
-
 import org.junit.Test;
 
 public class CaughtExceptionTest {

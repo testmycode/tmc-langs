@@ -160,13 +160,13 @@ public class AbstractJavaPluginTest {
             }
         };
         ArgumentCaptor<SourceFiles> sourceFilesCaptor = ArgumentCaptor.forClass(SourceFiles.class);
-        File expected = TestUtils.getPath(getClass(), "trivial/test/TrivialTest.java").toFile();
 
         plugin.scanExercise(path, "trivial");
 
         verify(scanner).findTests(any(ClassPath.class), sourceFilesCaptor.capture(), anyString());
 
         SourceFiles sourceFiles = sourceFilesCaptor.getValue();
+        File expected = TestUtils.getPath(getClass(), "trivial/test/TrivialTest.java").toFile();
 
         assertFalse(sourceFiles.getSources().isEmpty());
         assertTrue(sourceFiles.getSources().contains(expected));

@@ -10,8 +10,7 @@ public class ProjectTypeHandler {
     /**
      * Recognizes the project type.
      *
-     * <p>
-     * Iterate through all language plugins to find one that recognizes the
+     * <p>Iterate through all language plugins to find one that recognizes the
      * project as their type.
      *
      * @param path The path to the exercise directory.

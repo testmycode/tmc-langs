@@ -2,12 +2,13 @@ package fi.helsinki.cs.tmc.langs.java.ant;
 
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
-import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
@@ -55,9 +56,7 @@ public class AntPlugin extends AbstractJavaPlugin {
      * Create a new AntPlugin.
      */
     public AntPlugin() {
-        super(TEST_DIR,
-                new SubmissionProcessor(new AntFileMovingPolicy()),
-                new TestScanner());
+        super(TEST_DIR, new StudentFileAwareSubmissionProcessor(), new TestScanner());
     }
 
     @Override
@@ -68,6 +67,11 @@ public class AntPlugin extends AbstractJavaPlugin {
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.resolve(BUILD_FILE));
+    }
+
+    @Override
+    protected StudentFilePolicy getStudentFilePolicy(Path path) {
+        return new AntStudentFilePolicy(path);
     }
 
     /**

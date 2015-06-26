@@ -11,11 +11,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
-import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
@@ -45,7 +47,7 @@ public class AbstractJavaPluginTest {
         }
 
         public StubLanguagePlugin(Path testFolderPath) {
-            super(testFolderPath, new SubmissionProcessor(), new TestScanner());
+            super(testFolderPath, new StudentFileAwareSubmissionProcessor(), new TestScanner());
         }
 
         @Override
@@ -67,6 +69,11 @@ public class AbstractJavaPluginTest {
         @Override
         protected boolean isExerciseTypeCorrect(Path path) {
             return false;
+        }
+
+        @Override
+        protected StudentFilePolicy getStudentFilePolicy(Path projectPath) {
+            return null;
         }
 
         @Override
@@ -156,7 +163,7 @@ public class AbstractJavaPluginTest {
         Path path = TestUtils.getPath(getClass(), "trivial");
         TestScanner scanner = mock(TestScanner.class);
         AbstractJavaPlugin plugin = new StubLanguagePlugin(
-                Paths.get(""), new SubmissionProcessor(), scanner) {
+                Paths.get(""), new StudentFileAwareSubmissionProcessor(), scanner) {
             protected boolean isExerciseTypeCorrect(Path path) {
                 return true;
             }

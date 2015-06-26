@@ -1,7 +1,9 @@
 package fi.helsinki.cs.tmc.langs;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
-import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.collect.ImmutableList;
@@ -28,7 +30,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * default {@link SubmissionProcessor}.
      */
     public AbstractLanguagePlugin() {
-        this(new ExerciseBuilder(), new SubmissionProcessor());
+        this(new ExerciseBuilder(), new StudentFileAwareSubmissionProcessor());
     }
 
     /**
@@ -36,7 +38,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * default {@link SubmissionProcessor}.
      */
     public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder) {
-        this(exerciseBuilder, new SubmissionProcessor());
+        this(exerciseBuilder, new StudentFileAwareSubmissionProcessor());
     }
 
     /**
@@ -66,10 +68,21 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      */
     protected abstract boolean isExerciseTypeCorrect(Path path);
 
+    /**
+     * Gets a language specific {@link StudentFilePolicy}.
+     *
+     * <p>The project root path must be specified for the {@link StudentFilePolicy} to read
+     * any configuration files such as <tt>.tmcproject.yml</tt>.
+     *
+     * @param projectPath The project's root path
+     */
+    protected abstract StudentFilePolicy getStudentFilePolicy(Path projectPath);
+
     public abstract ValidationResult checkCodeStyle(Path path);
 
     @Override
     public void prepareSubmission(Path submissionPath, Path destPath) {
+        submissionProcessor.setStudentFilePolicy(getStudentFilePolicy(destPath));
         submissionProcessor.moveFiles(submissionPath, destPath);
     }
 

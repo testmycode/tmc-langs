@@ -1,12 +1,13 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
-import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 
 import org.apache.maven.cli.MavenCli;
 
@@ -39,9 +40,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
      * Creates a new MavenPlugin.
      */
     public MavenPlugin() {
-        super(TEST_FOLDER,
-                new SubmissionProcessor(new MavenFileMovingPolicy()),
-                new TestScanner());
+        super(TEST_FOLDER, new StudentFileAwareSubmissionProcessor(), new TestScanner());
     }
 
     @Override
@@ -52,6 +51,11 @@ public class MavenPlugin extends AbstractJavaPlugin {
     @Override
     public String getLanguageName() {
         return "apache-maven";
+    }
+
+    @Override
+    protected StudentFilePolicy getStudentFilePolicy(Path path) {
+        return new MavenStudentFilePolicy(path);
     }
 
     @Override

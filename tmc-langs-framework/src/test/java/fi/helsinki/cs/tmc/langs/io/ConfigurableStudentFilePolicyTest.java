@@ -1,8 +1,11 @@
-package fi.helsinki.cs.tmc.langs.sandbox;
+package fi.helsinki.cs.tmc.langs.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 
 import org.apache.commons.io.FileUtils;
 
@@ -14,29 +17,31 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ExtraStudentFileAwareFileMovingPolicyTest {
+public class ConfigurableStudentFilePolicyTest {
 
     private Path rootPath;
     private Path sourceDir;
     private Path targetDir;
 
     private SubmissionProcessor processor;
-    private FileMovingPolicy fileMovingPolicy;
+    private StudentFilePolicy studentFilePolicy;
 
     @Before
     public void setUp() throws IOException {
-
-        fileMovingPolicy = new ExtraStudentFileAwareFileMovingPolicy() {
-            @Override
-            public boolean shouldMoveFile(Path path) {
-                return false;
-            }
-        };
-        processor = new SubmissionProcessor(fileMovingPolicy);
-
         rootPath = Files.createTempDirectory("tmc-test-submissionprocessortest");
         sourceDir = Files.createTempDirectory(rootPath, "source");
         targetDir = Files.createTempDirectory(rootPath, "target");
+
+        Path tmcprojectYml = targetDir.resolve(".tmcproject.yml");
+        studentFilePolicy = new ConfigurableStudentFilePolicy(tmcprojectYml) {
+            @Override
+            public boolean isStudentSourceFile(Path path) {
+                return false;
+            }
+        };
+        processor = new StudentFileAwareSubmissionProcessor(studentFilePolicy);
+
+
     }
 
     /**
@@ -59,7 +64,7 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
         Files.createFile(newFile);
         FileUtils.write(newFile.toFile(), "Temporary");
 
-        assertTrue(fileMovingPolicy.shouldMove(newFile, sourceDir, targetDir));
+        assertTrue(studentFilePolicy.isStudentFile(newFile, sourceDir));
 
         processor.moveFiles(sourceDir, targetDir);
 
@@ -86,8 +91,8 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
         Files.createFile(temporary);
         FileUtils.write(temporary.toFile(), "Temporary 2");
 
-        assertTrue(fileMovingPolicy.shouldMove(temp, sourceDir, targetDir));
-        assertTrue(fileMovingPolicy.shouldMove(temporary, sourceDir, targetDir));
+        assertTrue(studentFilePolicy.isStudentFile(temp, sourceDir));
+        assertTrue(studentFilePolicy.isStudentFile(temporary, sourceDir));
 
         processor.moveFiles(sourceDir, targetDir);
 
@@ -118,7 +123,7 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
         Files.createFile(temp);
         FileUtils.write(temp.toFile(), "Temporary");
 
-        assertTrue(fileMovingPolicy.shouldMove(temp, sourceDir, targetDir));
+        assertTrue(studentFilePolicy.isStudentFile(temp, sourceDir));
 
         processor.moveFiles(sourceDir, targetDir);
 
@@ -143,7 +148,7 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
         Files.createFile(temp);
         FileUtils.write(temp.toFile(), "extra_student_files:\n  - temp");
 
-        assertFalse(fileMovingPolicy.shouldMove(temp, sourceDir, targetDir));
+        assertFalse(studentFilePolicy.isStudentFile(temp, sourceDir));
 
         processor.moveFiles(sourceDir, targetDir);
 
@@ -165,7 +170,7 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
         Path dir = sourceDir.resolve("subdir");
         Files.createDirectory(dir);
 
-        assertFalse(fileMovingPolicy.shouldMove(dir, sourceDir, targetDir));
+        assertFalse(studentFilePolicy.isStudentFile(dir, sourceDir));
 
         processor.moveFiles(sourceDir, targetDir);
 
@@ -181,7 +186,7 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
     public void doesNotMoveNonexistentFiles() {
         Path file = sourceDir.resolve("nonexistent");
 
-        assertFalse(fileMovingPolicy.shouldMove(file, sourceDir, targetDir));
+        assertFalse(studentFilePolicy.isStudentFile(file, sourceDir));
 
         processor.moveFiles(sourceDir, targetDir);
 
@@ -203,7 +208,7 @@ public class ExtraStudentFileAwareFileMovingPolicyTest {
         Files.createFile(newFile);
         FileUtils.write(newFile.toFile(), "Temporary");
 
-        assertFalse(fileMovingPolicy.shouldMove(newFile, sourceDir, targetDir));
+        assertFalse(studentFilePolicy.isStudentFile(newFile, sourceDir));
 
         processor.moveFiles(sourceDir, targetDir);
 

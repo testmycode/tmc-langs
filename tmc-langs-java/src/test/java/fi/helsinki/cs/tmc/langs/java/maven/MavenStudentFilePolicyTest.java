@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -15,26 +16,29 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MavenFileMovingPolicyTest {
+public class MavenStudentFilePolicyTest {
 
-    private MavenFileMovingPolicy mavenFileMovingPolicy;
+    private Path projectPath;
+    private MavenStudentFilePolicy mavenFileMovingPolicy;
 
-    public MavenFileMovingPolicyTest() {
-        mavenFileMovingPolicy = new MavenFileMovingPolicy();
+    @Before
+    public void setUp() {
+        projectPath = TestUtils.getPath(getClass(), "maven_exercise");
+        Path tmcprojectYml = projectPath.resolve(".tmcproject.yml");
+        mavenFileMovingPolicy = new MavenStudentFilePolicy(tmcprojectYml);
     }
 
     @Test
     public void testItDoesNotMovePomXml() throws IOException {
         Path pom = Paths.get("pom.xml");
-        assertFalse(mavenFileMovingPolicy.shouldMoveFile(pom));
+        assertFalse(mavenFileMovingPolicy.isStudentSourceFile(pom));
     }
 
     @Test
     public void testItMovesFilesInSrcMain() throws IOException {
-        final Path path = TestUtils.getPath(getClass(), "maven_exercise");
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(path, toBeMoved, mavenFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, mavenFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
         assertTrue(toBeMoved.contains("src"
@@ -49,10 +53,9 @@ public class MavenFileMovingPolicyTest {
 
     @Test
     public void testItDoesNotMoveFilesInSrcTest() throws IOException {
-        final Path path = TestUtils.getPath(getClass(), "maven_exercise");
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(path, toBeMoved, mavenFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, mavenFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
         assertFalse(toBeMoved.contains("src"
@@ -67,10 +70,9 @@ public class MavenFileMovingPolicyTest {
 
     @Test
     public void testItDoesNotMoveFilesInLib() throws IOException {
-        final Path path = TestUtils.getPath(getClass(), "maven_exercise");
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(path, toBeMoved, mavenFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, mavenFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
         assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"

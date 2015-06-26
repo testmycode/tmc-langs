@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs.sandbox;
+package fi.helsinki.cs.tmc.langs.io;
 
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.Yaml;
 
@@ -6,36 +6,46 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * An abstract {@link FileMovingPolicy} that also uses
+ * An abstract {@link StudentFilePolicy} that also uses
  * <a href="http://tmc.mooc.fi/usermanual/pages/instructors.html#_tmcproject_yml">
- * ExtraStudentFiles</a> to make a decision on whether to move a file or not.
+ * ExtraStudentFiles</a> to make a decision on whether a file is a student file or not.
  *
- * <p>For any {@link FileMovingPolicy} that extends this class, a file is moved if either
- * {@link ExtraStudentFileAwareFileMovingPolicy#isExtraStudentFile(Path)} or
- * {@link ExtraStudentFileAwareFileMovingPolicy#shouldMoveFile(Path)} returns {@code True}.
+ * <p>For any {@link StudentFilePolicy} that extends this class, a file is a student file if either
+ * {@link ConfigurableStudentFilePolicy#isExtraStudentFile(Path)} or
+ * {@link ConfigurableStudentFilePolicy#isStudentSourceFile(Path)} returns {@code True}.
  */
-public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovingPolicy {
+public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy {
 
-    private static final Path TMC_PROJECT_YML = Paths.get(".tmcproject.yml");
+    private Path configFile;
 
     private List<Path> extraStudentFiles;
     private Path rootPath;
-    private Path target;
+
+    public ConfigurableStudentFilePolicy(Path configFile) {
+        this.configFile = configFile;
+    }
 
     /**
-     * Determines whether a file should be moved even if it is not an <tt>ExtraStudentFile</tt>.
+     * Determines whether a file is a student source file.
+     *
+     * <p>A file should be considered a student source file if it resides in a location the student
+     * is expected to create his or her own source files in the general case. Any special cases
+     * are specified as ExtraStudentFiles in a separate configuration.
+     *
+     * <p>For example in a Java project that uses Apache Ant, {@code isStudentSourceFile} should
+     * return {@code True} for any files in the <tt>src</tt> directory.
      */
-    public abstract boolean shouldMoveFile(Path path);
+    public abstract boolean isStudentSourceFile(Path path);
     
     @Override
-    public boolean shouldMove(Path path, Path rootPath, Path target) {
+    public boolean isStudentFile(Path path, Path projectRootPath) {
         if (!path.toFile().exists()) {
             return false;
         }
@@ -44,19 +54,17 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
             return false;
         }
 
-        if (path.getFileName().equals(TMC_PROJECT_YML)) {
+        if (path.getFileName().equals(configFile.getFileName())) {
             return false;
         }
 
-        this.rootPath = rootPath;
-        this.target = target;
+        this.rootPath = projectRootPath;
         
-        return isExtraStudentFile(path) || shouldMoveFile(path);
+        return isExtraStudentFile(path) || isStudentSourceFile(path);
     }
 
     /**
-     * Determines whether a file is an <tt>ExtraStudentFile</tt> and therefore should be always
-     * moved.
+     * Determines whether a file is an <tt>ExtraStudentFile</tt>.
      */
     private boolean isExtraStudentFile(Path path) {
         if (extraStudentFiles == null) {
@@ -80,15 +88,13 @@ public abstract class ExtraStudentFileAwareFileMovingPolicy implements FileMovin
     private void loadExtraStudentFileList() {
         extraStudentFiles = new ArrayList<>();
 
-        File tmcprojectyml = this.target.toAbsolutePath().resolve(TMC_PROJECT_YML).toFile();
-
-        if (tmcprojectyml.exists()) {
-            parseExtraStudentFiles(tmcprojectyml);
+        if (Files.exists(configFile)) {
+            parseExtraStudentFiles(configFile);
         }
     }
 
-    private void parseExtraStudentFiles(File file) {
-        String fileContents = initFileContents(file);
+    private void parseExtraStudentFiles(Path path) {
+        String fileContents = initFileContents(path.toAbsolutePath().toFile());
         Yaml yaml = new Yaml();
         Object yamlSpecifications = yaml.load(fileContents);
 

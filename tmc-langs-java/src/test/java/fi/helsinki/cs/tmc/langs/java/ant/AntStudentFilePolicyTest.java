@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -15,26 +16,29 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AntFileMovingPolicyTest {
+public class AntStudentFilePolicyTest {
 
-    private AntFileMovingPolicy antFileMovingPolicy;
+    private AntStudentFilePolicy antFileMovingPolicy;
+    private Path projectPath;
 
-    public AntFileMovingPolicyTest() {
-        antFileMovingPolicy = new AntFileMovingPolicy();
+    @Before
+    public void setUp() {
+        projectPath = TestUtils.getPath(getClass(), "ant_arith_funcs");
+        Path tmcprojectYml = projectPath.resolve(".tmcproject.yml");
+        antFileMovingPolicy = new AntStudentFilePolicy(tmcprojectYml);
     }
 
     @Test
     public void testItDoesNotMoveBuildXml() throws IOException {
         Path build = Paths.get("build.xml");
-        assertFalse(antFileMovingPolicy.shouldMoveFile(build));
+        assertFalse(antFileMovingPolicy.isStudentSourceFile(build));
     }
 
     @Test
     public void testItMovesFilesInSrc() throws IOException {
-        final Path path = TestUtils.getPath(getClass(), "ant_arith_funcs");
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(path, toBeMoved, antFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, antFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
         assertTrue(toBeMoved.contains("src" + File.separatorChar + "Arith.java"));
@@ -42,10 +46,9 @@ public class AntFileMovingPolicyTest {
 
     @Test
     public void testItDoesNotMoveFilesInTest() throws IOException {
-        final Path path = TestUtils.getPath(getClass(), "ant_arith_funcs");
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(path, toBeMoved, antFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, antFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
         assertFalse(toBeMoved.contains("test" + File.separatorChar + "ArithTest.java"));
@@ -53,10 +56,9 @@ public class AntFileMovingPolicyTest {
 
     @Test
     public void testItDoesNotMoveFilesInLib() throws IOException {
-        final Path path = TestUtils.getPath(getClass(), "ant_arith_funcs");
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(path, toBeMoved, antFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, antFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
         assertFalse(toBeMoved.contains("lib"

@@ -1,6 +1,6 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
-import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
+import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 
 import com.google.common.base.Throwables;
 
@@ -84,17 +84,18 @@ public final class TestUtils {
     }
 
     /**
-     * Collects a list of paths that are to be moved with the provided file moving policy.
+     * Collects a list of paths that the provided {@link ConfigurableStudentFilePolicy}
+     * considers student files.
      */
     public static void collectPaths(final Path path,
                                     final List<String> toBeMoved,
-                                    final ExtraStudentFileAwareFileMovingPolicy fileMovingPolicy)
+                                    final ConfigurableStudentFilePolicy fileMovingPolicy)
             throws IOException {
         Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                     throws IOException {
-                if (fileMovingPolicy.shouldMoveFile(path.relativize(file))) {
+                if (fileMovingPolicy.isStudentSourceFile(path.relativize(file))) {
                     toBeMoved.add(path.relativize(file).toString());
                 }
 

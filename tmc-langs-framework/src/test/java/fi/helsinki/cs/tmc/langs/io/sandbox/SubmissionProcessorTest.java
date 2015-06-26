@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs.sandbox;
+package fi.helsinki.cs.tmc.langs.io.sandbox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -22,11 +22,11 @@ public class SubmissionProcessorTest {
     private Path sourceFile;
     private Path subSourceFile;
 
-    private SubmissionProcessor processor;
+    private StudentFileAwareSubmissionProcessor processor;
 
     @Before
     public void setUp() throws IOException {
-        processor = new SubmissionProcessor();
+        processor = new StudentFileAwareSubmissionProcessor();
 
         rootPath = Files.createTempDirectory("tmc-test-submissionprocessortest");
         sourceDir = Files.createTempDirectory(rootPath, "source");

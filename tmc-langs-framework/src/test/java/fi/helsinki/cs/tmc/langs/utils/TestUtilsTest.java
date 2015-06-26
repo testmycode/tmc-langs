@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
+import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 
 import org.apache.commons.io.FileUtils;
 
@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,10 +89,10 @@ public class TestUtilsTest {
     @Test
     public void collectPathsCanCollectPaths() throws IOException {
         List<String> toBeMoved = new ArrayList<>();
-        ExtraStudentFileAwareFileMovingPolicy fileMovingPolicy =
-                new ExtraStudentFileAwareFileMovingPolicy() {
+        ConfigurableStudentFilePolicy fileMovingPolicy =
+                new ConfigurableStudentFilePolicy(Paths.get("")) {
             @Override
-            public boolean shouldMoveFile(Path path) {
+            public boolean isStudentSourceFile(Path path) {
                 return true;
             }
         };
@@ -107,10 +108,10 @@ public class TestUtilsTest {
     @Test
     public void collectPathsDoesNotCollectWrongPaths() throws IOException {
         List<String> toBeMoved = new ArrayList<>();
-        ExtraStudentFileAwareFileMovingPolicy fileMovingPolicy =
-                new ExtraStudentFileAwareFileMovingPolicy() {
+        ConfigurableStudentFilePolicy fileMovingPolicy =
+                new ConfigurableStudentFilePolicy(Paths.get("")) {
             @Override
-            public boolean shouldMoveFile(Path path) {
+            public boolean isStudentSourceFile(Path path) {
                 return false;
             }
         };

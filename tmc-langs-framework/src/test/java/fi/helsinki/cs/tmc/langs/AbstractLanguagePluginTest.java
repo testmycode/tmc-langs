@@ -8,7 +8,9 @@ import static org.mockito.Mockito.verify;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
-import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
@@ -33,6 +35,11 @@ public class AbstractLanguagePluginTest {
         @Override
         protected boolean isExerciseTypeCorrect(Path path) {
             return path.resolve("build.xml").toFile().exists();
+        }
+
+        @Override
+        protected StudentFilePolicy getStudentFilePolicy(Path projectPath) {
+            return null;
         }
 
         @Override
@@ -63,7 +70,7 @@ public class AbstractLanguagePluginTest {
     @Before
     public void setUp() {
         exerciseBuilder = mock(ExerciseBuilder.class);
-        submissionProcessor = mock(SubmissionProcessor.class);
+        submissionProcessor = mock(StudentFileAwareSubmissionProcessor.class);
         plugin = new StubLanguagePlugin(exerciseBuilder, submissionProcessor);
     }
 
@@ -135,6 +142,11 @@ public class AbstractLanguagePluginTest {
             }
 
             @Override
+            protected StudentFilePolicy getStudentFilePolicy(Path projectPath) {
+                return null;
+            }
+
+            @Override
             public String getLanguageName() {
                 return null;
             }
@@ -165,6 +177,11 @@ public class AbstractLanguagePluginTest {
             }
 
             @Override
+            protected StudentFilePolicy getStudentFilePolicy(Path projectPath) {
+                return null;
+            }
+
+            @Override
             public String getLanguageName() {
                 return null;
             }
@@ -188,10 +205,15 @@ public class AbstractLanguagePluginTest {
 
     @Test
     public void hasConstructorThatTakesOnlyAnSubmissionProcessorAsParameter() {
-        new AbstractLanguagePlugin(new SubmissionProcessor()) {
+        new AbstractLanguagePlugin(new StudentFileAwareSubmissionProcessor()) {
             @Override
             protected boolean isExerciseTypeCorrect(Path path) {
                 return false;
+            }
+
+            @Override
+            protected StudentFilePolicy getStudentFilePolicy(Path projectPath) {
+                return null;
             }
 
             @Override

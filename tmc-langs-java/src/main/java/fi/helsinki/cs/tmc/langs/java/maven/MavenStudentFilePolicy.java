@@ -1,11 +1,15 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
-import fi.helsinki.cs.tmc.langs.sandbox.ExtraStudentFileAwareFileMovingPolicy;
+import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MavenFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy {
+public class MavenStudentFilePolicy extends ConfigurableStudentFilePolicy {
+
+    public MavenStudentFilePolicy(Path configFile) {
+        super(configFile);
+    }
 
     /**
      * Returns {@code True} for all files in the <tt>projectRoot/src/main</tt> directory and other
@@ -13,10 +17,10 @@ public class MavenFileMovingPolicy extends ExtraStudentFileAwareFileMovingPolicy
      *
      * <p>Will NOT return {@code True} for any test files. If test file modification are part
      * of the exercise, those test files are whitelisted as <tt>ExtraStudentFiles</tt> and the
-     * decision to move them is made by {@link ExtraStudentFileAwareFileMovingPolicy}.
+     * decision to include them is made by {@link ConfigurableStudentFilePolicy}.
      */
     @Override
-    public boolean shouldMoveFile(Path path) {
+    public boolean isStudentSourceFile(Path path) {
         return path.startsWith(Paths.get("src", "main"));
     }
 }

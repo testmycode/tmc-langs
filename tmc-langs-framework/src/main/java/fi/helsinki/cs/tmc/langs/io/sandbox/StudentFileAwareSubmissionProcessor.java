@@ -1,4 +1,7 @@
-package fi.helsinki.cs.tmc.langs.sandbox;
+package fi.helsinki.cs.tmc.langs.io.sandbox;
+
+import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,29 +16,35 @@ import java.util.logging.Logger;
 /**
  * Moves files from a directory containing an unzipped student submission to a TMC-sandbox.
  */
-public class SubmissionProcessor {
+public class StudentFileAwareSubmissionProcessor implements SubmissionProcessor {
 
-    private static final Logger log = Logger.getLogger(SubmissionProcessor.class.getName());
-    private FileMovingPolicy fileMovingPolicy;
+    private static final Logger log =
+            Logger.getLogger(StudentFileAwareSubmissionProcessor.class.getName());
+    private StudentFilePolicy studentFilePolicy;
 
     /**
      * Creates a new SubmissionProcessor that moves all files.
      */
-    public SubmissionProcessor() {
-        this(new DefaultFileMovingPolicy());
+    public StudentFileAwareSubmissionProcessor() {
+        this(new EverythingIsStudentFileStudentFilePolicy());
     }
 
     /**
-     * Creates a new SubmissionProcessor that uses a provided FileMovingPolicy to decide which
+     * Creates a new SubmissionProcessor that uses a provided StudentFilePolicy to decide which
      * files to move.
      */
-    public SubmissionProcessor(FileMovingPolicy fileMovingPolicy) {
-        this.fileMovingPolicy = fileMovingPolicy;
+    public StudentFileAwareSubmissionProcessor(StudentFilePolicy studentFilePolicy) {
+        this.studentFilePolicy = studentFilePolicy;
+    }
+
+    @Override
+    public void setStudentFilePolicy(StudentFilePolicy studentFilePolicy) {
+        this.studentFilePolicy = studentFilePolicy;
     }
 
     /**
      * Moves some of the contents of <tt>source</tt> to <tt>target</tt> based on the decisions
-     * of the {@link FileMovingPolicy} that was given when constructing this SubmissionProcessor.
+     * of the {@link StudentFilePolicy} that was given when constructing this SubmissionProcessor.
      *
      * <p>As an end result, a file with the path <tt>source/foo.java</tt> will be in path
      * <tt>target/foo.java</tt>.
@@ -44,12 +53,14 @@ public class SubmissionProcessor {
      *                  moved.
      * @param target    Directory to which the source files are moved to.
      */
+    @Override
     public void moveFiles(final Path source, final Path target) {
+
         try {
             Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (fileMovingPolicy.shouldMove(file, source, target)) {
+                    if (studentFilePolicy.isStudentFile(file, source)) {
                         try {
                             moveFile(source, file, target);
                         } catch (IOException exception) {

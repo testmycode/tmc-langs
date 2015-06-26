@@ -58,7 +58,7 @@ public class CTestResultParser {
     private static final String SAX_PARSER_ERROR = "SAX parser error occured";
     private static final String PARSING_DONE_MESSAGE = "C test cases parsed.";
 
-    protected static final Logger log = LoggerFactory.getLogger(CTestResultParser.class);
+    private static final Logger log = LoggerFactory.getLogger(CTestResultParser.class);
 
     private File projectDir;
     private File testResults;
@@ -88,7 +88,7 @@ public class CTestResultParser {
         try {
             this.tests = parseTestCases(testResults);
         } catch (ParserConfigurationException | IOException e) {
-            e.printStackTrace();
+            log.error(e.toString());
         }
     }
 
@@ -211,7 +211,7 @@ public class CTestResultParser {
             try {
                 addValgrindOutput();
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                log.error(e.toString());
             }
         } else {
             addWarningToValgrindOutput();

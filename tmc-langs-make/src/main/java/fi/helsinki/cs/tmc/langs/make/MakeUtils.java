@@ -1,5 +1,8 @@
 package fi.helsinki.cs.tmc.langs.make;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -10,6 +13,11 @@ import java.util.Scanner;
 
 
 public class MakeUtils {
+
+    private static final String FILE_NOT_FOUND_ERROR_MESSAGE = "Couldn't initialize file scanner.";
+
+    private static final Logger log = LoggerFactory.getLogger(MakeUtils.class);
+
     /**
      * Builds a map that maps tests with their available points.
      */
@@ -40,7 +48,8 @@ public class MakeUtils {
         try {
             scanner = new Scanner(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error(FILE_NOT_FOUND_ERROR_MESSAGE);
+            log.error(e.toString());
             return null;
         }
         return scanner;

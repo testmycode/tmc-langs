@@ -59,7 +59,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
         try {
             runTests(path, false);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.toString());
             return Optional.absent();
         }
 
@@ -134,7 +134,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
             try {
                 runTests(path, withValgrind);
             } catch (Exception e1) {
-                e1.printStackTrace();
+                log.error(e1.toString());
                 throw new RuntimeException(TEST_FAIL_MESSAGE);
             }
         }

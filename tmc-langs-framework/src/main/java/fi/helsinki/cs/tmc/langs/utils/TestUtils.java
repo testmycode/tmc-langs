@@ -118,7 +118,7 @@ public final class TestUtils {
     /**
      * Initializes a temporary file with content.
      */
-    public static File initTempFileWithContent(String prefix, String suffix, String content)
+    public static Path initTempFileWithContent(String prefix, String suffix, String content)
             throws IOException {
         return initTempFileWithContent(prefix, suffix, null, content);
     }
@@ -126,7 +126,7 @@ public final class TestUtils {
     /**
      * Initializes a temporary file in a specific directory with content.
      */
-    public static File initTempFileWithContent(String prefix, String suffix, File directory,
+    public static Path initTempFileWithContent(String prefix, String suffix, File directory,
                                                String content) throws IOException {
         String suffixWithDot = "." + suffix;
         File file = File.createTempFile(prefix, suffixWithDot, directory);
@@ -137,6 +137,6 @@ public final class TestUtils {
         pw.flush();
         pw.close();
 
-        return file;
+        return file.toPath();
     }
 }

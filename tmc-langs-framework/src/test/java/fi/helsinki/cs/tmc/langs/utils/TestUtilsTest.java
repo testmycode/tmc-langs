@@ -123,29 +123,29 @@ public class TestUtilsTest {
 
     @Test
     public void initTempFileWithContent() throws IOException {
-        File file = TestUtils.initTempFileWithContent("temp", "tmp", "Temporary");
+        Path file = TestUtils.initTempFileWithContent("temp", "tmp", "Temporary");
 
-        assertTrue(file.exists());
+        assertTrue(Files.exists(file));
         assertTrue(file.toString().startsWith("/tmp/temp"));
         assertTrue(file.toString().endsWith(".tmp"));
-        assertEquals("Temporary\n", FileUtils.readFileToString(file));
+        assertEquals("Temporary\n", FileUtils.readFileToString(file.toFile()));
 
-        file.delete();
+        Files.delete(file);
     }
 
     @Test
     public void initTempFileWithContentInDirectory() throws IOException {
         Path dirPath = Files.createTempDirectory("tempdir");
         File dir = dirPath.toFile();
-        File file = TestUtils.initTempFileWithContent("temp", "tmp", dir, "Temporary");
+        Path file = TestUtils.initTempFileWithContent("temp", "tmp", dir, "Temporary");
 
-        assertTrue(file.exists());
+        assertTrue(Files.exists(file));
         assertTrue(file.toString().startsWith("/tmp/temp"));
         assertTrue(file.toString().endsWith(".tmp"));
-        assertEquals(file, dir.listFiles()[0]);
-        assertEquals("Temporary\n", FileUtils.readFileToString(file));
+        assertEquals(file.toFile(), dir.listFiles()[0]);
+        assertEquals("Temporary\n", FileUtils.readFileToString(file.toFile()));
 
-        file.delete();
+        Files.delete(file);
         dir.delete();
     }
 }

@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,7 +62,8 @@ public class MakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        final Path availablePoints = path.toAbsolutePath().resolve(TEST_DIR).resolve(AVAILABLE_POINTS);
+        final Path availablePoints = path.toAbsolutePath().resolve(TEST_DIR)
+                .resolve(AVAILABLE_POINTS);
 
         if (!Files.exists(availablePoints)) {
             return Optional.absent();
@@ -73,12 +73,12 @@ public class MakePlugin extends AbstractLanguagePlugin {
     }
 
     private ExerciseDesc parseExerciseDesc(Path availablePoints) {
-        Scanner scanner = this.makeUtils.initFileScanner(availablePoints.toFile());
+        Scanner scanner = this.makeUtils.initFileScanner(availablePoints);
         if (scanner == null) {
             return null;
         }
 
-        Map<String, List<String>> idsToPoints = this.makeUtils.mapIdsToPoints(availablePoints.toFile());
+        Map<String, List<String>> idsToPoints = this.makeUtils.mapIdsToPoints(availablePoints);
         List<TestDesc> tests = createTestDescs(idsToPoints, scanner);
 
         String exerciseName = parseExerciseName(availablePoints);
@@ -141,11 +141,11 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
         Path baseTestPath = path.toAbsolutePath().resolve(TEST_DIR);
         Path testResults = baseTestPath.resolve(TMC_TEST_RESULTS);
-        File valgrindOutput = withValgrind ? baseTestPath.resolve(VALGRIND_LOG).toFile() : null;
+        Path valgrindOutput = withValgrind ? baseTestPath.resolve(VALGRIND_LOG) : null;
 
         log.info("Locating exercise");
 
-        return new CTestResultParser(path.toFile(), testResults.toFile(), valgrindOutput).result();
+        return new CTestResultParser(path, testResults, valgrindOutput).result();
     }
 
     private void runTests(Path dir, boolean withValgrind) throws Exception {

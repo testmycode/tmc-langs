@@ -12,6 +12,9 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +35,11 @@ public class CTestResultParserTest {
     @Test(expected = IllegalStateException.class)
     public void testParsingWithNoTests() throws Exception {
         CTestResultParser cpar = null;
-        File tmp = mkTempFile("test_output", ".xml");
+        Path tmp = mkTempFile("test_output", ".xml");
         try {
             cpar = new CTestResultParser(null, tmp, null);
-            cpar.parseTestOutput();
         } finally {
-            tmp.delete();
+            Files.delete(tmp);
         }
         assertTrue(cpar.getTestResults().isEmpty());
     }
@@ -48,10 +50,9 @@ public class CTestResultParserTest {
         try {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(0));
-            File tmp = constructTestOutput(testCases);
+            Path tmp = constructTestOutput(testCases);
             cpar = new CTestResultParser(tmpFolder(), tmp, emptyValgrindOutput());
-            cpar.parseTestOutput();
-            tmp.delete();
+            Files.delete(tmp);
 
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
@@ -69,10 +70,9 @@ public class CTestResultParserTest {
         try {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
-            File tmp = constructTestOutput(testCases);
+            Path tmp = constructTestOutput(testCases);
             cpar = new CTestResultParser(tmpFolder(), tmp, null);
-            cpar.parseTestOutput();
-            tmp.delete();
+            Files.delete(tmp);
 
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
@@ -90,10 +90,9 @@ public class CTestResultParserTest {
     public void testParsingWithOneFailingAndOnePassing() {
         CTestResultParser cpar = null;
         try {
-            File tmp = constructTestOutput(oneOfEachTest);
+            Path tmp = constructTestOutput(oneOfEachTest);
             cpar = new CTestResultParser(tmpFolder(), tmp, emptyValgrindOutput());
-            cpar.parseTestOutput();
-            tmp.delete();
+            tmp.toFile().delete();
 
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
@@ -110,12 +109,11 @@ public class CTestResultParserTest {
         try {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
-            File ttmp = constructTestOutput(testCases);
+            Path ttmp = constructTestOutput(testCases);
             cpar = new CTestResultParser(tmpFolder(), ttmp, null);
-            cpar.parseTestOutput();
-            ttmp.delete();
-            File vtmp = constructNotMemoryFailingValgrindOutput(testCases);
-            vtmp.delete();
+            ttmp.toFile().delete();
+            Path vtmp = constructNotMemoryFailingValgrindOutput(testCases);
+            vtmp.toFile().delete();
 
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
@@ -133,14 +131,13 @@ public class CTestResultParserTest {
     public void testParsingWithValgrindOutput() {
         CTestResultParser cpar = null;
         try {
-            File ttmp = constructTestOutput(oneOfEachTest);
-            File vtmp = constructMemoryFailingValgrindOutput();
+            Path ttmp = constructTestOutput(oneOfEachTest);
+            Path vtmp = constructMemoryFailingValgrindOutput();
 
             cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp);
-            cpar.parseTestOutput();
-            vtmp.delete();
-            ttmp.delete();
-        } catch (Exception e) {
+            vtmp.toFile().delete();
+            ttmp.toFile().delete();
+        } catch (IOException e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
         }
         List<TestResult> results = cpar.getTestResults();
@@ -157,13 +154,12 @@ public class CTestResultParserTest {
     public void testTestsPassWhenNoMemoryErrors() {
         CTestResultParser cpar = null;
         try {
-            File ttmp = constructTestOutput(oneOfEachTest);
-            File vtmp = constructNotMemoryFailingValgrindOutput(oneOfEachTest);
+            Path ttmp = constructTestOutput(oneOfEachTest);
+            Path vtmp = constructNotMemoryFailingValgrindOutput(oneOfEachTest);
 
             cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp);
-            cpar.parseTestOutput();
-            vtmp.delete();
-            ttmp.delete();
+            vtmp.toFile().delete();
+            ttmp.toFile().delete();
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
         }
@@ -175,9 +171,9 @@ public class CTestResultParserTest {
         }
     }
 
-    private File constructTestOutput(ArrayList<CTestCase> testCases) throws IOException {
-        File tmp = mkTempFile("test_output", ".xml");
-        PrintWriter pw = new PrintWriter(tmp, "UTF-8");
+    private Path constructTestOutput(ArrayList<CTestCase> testCases) throws IOException {
+        Path tmp = mkTempFile("test_output", ".xml");
+        PrintWriter pw = new PrintWriter(tmp.toFile(), "UTF-8");
         pw.println("<?xml version=\"1.0\"?>");
         pw.println("<testsuites xmlns=\"http://check.sourceforge.net/ns\">");
         pw.println("  <datetime>2013-02-14 14:57:08</datetime>");
@@ -202,10 +198,10 @@ public class CTestResultParserTest {
         return tmp;
     }
 
-    private File constructNotMemoryFailingValgrindOutput(ArrayList<CTestCase> testCases)
+    private Path constructNotMemoryFailingValgrindOutput(ArrayList<CTestCase> testCases)
         throws IOException {
-        File tmp = mkTempFile("valgrind", ".log");
-        PrintWriter pw = new PrintWriter(tmp);
+        Path tmp = mkTempFile("valgrind", ".log");
+        PrintWriter pw = new PrintWriter(tmp.toFile());
         pw.println("==" + testCases.size() * 2 + 1 + "== Main process");
         int counter = 2;
         for (CTestCase t : testCases) {
@@ -223,9 +219,9 @@ public class CTestResultParserTest {
         return tmp;
     }
 
-    private File constructMemoryFailingValgrindOutput() throws IOException {
-        File tmp = mkTempFile("valgrind", ".log");
-        PrintWriter pw = new PrintWriter(tmp);
+    private Path constructMemoryFailingValgrindOutput() throws IOException {
+        Path tmp = mkTempFile("valgrind", ".log");
+        PrintWriter pw = new PrintWriter(tmp.toFile());
         pw.println("==10== Main process");
         pw.println("==1== 1");
         pw.println("Some crap that should be ignore");
@@ -255,22 +251,22 @@ public class CTestResultParserTest {
         return tmp;
     }
 
-    private File emptyValgrindOutput() throws IOException {
-        File tmp = mkTempFile("valgrind", ".log");
-        PrintWriter pw = new PrintWriter(tmp);
+    private Path emptyValgrindOutput() throws IOException {
+        Path tmp = mkTempFile("valgrind", ".log");
+        PrintWriter pw = new PrintWriter(tmp.toFile());
         pw.println("Nothing");
         pw.flush();
         pw.close();
         return tmp;
     }
 
-    private File mkTempFile(String prefix, String suffix) throws IOException {
+    private Path mkTempFile(String prefix, String suffix) throws IOException {
         File tmp = File.createTempFile(prefix, suffix);
         tmp.deleteOnExit();
-        return tmp;
+        return tmp.toPath();
     }
 
-    private File tmpFolder() {
-        return new File(System.getProperty("java.io.tmpdir"));
+    private Path tmpFolder() {
+        return Paths.get(System.getProperty("java.io.tmpdir"));
     }
 }

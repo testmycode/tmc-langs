@@ -151,7 +151,7 @@ public class MakePluginTest {
         path = TestUtils.getPath(getClass(), "failing-suite");
         assertTrue(makePlugin.isExerciseTypeCorrect(path));
 
-        path = TestUtils.getPath(getClass(), "nonexistent");
+        path = TestUtils.getPath(getClass(), "");
         assertFalse(makePlugin.isExerciseTypeCorrect(path));
     }
 
@@ -174,7 +174,7 @@ public class MakePluginTest {
 
     @Test
     public void testScanExerciseWithNonexistentProject() {
-        Path path = TestUtils.getPath(getClass(), "nonexistent");
+        Path path = TestUtils.getPath(getClass(), "");
         Optional<ExerciseDesc> optional = makePlugin.scanExercise(path, "");
 
         assertFalse(optional.isPresent());

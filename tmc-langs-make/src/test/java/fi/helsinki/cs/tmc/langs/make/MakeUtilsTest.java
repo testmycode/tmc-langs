@@ -10,8 +10,9 @@ import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -19,8 +20,8 @@ import java.util.Scanner;
 public class MakeUtilsTest {
 
     private MakeUtils makeUtils;
-    private File correctFile;
-    private File incorrectFile;
+    private Path correctFile;
+    private Path incorrectFile;
 
     public MakeUtilsTest() {
         this.makeUtils = new MakeUtils();
@@ -34,8 +35,8 @@ public class MakeUtilsTest {
                 "[test] [test_one] 1.1"
         );
 
-        incorrectFile = new File("some/path/that/does/not/exist");
-        incorrectFile.deleteOnExit();
+        incorrectFile = Paths.get("some", "path", "that", "does", "not", "exist");
+        incorrectFile.toFile().deleteOnExit();
     }
 
     @Test

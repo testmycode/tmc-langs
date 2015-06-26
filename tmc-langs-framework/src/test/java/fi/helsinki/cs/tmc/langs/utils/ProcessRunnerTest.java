@@ -6,23 +6,23 @@ import org.apache.commons.io.FileUtils;
 
 import org.junit.Test;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ProcessRunnerTest extends TestCase {
 
-    private File folder;
+    private Path folder;
 
     @Override
     protected void setUp() throws Exception {
-        this.folder = Files.createTempDirectory("process-runner").toFile();
+        this.folder = Files.createTempDirectory("process-runner");
         super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        FileUtils.deleteDirectory(this.folder);
+        FileUtils.deleteDirectory(this.folder.toFile());
         super.tearDown();
     }
 
@@ -62,7 +62,7 @@ public class ProcessRunnerTest extends TestCase {
                 this.folder
         );
         runner.call();
-        assertTrue(Paths.get(this.folder.getAbsolutePath(), "special-folder")
+        assertTrue(Paths.get(this.folder.toAbsolutePath().toString(), "special-folder")
                 .toFile().isDirectory());
     }
 }

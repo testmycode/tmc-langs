@@ -3,8 +3,8 @@ package fi.helsinki.cs.tmc.langs.make;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ public class MakeUtils {
     /**
      * Builds a map that maps tests with their available points.
      */
-    public Map<String, List<String>> mapIdsToPoints(File availablePoints) {
+    public Map<String, List<String>> mapIdsToPoints(Path availablePoints) {
         Scanner scanner = initFileScanner(availablePoints);
         Map<String, List<String>> idsToPoints = new HashMap<>();
 
@@ -43,11 +43,11 @@ public class MakeUtils {
     /**
      * Initializes a file scanner or returns null if it's not possible.
      */
-    public Scanner initFileScanner(File file) {
+    public Scanner initFileScanner(Path file) {
         Scanner scanner;
         try {
             scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             log.error(FILE_NOT_FOUND_ERROR_MESSAGE);
             log.error(e.toString());
             return null;

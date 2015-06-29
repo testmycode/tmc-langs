@@ -27,6 +27,7 @@ public class ValgrindParser {
             "Warning, valgrind not available - unable to run local memory tests\n";
     private static final String VALGRIND_SUBMIT_MESSAGE = "\nYou may also submit the exercise "
             + "to the server to have it memory-tested.";
+    private static final String CANT_PARSE_PID = "Couldn't parse PID from Valgrind log";
 
     private Path output;
     private Logger log = LoggerFactory.getLogger(ValgrindParser.class);
@@ -43,7 +44,7 @@ public class ValgrindParser {
             try {
                 addValgrindOutput(tests);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.toString());
             }
         } else {
             addWarningToValgrindOutput(tests);
@@ -139,6 +140,7 @@ public class ValgrindParser {
         try {
             return Integer.parseInt(line.split(" ")[0].replaceAll("(==|--)", ""));
         } catch (Exception e) {
+            log.error(CANT_PARSE_PID);
             return -1;
         }
     }

@@ -35,6 +35,11 @@ public class MakePlugin extends AbstractLanguagePlugin {
     private static final Path VALGRIND_LOG = Paths.get("valgrind.log");
 
     private static final String TEST_FAIL_MESSAGE = "Failed to run tests.";
+    private static final String WRONG_EXERCISE_TYPE_MESSAGE =
+            "Failed to scan exercise due to missing Makefile.";
+    private static final String CANT_PARSE_EXERCISE_DESCRIPTION =
+            "Couldn't parse exercise description.";
+    private static final String COMPILE_FAILED_MESSAGE = "Failed to compile project.";
 
     private static final Logger log = LoggerFactory.getLogger(MakePlugin.class);
 
@@ -53,11 +58,13 @@ public class MakePlugin extends AbstractLanguagePlugin {
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         if (!isExerciseTypeCorrect(path)) {
+            log.error(WRONG_EXERCISE_TYPE_MESSAGE);
             return Optional.absent();
         }
         try {
             runTests(path, false);
         } catch (Exception e) {
+            log.error(TEST_FAIL_MESSAGE);
             log.error(e.toString());
             return Optional.absent();
         }
@@ -66,6 +73,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
                 .resolve(AVAILABLE_POINTS);
 
         if (!Files.exists(availablePoints)) {
+            log.info(CANT_PARSE_EXERCISE_DESCRIPTION);
             return Optional.absent();
         }
 
@@ -75,6 +83,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
     private ExerciseDesc parseExerciseDesc(Path availablePoints) {
         Scanner scanner = this.makeUtils.initFileScanner(availablePoints);
         if (scanner == null) {
+            log.info(CANT_PARSE_EXERCISE_DESCRIPTION);
             return null;
         }
 
@@ -122,6 +131,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
         boolean withValgrind = true;
 
         if (!builds(path)) {
+            log.info(COMPILE_FAILED_MESSAGE);
             return new RunResult(RunResult.Status.COMPILE_FAILED,
                 ImmutableList.<TestResult>of(), new ImmutableMap.Builder<String, byte[]>().build());
         }
@@ -142,8 +152,6 @@ public class MakePlugin extends AbstractLanguagePlugin {
         Path baseTestPath = path.toAbsolutePath().resolve(TEST_DIR);
         Path testResults = baseTestPath.resolve(TMC_TEST_RESULTS);
         Path valgrindOutput = withValgrind ? baseTestPath.resolve(VALGRIND_LOG) : null;
-
-        log.info("Locating exercise");
 
         return new CTestResultParser(path, testResults, valgrindOutput).result();
     }

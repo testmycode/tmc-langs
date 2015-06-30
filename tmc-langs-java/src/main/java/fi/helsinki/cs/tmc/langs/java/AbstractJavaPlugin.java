@@ -2,11 +2,13 @@ package fi.helsinki.cs.tmc.langs.java;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
@@ -48,7 +50,9 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     public AbstractJavaPlugin(Path testFolderPath,
                               SubmissionProcessor submissionProcessor,
                               TestScanner testScanner) {
-        super(submissionProcessor);
+        super(new ExerciseBuilder(),
+                submissionProcessor,
+                new StudentFileAwareUnzipper());
         this.testFolderPath = testFolderPath;
         this.testScanner = testScanner;
     }

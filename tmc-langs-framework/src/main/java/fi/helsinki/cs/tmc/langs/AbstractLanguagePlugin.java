@@ -4,11 +4,13 @@ import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Stack;
 import java.util.logging.Logger;
@@ -17,46 +19,19 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
 
     private static final Logger log = Logger.getLogger(AbstractLanguagePlugin.class.getName());
 
-    /**
-     * ExerciseBuilder uses an instance because it is somewhat likely that it
-     * will need some language specific configuration.
-     */
     private final ExerciseBuilder exerciseBuilder;
     private final SubmissionProcessor submissionProcessor;
-
-
-    /**
-     * Instantiates a new AbstractLanguagePlugin with a default ExerciseBuilder and a
-     * default {@link SubmissionProcessor}.
-     */
-    public AbstractLanguagePlugin() {
-        this(new ExerciseBuilder(), new StudentFileAwareSubmissionProcessor());
-    }
+    private final Unzipper unzipper;
 
     /**
-     * Instantiates a new AbstractLanguagePlugin with the specified ExerciseBuilder and a
-     * default {@link SubmissionProcessor}.
-     */
-    public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder) {
-        this(exerciseBuilder, new StudentFileAwareSubmissionProcessor());
-    }
-
-    /**
-     * Instantiates a new AbstractLanguagePlugin with a default ExerciseBuilder and the specified
-     * {@link SubmissionProcessor}.
-     */
-    public AbstractLanguagePlugin(SubmissionProcessor submissionProcessor) {
-        this(new ExerciseBuilder(), submissionProcessor);
-    }
-
-    /**
-     * Instantiates a new AbstractLanguagePlugin with the specified ExerciseBuilder and the
-     * specified {@link SubmissionProcessor}.
+     * Instantiates a new AbstractLanguagePlugin.
      */
     public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder,
-                                  SubmissionProcessor submissionProcessor) {
+                                  SubmissionProcessor submissionProcessor,
+                                  Unzipper unzipper) {
         this.exerciseBuilder = exerciseBuilder;
         this.submissionProcessor = submissionProcessor;
+        this.unzipper = unzipper;
     }
 
     /**
@@ -84,6 +59,12 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     public void prepareSubmission(Path submissionPath, Path destPath) {
         submissionProcessor.setStudentFilePolicy(getStudentFilePolicy(destPath));
         submissionProcessor.moveFiles(submissionPath, destPath);
+    }
+
+    @Override
+    public void extractProject(Path compressedProject, Path targetLocation) throws IOException {
+        unzipper.setStudentFilePolicy(getStudentFilePolicy(targetLocation));
+        unzipper.unzip(compressedProject, targetLocation);
     }
 
     @Override

@@ -7,6 +7,7 @@ import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -115,4 +116,15 @@ public interface LanguagePlugin {
      *     applicable
      */
     ValidationResult checkCodeStyle(Path path);
+
+    /**
+     * Extract a given archive file containing a compressed project to a target location.
+     *
+     * <p>This will overwrite any existing files as long as they are not specified as StudentFiles
+     * by the language dependent {@link fi.helsinki.cs.tmc.langs.io.StudentFilePolicy}.
+     *
+     * @param compressedProject A path to the compressed archive.
+     * @param targetLocation Location where the archive should be extracted to
+     */
+    void extractProject(Path compressedProject, Path targetLocation) throws IOException;
 }

@@ -117,8 +117,9 @@ public class MakePluginTest {
         RunResult result = makePlugin.runTests(path);
 
         assertEquals(RunResult.Status.PASSED, result.status);
-        assertEquals(3, result.testResults.size());
-        assertEquals("1.3", result.testResults.get(2).points.get(0));
+        assertEquals(2, result.testResults.size());
+        assertEquals("1.3", result.testResults.get(0).points.get(1));
+        assertEquals("1.3", result.testResults.get(1).points.get(1));
     }
 
     @Test

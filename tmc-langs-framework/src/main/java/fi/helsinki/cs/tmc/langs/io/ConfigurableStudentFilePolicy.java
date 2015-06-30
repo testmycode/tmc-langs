@@ -1,16 +1,11 @@
 package fi.helsinki.cs.tmc.langs.io;
 
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.Yaml;
+import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * An abstract {@link StudentFilePolicy} that also uses
@@ -46,11 +41,11 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
     
     @Override
     public boolean isStudentFile(Path path, Path projectRootPath) {
-        if (!path.toFile().exists()) {
+        if (!Files.exists(path)) {
             return false;
         }
 
-        if (path.toFile().isDirectory()) {
+        if (Files.isDirectory(path)) {
             return false;
         }
 
@@ -89,50 +84,8 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
         extraStudentFiles = new ArrayList<>();
 
         if (Files.exists(configFile)) {
-            parseExtraStudentFiles(configFile);
-        }
-    }
-
-    private void parseExtraStudentFiles(Path path) {
-        String fileContents = initFileContents(path.toAbsolutePath().toFile());
-        Yaml yaml = new Yaml();
-        Object yamlSpecifications = yaml.load(fileContents);
-
-        if (!(yamlSpecifications instanceof Map)) {
-            return;
-        }
-
-        Map<?, ?> specsAsMap = (Map<?, ?>) yamlSpecifications;
-        Object files = specsAsMap.get("extra_student_files");
-        addFiles(files);
-    }
-
-    private void addFiles(Object files) {
-        addAllIfList(files);
-        addIfString(files);
-    }
-
-    private void addAllIfList(Object files) {
-        if (files instanceof List) {
-            for (Object value : (List<?>) files) {
-                addIfString(value);
-            }
-        }
-    }
-
-    private void addIfString(Object value) {
-        if (value instanceof String) {
-            Path path = this.rootPath.resolve((String) value);
-            extraStudentFiles.add(path);
-        }
-    }
-
-    private String initFileContents(File file) {
-        try {
-            return FileUtils.readFileToString(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
+            TmcProjectYmlParser parser = new TmcProjectYmlParser();
+            extraStudentFiles = parser.parseExtraStudentFiles(configFile, rootPath);
         }
     }
 }

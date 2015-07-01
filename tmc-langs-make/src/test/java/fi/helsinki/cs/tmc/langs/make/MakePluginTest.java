@@ -112,14 +112,38 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testSuitePointsWithPassingSuite() {
-        Path path = TestUtils.getPath(getClass(), "passing-suite");
+    public void testSamePointFromMultipleTestsAllSuccessful() {
+        Path path = TestUtils.getPath(getClass(), "passing-same-point");
         RunResult result = makePlugin.runTests(path);
 
         assertEquals(RunResult.Status.PASSED, result.status);
         assertEquals(2, result.testResults.size());
         assertEquals("1.3", result.testResults.get(0).points.get(1));
         assertEquals("1.3", result.testResults.get(1).points.get(1));
+    }
+
+    @Test
+    public void testSamePointFromMultipleTestsSomeFailed() {
+        Path path = TestUtils.getPath(getClass(), "failing-same-point");
+        RunResult result = makePlugin.runTests(path);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(2, result.testResults.size());
+        // TODO: What to do when some pass and some fail?
+        // TODO: Should the passing tests include the point or not?
+        //assertEquals("1.3", result.testResults.get(0).points.get(1));
+        //assertEquals("1.3", result.testResults.get(1).points.get(1));
+    }
+
+    @Test
+    public void testSuitePointsWithPassingSuite() {
+        Path path = TestUtils.getPath(getClass(), "passing-suite");
+        RunResult result = makePlugin.runTests(path);
+
+        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(3, result.testResults.size());
+        assertEquals("1.3", result.testResults.get(2).points.get(0));
+        assertEquals("suite.Test-Passing-Suite", result.testResults.get(2).name);
     }
 
     @Test
@@ -130,6 +154,7 @@ public class MakePluginTest {
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
         assertEquals(3, result.testResults.size());
         assertEquals("1.3", result.testResults.get(2).points.get(0));
+        assertEquals("suite.Test-Failing-Suite", result.testResults.get(2).name);
     }
 
     @Test

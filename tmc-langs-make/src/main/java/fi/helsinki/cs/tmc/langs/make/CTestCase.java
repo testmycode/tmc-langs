@@ -38,6 +38,7 @@ public class CTestCase {
         this.name = name;
     }
 
+    // TODO: Change behaviour based on Valgrind strategy (currently always fails if Valgrind fails).
     private boolean failedDueToValgrind(String valgrindTrace) {
         return StringUtils.isNotBlank(valgrindTrace);
     }

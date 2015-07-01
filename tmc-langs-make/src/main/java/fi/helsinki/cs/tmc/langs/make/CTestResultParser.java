@@ -134,6 +134,9 @@ public class CTestResultParser {
             cases.add(testCase);
         }
 
+        // TODO: Now always adds suite points, even when some test methods in the suite fail.
+        // TODO: Or maybe should associate points with methods also here?
+        // TODO: (Associating requires additional logic)
         cases.addAll(suiteCases(idsToPoints, addedCases));
 
         return cases;
@@ -145,7 +148,7 @@ public class CTestResultParser {
 
         for (String key : idsToPoints.keySet()) {
             if (!addedCases.contains(key)) {
-                suiteCases.add(new CTestCase("suite", "success", "", idsToPoints.get(key)));
+                suiteCases.add(new CTestCase("suite." + key, "success", "", idsToPoints.get(key)));
             }
         }
         return suiteCases;

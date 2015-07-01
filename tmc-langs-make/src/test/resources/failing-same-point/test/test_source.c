@@ -24,10 +24,10 @@ END_TEST
 int main(int argc, const char *argv[])
 {
     srand((unsigned)time(NULL));
-	  Suite *s = tmc_suite_create("Test-Failing-Suite", "1.3");
+	  Suite *s = suite_create("Test-Failing-Same-Point");
 
-	  tmc_register_test(s, test_one, "1.1");
-    tmc_register_test(s, test_two, "1.2");
+	  tmc_register_test(s, test_one, "1.1 1.3");
+    tmc_register_test(s, test_two, "1.2 1.3");
 
 	  return tmc_run_tests(argc, argv, s);
 }

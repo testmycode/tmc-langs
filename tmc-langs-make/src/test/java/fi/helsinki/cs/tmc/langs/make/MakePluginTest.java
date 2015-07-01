@@ -97,7 +97,8 @@ public class MakePluginTest {
         Path path = TestUtils.getPath(getClass(), "failing");
         RunResult result = makePlugin.runTests(path);
 
-        assertEquals(0, result.testResults.get(0).points.size());
+        assertEquals("1.1", result.testResults.get(0).points.get(0));
+        assertEquals(1, result.testResults.get(0).points.size());
     }
 
     @Test
@@ -129,10 +130,8 @@ public class MakePluginTest {
 
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
         assertEquals(2, result.testResults.size());
-        // TODO: What to do when some pass and some fail?
-        // TODO: Should the passing tests include the point or not?
-        //assertEquals("1.3", result.testResults.get(0).points.get(1));
-        //assertEquals("1.3", result.testResults.get(1).points.get(1));
+        assertEquals("1.3", result.testResults.get(0).points.get(1));
+        assertEquals("1.3", result.testResults.get(1).points.get(1));
     }
 
     @Test
@@ -155,6 +154,7 @@ public class MakePluginTest {
         assertEquals(3, result.testResults.size());
         assertEquals("1.3", result.testResults.get(2).points.get(0));
         assertEquals("suite.Test-Failing-Suite", result.testResults.get(2).name);
+        assertEquals(false, result.testResults.get(2).passed);
     }
 
     @Test

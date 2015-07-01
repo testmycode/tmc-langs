@@ -120,11 +120,10 @@ public class CTestResultParser {
             String name = node.getElementsByTagName("description").item(0).getTextContent();
             String message = node.getElementsByTagName("message").item(0).getTextContent();
             String id = node.getElementsByTagName("id").item(0).getTextContent();
-            List<String> points = new ArrayList<>();
+            List<String> points = idsToPoints.get(id);
 
             if (message.equals("Passed")) {
                 message = "";
-                points = idsToPoints.get(id);
             }
 
             addedCases.add(id);
@@ -134,24 +133,34 @@ public class CTestResultParser {
             cases.add(testCase);
         }
 
-        // TODO: Now always adds suite points, even when some test methods in the suite fail.
-        // TODO: Or maybe should associate points with methods also here?
-        // TODO: (Associating requires additional logic)
-        cases.addAll(suiteCases(idsToPoints, addedCases));
+        addSuiteCases(idsToPoints, addedCases, cases);
 
         return cases;
     }
 
-    private List<CTestCase> suiteCases(Map<String, List<String>> idsToPoints,
-                                       List<String> addedCases) {
-        List<CTestCase> suiteCases = new ArrayList<>();
+    private void addSuiteCases(Map<String, List<String>> idsToPoints,
+                                       List<String> addedCases, List<CTestCase> cases) {
+        String result = "";
+        String message = "Some tests failed";
+        if (allCasesPassed(cases)) {
+            result = "success";
+            message = "";
+        }
 
         for (String key : idsToPoints.keySet()) {
             if (!addedCases.contains(key)) {
-                suiteCases.add(new CTestCase("suite." + key, "success", "", idsToPoints.get(key)));
+                cases.add(new CTestCase("suite." + key, result, message, idsToPoints.get(key)));
             }
         }
-        return suiteCases;
+    }
+
+    private boolean allCasesPassed(List<CTestCase> cases) {
+        for (CTestCase testCase : cases) {
+            if (!testCase.getResult().equals("success")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

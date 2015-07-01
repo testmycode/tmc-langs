@@ -27,12 +27,12 @@ public class CTestCaseTest {
         List<String> points = new ArrayList<>();
         points.add("1.1");
 
-        this.passing = new CTestCase("test_passing", "success", "", points);
+        this.passing = new CTestCase("test_passing", true, "", points);
 
-        this.failing = new CTestCase("test_failing", "failure", "Some tests failed",
+        this.failing = new CTestCase("test_failing", false, "Some tests failed",
                 new ArrayList<String>());
 
-        this.valgrindFail = new CTestCase("test_valgrindFail", "success", "", points);
+        this.valgrindFail = new CTestCase("test_valgrindFail", true, "", points);
         String valgrindTrace = "\n"
                 + "==20737== \n"
                 + "==20737== HEAP SUMMARY:\n"
@@ -62,7 +62,7 @@ public class CTestCaseTest {
                 + "==20737== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)";
         this.valgrindFail.setValgrindTrace(valgrindTrace);
 
-        this.bothFail = new CTestCase("test_bothFail", "failure", "Some tests failed",
+        this.bothFail = new CTestCase("test_bothFail", false, "Some tests failed",
                 new ArrayList<String>());
         this.bothFail.setValgrindTrace(valgrindTrace);
     }

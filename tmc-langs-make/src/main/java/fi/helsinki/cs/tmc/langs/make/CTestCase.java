@@ -15,10 +15,9 @@ public class CTestCase {
     private static final String VALGRIND_FAIL_MESSAGE =
               " - Failed due to errors in valgrind log; see log below. "
             + "Try submitting to server, some leaks might be platform dependent";
-    private static final String SUCCESS = "success";
 
     private String name;
-    private String result;
+    private boolean passed;
     private String message;
     private List<String> points;
     private String valgrindTrace;
@@ -26,9 +25,9 @@ public class CTestCase {
     /**
     * Create a test case for C-tests.
     */
-    public CTestCase(String name, String result, String message, List<String> points) {
+    public CTestCase(String name, boolean passed, String message, List<String> points) {
         this(name);
-        this.result = result;
+        this.passed = passed;
         this.message = message;
         this.points = points;
         this.valgrindTrace = null;
@@ -50,9 +49,8 @@ public class CTestCase {
         String msg = message;
 
         boolean valgrindFailed = failedDueToValgrind(valgrindTrace);
-        boolean resultsSuccessful = result.equals(SUCCESS);
-        boolean successful = resultsSuccessful && !valgrindFailed;
-        boolean failedOnlyBecauseOfValgrind = resultsSuccessful && valgrindFailed;
+        boolean successful = passed && !valgrindFailed;
+        boolean failedOnlyBecauseOfValgrind = passed && valgrindFailed;
 
         if (failedOnlyBecauseOfValgrind) {
             msg += VALGRIND_FAIL_MESSAGE;
@@ -76,8 +74,8 @@ public class CTestCase {
         return name;
     }
 
-    public String getResult() {
-        return result;
+    public boolean getResult() {
+        return passed;
     }
 
     public String getMessage() {

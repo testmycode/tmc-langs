@@ -28,8 +28,8 @@ public class CTestResultParserTest {
     @Before
     public void setUp() {
         oneOfEachTest = new ArrayList<>();
-        oneOfEachTest.add(new CTestCase("passing", "success", "Passed", null));
-        oneOfEachTest.add(new CTestCase("failing", "failure", "This test should've failed", null));
+        oneOfEachTest.add(new CTestCase("passing", true, "Passed", null));
+        oneOfEachTest.add(new CTestCase("failing", false, "This test should've failed", null));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -180,7 +180,8 @@ public class CTestResultParserTest {
         pw.println("  <suite>");
         pw.println("    <title>tests</title>");
         for (CTestCase t : testCases) {
-            pw.println("    <test result=\"" + t.getResult() + "\">");
+            String result =  t.getResult() ? "success" : "failure";
+            pw.println("    <test result=\"" + result + "\">");
             pw.println("      <path>.</path>");
             pw.println("      <fn>test.c:1</fn>");
             pw.println("      <id>" + t.getName() + "</id>");

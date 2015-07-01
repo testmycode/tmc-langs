@@ -112,11 +112,10 @@ public class CTestResultParser {
     private List<CTestCase> createCTestCases(NodeList nodeList,
                                              Map<String, List<String>> idsToPoints) {
         List<CTestCase> cases = new ArrayList<>();
-        List<String> addedCases = new ArrayList<>();
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             Element node = (Element) nodeList.item(i);
-            String result = node.getAttribute("result");
+            boolean passed = node.getAttribute("result").equals("success");
             String name = node.getElementsByTagName("description").item(0).getTextContent();
             String message = node.getElementsByTagName("message").item(0).getTextContent();
             String id = node.getElementsByTagName("id").item(0).getTextContent();
@@ -126,41 +125,47 @@ public class CTestResultParser {
                 message = "";
             }
 
-            addedCases.add(id);
-
-            CTestCase testCase = new CTestCase(name, result, message, points);
+            CTestCase testCase = new CTestCase(name, passed, message, points);
 
             cases.add(testCase);
         }
 
-        addSuiteCases(idsToPoints, addedCases, cases);
+        addSuiteCases(idsToPoints, cases);
 
         return cases;
     }
 
-    private void addSuiteCases(Map<String, List<String>> idsToPoints,
-                                       List<String> addedCases, List<CTestCase> cases) {
-        String result = "";
+    private void addSuiteCases(Map<String, List<String>> idsToPoints, List<CTestCase> cases) {
+        boolean passed = false;
+        List<String> addedCases = addedCases(cases);
         String message = "Some tests failed";
         if (allCasesPassed(cases)) {
-            result = "success";
+            passed = true;
             message = "";
         }
 
         for (String key : idsToPoints.keySet()) {
             if (!addedCases.contains(key)) {
-                cases.add(new CTestCase("suite." + key, result, message, idsToPoints.get(key)));
+                cases.add(new CTestCase("suite." + key, passed, message, idsToPoints.get(key)));
             }
         }
     }
 
     private boolean allCasesPassed(List<CTestCase> cases) {
         for (CTestCase testCase : cases) {
-            if (!testCase.getResult().equals("success")) {
+            if (!testCase.getResult()) {
                 return false;
             }
         }
         return true;
+    }
+
+    private List<String> addedCases(List<CTestCase> cases) {
+        List<String> addedCases = new ArrayList<>();
+        for (CTestCase testCase : cases) {
+            addedCases.add(testCase.getName());
+        }
+        return addedCases;
     }
 
     /**

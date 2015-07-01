@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -26,10 +27,10 @@ import java.nio.file.Paths;
  */
 public class MavenPlugin extends AbstractJavaPlugin {
 
-    private static final String POM_LOCATION = File.separatorChar + "pom.xml";
-    private static final String RESULT_FILE = File.separatorChar + "target" + File.separatorChar
-            + "test_output.txt";
-    private static final String TEST_FOLDER = File.separatorChar + "src";
+    private static final Path POM_FILE = Paths.get("pom.xml");
+    private static final Path RESULT_FILE = Paths.get("target", "test_output.txt");
+    private static final Path TEST_FOLDER = Paths.get("src");
+
     private static final String TEST_RUNNER_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test";
 
     private Logger log = LoggerFactory.getLogger(MavenPlugin.class);
@@ -45,7 +46,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
-        return new File(path.toString() + POM_LOCATION).exists();
+        return Files.exists(path.toAbsolutePath().resolve(POM_FILE));
     }
 
     @Override
@@ -56,10 +57,8 @@ public class MavenPlugin extends AbstractJavaPlugin {
     @Override
     protected ClassPath getProjectClassPath(Path projectRoot) throws IOException {
         ClassPath testClassPath = MavenClassPathBuilder.fromProjectBasePath(projectRoot);
-        testClassPath.add(Paths.get(projectRoot.toString() + File.separatorChar + "target"
-                + File.separatorChar + "classes"));
-        testClassPath.add(Paths.get(projectRoot.toString() + File.separatorChar + "target"
-                + File.separatorChar + "test-classes"));
+        testClassPath.add(projectRoot.resolve("target").resolve("classes"));
+        testClassPath.add(projectRoot.resolve("target").resolve("test-classes"));
         return testClassPath;
     }
 
@@ -109,6 +108,6 @@ public class MavenPlugin extends AbstractJavaPlugin {
         }
 
         log.info("Successfully ran tests for maven project at {}", path);
-        return new File(path.toString() + RESULT_FILE);
+        return path.toAbsolutePath().resolve(RESULT_FILE).toFile();
     }
 }

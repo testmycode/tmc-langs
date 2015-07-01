@@ -30,6 +30,7 @@ import org.mockito.ArgumentCaptor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -37,13 +38,13 @@ public class AbstractJavaPluginTest {
 
     private class StubLanguagePlugin extends AbstractJavaPlugin {
 
-        public StubLanguagePlugin(String testFolderPath,
+        public StubLanguagePlugin(Path testFolderPath,
                                   SubmissionProcessor submissionProcessor,
                                   TestScanner testScanner) {
             super(testFolderPath, submissionProcessor, testScanner);
         }
 
-        public StubLanguagePlugin(String testFolderPath) {
+        public StubLanguagePlugin(Path testFolderPath) {
             super(testFolderPath, new SubmissionProcessor(), new TestScanner());
         }
 
@@ -102,7 +103,7 @@ public class AbstractJavaPluginTest {
     @Test
     public void exceptionOnGetClassPathReturnsAbsentDuringScanExercise() {
         Path path = TestUtils.getPath(getClass(), "trivial");
-        AbstractJavaPlugin plugin = new StubLanguagePlugin(path.toString()) {
+        AbstractJavaPlugin plugin = new StubLanguagePlugin(path) {
             @Override
             protected boolean isExerciseTypeCorrect(Path path) {
                 return true;
@@ -119,7 +120,7 @@ public class AbstractJavaPluginTest {
 
     @Test
     public void testRunnerExceptionDuringRunTestsReturnsNull() {
-        AbstractJavaPlugin plugin = new StubLanguagePlugin("") {
+        AbstractJavaPlugin plugin = new StubLanguagePlugin(Paths.get("")) {
             @Override
             protected File createRunResultFile(Path path)
                     throws TestRunnerException, TestScannerException {
@@ -132,7 +133,7 @@ public class AbstractJavaPluginTest {
 
     @Test
     public void testScannerExceptionDuringRunTestsReturnsNull() {
-        AbstractJavaPlugin plugin = new StubLanguagePlugin("") {
+        AbstractJavaPlugin plugin = new StubLanguagePlugin(Paths.get("")) {
             @Override
             protected File createRunResultFile(Path path)
                     throws TestRunnerException, TestScannerException {
@@ -145,7 +146,7 @@ public class AbstractJavaPluginTest {
 
     @Test
     public void scanExerciseReturnsAbsentOnInvalidProject() {
-        AbstractJavaPlugin plugin = new StubLanguagePlugin("");
+        AbstractJavaPlugin plugin = new StubLanguagePlugin(Paths.get(""));
         Optional<ExerciseDesc> result = plugin.scanExercise(null, "");
         assertFalse(result.isPresent());
     }
@@ -154,7 +155,8 @@ public class AbstractJavaPluginTest {
     public void scanExerciseAddsSourceFilesFromProject() {
         Path path = TestUtils.getPath(getClass(), "trivial");
         TestScanner scanner = mock(TestScanner.class);
-        AbstractJavaPlugin plugin = new StubLanguagePlugin("", new SubmissionProcessor(), scanner) {
+        AbstractJavaPlugin plugin = new StubLanguagePlugin(
+                Paths.get(""), new SubmissionProcessor(), scanner) {
             protected boolean isExerciseTypeCorrect(Path path) {
                 return true;
             }

@@ -34,11 +34,11 @@ import java.util.List;
  */
 public class AntPlugin extends AbstractJavaPlugin {
 
-    private static final String TEST_DIR = "test";
-    private static final String RESULT_FILE = "results.txt";
-    private static final String BUILD_FILE = "build.xml";
-    private static final String BUILD_LOG_FILE = "build_log.txt";
-    private static final String BUILD_ERROR_LOG_FILE = "build_errors.txt";
+    private static final Path TEST_DIR = Paths.get("test");
+    private static final Path RESULT_FILE = Paths.get("results.txt");
+    private static final Path BUILD_FILE = Paths.get("build.xml");
+    private static final Path BUILD_LOG_FILE = Paths.get("build_log.txt");
+    private static final Path BUILD_ERROR_LOG_FILE = Paths.get("build_errors.txt");
 
     private static final String ANT_BUILD_FILE_PROPERTY = "ant.file";
     private static final String ANT_JAVAC_FORK_PROPERTY = "javac.fork";
@@ -67,7 +67,7 @@ public class AntPlugin extends AbstractJavaPlugin {
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
-        return path.resolve(BUILD_FILE).toFile().exists();
+        return Files.exists(path.resolve(BUILD_FILE));
     }
 
     /**

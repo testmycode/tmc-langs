@@ -39,13 +39,13 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     private static final Logger log = LoggerFactory.getLogger(AbstractJavaPlugin.class);
 
     private final TestResultParser resultParser = new TestResultParser();
-    private final String testFolderPath;
+    private final Path testFolderPath;
     private final TestScanner testScanner;
 
     /**
      * Creates a new AbstractJavaPlugin.
      */
-    public AbstractJavaPlugin(String testFolderPath,
+    public AbstractJavaPlugin(Path testFolderPath,
                               SubmissionProcessor submissionProcessor,
                               TestScanner testScanner) {
         super(submissionProcessor);

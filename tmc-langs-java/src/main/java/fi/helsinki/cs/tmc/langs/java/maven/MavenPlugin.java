@@ -1,6 +1,6 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
-import fi.helsinki.cs.tmc.langs.CompileResult;
+import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;

@@ -1,7 +1,7 @@
 package fi.helsinki.cs.tmc.langs.util;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
-import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
+import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

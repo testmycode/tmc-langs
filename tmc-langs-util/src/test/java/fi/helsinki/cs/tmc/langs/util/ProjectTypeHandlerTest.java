@@ -3,7 +3,7 @@ package fi.helsinki.cs.tmc.langs.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
+import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 

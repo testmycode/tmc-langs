@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs;
+package fi.helsinki.cs.tmc.langs.domain;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;

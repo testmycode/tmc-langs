@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;

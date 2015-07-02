@@ -5,6 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;

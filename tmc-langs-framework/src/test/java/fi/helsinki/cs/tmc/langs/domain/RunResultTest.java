@@ -1,10 +1,12 @@
-package fi.helsinki.cs.tmc.langs;
+package fi.helsinki.cs.tmc.langs.domain;
 
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import org.junit.Test;
 
 public class RunResultTest {

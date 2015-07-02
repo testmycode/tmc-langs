@@ -3,9 +3,9 @@ package fi.helsinki.cs.tmc.langs.util;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.edutestutils.MockStdio;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.NoLanguagePluginFoundException;
-import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

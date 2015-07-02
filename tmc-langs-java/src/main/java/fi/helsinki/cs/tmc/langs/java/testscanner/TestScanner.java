@@ -1,6 +1,6 @@
 package fi.helsinki.cs.tmc.langs.java.testscanner;
 
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 

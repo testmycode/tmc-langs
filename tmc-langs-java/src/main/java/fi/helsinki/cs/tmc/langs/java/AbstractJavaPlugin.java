@@ -1,11 +1,11 @@
 package fi.helsinki.cs.tmc.langs.java;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
-import fi.helsinki.cs.tmc.langs.CompileResult;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.SpecialLogs;
-import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.domain.CompileResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;

@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs;
+package fi.helsinki.cs.tmc.langs.domain;
 
 import org.junit.runner.notification.Failure;
 

@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs;
+package fi.helsinki.cs.tmc.langs.domain;
 
 /**
  * Holds constants for special log types for use in RunResult.

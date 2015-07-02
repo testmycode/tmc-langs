@@ -1,7 +1,7 @@
 package fi.helsinki.cs.tmc.langs.java;
 
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;

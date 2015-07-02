@@ -2,7 +2,7 @@ package fi.helsinki.cs.tmc.langs.java.testrunner;
 
 import static org.junit.Assert.assertEquals;
 
-import fi.helsinki.cs.tmc.langs.TestCase;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;

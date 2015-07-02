@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs;
+package fi.helsinki.cs.tmc.langs.domain;
 
 public class CompileResult {
 

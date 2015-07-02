@@ -1,6 +1,6 @@
 package fi.helsinki.cs.tmc.langs.java.testscanner;
 
-import fi.helsinki.cs.tmc.langs.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

@@ -1,8 +1,8 @@
 package fi.helsinki.cs.tmc.langs.java;
 
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.TestCase;
-import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.java.testrunner.TestCaseList;
 
 import com.google.common.base.Throwables;

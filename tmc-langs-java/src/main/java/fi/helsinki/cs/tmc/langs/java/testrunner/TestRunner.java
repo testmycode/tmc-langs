@@ -1,7 +1,7 @@
 package fi.helsinki.cs.tmc.langs.java.testrunner;
 
-import fi.helsinki.cs.tmc.langs.CaughtException;
-import fi.helsinki.cs.tmc.langs.TestCase;
+import fi.helsinki.cs.tmc.langs.domain.CaughtException;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;

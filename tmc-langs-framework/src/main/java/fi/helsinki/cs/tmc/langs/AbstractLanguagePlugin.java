@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs;
 
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 

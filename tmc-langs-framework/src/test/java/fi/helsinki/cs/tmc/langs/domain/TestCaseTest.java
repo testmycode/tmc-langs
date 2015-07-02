@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs;
+package fi.helsinki.cs.tmc.langs.domain;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -6,7 +6,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import fi.helsinki.cs.tmc.langs.TestCase.Status;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
+import fi.helsinki.cs.tmc.langs.domain.TestCase.Status;
 
 import org.junit.Before;
 import org.junit.Test;

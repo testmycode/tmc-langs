@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -135,5 +136,71 @@ public class MavenPluginTest {
         Path project = TestUtils.getPath(getClass(), "reflection_utils_maven_test_case");
         RunResult result = mavenPlugin.runTests(project);
         assertEquals(RunResult.Status.PASSED, result.status);
+    }
+
+    @Test
+    public void testMultipleTestMethodsGetAddedToRunResultWhenAllPass() {
+        Path path = TestUtils.getPath(getClass(), "passing_maven_exercise_with_class_points");
+        RunResult result = mavenPlugin.runTests(path);
+
+        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(2, result.testResults.size());
+
+        assertTrue(result.testResults.get(0).passed);
+        assertTrue(result.testResults.get(1).passed);
+
+        assertEquals("", result.testResults.get(0).errorMessage);
+        assertEquals("", result.testResults.get(1).errorMessage);
+
+        assertTrue(result.testResults.get(0).backtrace.isEmpty());
+        assertTrue(result.testResults.get(1).backtrace.isEmpty());
+    }
+
+    @Test
+    public void testPointsWhenAllTestsPass() {
+        Path path = TestUtils.getPath(getClass(), "passing_maven_exercise_with_class_points");
+        RunResult result = mavenPlugin.runTests(path);
+
+        assertEquals(2, result.testResults.get(0).points.size());
+        assertEquals(2, result.testResults.get(1).points.size());
+
+        assertEquals("class-point", result.testResults.get(0).points.get(0));
+        assertEquals("class-point", result.testResults.get(1).points.get(0));
+
+        assertEquals("same-point", result.testResults.get(0).points.get(1));
+        assertEquals("same-point", result.testResults.get(1).points.get(1));
+    }
+
+    @Test
+    public void testMultipleTestMethodsGetAddedToRunResultWhenSomeFail() {
+        Path path = TestUtils.getPath(getClass(), "failing_maven_exercise_with_class_points");
+        RunResult result = mavenPlugin.runTests(path);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(2, result.testResults.size());
+
+        assertTrue(result.testResults.get(0).passed);
+        assertFalse(result.testResults.get(1).passed);
+
+        assertEquals("", result.testResults.get(0).errorMessage);
+        assertEquals("AssertionError", result.testResults.get(1).errorMessage);
+
+        assertTrue(result.testResults.get(0).backtrace.isEmpty());
+        assertFalse(result.testResults.get(1).backtrace.isEmpty());
+    }
+
+    @Test
+    public void testPointsWhenSomeTestsFail() {
+        Path path = TestUtils.getPath(getClass(), "failing_maven_exercise_with_class_points");
+        RunResult result = mavenPlugin.runTests(path);
+
+        assertEquals(2, result.testResults.get(0).points.size());
+        assertEquals(2, result.testResults.get(1).points.size());
+
+        assertEquals("class-point", result.testResults.get(0).points.get(0));
+        assertEquals("class-point", result.testResults.get(1).points.get(0));
+
+        assertEquals("same-point", result.testResults.get(0).points.get(1));
+        assertEquals("same-point", result.testResults.get(1).points.get(1));
     }
 }

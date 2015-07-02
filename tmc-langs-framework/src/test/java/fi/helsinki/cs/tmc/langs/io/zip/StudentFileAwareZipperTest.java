@@ -3,7 +3,6 @@ package fi.helsinki.cs.tmc.langs.io.zip;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 

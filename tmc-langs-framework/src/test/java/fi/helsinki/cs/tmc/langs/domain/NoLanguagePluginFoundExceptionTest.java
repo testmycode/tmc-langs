@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs.domain;
 
 import static org.junit.Assert.assertEquals;
 
-import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import org.junit.Test;
 
 public class NoLanguagePluginFoundExceptionTest {

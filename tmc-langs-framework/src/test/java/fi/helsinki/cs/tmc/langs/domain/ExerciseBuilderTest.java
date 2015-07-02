@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 
 import com.google.common.io.Files;
 
-import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import org.apache.commons.io.FileUtils;
 
 import org.junit.Before;

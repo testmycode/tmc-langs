@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableList;
 
-import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import org.junit.Test;
 
 public class ExerciseDescTest {

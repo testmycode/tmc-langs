@@ -6,7 +6,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestCase.Status;
 
 import org.junit.Before;

@@ -118,6 +118,14 @@ public interface LanguagePlugin {
     ValidationResult checkCodeStyle(Path path);
 
     /**
+     * Compress a given project so that it can be sent to the TestMyCode server.
+     *
+     * @param path Path to the root of the project.
+     * @return The compressed file as a byte array.
+     */
+    byte[] compressProject(Path path) throws IOException;
+
+    /**
      * Extract a given archive file containing a compressed project to a target location.
      *
      * <p>This will overwrite any existing files as long as they are not specified as StudentFiles

@@ -29,7 +29,7 @@ public class AbstractLanguagePluginTest {
 
         public StubLanguagePlugin(ExerciseBuilder exerciseBuilder,
                                   SubmissionProcessor submissionProcessor) {
-            super(exerciseBuilder, submissionProcessor, null);
+            super(exerciseBuilder, submissionProcessor, null, null);
         }
 
         @Override

@@ -5,6 +5,7 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
+import fi.helsinki.cs.tmc.langs.io.zip.Zipper;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.collect.ImmutableList;
@@ -21,6 +22,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
 
     private final ExerciseBuilder exerciseBuilder;
     private final SubmissionProcessor submissionProcessor;
+    private final Zipper zipper;
     private final Unzipper unzipper;
 
     /**
@@ -28,9 +30,11 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      */
     public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder,
                                   SubmissionProcessor submissionProcessor,
+                                  Zipper zipper,
                                   Unzipper unzipper) {
         this.exerciseBuilder = exerciseBuilder;
         this.submissionProcessor = submissionProcessor;
+        this.zipper = zipper;
         this.unzipper = unzipper;
     }
 
@@ -65,6 +69,12 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     public void extractProject(Path compressedProject, Path targetLocation) throws IOException {
         unzipper.setStudentFilePolicy(getStudentFilePolicy(targetLocation));
         unzipper.unzip(compressedProject, targetLocation);
+    }
+
+    @Override
+    public byte[] compressProject(Path project) throws IOException {
+        zipper.setStudentFilePolicy(getStudentFilePolicy(project));
+        return zipper.zip(project);
     }
 
     @Override

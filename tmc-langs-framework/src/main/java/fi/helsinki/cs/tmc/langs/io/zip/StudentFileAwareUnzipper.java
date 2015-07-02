@@ -2,20 +2,21 @@ package fi.helsinki.cs.tmc.langs.io.zip;
 
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.FileUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.Enumeration;
 
-public class StudentFileAwareUnzipper extends ZipProcessor implements Unzipper{
+public class StudentFileAwareUnzipper implements Unzipper{
 
     private Logger log = LoggerFactory.getLogger(StudentFileAwareUnzipper.class);
     private StudentFilePolicy filePolicy;
@@ -44,35 +45,29 @@ public class StudentFileAwareUnzipper extends ZipProcessor implements Unzipper{
             Files.createDirectories(target);
         }
 
-        ZipInputStream zipStream = new ZipInputStream(new FileInputStream(zip.toFile()));
-        ZipEntry zipEntry = zipStream.getNextEntry();
-        while (zipEntry != null) {
-            Path entryPath = target.resolve(zipEntry.getName());
+        ZipFile zipFile = new ZipFile(zip.toFile());
+        Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+        while (entries.hasMoreElements()) {
+            ZipArchiveEntry entry = entries.nextElement();
+            Path entryTargetPath = target.resolve(entry.getName());
 
-            log.debug("Processing zipEntry with name {} to {}", zipEntry.getName(), entryPath);
-            if (zipEntry.getName().endsWith(File.separator)) {
-                Files.createDirectories(entryPath);
+            log.debug("Processing zipEntry with name {} to {}", entry.getName(), entryTargetPath);
+            if (entry.isDirectory()) {
+                Files.createDirectories(entryTargetPath);
             } else {
-                if (allowedToUnzip(entryPath, target)) {
+                if (allowedToUnzip(entryTargetPath, target)) {
                     log.trace("Allowed to unzip, unzipping");
-                    unzipFile(zipStream, entryPath);
+                    InputStream entryContent = zipFile.getInputStream(entry);
+                    FileUtils.copyInputStreamToFile(entryContent, entryTargetPath.toFile());
                 } else {
                     log.trace("Not allowed to unzip, skipping file");
                 }
             }
 
-
-            log.debug("Done with file {}", entryPath);
-            zipEntry = zipStream.getNextEntry();
+            log.debug("Done with file {}", entryTargetPath);
         }
 
         log.debug("Done unzipping");
-
-        zipStream.closeEntry();
-        log.debug("Closed last entry");
-
-        zipStream.close();
-        log.debug("Closed zip stream");
     }
 
     private boolean allowedToUnzip(Path file, Path projectRoot) {
@@ -91,23 +86,5 @@ public class StudentFileAwareUnzipper extends ZipProcessor implements Unzipper{
         log.trace("File is not a student file, allow overwriting");
 
         return true;
-    }
-
-    private void unzipFile(ZipInputStream zipStream, Path entryPath) throws IOException {
-        log.debug("Unzipping file to {}", entryPath);
-
-        if (!Files.exists(entryPath.getParent())) {
-            log.trace("Parent directory does not exist, creating");
-            Files.createDirectories(entryPath.getParent());
-        } else {
-            log.trace("Parent directory exists");
-        }
-
-        log.trace("Creating file {}", entryPath);
-        FileOutputStream fileStream = new FileOutputStream(entryPath.toFile(), false);
-        copyBytes(zipStream, fileStream);
-
-        log.trace("Closing file stream to {}", entryPath);
-        fileStream.close();
     }
 }

@@ -144,10 +144,11 @@ public class StudentFileAwareUnzipperTest {
         Path testFile = tmpDir.resolve("testDirectory").resolve("testFile.txt");
         Files.createDirectories(testFile.getParent());
         Files.createFile(testFile);
-        long originalSize = Files.size(testFile);
 
         unzipper = new StudentFileAwareUnzipper(getEverythingIsStudentFilePolicy());
         unzipper.setStudentFilePolicy(getNothingIsStudentFilePolicy());
+
+        long originalSize = Files.size(testFile);
         unzipper.unzip(TEST_DIR_ZIP, tmpDir);
 
         assertTrue(originalSize != Files.size(testFile));

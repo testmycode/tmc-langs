@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
-import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.Zipper;

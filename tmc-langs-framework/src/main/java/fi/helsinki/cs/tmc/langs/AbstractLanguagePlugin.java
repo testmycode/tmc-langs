@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs;
 
+import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
@@ -99,6 +100,15 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         } else {
             return listBuilder.build();
         }
+    }
+
+    /**
+     * Reads and parses the configuration file of the project.
+     * @return The configuration as an object.
+     */
+    protected Configuration getConfiguration(Path projectRoot) {
+        Path configPath = projectRoot.resolve(".tmcproject.yml");
+        return new Configuration(configPath);
     }
 
     /**

@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
+import fi.helsinki.cs.tmc.langs.domain.ValueObject;
+
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.Yaml;
 
 import org.apache.commons.io.FileUtils;
@@ -11,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +34,7 @@ public class TmcProjectYmlParser {
         rootPath = projectRootPath;
         extraStudentFiles = new ArrayList<>();
 
-        String fileContents = initFileContents(configFilePath.toAbsolutePath().toFile());
-        Yaml yaml = new Yaml();
-        Object yamlSpecifications = yaml.load(fileContents);
+        Object yamlSpecifications = getYamlSpecs(configFilePath.toAbsolutePath());
 
         if (!(yamlSpecifications instanceof Map)) {
             return extraStudentFiles;
@@ -44,6 +45,36 @@ public class TmcProjectYmlParser {
         addFiles(fileMap);
 
         return extraStudentFiles;
+    }
+
+    public Map<String, ValueObject> parseOptions(Path path) {
+
+        log.debug("Parsing configuration from {}", path);
+
+        Object yamlSpecifications = getYamlSpecs(path);
+
+        if (!(yamlSpecifications instanceof Map)) {
+            return new HashMap<>();
+        }
+
+        Map<?, ?> specsAsMap = (Map<?, ?>) yamlSpecifications;
+        Map<String, ValueObject> options = new HashMap<>();
+
+        for(Object key : specsAsMap.keySet()) {
+            Object value = specsAsMap.get(key);
+            if (!(key instanceof String)) {
+                continue;
+            }
+            options.put((String) key, new ValueObject(value));
+        }
+
+        return options;
+    }
+
+    private Object getYamlSpecs(Path path) {
+        String fileContents = initFileContents(path.toFile());
+        Yaml yaml = new Yaml();
+        return yaml.load(fileContents);
     }
 
     private void addFiles(Object files) {

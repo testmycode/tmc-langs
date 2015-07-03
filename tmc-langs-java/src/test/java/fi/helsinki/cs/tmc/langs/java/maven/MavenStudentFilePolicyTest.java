@@ -19,26 +19,25 @@ import java.util.List;
 public class MavenStudentFilePolicyTest {
 
     private Path projectPath;
-    private MavenStudentFilePolicy mavenFileMovingPolicy;
+    private MavenStudentFilePolicy mavenStudentFilePolicy;
 
     @Before
     public void setUp() {
         projectPath = TestUtils.getPath(getClass(), "maven_exercise");
-        Path tmcprojectYml = projectPath.resolve(".tmcproject.yml");
-        mavenFileMovingPolicy = new MavenStudentFilePolicy(tmcprojectYml);
+        mavenStudentFilePolicy = new MavenStudentFilePolicy(projectPath);
     }
 
     @Test
     public void testItDoesNotMovePomXml() throws IOException {
         Path pom = Paths.get("pom.xml");
-        assertFalse(mavenFileMovingPolicy.isStudentSourceFile(pom));
+        assertFalse(mavenStudentFilePolicy.isStudentSourceFile(pom));
     }
 
     @Test
     public void testItMovesFilesInSrcMain() throws IOException {
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(projectPath, toBeMoved, mavenFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, mavenStudentFilePolicy);
 
         assertEquals(1, toBeMoved.size());
         assertTrue(toBeMoved.contains("src"
@@ -55,7 +54,7 @@ public class MavenStudentFilePolicyTest {
     public void testItDoesNotMoveFilesInSrcTest() throws IOException {
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(projectPath, toBeMoved, mavenFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, mavenStudentFilePolicy);
 
         assertEquals(1, toBeMoved.size());
         assertFalse(toBeMoved.contains("src"
@@ -72,7 +71,7 @@ public class MavenStudentFilePolicyTest {
     public void testItDoesNotMoveFilesInLib() throws IOException {
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(projectPath, toBeMoved, mavenFileMovingPolicy);
+        TestUtils.collectPaths(projectPath, toBeMoved, mavenStudentFilePolicy);
 
         assertEquals(1, toBeMoved.size());
         assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"

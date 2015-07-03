@@ -1,6 +1,6 @@
 package fi.helsinki.cs.tmc.langs.make;
 
-import fi.helsinki.cs.tmc.langs.TestResult;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
 import com.google.common.collect.ImmutableList;
 

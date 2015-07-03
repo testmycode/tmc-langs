@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -15,26 +16,28 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MakeFileMovingPolicyTest {
+public class MakeStudentFilePolicyTest {
 
-    private MakeFileMovingPolicy makeFileMovingPolicy;
+    private Path path;
+    private MakeStudentFilePolicy makeStudentFilePolicy;
 
-    public MakeFileMovingPolicyTest() {
-        makeFileMovingPolicy = new MakeFileMovingPolicy();
+    @Before
+    public void setUp() {
+        path = TestUtils.getPath(getClass(), "passing");
+        makeStudentFilePolicy = new MakeStudentFilePolicy(path);
     }
 
     @Test
     public void testItDoesNotMoveMakefiles() {
         Path makefile = Paths.get("Makefile");
-        assertFalse(makeFileMovingPolicy.shouldMoveFile(makefile));
+        assertFalse(makeStudentFilePolicy.isStudentSourceFile(makefile));
     }
 
     @Test
     public void testItMovesFilesInSrc() throws IOException {
-        final Path path = TestUtils.getPath(getClass(), "passing");
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(path, toBeMoved, makeFileMovingPolicy);
+        TestUtils.collectPaths(path, toBeMoved, makeStudentFilePolicy);
 
         assertEquals(3, toBeMoved.size());
         // Should not move Makefile in source
@@ -46,10 +49,9 @@ public class MakeFileMovingPolicyTest {
 
     @Test
     public void testItDoesNotMoveFilesInTest() throws IOException {
-        final Path path = TestUtils.getPath(getClass(), "passing");
         final List<String> toBeMoved = new ArrayList<>();
 
-        TestUtils.collectPaths(path, toBeMoved, makeFileMovingPolicy);
+        TestUtils.collectPaths(path, toBeMoved, makeStudentFilePolicy);
 
         assertEquals(3, toBeMoved.size());
         assertFalse(toBeMoved.contains("test" + File.separatorChar + "test_source.c"));

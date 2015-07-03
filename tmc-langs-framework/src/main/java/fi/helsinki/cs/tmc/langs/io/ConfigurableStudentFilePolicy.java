@@ -4,6 +4,7 @@ import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,13 +19,15 @@ import java.util.List;
  */
 public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy {
 
+    private static final Path CONFIG_PATH = Paths.get(".tmcproject.yml");
+
     private Path configFile;
 
     private List<Path> extraStudentFiles;
     private Path rootPath;
 
-    public ConfigurableStudentFilePolicy(Path configFile) {
-        this.configFile = configFile;
+    public ConfigurableStudentFilePolicy(Path configFileParent) {
+        this.configFile = configFileParent.resolve(CONFIG_PATH);
     }
 
     /**

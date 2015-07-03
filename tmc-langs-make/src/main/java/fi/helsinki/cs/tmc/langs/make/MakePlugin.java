@@ -1,11 +1,15 @@
 package fi.helsinki.cs.tmc.langs.make;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
-import fi.helsinki.cs.tmc.langs.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.RunResult;
-import fi.helsinki.cs.tmc.langs.TestDesc;
-import fi.helsinki.cs.tmc.langs.TestResult;
-import fi.helsinki.cs.tmc.langs.sandbox.SubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
+import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
@@ -45,8 +49,14 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
     private MakeUtils makeUtils;
 
+    /**
+     * Creates a new MakePlugin.
+     */
     public MakePlugin() {
-        super(new SubmissionProcessor(new MakeFileMovingPolicy()));
+        super(new ExerciseBuilder(),
+                new StudentFileAwareSubmissionProcessor(),
+                new StudentFileAwareZipper(),
+                new StudentFileAwareUnzipper());
         this.makeUtils = new MakeUtils();
     }
 
@@ -124,6 +134,19 @@ public class MakePlugin extends AbstractLanguagePlugin {
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.resolve(MAKEFILE));
+    }
+
+    /**
+     * Gets a language specific {@link StudentFilePolicy}.
+     *
+     * <p>The project root path must be specified for the {@link StudentFilePolicy} to read
+     * any configuration files such as <tt>.tmcproject.yml</tt>.
+     *
+     * @param projectPath The project's root path
+     */
+    @Override
+    protected StudentFilePolicy getStudentFilePolicy(Path projectPath) {
+        return new MakeStudentFilePolicy(projectPath);
     }
 
     @Override

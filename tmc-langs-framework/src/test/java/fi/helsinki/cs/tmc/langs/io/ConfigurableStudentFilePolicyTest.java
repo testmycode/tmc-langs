@@ -32,8 +32,7 @@ public class ConfigurableStudentFilePolicyTest {
         sourceDir = Files.createTempDirectory(rootPath, "source");
         targetDir = Files.createTempDirectory(rootPath, "target");
 
-        Path tmcprojectYml = targetDir.resolve(".tmcproject.yml");
-        studentFilePolicy = new ConfigurableStudentFilePolicy(tmcprojectYml) {
+        studentFilePolicy = new ConfigurableStudentFilePolicy(targetDir) {
             @Override
             public boolean isStudentSourceFile(Path path) {
                 return false;

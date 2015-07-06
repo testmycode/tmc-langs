@@ -17,6 +17,11 @@ public class ValueObject {
         return this.value;
     }
 
+    /**
+     * Returns the value of this object as a String.
+     *
+     * @return Value as a String. Null if value isn't a String.
+     */
     public String asString() {
         if (!(value instanceof String)) {
             log.error("Couldn't convert configuration {} to String.", value.toString());
@@ -25,6 +30,11 @@ public class ValueObject {
         return (String) this.value;
     }
 
+    /**
+     * Returns the value of this object as a Boolean.
+     *
+     * @return Value as a Boolean. Null if value isn't a Boolean.
+     */
     public Boolean asBoolean() {
         if (!(value instanceof Boolean)) {
             log.error("Couldn't convert configuration {} to Boolean.", value.toString());

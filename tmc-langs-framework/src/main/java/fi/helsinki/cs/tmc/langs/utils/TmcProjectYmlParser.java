@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TmcProjectYmlParser {
+public class TmcProjectYmlParser implements ConfigurationParser {
 
     private Logger log = LoggerFactory.getLogger(TmcProjectYmlParser.class);
 
@@ -47,6 +47,7 @@ public class TmcProjectYmlParser {
         return extraStudentFiles;
     }
 
+    @Override
     public Map<String, ValueObject> parseOptions(Path path) {
 
         log.debug("Parsing configuration from {}", path);
@@ -60,7 +61,7 @@ public class TmcProjectYmlParser {
         Map<?, ?> specsAsMap = (Map<?, ?>) yamlSpecifications;
         Map<String, ValueObject> options = new HashMap<>();
 
-        for(Object key : specsAsMap.keySet()) {
+        for (Object key : specsAsMap.keySet()) {
             Object value = specsAsMap.get(key);
             if (!(key instanceof String)) {
                 continue;

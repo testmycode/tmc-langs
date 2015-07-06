@@ -1,15 +1,15 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import fi.helsinki.cs.tmc.langs.utils.ConfigurationParser;
 import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Configuration {
-    Map<String, ValueObject> options;
+
+    private Map<String, ValueObject> options;
 
     public Configuration() {
         options = new HashMap<>();
@@ -20,10 +20,16 @@ public class Configuration {
     }
 
     public boolean isSet(String config) {
-        return options.keySet().contains(config);
+        return options.containsKey(config);
     }
 
-    public Object get(String key) {
+    /**
+     * Returns the configuration option for the given key if it exists.
+     *
+     * @param key   Name of the configuration.
+     * @return      Value of the configuration. Null if not set.
+     */
+    public ValueObject get(String key) {
         if (isSet(key)) {
             return options.get(key);
         }
@@ -31,7 +37,7 @@ public class Configuration {
     }
 
     public void parseOptions(Path path) {
-        TmcProjectYmlParser parser = new TmcProjectYmlParser();
+        ConfigurationParser parser = new TmcProjectYmlParser();
         options = parser.parseOptions(path);
     }
 }

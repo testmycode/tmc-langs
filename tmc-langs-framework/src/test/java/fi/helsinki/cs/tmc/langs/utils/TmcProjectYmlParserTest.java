@@ -1,10 +1,10 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.domain.ValueObject;
+
 import org.apache.commons.io.FileUtils;
 
 import org.junit.Before;
@@ -25,14 +25,40 @@ public class TmcProjectYmlParserTest {
     }
 
     @Test
-    public void testParserWithSimpleOption() throws IOException {
+    public void testParserParsesOptions() throws IOException {
         Path path = Files.createTempFile("temp", ".txt");
-        FileUtils.writeStringToFile(path.toFile(), "fail_tests_on_valgrind_error: true");
+        FileUtils.writeStringToFile(path.toFile(), "simple_option: true");
         Map<String, ValueObject> options = tmcProjectYmlParser.parseOptions(path);
 
         assertTrue(!options.isEmpty());
         assertEquals(1, options.size());
-        assertTrue(options.containsKey("fail_tests_on_valgrind_error"));
-        assertEquals(true, options.get("fail_tests_on_valgrind_error").asBoolean());
+        assertTrue(options.containsKey("simple_option"));
+    }
+
+    @Test
+    public void testParserWithSimpleBooleanOption() throws IOException {
+        Path path = Files.createTempFile("temp", ".txt");
+        FileUtils.writeStringToFile(path.toFile(), "simple_option: true");
+        Map<String, ValueObject> options = tmcProjectYmlParser.parseOptions(path);
+
+        assertEquals(true, options.get("simple_option").asBoolean());
+    }
+
+    @Test
+    public void testParserWithSimpleFalseBooleanOption() throws IOException {
+        Path path = Files.createTempFile("temp", ".txt");
+        FileUtils.writeStringToFile(path.toFile(), "simple_option: false");
+        Map<String, ValueObject> options = tmcProjectYmlParser.parseOptions(path);
+
+        assertEquals(false, options.get("simple_option").asBoolean());
+    }
+
+    @Test
+    public void testParserWithSimpleStringOption() throws IOException {
+        Path path = Files.createTempFile("temp", ".txt");
+        FileUtils.writeStringToFile(path.toFile(), "simple_option: option");
+        Map<String, ValueObject> options = tmcProjectYmlParser.parseOptions(path);
+
+        assertEquals("option", options.get("simple_option").asString());
     }
 }

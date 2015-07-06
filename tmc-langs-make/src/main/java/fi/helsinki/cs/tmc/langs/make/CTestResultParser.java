@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.make;
 
+import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
@@ -37,25 +38,46 @@ public class CTestResultParser {
 
     private static final Path AVAILABLE_POINTS = Paths.get("tmc_available_points.txt");
     private static final Path TEST_DIR = Paths.get("test");
+
     private static final String DOC_NULL_ERROR_MESSAGE = "doc cannot be null "
             + "- can't parse test results :(";
     private static final String SAX_PARSER_ERROR = "SAX parser error occured";
     private static final String PARSING_DONE_MESSAGE = "C test cases parsed.";
+
+    /**
+     * Name of the configuration option that controls Valgrind strategy.
+     * Defaults to true, should be set to false in .tmcproject.yml if
+     * Valgrind failures are allowed.
+     */
+    private static final String VALGRIND_STRATEGY_OPTION = "fail_on_valgrind_error";
 
     private static final Logger log = LoggerFactory.getLogger(CTestResultParser.class);
 
     private Path projectDir;
     private Path testResults;
     private List<CTestCase> tests;
+    private boolean failOnValgrindError;
 
     /**
     * Create a parser that will parse test results from a file.
     */
-    public CTestResultParser(Path projectDir, Path testResults, Path valgrindOutput) {
+    public CTestResultParser(Path projectDir,
+                             Path testResults,
+                             Path valgrindOutput,
+                             Configuration configuration) {
         this.projectDir = projectDir;
         this.testResults = testResults;
+        // These last three lines need to be in this exact order.
+        this.failOnValgrindError = valgrindStrategy(configuration);
         this.tests = parseTestCases(testResults);
         new ValgrindParser(valgrindOutput).addOutputs(tests);
+    }
+
+    private boolean valgrindStrategy(Configuration configuration) {
+        if (configuration.isSet(VALGRIND_STRATEGY_OPTION)) {
+            return configuration.get(VALGRIND_STRATEGY_OPTION).asBoolean();
+        }
+        return true;
     }
 
     private List<CTestCase> parseTestCases(Path testOutput) {
@@ -70,18 +92,17 @@ public class CTestResultParser {
         Path availablePoints = projectDir.toAbsolutePath().resolve(TEST_DIR)
                 .resolve(AVAILABLE_POINTS);
         Map<String, List<String>> idsToPoints = new MakeUtils().mapIdsToPoints(availablePoints);
-
         NodeList nodeList = doc.getElementsByTagName("test");
         List<CTestCase> cases = createCTestCases(nodeList, idsToPoints);
 
         log.info(PARSING_DONE_MESSAGE);
+
         return cases;
     }
 
     private Document prepareDocument(Path testOutput)
             throws ParserConfigurationException, IOException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-
         DocumentBuilder documentBuilder = dbFactory.newDocumentBuilder();
         documentBuilder.setErrorHandler(null); // Silence logging
         dbFactory.setValidating(false);
@@ -125,7 +146,7 @@ public class CTestResultParser {
                 message = "";
             }
 
-            CTestCase testCase = new CTestCase(name, passed, message, points);
+            CTestCase testCase = new CTestCase(name, passed, message, points, failOnValgrindError);
 
             cases.add(testCase);
         }
@@ -146,7 +167,15 @@ public class CTestResultParser {
 
         for (String key : idsToPoints.keySet()) {
             if (!addedCases.contains(key)) {
-                cases.add(new CTestCase("suite." + key, passed, message, idsToPoints.get(key)));
+                cases.add(
+                        new CTestCase(
+                                "suite." + key,
+                                passed,
+                                message,
+                                idsToPoints.get(key),
+                                failOnValgrindError
+                        )
+                );
             }
         }
     }
@@ -186,11 +215,13 @@ public class CTestResultParser {
         if (!Files.exists(testResults)) {
             return Status.COMPILE_FAILED;
         }
+
         for (TestResult result : getTestResults()) {
             if (!result.passed) {
                 return Status.TESTS_FAILED;
             }
         }
+
         return Status.PASSED;
     }
 

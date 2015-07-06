@@ -21,25 +21,31 @@ public class CTestCase {
     private String message;
     private List<String> points;
     private String valgrindTrace;
+    private boolean failOnValgrindError;
 
     /**
     * Create a test case for C-tests.
     */
-    public CTestCase(String name, boolean passed, String message, List<String> points) {
-        this(name);
+    public CTestCase(String name,
+                     boolean passed,
+                     String message,
+                     List<String> points,
+                     boolean failOnValgrindError) {
+        this.name = name;
         this.passed = passed;
         this.message = message;
         this.points = points;
         this.valgrindTrace = null;
+        this.failOnValgrindError = failOnValgrindError;
     }
 
-    public CTestCase(String name) {
-        this.name = name;
+    public CTestCase(String name, boolean passed, String message, List<String> points) {
+        this(name, passed, message, points, true);
     }
 
-    // TODO: Change behaviour based on Valgrind strategy (currently always fails if Valgrind fails).
+
     private boolean failedDueToValgrind(String valgrindTrace) {
-        return StringUtils.isNotBlank(valgrindTrace);
+        return failOnValgrindError && StringUtils.isNotBlank(valgrindTrace);
     }
 
     /**
@@ -66,6 +72,7 @@ public class CTestCase {
         if (this.points != null) {
             points = ImmutableList.copyOf(this.points);
         }
+
         return new TestResult(name, successful, points, msg, ImmutableList
                 .copyOf(trace));
     }

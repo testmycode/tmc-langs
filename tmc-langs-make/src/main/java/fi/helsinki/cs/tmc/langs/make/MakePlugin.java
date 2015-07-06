@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.make;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
+import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
@@ -71,6 +72,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
             log.error(WRONG_EXERCISE_TYPE_MESSAGE);
             return Optional.absent();
         }
+
         try {
             runTests(path, false);
         } catch (Exception e) {
@@ -99,7 +101,6 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
         Map<String, List<String>> idsToPoints = this.makeUtils.mapIdsToPoints(availablePoints);
         List<TestDesc> tests = createTestDescs(idsToPoints, scanner);
-
         String exerciseName = parseExerciseName(availablePoints);
 
         return new ExerciseDesc(exerciseName, ImmutableList.copyOf(tests));
@@ -175,8 +176,9 @@ public class MakePlugin extends AbstractLanguagePlugin {
         Path baseTestPath = path.toAbsolutePath().resolve(TEST_DIR);
         Path testResults = baseTestPath.resolve(TMC_TEST_RESULTS);
         Path valgrindOutput = withValgrind ? baseTestPath.resolve(VALGRIND_LOG) : null;
+        Configuration configuration = new Configuration(path);
 
-        return new CTestResultParser(path, testResults, valgrindOutput).result();
+        return new CTestResultParser(path, testResults, valgrindOutput, configuration).result();
     }
 
     private void runTests(Path dir, boolean withValgrind) throws Exception {
@@ -187,7 +189,6 @@ public class MakePlugin extends AbstractLanguagePlugin {
                 new Object[]{Arrays.deepToString(command)});
 
         ProcessRunner runner = new ProcessRunner(command, dir);
-
         runner.call();
     }
 
@@ -209,6 +210,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
         } catch (Exception e) {
             return false;
         }
+
         return true;
     }
 }

@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +39,7 @@ public class CTestResultParserTest {
         CTestResultParser cpar = null;
         Path tmp = mkTempFile("test_output", ".xml");
         try {
-            cpar = new CTestResultParser(null, tmp, null);
+            cpar = new CTestResultParser(null, tmp, null, new Configuration());
         } finally {
             Files.delete(tmp);
         }
@@ -51,9 +53,12 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(0));
             Path tmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmpFolder(), tmp, emptyValgrindOutput());
+            cpar = new CTestResultParser(
+                    tmpFolder(),
+                    tmp,
+                    emptyValgrindOutput(),
+                    new Configuration());
             Files.delete(tmp);
-
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
         }
@@ -71,7 +76,7 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
             Path tmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmpFolder(), tmp, null);
+            cpar = new CTestResultParser(tmpFolder(), tmp, null, new Configuration());
             Files.delete(tmp);
 
         } catch (Exception e) {
@@ -91,7 +96,11 @@ public class CTestResultParserTest {
         CTestResultParser cpar = null;
         try {
             Path tmp = constructTestOutput(oneOfEachTest);
-            cpar = new CTestResultParser(tmpFolder(), tmp, emptyValgrindOutput());
+            cpar = new CTestResultParser(
+                    tmpFolder(),
+                    tmp,
+                    emptyValgrindOutput(),
+                    new Configuration());
             tmp.toFile().delete();
 
         } catch (Exception e) {
@@ -110,7 +119,7 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
             Path ttmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmpFolder(), ttmp, null);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, null, new Configuration());
             ttmp.toFile().delete();
             Path vtmp = constructNotMemoryFailingValgrindOutput(testCases);
             vtmp.toFile().delete();
@@ -123,7 +132,7 @@ public class CTestResultParserTest {
         TestResult result = results.get(0);
         assertFalse("The test should not be successful", result.passed);
         assertEquals("The test should contain the message: This test should've failed",
-            "This test should've failed", result.errorMessage);
+                "This test should've failed", result.errorMessage);
         assertEquals("The name of the test should be \"failing\"", "failing", result.name);
     }
 
@@ -134,7 +143,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructMemoryFailingValgrindOutput();
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration());
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (IOException e) {
@@ -157,7 +166,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructNotMemoryFailingValgrindOutput(oneOfEachTest);
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration());
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (Exception e) {
@@ -169,6 +178,50 @@ public class CTestResultParserTest {
             assertEquals("Valgrind output should be empty when there was no error", 0,
                     r.backtrace.size());
         }
+    }
+
+    @Test
+    public void testValgrindStrategyDefaultsToTrue() {
+        CTestResultParser cpar = null;
+        try {
+            Path ttmp = constructTestOutput(oneOfEachTest);
+            Path vtmp = constructMemoryFailingValgrindOutput();
+
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration());
+            vtmp.toFile().delete();
+            ttmp.toFile().delete();
+        } catch (IOException e) {
+            fail("Error creating or parsing mock output file: " + e.getMessage());
+        }
+        List<TestResult> results = cpar.getTestResults();
+
+        assertFalse(results.get(0).passed);
+        assertFalse(results.get(1).passed);
+    }
+
+    @Test
+    public void testTestsPassWhenValgrindFailuresAllowed() throws IOException {
+        Path config = Files.createTempFile("temp", ".txt");
+        FileUtils.writeStringToFile(config.toFile(), "fail_on_valgrind_error: false");
+        Configuration configuration = new Configuration(config);
+
+        CTestResultParser cpar = null;
+        try {
+            Path ttmp = constructTestOutput(oneOfEachTest);
+            Path vtmp = constructMemoryFailingValgrindOutput();
+
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, configuration);
+            vtmp.toFile().delete();
+            ttmp.toFile().delete();
+        } catch (IOException e) {
+            fail("Error creating or parsing mock output file: " + e.getMessage());
+        }
+        List<TestResult> results = cpar.getTestResults();
+
+        // The one with only Valgrind errors passes
+        assertTrue(results.get(0).passed);
+        // The one with failing tests still fails
+        assertFalse(results.get(1).passed);
     }
 
     private Path constructTestOutput(ArrayList<CTestCase> testCases) throws IOException {

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import com.google.common.base.Optional;
@@ -204,5 +205,13 @@ public class MakePluginTest {
         Optional<ExerciseDesc> optional = makePlugin.scanExercise(path, "");
 
         assertFalse(optional.isPresent());
+    }
+
+    @Test
+    public void testGetStudentFilePolicy() {
+        Path path = TestUtils.getPath(getClass(), "passing");
+        StudentFilePolicy studentFilePolicy = makePlugin.getStudentFilePolicy(path);
+
+        assertTrue(studentFilePolicy.getClass().equals(new MakeStudentFilePolicy(path).getClass()));
     }
 }

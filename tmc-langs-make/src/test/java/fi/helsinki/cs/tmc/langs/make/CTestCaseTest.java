@@ -6,10 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +17,7 @@ public class CTestCaseTest {
     private CTestCase failing;
     private CTestCase valgrindFail;
     private CTestCase bothFail;
+    private CTestCase valgrindFailAllowed;
 
     /**
      * Initializes variables used in tests.
@@ -63,12 +62,12 @@ public class CTestCaseTest {
         this.valgrindFail.setValgrindTrace(valgrindTrace);
 
         this.bothFail = new CTestCase("test_bothFail", false, "Some tests failed",
-                new ArrayList<String>());
+                points);
         this.bothFail.setValgrindTrace(valgrindTrace);
-    }
 
-    @Before
-    public void setup() throws IOException {
+        this.valgrindFailAllowed = new CTestCase("test_valgrindFailAllowed", true, "", points,
+                false);
+        this.valgrindFailAllowed.setValgrindTrace(valgrindTrace);
     }
 
     @Test
@@ -86,6 +85,7 @@ public class CTestCaseTest {
     @Test
     public void testResultIsCorrectWithFailingTest() {
         TestResult testResult = this.failing.getTestResult();
+
         assertEquals("test_failing", testResult.name);
         assertFalse(testResult.passed);
         assertEquals(0, testResult.points.size());
@@ -96,6 +96,7 @@ public class CTestCaseTest {
     @Test
     public void testResultIsCorrectWhenValgrindFailsButTestPasses() {
         TestResult testResult = this.valgrindFail.getTestResult();
+
         assertEquals("test_valgrindFail", testResult.name);
         assertFalse(testResult.passed);
         assertEquals(1, testResult.points.size());
@@ -111,12 +112,26 @@ public class CTestCaseTest {
     @Test
     public void testResultIsCorrectWhenValgrindFailsAndTestFails() {
         TestResult testResult = this.bothFail.getTestResult();
+
         assertEquals("test_bothFail", testResult.name);
         assertFalse(testResult.passed);
-        assertEquals(0, testResult.points.size());
+        assertEquals(1, testResult.points.size());
+        assertEquals("1.1", testResult.points.get(0));
         assertEquals("Some tests failed", testResult.errorMessage);
         assertEquals(25, testResult.backtrace.size());
         assertTrue(testResult.backtrace.get(testResult.backtrace.size() - 1)
                 .contains("ERROR SUMMARY: 1 errors from 1 contexts"));
+    }
+
+    @Test
+    public void testResultIsCorrectWhenValgrindIsAllowedToFail() {
+        TestResult testResult = this.valgrindFailAllowed.getTestResult();
+
+        assertEquals("test_valgrindFailAllowed", testResult.name);
+        assertTrue(testResult.passed);
+        assertEquals(1, testResult.points.size());
+        assertEquals("1.1", testResult.points.get(0));
+        assertEquals("", testResult.errorMessage);
+        assertTrue(testResult.backtrace.isEmpty());
     }
 }

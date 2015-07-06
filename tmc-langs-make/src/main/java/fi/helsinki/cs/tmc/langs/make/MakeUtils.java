@@ -34,6 +34,7 @@ public class MakeUtils {
 
             String key = parts[1];
             String value = parts[2];
+
             addPointsToId(idsToPoints, key, value);
         }
 
@@ -44,15 +45,13 @@ public class MakeUtils {
      * Initializes a file scanner or returns null if it's not possible.
      */
     public Scanner initFileScanner(Path file) {
-        Scanner scanner;
         try {
-            scanner = new Scanner(file);
+            return new Scanner(file);
         } catch (IOException e) {
             log.error(FILE_NOT_FOUND_ERROR_MESSAGE);
             log.error(e.toString());
             return null;
         }
-        return scanner;
     }
 
     /**
@@ -62,6 +61,7 @@ public class MakeUtils {
         if (scanner == null) {
             return new String[0];
         }
+
         String row = scanner.nextLine();
         String[] parts = row.split(" \\[|\\] | ", 3);
 
@@ -78,7 +78,9 @@ public class MakeUtils {
         if (!idsToPoints.containsKey(key)) {
             idsToPoints.put(key, new ArrayList<String>());
         }
+
         String[] points = value.split(" ");
+        
         for (String point : points) {
             idsToPoints.get(key).add(point);
         }

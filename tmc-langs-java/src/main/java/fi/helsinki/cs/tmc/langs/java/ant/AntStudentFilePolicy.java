@@ -7,8 +7,8 @@ import java.nio.file.Paths;
 
 public class AntStudentFilePolicy extends ConfigurableStudentFilePolicy {
 
-    public AntStudentFilePolicy(Path configFile) {
-        super(configFile);
+    public AntStudentFilePolicy(Path configFileParent) {
+        super(configFileParent);
     }
 
     /**

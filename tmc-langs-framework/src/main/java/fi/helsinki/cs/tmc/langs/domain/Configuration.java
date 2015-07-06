@@ -36,6 +36,11 @@ public class Configuration {
         return null;
     }
 
+    /**
+     * Parse options from the path.
+     *
+     * @param path Absolute path to configuration, e.g. .tmcproject.yml -file.
+     */
     public void parseOptions(Path path) {
         ConfigurationParser parser = new TmcProjectYmlParser();
         options = parser.parseOptions(path);

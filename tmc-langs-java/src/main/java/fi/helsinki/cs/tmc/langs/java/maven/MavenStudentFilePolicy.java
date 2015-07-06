@@ -7,8 +7,8 @@ import java.nio.file.Paths;
 
 public class MavenStudentFilePolicy extends ConfigurableStudentFilePolicy {
 
-    public MavenStudentFilePolicy(Path configFile) {
-        super(configFile);
+    public MavenStudentFilePolicy(Path configFileParent) {
+        super(configFileParent);
     }
 
     /**

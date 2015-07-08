@@ -1,13 +1,16 @@
 package fi.helsinki.cs.tmc.langs.make;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
 import org.apache.commons.io.FileUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,6 +1,8 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -18,6 +20,8 @@ public class ProcessRunner implements Callable<ProcessResult> {
 
     private final String[] command;
     private final Path workDir;
+
+    private static final Logger log = LoggerFactory.getLogger(ProcessRunner.class);
 
     public ProcessRunner(String[] command, Path workDir) {
         this.command = command;
@@ -72,7 +76,7 @@ public class ProcessRunner implements Callable<ProcessResult> {
                 IOUtils.copy(inputStream, stringWriter, "UTF-8");
                 inputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.toString());
             }
         }
     }

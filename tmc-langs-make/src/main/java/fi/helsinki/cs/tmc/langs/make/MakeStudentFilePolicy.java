@@ -7,6 +7,9 @@ import java.nio.file.Paths;
 
 public class MakeStudentFilePolicy extends ConfigurableStudentFilePolicy {
 
+    private static final Path MAKEFILE_PATH = Paths.get("Makefile");
+    private static final Path SOURCE_FOLDER_PATH = Paths.get("src");
+
     public MakeStudentFilePolicy(Path configFileParent) {
         super(configFileParent);
     }
@@ -21,6 +24,6 @@ public class MakeStudentFilePolicy extends ConfigurableStudentFilePolicy {
      */
     @Override
     public boolean isStudentSourceFile(Path path) {
-        return !path.endsWith("Makefile") && path.startsWith(Paths.get("src"));
+        return !path.endsWith(MAKEFILE_PATH) && path.startsWith(SOURCE_FOLDER_PATH);
     }
 }

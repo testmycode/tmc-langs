@@ -183,7 +183,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
     private void runTests(Path dir, boolean withValgrind) throws Exception {
         String target = withValgrind ? "run-test-with-valgrind" : "run-test";
-        String[] command = new String[]{"make", target};
+        String[] command = {"make", target};
 
         log.info("Running tests with command {0}",
                 new Object[]{Arrays.deepToString(command)});
@@ -198,7 +198,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
     }
 
     private boolean builds(Path dir) {
-        String[] command = new String[]{"make", "test"};
+        String[] command = {"make", "test"};
         ProcessRunner runner = new ProcessRunner(command, dir);
 
         try {

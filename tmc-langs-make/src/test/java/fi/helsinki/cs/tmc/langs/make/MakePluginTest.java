@@ -185,12 +185,12 @@ public class MakePluginTest {
     @Test
     public void testScanExerciseWithPassing() {
         Path path = TestUtils.getPath(getClass(), "passing");
-        Optional<ExerciseDesc> optional = makePlugin.scanExercise(path, "");
+        Optional<ExerciseDesc> optional = makePlugin.scanExercise(path, "passing exercise");
         assertTrue(optional.isPresent());
 
         ExerciseDesc desc = optional.get();
 
-        assertEquals("passing", desc.name);
+        assertEquals("passing exercise", desc.name);
 
         assertEquals(1, desc.tests.size());
         assertEquals("test.test_one", desc.tests.get(0).name);

@@ -89,10 +89,10 @@ public class MakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        return Optional.of(parseExerciseDesc(availablePoints));
+        return Optional.of(parseExerciseDesc(availablePoints, exerciseName));
     }
 
-    private ExerciseDesc parseExerciseDesc(Path availablePoints) {
+    private ExerciseDesc parseExerciseDesc(Path availablePoints, String exerciseName) {
         Scanner scanner = this.makeUtils.initFileScanner(availablePoints);
         if (scanner == null) {
             log.info(CANT_PARSE_EXERCISE_DESCRIPTION);
@@ -101,7 +101,6 @@ public class MakePlugin extends AbstractLanguagePlugin {
 
         Map<String, List<String>> idsToPoints = this.makeUtils.mapIdsToPoints(availablePoints);
         List<TestDesc> tests = createTestDescs(idsToPoints, scanner);
-        String exerciseName = parseExerciseName(availablePoints);
 
         return new ExerciseDesc(exerciseName, ImmutableList.copyOf(tests));
     }
@@ -126,10 +125,6 @@ public class MakePlugin extends AbstractLanguagePlugin {
         }
 
         return tests;
-    }
-
-    private String parseExerciseName(Path availablePoints) {
-        return availablePoints.getParent().getParent().getFileName().toString();
     }
 
     @Override

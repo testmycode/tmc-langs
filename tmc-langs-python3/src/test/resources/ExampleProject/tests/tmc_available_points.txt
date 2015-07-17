@@ -1,6 +1,0 @@
-[test] [test_two.SecondTest.test_failing] 2.4 2.1
-[test] [test_two.SecondTest.test_passing] 2.2 2.3 2.1
-[test] [test_two.SecondTest.test_erroring] 2.5 2.6 2.1
-[test] [test_new.TestCase.test_new] 1.2 1.1
-[suite] [test_new.TestCase] 1.1
-[suite] [test_two.SecondTest] 2.1

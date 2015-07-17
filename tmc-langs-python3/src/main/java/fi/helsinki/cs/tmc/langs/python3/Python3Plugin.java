@@ -1,9 +1,11 @@
 package fi.helsinki.cs.tmc.langs.python3;
 
+import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
@@ -17,6 +19,7 @@ import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +28,7 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     private static final Path SETUP_PY_PATH = Paths.get("setup.py");
     private static final Path REQUIREMENTS_TXT_PATH = Paths.get("requirements.txt");
-    private static final Path TEST_FOLDER_PATH = Paths.get("tests");
+    private static final Path TEST_FOLDER_PATH = Paths.get("test");
 
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
 
@@ -48,7 +51,7 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     protected StudentFilePolicy getStudentFilePolicy(Path projectPath) {
-        return new EverythingIsStudentFileStudentFilePolicy();
+        return new Python3StudentFilePolicy(projectPath);
     }
 
     @Override
@@ -58,18 +61,34 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-        return null;
+        String[] command = {"python3", "-m", "tmc", "available_points"};
+        Path testFolder = path.resolve(TEST_FOLDER_PATH);
+        ProcessRunner runner = new ProcessRunner(command, testFolder);
+        try {
+            runner.call();
+            ImmutableList<TestDesc> testDescs = new Python3ExerciseDescParser(testFolder).parse();
+            return Optional.of(new ExerciseDesc(exerciseName, testDescs));
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+        return Optional.absent();
     }
 
     @Override
     public RunResult runTests(Path path) {
-        String[] command = {"python3 -m tmc"};
-        ProcessRunner runner = new ProcessRunner(command, path.resolve(TEST_FOLDER_PATH));
+        String[] command = {"python3", "-m", "tmc"};
+        Path testFolder = path.resolve(TEST_FOLDER_PATH);
+        ProcessRunner runner = new ProcessRunner(command, testFolder);
         try {
             runner.call();
         } catch (Exception e) {
             log.error(e.toString());
             throw new RuntimeException(CANNOT_RUN_TESTS_MESSAGE);
+        }
+        try {
+            return new Python3TestResultParser(testFolder).result();
+        } catch (IOException e) {
+            log.error(e.toString());
         }
         return null;
     }

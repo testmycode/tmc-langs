@@ -37,3 +37,6 @@ buildNumber.properties
 .mvn/timing.properties
 
 *.log
+
+# Python
+__pycache__/

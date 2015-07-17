@@ -135,4 +135,11 @@ public interface LanguagePlugin {
      * @param targetLocation Location where the archive should be extracted to
      */
     void extractProject(Path compressedProject, Path targetLocation) throws IOException;
+
+    /**
+     * Tells if there's a correct exercise.
+     * @param path The path to the exercise directory.
+     * @return True if given path is valid directory for this language plugin
+     */
+    boolean isExerciseTypeCorrect(Path path);
 }

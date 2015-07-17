@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 public class PluginImplLanguagePlugin extends AntPlugin {
 
     @Override
-    protected boolean isExerciseTypeCorrect(Path path) {
+    public boolean isExerciseTypeCorrect(Path path) {
         return new File(path.toString() + File.separatorChar + "build.xml").exists();
     }
 

@@ -46,4 +46,13 @@ public class ProjectTypeHandler {
         return getProjectType(path).getLanguagePlugin();
     }
 
+    public static boolean isExerciseDirectory(Path path) {
+        for (ProjectType projectType : ProjectType.values()) {
+            if (projectType.getLanguagePlugin().isExerciseTypeCorrect(path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

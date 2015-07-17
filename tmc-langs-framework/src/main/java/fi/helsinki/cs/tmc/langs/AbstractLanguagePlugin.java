@@ -45,7 +45,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @param path The path to the exercise directory.
      * @return True if given path is valid directory for this language plugin
      */
-    protected abstract boolean isExerciseTypeCorrect(Path path);
+    public abstract boolean isExerciseTypeCorrect(Path path);
 
     /**
      * Gets a language specific {@link StudentFilePolicy}.

@@ -44,7 +44,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    protected boolean isExerciseTypeCorrect(Path path) {
+    public boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.toAbsolutePath().resolve(POM_FILE));
     }
 

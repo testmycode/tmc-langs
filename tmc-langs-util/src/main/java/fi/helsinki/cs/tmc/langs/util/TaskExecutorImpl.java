@@ -34,6 +34,11 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
+    public boolean isExerciseDirectory(Path path) {
+        return ProjectTypeHandler.isExerciseDirectory(path);
+    }
+
+    @Override
     public void prepareStub(Path path) throws NoLanguagePluginFoundException {
         getLanguagePlugin(path).prepareStub(path);
     }

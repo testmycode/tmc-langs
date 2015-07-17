@@ -128,7 +128,7 @@ public class MakePlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    protected boolean isExerciseTypeCorrect(Path path) {
+    public boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.resolve(MAKEFILE));
     }
 

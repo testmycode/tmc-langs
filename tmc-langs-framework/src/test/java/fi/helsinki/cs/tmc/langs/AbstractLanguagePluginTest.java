@@ -33,7 +33,7 @@ public class AbstractLanguagePluginTest {
         }
 
         @Override
-        protected boolean isExerciseTypeCorrect(Path path) {
+        public boolean isExerciseTypeCorrect(Path path) {
             return path.resolve("build.xml").toFile().exists();
         }
 

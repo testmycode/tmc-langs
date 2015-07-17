@@ -65,7 +65,7 @@ public class AntPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    protected boolean isExerciseTypeCorrect(Path path) {
+    public boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.resolve(BUILD_FILE));
     }
 

@@ -56,4 +56,9 @@ public interface TaskExecutor {
     Optional<ExerciseDesc> scanExercise(Path path, String exerciseName)
             throws NoLanguagePluginFoundException;
 
+    /**
+     * Figures out if this path contains any exercise that TMC-langs can process.
+     */
+    boolean isExerciseDirectory(Path path);
+
 }

@@ -67,7 +67,7 @@ public class AbstractJavaPluginTest {
         }
 
         @Override
-        protected boolean isExerciseTypeCorrect(Path path) {
+        public boolean isExerciseTypeCorrect(Path path) {
             return false;
         }
 
@@ -112,7 +112,7 @@ public class AbstractJavaPluginTest {
         Path path = TestUtils.getPath(getClass(), "trivial");
         AbstractJavaPlugin plugin = new StubLanguagePlugin(path) {
             @Override
-            protected boolean isExerciseTypeCorrect(Path path) {
+            public boolean isExerciseTypeCorrect(Path path) {
                 return true;
             }
 
@@ -164,7 +164,7 @@ public class AbstractJavaPluginTest {
         TestScanner scanner = mock(TestScanner.class);
         AbstractJavaPlugin plugin = new StubLanguagePlugin(
                 Paths.get(""), new StudentFileAwareSubmissionProcessor(), scanner) {
-            protected boolean isExerciseTypeCorrect(Path path) {
+            public boolean isExerciseTypeCorrect(Path path) {
                 return true;
             }
         };

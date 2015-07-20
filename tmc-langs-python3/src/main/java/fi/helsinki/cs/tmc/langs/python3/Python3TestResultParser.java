@@ -44,8 +44,7 @@ public class Python3TestResultParser {
         byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
         ObjectMapper mapper = new ObjectMapper();
 
-        return  (List<Map<String, Object>>) mapper.readValue(json, List.class);
-
+        return (List<Map<String, Object>>) mapper.readValue(json, List.class);
     }
 
     private TestResult createTestResult(Map<String, Object> details){

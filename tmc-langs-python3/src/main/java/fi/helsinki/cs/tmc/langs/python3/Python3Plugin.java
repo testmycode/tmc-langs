@@ -29,6 +29,9 @@ public class Python3Plugin extends AbstractLanguagePlugin {
     private static final Path SETUP_PY_PATH = Paths.get("setup.py");
     private static final Path REQUIREMENTS_TXT_PATH = Paths.get("requirements.txt");
     private static final Path TEST_FOLDER_PATH = Paths.get("test");
+    private static final Path INIT_PY_PATH = Paths.get("test");
+    private static final Path TMC_TEST_LIBRARY_PATH = Paths.get("tmc");
+    private static final Path MAIN_PY_PATH = Paths.get("__main__.py");
 
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
 
@@ -46,7 +49,9 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
-        return Files.exists(path.resolve(SETUP_PY_PATH)) || Files.exists(path.resolve(REQUIREMENTS_TXT_PATH));
+        return Files.exists(path.resolve(SETUP_PY_PATH)) || Files.exists(path.resolve(REQUIREMENTS_TXT_PATH))
+                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(INIT_PY_PATH))
+                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TMC_TEST_LIBRARY_PATH).resolve(MAIN_PY_PATH));
     }
 
     @Override

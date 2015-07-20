@@ -12,7 +12,7 @@ public class Python3StudentFilePolicy extends ConfigurableStudentFilePolicy {
     }
 
     /**
-     * Returns {@code True} for all files in the <tt>projectRoot/src/main</tt> directory and other
+     * Returns {@code True} for all files in the <tt>projectRoot/src/</tt> directory and other
      * files required for building the project.
      *
      * <p>Will NOT return {@code True} for any test files. If test file modification are part

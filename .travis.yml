@@ -3,8 +3,10 @@ cache:
     - $HOME/.m2
 language: java
 before_install:
+  - sudo add-apt-repository --yes ppa:fkrull/deadsnakes
   - sudo apt-get update
-  - sudo apt-get install -y valgrind check python3
+  - sudo apt-get install -y valgrind check python3.4
+  - sudo ln -s $(which python3.4) /usr/bin/python3
 script:
   - mvn clean test -q
 after_success:

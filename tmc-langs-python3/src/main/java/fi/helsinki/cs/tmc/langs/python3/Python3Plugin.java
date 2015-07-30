@@ -6,7 +6,6 @@ import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
-import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
@@ -16,6 +15,8 @@ import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.base.Optional;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,9 +67,8 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-        String[] command = {"python3", "-m", "tmc", "available_points"};
         Path testFolder = path.resolve(TEST_FOLDER_PATH);
-        ProcessRunner runner = new ProcessRunner(command, testFolder);
+        ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), testFolder);
         try {
             runner.call();
             ImmutableList<TestDesc> testDescs = new Python3ExerciseDescParser(testFolder).parse();
@@ -81,9 +81,8 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        String[] command = {"python3", "-m", "tmc"};
         Path testFolder = path.resolve(TEST_FOLDER_PATH);
-        ProcessRunner runner = new ProcessRunner(command, testFolder);
+        ProcessRunner runner = new ProcessRunner(getTestCommand(), testFolder);
         try {
             runner.call();
         } catch (Exception e) {
@@ -101,5 +100,14 @@ public class Python3Plugin extends AbstractLanguagePlugin {
     @Override
     public ValidationResult checkCodeStyle(Path path) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private String[] getAvailablePointsCommand() {
+        return ArrayUtils.add(getTestCommand(), "available_points");
+    }
+
+    private String[] getTestCommand() {
+        String[] command = SystemUtils.IS_OS_WINDOWS ? new String[] {"py", "-3"} : new String[] {"python3"};
+        return ArrayUtils.addAll(command, "-m", "tmc");
     }
 }

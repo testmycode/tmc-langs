@@ -28,8 +28,8 @@ public class ProcessRunnerTest extends TestCase {
 
     @Test
     public void testFailingProcessHasCorrectStatus() throws Exception {
-        ProcessRunner runner = new ProcessRunner(new String[]{"false"}, this.folder);
-        assertTrue(0 != runner.call().statusCode);
+        ProcessRunner runner = new ProcessRunner(new String[]{"java"}, this.folder);
+        assertEquals(1, runner.call().statusCode);
     }
 
     @Test
@@ -41,28 +41,17 @@ public class ProcessRunnerTest extends TestCase {
     @Test
     public void testProcessHasCorrectOutput() throws Exception {
         ProcessRunner runner = new ProcessRunner(
-                new String[]{"echo", "This is a test."},
+                new String[]{"git", "--help"},
                 this.folder
         );
         String output = runner.call().output;
-        assertTrue(output.contains("This is a test."));
+        assertTrue(output.contains("git"));
     }
 
     @Test
     public void testProcessHasCorrectErrorOutput() throws Exception {
-        ProcessRunner runner = new ProcessRunner(new String[]{"java"}, this.folder);
+        ProcessRunner runner = new ProcessRunner(new String[]{"java", "-version"}, this.folder);
         String error = runner.call().errorOutput;
         assertTrue(error.contains("java"));
-    }
-
-    @Test
-    public void testProcessIsExecutedInRightFolder() throws Exception {
-        ProcessRunner runner = new ProcessRunner(
-                new String[]{"mkdir", "special-folder"},
-                this.folder
-        );
-        runner.call();
-        assertTrue(Paths.get(this.folder.toAbsolutePath().toString(), "special-folder")
-                .toFile().isDirectory());
     }
 }

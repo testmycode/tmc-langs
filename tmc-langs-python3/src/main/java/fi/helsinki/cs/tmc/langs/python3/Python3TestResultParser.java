@@ -3,6 +3,7 @@ package fi.helsinki.cs.tmc.langs.python3;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.common.collect.ImmutableList;
@@ -15,15 +16,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Python3TestResultParser {
     private static Path RESULT_FILE = Paths.get(".tmc_test_results.json");
 
     private Path path;
+    private ObjectMapper mapper;
 
     public Python3TestResultParser(Path path) {
         this.path = path;
+        this.mapper = new ObjectMapper();
     }
 
     /**
@@ -31,39 +33,48 @@ public class Python3TestResultParser {
      * @return Test run results.
      */
     public RunResult result() throws IOException {
-        boolean allPassed = true;
-        ArrayList<TestResult> testResults = new ArrayList<>();
+        List<TestResult> testResults = getTestResults();
 
-        for (Map<String, Object> details : getDetails()) {
-            TestResult result = createTestResult(details);
+        RunResult.Status status = RunResult.Status.PASSED;
+        for (TestResult result : testResults) {
             if (!result.passed) {
-                allPassed = false;
+                status = RunResult.Status.TESTS_FAILED;
             }
-            testResults.add(result);
         }
-        RunResult.Status status =
-                allPassed ? RunResult.Status.PASSED : RunResult.Status.TESTS_FAILED;
+
         ImmutableList<TestResult> immutableResults = ImmutableList.copyOf(testResults);
         ImmutableMap<String, byte[]> logs = ImmutableMap.copyOf(new HashMap<String, byte[]>());
         return new RunResult(status, immutableResults, logs);
     }
 
-    private List<Map<String, Object>> getDetails() throws IOException {
+    private List<TestResult> getTestResults() throws IOException {
         byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
-        ObjectMapper mapper = new ObjectMapper();
+        List<TestResult> results = new ArrayList<>();
 
-        return (List<Map<String, Object>>) mapper.readValue(json, List.class);
+        JsonNode tree = mapper.readTree(json);
+        for (JsonNode node : tree) {
+            results.add(toTestResult(node));
+        }
+
+        return results;
     }
 
-    private TestResult createTestResult(Map<String, Object> details) {
-        String status = (String) details.get("status");
-        String message = (String) details.get("message");
-        String name = (String) details.get("name");
-        List<String> points = (List<String>) details.get("points");
-        List<String> backtrace = (List<String>) details.get("backtrace");
-        boolean passed = status.equals("passed");
-        ImmutableList<String> immutableBacktrace = ImmutableList.copyOf(backtrace);
-        ImmutableList<String> immutablePoints = ImmutableList.copyOf(points);
-        return new TestResult(name, passed, immutablePoints, message, immutableBacktrace);
+    private TestResult toTestResult(JsonNode node) {
+        List<String> points = new ArrayList<>();
+        for (JsonNode point : node.get("points")) {
+            points.add(point.asText());
+        }
+
+        List<String> backTrace = new ArrayList<>();
+        for (JsonNode line : node.get("backtrace")) {
+            backTrace.add(line.asText());
+        }
+
+        return new TestResult(
+                node.get("name").asText(),
+                node.get("passed").asBoolean(),
+                ImmutableList.copyOf(points),
+                node.get("message").asText(),
+                ImmutableList.copyOf(backTrace));
     }
 }

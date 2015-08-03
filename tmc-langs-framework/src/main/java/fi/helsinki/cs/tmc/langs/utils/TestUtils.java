@@ -4,6 +4,8 @@ import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 
 import com.google.common.base.Throwables;
 
+import org.junit.Assume;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,5 +140,10 @@ public final class TestUtils {
         pw.close();
 
         return file.toPath();
+    }
+
+    public static void skipTestIfOnWindowsContinuosIntegration() {
+        String message = "This test is not supported on Windows CI.";
+        Assume.assumeTrue(message, System.getenv("APPVEYOR") == null);
     }
 }

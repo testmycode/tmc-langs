@@ -20,6 +20,7 @@ public class MakePluginTest {
     private MakePlugin makePlugin;
 
     public MakePluginTest() {
+        TestUtils.skipTestIfOnWindowsContinuosIntegration();
         makePlugin = new MakePlugin();
     }
 

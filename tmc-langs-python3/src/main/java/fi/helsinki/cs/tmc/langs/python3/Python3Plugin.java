@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.python3;
 
-import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
@@ -14,9 +13,11 @@ import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +51,11 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     protected boolean isExerciseTypeCorrect(Path path) {
-        return Files.exists(path.resolve(SETUP_PY_PATH)) || Files.exists(path.resolve(REQUIREMENTS_TXT_PATH))
+        return Files.exists(path.resolve(SETUP_PY_PATH))
+                || Files.exists(path.resolve(REQUIREMENTS_TXT_PATH))
                 || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(INIT_PY_PATH))
-                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TMC_TEST_LIBRARY_PATH).resolve(MAIN_PY_PATH));
+                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TMC_TEST_LIBRARY_PATH)
+                    .resolve(MAIN_PY_PATH));
     }
 
     @Override
@@ -107,7 +110,8 @@ public class Python3Plugin extends AbstractLanguagePlugin {
     }
 
     private String[] getTestCommand() {
-        String[] command = SystemUtils.IS_OS_WINDOWS ? new String[] {"py", "-3"} : new String[] {"python3"};
+        String[] command =
+                SystemUtils.IS_OS_WINDOWS ? new String[] {"py", "-3"} : new String[] {"python3"};
         return ArrayUtils.addAll(command, "-m", "tmc");
     }
 }

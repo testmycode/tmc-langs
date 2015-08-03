@@ -25,6 +25,10 @@ public class Python3TestResultParser {
         this.path = path;
     }
 
+    /**
+     * Parses the test results from the result file.
+     * @return Test run results.
+     */
     public RunResult result() throws IOException {
         boolean allPassed = true;
         ArrayList<TestResult> testResults = new ArrayList<>();
@@ -36,8 +40,11 @@ public class Python3TestResultParser {
             }
             testResults.add(result);
         }
-        RunResult.Status status = allPassed ? RunResult.Status.PASSED : RunResult.Status.TESTS_FAILED;
-        return new RunResult(status, ImmutableList.copyOf(testResults), ImmutableMap.copyOf(new HashMap<String, byte[]>()));
+        RunResult.Status status =
+                allPassed ? RunResult.Status.PASSED : RunResult.Status.TESTS_FAILED;
+        ImmutableList<TestResult> immutableResults = ImmutableList.copyOf(testResults);
+        ImmutableMap<String, byte[]> logs = ImmutableMap.copyOf(new HashMap<String, byte[]>());
+        return new RunResult(status, immutableResults, logs);
     }
 
     private List<Map<String, Object>> getDetails() throws IOException {
@@ -47,13 +54,15 @@ public class Python3TestResultParser {
         return (List<Map<String, Object>>) mapper.readValue(json, List.class);
     }
 
-    private TestResult createTestResult(Map<String, Object> details){
+    private TestResult createTestResult(Map<String, Object> details) {
         String status = (String) details.get("status");
         String message = (String) details.get("message");
         String name = (String) details.get("name");
         List<String> points = (List<String>) details.get("points");
         List<String> backtrace = (List<String>) details.get("backtrace");
         boolean passed = status.equals("passed");
-        return new TestResult(name, passed, ImmutableList.copyOf(points), message, ImmutableList.copyOf(backtrace));
+        ImmutableList<String> immutableBacktrace = ImmutableList.copyOf(backtrace);
+        ImmutableList<String> immutablePoints = ImmutableList.copyOf(points);
+        return new TestResult(name, passed, immutablePoints, message, immutableBacktrace);
     }
 }

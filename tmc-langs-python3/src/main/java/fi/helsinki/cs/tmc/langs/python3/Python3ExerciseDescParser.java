@@ -1,8 +1,9 @@
 package fi.helsinki.cs.tmc.langs.python3;
 
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,9 @@ public class Python3ExerciseDescParser {
         this.path = path;
     }
 
+    /**
+     * Parses the available points.
+     */
     public ImmutableList<TestDesc> parse() {
         List<TestDesc> res = new ArrayList<>();
         Map<String, List<String>> parse = getResults();

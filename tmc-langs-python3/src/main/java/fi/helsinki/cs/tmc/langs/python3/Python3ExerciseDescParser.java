@@ -3,7 +3,9 @@ package fi.helsinki.cs.tmc.langs.python3;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.common.collect.ImmutableList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,11 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Python3ExerciseDescParser {
+
     private static Path RESULT_FILE = Paths.get(".available_points.json");
 
-    private Path path;
-
     private static Logger log = LoggerFactory.getLogger(Python3Plugin.class);
+
+    private Path path;
 
     public Python3ExerciseDescParser(Path path) {
         this.path = path;

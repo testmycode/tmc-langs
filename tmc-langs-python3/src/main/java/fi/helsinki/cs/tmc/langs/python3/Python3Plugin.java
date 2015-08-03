@@ -89,13 +89,13 @@ public class Python3Plugin extends AbstractLanguagePlugin {
         try {
             runner.call();
         } catch (Exception e) {
-            log.error(e.toString());
-            throw new RuntimeException(CANNOT_RUN_TESTS_MESSAGE);
+            log.error(CANNOT_RUN_TESTS_MESSAGE, e);
+            throw new RuntimeException(CANNOT_RUN_TESTS_MESSAGE, e);
         }
         try {
             return new Python3TestResultParser(testFolder).result();
         } catch (IOException e) {
-            log.error(e.toString());
+            log.error("Failed to parse test results", e);
         }
         return null;
     }

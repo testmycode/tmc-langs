@@ -33,7 +33,6 @@ def points(*points):
     return points_wrapper
 
 
-# TODO: Add support for nested classes.
 def _parse_points(test):
     name = _name_test(test)
     testPoints = point_register['test']

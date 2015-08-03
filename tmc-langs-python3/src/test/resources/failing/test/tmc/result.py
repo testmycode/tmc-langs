@@ -39,6 +39,7 @@ class TMCResult(TextTestResult):
             'name': _name_test(test),
             'status': status,
             'message': message,
+            'passed': status == 'passed',
             'points': points,
             'backtrace': backtrace
         }

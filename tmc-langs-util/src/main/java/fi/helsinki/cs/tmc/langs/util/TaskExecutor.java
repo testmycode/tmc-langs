@@ -59,6 +59,6 @@ public interface TaskExecutor {
     /**
      * Figures out if this path contains any exercise that TMC-langs can process.
      */
-    boolean isExerciseDirectory(Path path);
+    boolean isExerciseRootDirectory(Path path);
 
 }

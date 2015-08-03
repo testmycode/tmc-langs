@@ -8,9 +8,14 @@ import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.base.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.file.Path;
 
 public class TaskExecutorImpl implements TaskExecutor {
+
+    private static Logger log = LoggerFactory.getLogger(TaskExecutorImpl.class);
 
     @Override
     public ValidationResult runCheckCodeStyle(Path path) throws NoLanguagePluginFoundException {
@@ -34,8 +39,13 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public boolean isExerciseDirectory(Path path) {
-        return ProjectTypeHandler.isExerciseDirectory(path);
+    public boolean isExerciseRootDirectory(Path path) {
+        for (ProjectType projectType : ProjectType.values()) {
+            if (projectType.getLanguagePlugin().isExerciseTypeCorrect(path)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -55,6 +65,6 @@ public class TaskExecutorImpl implements TaskExecutor {
      * @return Language Plugin that recognises the exercise.
      */
     private LanguagePlugin getLanguagePlugin(Path path) throws NoLanguagePluginFoundException {
-        return ProjectTypeHandler.getLanguagePlugin(path);
+        return ProjectType.getProjectType(path).getLanguagePlugin();
     }
 }

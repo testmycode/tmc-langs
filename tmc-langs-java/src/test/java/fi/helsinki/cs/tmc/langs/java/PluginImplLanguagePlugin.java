@@ -9,6 +9,7 @@ import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import com.google.common.base.Optional;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -16,7 +17,7 @@ public class PluginImplLanguagePlugin extends AntPlugin {
 
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
-        return new File(path.toString() + File.separatorChar + "build.xml").exists();
+        return Files.exists(path.resolve("build.xml"));
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -34,7 +35,7 @@ public class AbstractLanguagePluginTest {
 
         @Override
         public boolean isExerciseTypeCorrect(Path path) {
-            return path.resolve("build.xml").toFile().exists();
+            return Files.exists(path.resolve("build.xml"));
         }
 
         @Override

@@ -137,7 +137,7 @@ public interface LanguagePlugin {
     void extractProject(Path compressedProject, Path targetLocation) throws IOException;
 
     /**
-     * Tells if there's a correct exercise.
+     * Tells if there's a valid exercise in this path.
      * @param path The path to the exercise directory.
      * @return True if given path is valid directory for this language plugin
      */

@@ -13,7 +13,7 @@ import org.junit.rules.ExpectedException;
 
 import java.nio.file.Path;
 
-public class ProjectTypeHandlerTest {
+public class ProjectTypeTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -22,7 +22,7 @@ public class ProjectTypeHandlerTest {
     public void testProjectTypeOnJavaAntExercise() {
         try {
             Path project = TestUtils.getPath(getClass(), "arith_funcs");
-            ProjectType projectType = ProjectTypeHandler.getProjectType(project);
+            ProjectType projectType = ProjectType.getProjectType(project);
             assertEquals(ProjectType.JAVA_ANT, projectType);
         } catch (NoLanguagePluginFoundException e) {
             fail("Couldn't identify arith_funcs project type, expected JAVA_ANT");
@@ -33,7 +33,7 @@ public class ProjectTypeHandlerTest {
     public void testLanguagePluginOnJavaAntExercise() {
         try {
             Path project = TestUtils.getPath(getClass(), "arith_funcs");
-            ProjectType projectType = ProjectTypeHandler.getProjectType(project);
+            ProjectType projectType = ProjectType.getProjectType(project);
             assertEquals(AntPlugin.class, projectType.getLanguagePlugin().getClass());
         } catch (NoLanguagePluginFoundException e) {
             fail("Couldn't identify arith_funcs exercise language, expected Ant");
@@ -44,6 +44,6 @@ public class ProjectTypeHandlerTest {
     public void testDummyProject() throws NoLanguagePluginFoundException {
         exception.expect(NoLanguagePluginFoundException.class);
         exception.expectMessage("No suitable language plugin found.");
-        ProjectTypeHandler.getLanguagePlugin(TestUtils.getPath(getClass(), "dummy_project"));
+        ProjectType.getProjectType(TestUtils.getPath(getClass(), "dummy_project"));
     }
 }

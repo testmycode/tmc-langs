@@ -6,6 +6,8 @@ import fi.helsinki.cs.tmc.edutestutils.MockStdio;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -39,6 +41,7 @@ public class MainTest {
 
     @Before
     public void setUp() {
+        TestUtils.skipTestIfOnWindowsContinuosIntegration();
         mainClass = new Main();
         Main.setExecutor(executor);
     }

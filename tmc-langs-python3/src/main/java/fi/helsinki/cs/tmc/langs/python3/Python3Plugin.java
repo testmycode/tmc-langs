@@ -31,7 +31,7 @@ public class Python3Plugin extends AbstractLanguagePlugin {
     private static final Path SETUP_PY_PATH = Paths.get("setup.py");
     private static final Path REQUIREMENTS_TXT_PATH = Paths.get("requirements.txt");
     private static final Path TEST_FOLDER_PATH = Paths.get("test");
-    private static final Path INIT_PY_PATH = Paths.get("test");
+    private static final Path INIT_PY_PATH = Paths.get("__init__.py");
     private static final Path TMC_TEST_LIBRARY_PATH = Paths.get("tmc");
     private static final Path MAIN_PY_PATH = Paths.get("__main__.py");
 

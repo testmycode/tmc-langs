@@ -105,7 +105,7 @@ public class Python3Plugin extends AbstractLanguagePlugin {
         }
 
         try {
-            return new Python3TestResultParser(testFolder).result();
+            return new Python3TestResultParser(testFolder).parse();
         } catch (IOException e) {
             log.error(CANNOT_PARSE_TEST_RESULTS_MESSAGE, e);
         }

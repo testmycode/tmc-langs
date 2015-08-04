@@ -17,7 +17,8 @@ public class Python3PluginTest {
 
     private Python3Plugin python3Plugin;
 
-    public Python3PluginTest() {
+    @Before
+    public void setUp() {
         python3Plugin = new Python3Plugin();
     }
 

@@ -11,8 +11,30 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <tmc.basedir>${basedir}/../target</tmc.basedir>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>testmycode.net</id>
+            <url>http://maven.testmycode.net/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
+    <scm>
+        <connection>scm:git:https://github.com/testmycode/tmc-langs.git</connection>
+        <developerConnection>scm:git:git@github.com:testmycode/tmc-langs.git</developerConnection>
+        <url>https://github.com/testmycode/tmc-langs/</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <organization>
+        <name>University of Helsinki, Department of Computer Science</name>
+        <url>http://cs.helsinki.fi/en/</url>
+    </organization>
 
     <artifactId>tmc-langs-abstraction</artifactId>
     <packaging>jar</packaging>
@@ -58,6 +80,33 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Release -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+            </plugin>
         </plugins>
     </build>
+
+    <!-- Deploy to maven.testmycode.net/nexus/ -->
+    <distributionManagement>
+
+        <!-- Release -->
+        <repository>
+            <id>tmc</id>
+            <name>TMC Releases</name>
+            <url>http://maven.testmycode.net/nexus/content/repositories/releases/</url>
+        </repository>
+
+        <!-- Snapshot -->
+        <snapshotRepository>
+            <id>tmc</id>
+            <name>TMC Snapshots</name>
+            <url>http://maven.testmycode.net/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+
+    </distributionManagement>
+
 </project>

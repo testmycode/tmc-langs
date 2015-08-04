@@ -22,6 +22,16 @@
         </repository>
     </repositories>
 
+    <licenses>
+        <license>
+            <name>GNU General Public License, version 2</name>
+            <url>http://gnu.org/licenses/gpl-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+
+
     <build>
         <plugins>
             <plugin>

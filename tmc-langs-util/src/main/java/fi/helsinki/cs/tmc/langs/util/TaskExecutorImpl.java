@@ -4,6 +4,8 @@ import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
 import com.google.common.base.Optional;
@@ -11,6 +13,7 @@ import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 public class TaskExecutorImpl implements TaskExecutor {
@@ -46,6 +49,18 @@ public class TaskExecutorImpl implements TaskExecutor {
             }
         }
         return false;
+    }
+
+    @Override
+    public void extractProject(Path compressedProject, Path targetLocation) throws IOException {
+        try {
+            LanguagePlugin languagePlugin = getLanguagePlugin(targetLocation);
+            languagePlugin.extractProject(compressedProject, targetLocation);
+        } catch (NoLanguagePluginFoundException e) {
+            StudentFileAwareUnzipper unzipper =
+                    new StudentFileAwareUnzipper(new EverythingIsStudentFileStudentFilePolicy());
+            unzipper.unzip(compressedProject, targetLocation);
+        }
     }
 
     @Override

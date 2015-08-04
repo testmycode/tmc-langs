@@ -54,7 +54,7 @@ public class Python3Plugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    protected boolean isExerciseTypeCorrect(Path path) {
+    public boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.resolve(SETUP_PY_PATH))
                 || Files.exists(path.resolve(REQUIREMENTS_TXT_PATH))
                 || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(INIT_PY_PATH))

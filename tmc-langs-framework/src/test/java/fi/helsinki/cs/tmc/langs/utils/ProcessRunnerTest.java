@@ -51,6 +51,6 @@ public class ProcessRunnerTest extends TestCase {
     public void testProcessHasCorrectErrorOutput() throws Exception {
         ProcessRunner runner = new ProcessRunner(new String[]{"java", "-version"}, this.folder);
         String error = runner.call().errorOutput;
-        assertTrue(error.contains("java"));
+        assertTrue(error.contains("version"));
     }
 }

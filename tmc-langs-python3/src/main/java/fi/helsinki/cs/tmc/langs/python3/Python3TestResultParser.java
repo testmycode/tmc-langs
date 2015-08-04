@@ -30,6 +30,7 @@ public class Python3TestResultParser {
 
     /**
      * Parses the test results from the result file.
+     *
      * @return Test run results.
      */
     public RunResult parse() throws IOException {

@@ -7,11 +7,14 @@ import static org.junit.Assert.assertTrue;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Python3PluginTest {
 
@@ -25,6 +28,58 @@ public class Python3PluginTest {
     @Test
     public void testGetLanguageName() {
         assertEquals("python3", python3Plugin.getLanguageName());
+    }
+
+    @Test
+    public void exerciseIsCorrectTypeIfItContainsSetupPy() {
+        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
+        Path project = testCasesRoot.resolve("setup_py");
+
+        assertTrue(python3Plugin.isExerciseTypeCorrect(project));
+    }
+
+    @Test
+    public void exerciseIsCorrectTypeIfItContainsRequirementsTxt() {
+        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
+        Path project = testCasesRoot.resolve("requirements_txt");
+
+        assertTrue(python3Plugin.isExerciseTypeCorrect(project));
+    }
+
+    @Test
+    public void exerciseIsCorrectTypeIfItContainsTestFolderInitPy() {
+        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
+        Path project = testCasesRoot.resolve("test_init_py");
+
+        assertTrue(python3Plugin.isExerciseTypeCorrect(project));
+    }
+
+    @Test
+    public void exerciseIsCorrectTypeIfItContainsTmcLibrary() {
+        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
+        Path project = testCasesRoot.resolve("tmc_lib");
+
+        assertTrue(python3Plugin.isExerciseTypeCorrect(project));
+    }
+
+    @Test
+    public void exerciseIsNotCorrectTypeIfItContainsOnlyPomXml() {
+        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
+        Path project = testCasesRoot.resolve("pom_xml");
+
+        assertFalse(python3Plugin.isExerciseTypeCorrect(project));
+    }
+
+    @Test
+    public void getStudentFilePolicyReturnsPython3StudentFilePolicy() {
+        StudentFilePolicy policy = python3Plugin.getStudentFilePolicy(Paths.get(""));
+
+        assertTrue(policy instanceof Python3StudentFilePolicy);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void checkCodeStyleThrowsUnsupportedOperationException() {
+        python3Plugin.checkCodeStyle(Paths.get(""));
     }
 
     @Test

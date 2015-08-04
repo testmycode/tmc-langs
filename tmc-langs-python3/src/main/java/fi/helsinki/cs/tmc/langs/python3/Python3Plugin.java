@@ -36,6 +36,10 @@ public class Python3Plugin extends AbstractLanguagePlugin {
     private static final Path MAIN_PY_PATH = Paths.get("__main__.py");
 
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
+    private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
+    private static final String CANNOT_SCAN_EXERCISE_MESSAGE = "Failed to scan exercise.";
+    private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE
+            = "Failed to parse exercise description.";
 
     private static Logger log = LoggerFactory.getLogger(Python3Plugin.class);
 
@@ -71,31 +75,39 @@ public class Python3Plugin extends AbstractLanguagePlugin {
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         Path testFolder = path.resolve(TEST_FOLDER_PATH);
+
         ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), testFolder);
         try {
             runner.call();
+        } catch (Exception e) {
+            log.error(CANNOT_SCAN_EXERCISE_MESSAGE, e);
+        }
+
+        try {
             ImmutableList<TestDesc> testDescs = new Python3ExerciseDescParser(testFolder).parse();
             return Optional.of(new ExerciseDesc(exerciseName, testDescs));
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (IOException e) {
+            log.error(CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE, e);
         }
+
         return Optional.absent();
     }
 
     @Override
     public RunResult runTests(Path path) {
         Path testFolder = path.resolve(TEST_FOLDER_PATH);
+
         ProcessRunner runner = new ProcessRunner(getTestCommand(), testFolder);
         try {
             runner.call();
         } catch (Exception e) {
             log.error(CANNOT_RUN_TESTS_MESSAGE, e);
-            throw new RuntimeException(CANNOT_RUN_TESTS_MESSAGE, e);
         }
+
         try {
             return new Python3TestResultParser(testFolder).result();
         } catch (IOException e) {
-            log.error("Failed to parse test results", e);
+            log.error(CANNOT_PARSE_TEST_RESULTS_MESSAGE, e);
         }
         return null;
     }

@@ -5,6 +5,7 @@ import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenPlugin;
 import fi.helsinki.cs.tmc.langs.make.MakePlugin;
+import fi.helsinki.cs.tmc.langs.python3.Python3Plugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,8 @@ public enum ProjectType {
 
     JAVA_ANT(new AntPlugin()),
     JAVA_MAVEN(new MavenPlugin()),
-    MAKEFILE(new MakePlugin());
+    MAKEFILE(new MakePlugin()),
+    PYTHON3(new Python3Plugin());
 
     private final LanguagePlugin languagePlugin;
     private static Logger log = LoggerFactory.getLogger(ProjectType.class);

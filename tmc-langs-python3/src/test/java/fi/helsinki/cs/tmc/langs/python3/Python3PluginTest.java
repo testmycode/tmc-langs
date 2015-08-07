@@ -117,4 +117,13 @@ public class Python3PluginTest {
         assertEquals(1, testDesc.tests.get(0).points.size());
     }
 
+    @Test
+    public void testComplexExercise() {
+        Path path = TestUtils.getPath(getClass(), "complex");
+        RunResult runResult = python3Plugin.runTests(path);
+
+        assertEquals(RunResult.Status.PASSED, runResult.status);
+        assertEquals(38, runResult.testResults.size());
+    }
+
 }

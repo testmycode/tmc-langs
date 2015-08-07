@@ -89,7 +89,7 @@ public class Python3PluginTest {
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
         assertTrue(testResult.passed);
-        assertEquals("test_new.TestCase.test_new", testResult.name);
+        assertEquals("test.test_new.TestCase.test_new", testResult.name);
         assertEquals(2, testResult.points.size());
         assertTrue(testResult.points.contains("1.2"));
         assertEquals("", testResult.errorMessage);

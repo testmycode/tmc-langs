@@ -58,7 +58,7 @@ public class Python3Plugin extends AbstractLanguagePlugin {
         return Files.exists(path.resolve(SETUP_PY_PATH))
                 || Files.exists(path.resolve(REQUIREMENTS_TXT_PATH))
                 || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(INIT_PY_PATH))
-                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TMC_TEST_LIBRARY_PATH)
+                || Files.exists(path.resolve(TMC_TEST_LIBRARY_PATH)
                     .resolve(MAIN_PY_PATH));
     }
 
@@ -74,9 +74,8 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-        Path testFolder = path.resolve(TEST_FOLDER_PATH);
 
-        ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), testFolder);
+        ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), path);
         try {
             runner.call();
         } catch (Exception e) {
@@ -84,7 +83,7 @@ public class Python3Plugin extends AbstractLanguagePlugin {
         }
 
         try {
-            ImmutableList<TestDesc> testDescs = new Python3ExerciseDescParser(testFolder).parse();
+            ImmutableList<TestDesc> testDescs = new Python3ExerciseDescParser(path).parse();
             return Optional.of(new ExerciseDesc(exerciseName, testDescs));
         } catch (IOException e) {
             log.error(CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE, e);
@@ -95,9 +94,8 @@ public class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        Path testFolder = path.resolve(TEST_FOLDER_PATH);
 
-        ProcessRunner runner = new ProcessRunner(getTestCommand(), testFolder);
+        ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
         try {
             runner.call();
         } catch (Exception e) {
@@ -105,7 +103,7 @@ public class Python3Plugin extends AbstractLanguagePlugin {
         }
 
         try {
-            return new Python3TestResultParser(testFolder).parse();
+            return new Python3TestResultParser(path).parse();
         } catch (IOException e) {
             log.error(CANNOT_PARSE_TEST_RESULTS_MESSAGE, e);
         }

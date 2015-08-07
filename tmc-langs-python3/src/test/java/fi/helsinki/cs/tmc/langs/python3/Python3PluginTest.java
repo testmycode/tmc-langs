@@ -113,7 +113,7 @@ public class Python3PluginTest {
         Path path = TestUtils.getPath(getClass(), "failing");
         ExerciseDesc testDesc = python3Plugin.scanExercise(path, "testname").get();
         assertEquals("testname", testDesc.name);
-        assertEquals("test_failing.FailingTest.test_new", testDesc.tests.get(0).name);
+        assertEquals("test.test_failing.FailingTest.test_new", testDesc.tests.get(0).name);
         assertEquals(1, testDesc.tests.get(0).points.size());
     }
 

@@ -72,4 +72,9 @@ public interface TaskExecutor {
      * @param targetLocation Location where the archive should be extracted to
      */
     void extractProject(Path compressedProject, Path targetLocation) throws IOException;
+
+    /**
+     * Compresses a project, creating a zip that can be sent to the TMC server as a submission.
+     */
+    byte[] compressProject(Path path) throws IOException, NoLanguagePluginFoundException;
 }

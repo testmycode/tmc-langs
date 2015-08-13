@@ -73,6 +73,11 @@ public class TaskExecutorImpl implements TaskExecutor {
         getLanguagePlugin(path).prepareSolution(path);
     }
 
+    @Override
+    public byte[] compressProject(Path path) throws NoLanguagePluginFoundException, IOException {
+        return getLanguagePlugin(path).compressProject(path);
+    }
+
     /**
      * Get language plugin for the given path.
      *

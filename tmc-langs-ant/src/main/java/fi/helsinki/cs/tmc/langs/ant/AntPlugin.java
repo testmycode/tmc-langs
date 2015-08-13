@@ -87,10 +87,11 @@ public class AntPlugin extends AbstractLanguagePlugin {
 
             DefaultLogger logger = new DefaultLogger();
             buildLog = new File(path.toString(), "build_log.txt");
-            PrintStream errorPrintStream = new PrintStream(buildLog);
-            logger.setErrorPrintStream(errorPrintStream);
-            logger.setOutputPrintStream(System.out);
-            logger.setMessageOutputLevel(Project.MSG_ERR);
+            PrintStream buildOutput = new PrintStream(buildLog);
+            
+            logger.setErrorPrintStream(buildOutput);
+            logger.setOutputPrintStream(buildOutput);
+            logger.setMessageOutputLevel(Project.MSG_INFO);
             buildProject.addBuildListener(logger);
 
             try {

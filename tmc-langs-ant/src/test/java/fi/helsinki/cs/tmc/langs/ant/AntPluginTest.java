@@ -9,8 +9,11 @@ import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.*;
 
@@ -56,7 +59,8 @@ public class AntPluginTest {
     }
 
     @Test
-    public void testRunTestsReturnsRunResultCorrectly() {
+    public void testRunTestsReturnsRunResultCorrectly() throws IOException {
+        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
         assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
         assertTrue("Logs should be empty", runResult.logs.isEmpty());
@@ -64,7 +68,8 @@ public class AntPluginTest {
     }
 
     @Test
-    public void testRunTestsAwardsCorrectPoints() {
+    public void testRunTestsAwardsCorrectPoints() throws IOException {
+        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
         ImmutableList<TestResult> testResults = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs")).testResults;
         assertEquals(4, testResults.size());
         assertTrue(testResults.get(0).passed);
@@ -72,16 +77,17 @@ public class AntPluginTest {
     }
 
     @Test
-    public void testBuildAntProjectRunsBuildFile() {
+    public void testBuildAntProjectRunsBuildFile() throws IOException {
         Path path = TestUtils.getPath(getClass(), "ant_arith_funcs").toAbsolutePath();
-        antPlugin.buildAntProject(path);
         File buildDir = Paths.get(path.toString() + File.separatorChar + "build").toFile();
+        TestUtils.removeDirRecursively(buildDir.toPath().toAbsolutePath());
+        antPlugin.buildAntProject(path);
         assertNotNull("Build directory should exist after building.", buildDir);
-        buildDir.delete();
     }
 
     @Test
-    public void testRunTestsReturnPassedCorrectly() {
+    public void testRunTestsReturnPassedCorrectly() throws IOException {
+        TestUtils.removeDirRecursively(getClass(), "trivial/build");
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "trivial"));
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
@@ -102,5 +108,22 @@ public class AntPluginTest {
         assertEquals(expectedErrorMessage, testResult.errorMessage);
         assertEquals(expectedName, testResult.name);
         assertEquals(expectedPassed, testResult.passed);
+    }
+
+    @Test
+    public void testAntCompileGivesOutputLogging() throws IOException {
+        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
+        File expected = new File("src/test/resources/arith_funcs_build.log");
+        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
+        File actual = new File("target/test-classes/ant_arith_funcs/build_log.txt");
+        assertFileLines(expected, actual);
+
+    }
+
+    private void assertFileLines(File expected, File actual) throws IOException {
+
+        List<String> expectedLines = FileUtils.readLines(expected);
+        List<String> actualLines = FileUtils.readLines(actual);
+        assertEquals("Build log should match by length", expectedLines.size(), actualLines.size());
     }
 }

@@ -115,7 +115,7 @@ public interface LanguagePlugin {
      * @return Validation result of the checkstyle ran, or null if not
      *     applicable
      */
-    ValidationResult checkCodeStyle(Path path);
+    ValidationResult checkCodeStyle(Path path) throws UnsupportedOperationException;
 
     /**
      * Compress a given project so that it can be sent to the TestMyCode server.

@@ -91,6 +91,9 @@ public class StudentFileAwareZipperTest {
         ZipFile actual = new ZipFile(actualPath.toFile());
 
         assertZipsEqualDecompressed(expected, actual);
+
+        expected.close();
+        actual.close();
     }
 
     @Test
@@ -109,6 +112,9 @@ public class StudentFileAwareZipperTest {
         ZipFile actual = new ZipFile(actualPath.toFile());
 
         assertZipsEqualDecompressed(expected, actual);
+
+        expected.close();
+        actual.close();
     }
 
     private void assertZipsEqualDecompressed(ZipFile expected, ZipFile actual) throws IOException {

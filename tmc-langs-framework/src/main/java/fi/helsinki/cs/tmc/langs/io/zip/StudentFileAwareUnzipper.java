@@ -67,6 +67,7 @@ public class StudentFileAwareUnzipper implements Unzipper{
             log.debug("Done with file {}", entryTargetPath);
         }
 
+        zipFile.close();
         log.debug("Done unzipping");
     }
 

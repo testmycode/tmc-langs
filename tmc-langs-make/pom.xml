@@ -31,7 +31,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.10</version>
+                <version>2.18.1</version>
                 <configuration>
                     <excludes>
                         <exclude>**/make-project/**/*</exclude>
@@ -42,7 +42,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.6</version>
                 <configuration>
                     <outputDirectory>${tmc.basedir}</outputDirectory>
                     <archive>

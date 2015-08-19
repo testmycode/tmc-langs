@@ -8,8 +8,8 @@
         <groupId>fi.helsinki.cs.tmc</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>    
-    
+    <modelVersion>4.0.0</modelVersion>
+
     <properties>
         <tmc.basedir>${basedir}/../target</tmc.basedir>
     </properties>
@@ -58,18 +58,7 @@
             <artifactId>system-rules</artifactId>
             <version>1.8.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
+
     </dependencies>
     <build>
         <plugins>

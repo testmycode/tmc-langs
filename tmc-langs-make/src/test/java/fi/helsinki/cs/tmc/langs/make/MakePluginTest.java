@@ -36,7 +36,7 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testmakeProjectWithFailingTestsCompilesAndFailsTests() {
+    public void testMakeProjectWithFailingTestsCompilesAndFailsTests() {
         Path path = TestUtils.getPath(getClass(), "failing");
         RunResult result = makePlugin.runTests(path);
 
@@ -62,7 +62,7 @@ public class MakePluginTest {
     }
 
     @Test
-    public void testmakeProjectWithPassingTestsCompilesAndPassesTests() {
+    public void testMakeProjectWithPassingTestsCompilesAndPassesTests() {
         Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);
 
@@ -214,5 +214,21 @@ public class MakePluginTest {
         StudentFilePolicy studentFilePolicy = makePlugin.getStudentFilePolicy(path);
 
         assertTrue(studentFilePolicy.getClass().equals(new MakeStudentFilePolicy(path).getClass()));
+    }
+
+    @Test
+    public void testBackwardCompatibilityWithPassingMakeProject() {
+        Path path = TestUtils.getPath(getClass(), "passing-old");
+        RunResult result = makePlugin.runTests(path);
+        assertEquals(1, result.testResults.size());
+        assertEquals(true, result.testResults.get(0).passed);
+    }
+
+    @Test
+    public void testBackwardCompatibilityWithFailingMakeProject() {
+        Path path = TestUtils.getPath(getClass(), "failing-old");
+        RunResult result = makePlugin.runTests(path);
+        assertEquals(1, result.testResults.size());
+        assertEquals(false, result.testResults.get(0).passed);
     }
 }

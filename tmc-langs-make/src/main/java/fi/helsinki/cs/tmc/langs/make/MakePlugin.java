@@ -173,7 +173,8 @@ public class MakePlugin extends AbstractLanguagePlugin {
         Path valgrindOutput = withValgrind ? baseTestPath.resolve(VALGRIND_LOG) : null;
         Configuration configuration = new Configuration(path);
 
-        return new CTestResultParser(path, testResults, valgrindOutput, configuration).result();
+        return new CTestResultParser(path, testResults, valgrindOutput, configuration, withValgrind)
+                .result();
     }
 
     private void runTests(Path dir, boolean withValgrind) throws Exception {
@@ -184,7 +185,11 @@ public class MakePlugin extends AbstractLanguagePlugin {
                 new Object[]{Arrays.deepToString(command)});
 
         ProcessRunner runner = new ProcessRunner(command, dir);
-        runner.call();
+        ProcessResult result = runner.call();
+        if (result.statusCode != 0) {
+            log.warn(result.errorOutput);
+            throw new IllegalArgumentException(result.errorOutput);
+        }
     }
 
     @Override

@@ -64,13 +64,16 @@ public class CTestResultParser {
     public CTestResultParser(Path projectDir,
                              Path testResults,
                              Path valgrindOutput,
-                             Configuration configuration) {
+                             Configuration configuration,
+                             boolean valgrindWasRun) {
         this.projectDir = projectDir;
         this.testResults = testResults;
         // These last three lines need to be in this exact order.
         this.failOnValgrindError = valgrindStrategy(configuration);
         this.tests = parseTestCases(testResults);
-        new ValgrindParser(valgrindOutput).addOutputs(tests);
+        if (valgrindWasRun && failOnValgrindError) {
+            new ValgrindParser(valgrindOutput).addOutputs(tests);
+        }
     }
 
     private boolean valgrindStrategy(Configuration configuration) {

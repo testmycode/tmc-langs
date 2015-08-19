@@ -42,7 +42,7 @@ public class CTestResultParserTest {
         CTestResultParser cpar = null;
         Path tmp = mkTempFile("test_output", ".xml");
         try {
-            cpar = new CTestResultParser(null, tmp, null, new Configuration());
+            cpar = new CTestResultParser(null, tmp, null, new Configuration(), true);
         } finally {
             Files.delete(tmp);
         }
@@ -60,7 +60,9 @@ public class CTestResultParserTest {
                     tmpFolder(),
                     tmp,
                     emptyValgrindOutput(),
-                    new Configuration());
+                    new Configuration(),
+                    true
+            );
             Files.delete(tmp);
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
@@ -79,7 +81,7 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
             Path tmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmpFolder(), tmp, null, new Configuration());
+            cpar = new CTestResultParser(tmpFolder(), tmp, null, new Configuration(), true);
             Files.delete(tmp);
 
         } catch (Exception e) {
@@ -103,7 +105,8 @@ public class CTestResultParserTest {
                     tmpFolder(),
                     tmp,
                     emptyValgrindOutput(),
-                    new Configuration());
+                    new Configuration(),
+                    true);
             tmp.toFile().delete();
 
         } catch (Exception e) {
@@ -122,7 +125,7 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
             Path ttmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmpFolder(), ttmp, null, new Configuration());
+            cpar = new CTestResultParser(tmpFolder(), ttmp, null, new Configuration(), true);
             ttmp.toFile().delete();
             Path vtmp = constructNotMemoryFailingValgrindOutput(testCases);
             vtmp.toFile().delete();
@@ -146,7 +149,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructMemoryFailingValgrindOutput();
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration());
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(), true);
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (IOException e) {
@@ -169,7 +172,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructNotMemoryFailingValgrindOutput(oneOfEachTest);
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration());
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(), true);
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (Exception e) {
@@ -190,7 +193,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructMemoryFailingValgrindOutput();
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration());
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(), true);
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (IOException e) {
@@ -213,7 +216,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructMemoryFailingValgrindOutput();
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, configuration);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, configuration, true);
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (IOException e) {

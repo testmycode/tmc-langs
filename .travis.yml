@@ -1,12 +1,18 @@
 language: java
+sudo: false
 cache:
   directories:
     - $HOME/.m2
+addons:
+  apt:
+    sources:
+      - deadsnakes
+    packages:
+      - valgrind
+      - check
+      - python3.4
 before_install:
-  - sudo add-apt-repository --yes ppa:fkrull/deadsnakes
-  - sudo apt-get update
-  - sudo apt-get install -y valgrind check python3.4
-  - sudo ln -s $(which python3.4) /usr/bin/python3
+  - mkdir $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"
 script:
   - mvn clean test -q
 after_success:

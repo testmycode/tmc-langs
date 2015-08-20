@@ -1,7 +1,7 @@
+language: java
 cache:
   directories:
     - $HOME/.m2
-language: java
 before_install:
   - sudo add-apt-repository --yes ppa:fkrull/deadsnakes
   - sudo apt-get update
@@ -11,3 +11,6 @@ script:
   - mvn clean test -q
 after_success:
   - mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
+jdk:
+  - oraclejdk8
+  - oraclejdk7

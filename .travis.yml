@@ -17,6 +17,12 @@ script:
   - mvn clean test -q
 after_success:
   - mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
+os:
+  - linux
+  - osx
 jdk:
   - oraclejdk8
   - oraclejdk7
+matrix:
+  allow_failures:
+    - os: osx

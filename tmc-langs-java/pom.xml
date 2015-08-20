@@ -121,7 +121,8 @@
                 <version>2.18.1</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/ant_arith_funcs/**/*</exclude>
+                        <exclude>src/test/resources/**/*</exclude>
+                        <!--exclude>**/ant_arith_funcs/**/*</exclude>
                         <exclude>**/ant_project/**/*</exclude>
                         <exclude>**/dummy_project/**/*</exclude>
                         <exclude>**/failing_maven_exercise/**/*</exclude>
@@ -133,6 +134,7 @@
                         <exclude>**/trivial/**/*</exclude>
                         <exclude>**/reflection_utils_ant_test_case/**/*</exclude>
                         <exclude>**/reflection_utils_maven_test_case/**/*</exclude>
+                        <exclude>**/failing_maven_exercise_with_class_points/**/*</exclude-->
                     </excludes>
                 </configuration>
             </plugin>

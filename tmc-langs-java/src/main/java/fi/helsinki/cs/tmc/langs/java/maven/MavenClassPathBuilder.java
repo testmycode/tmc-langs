@@ -38,6 +38,7 @@ public class MavenClassPathBuilder {
 
         String outputParameter = OUTPUT_FILE_PARAM_PREFIX + outputFile.getAbsolutePath();
 
+        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, projectPath.toAbsolutePath().toString());
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();

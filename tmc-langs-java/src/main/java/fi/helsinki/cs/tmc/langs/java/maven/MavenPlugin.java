@@ -71,6 +71,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Building maven project at {}", path);
 
+        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -96,6 +97,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Running tests for maven project at {}", path);
 
+        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();

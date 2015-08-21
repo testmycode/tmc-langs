@@ -49,6 +49,7 @@ public class ProcessRunner implements Callable<ProcessResult> {
             return new ProcessResult(statusCode, stdoutWriter.toString(), stderrWriter.toString());
         } finally {
             if (process != null) {
+                process.getOutputStream().close();
                 process.destroy();
             }
         }
@@ -74,6 +75,10 @@ public class ProcessRunner implements Callable<ProcessResult> {
         public void run() {
             try {
                 IOUtils.copy(inputStream, stringWriter, "UTF-8");
+            } catch (IOException e) {
+                log.error(e.toString());
+            }
+            try {
                 inputStream.close();
             } catch (IOException e) {
                 log.error(e.toString());

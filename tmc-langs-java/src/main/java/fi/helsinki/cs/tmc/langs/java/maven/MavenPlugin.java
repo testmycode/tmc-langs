@@ -73,7 +73,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
 
         String multimoduleProjectDirectory = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
         System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
-        
+
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -84,7 +84,10 @@ public class MavenPlugin extends AbstractJavaPlugin {
                 new PrintStream(outBuf),
                 new PrintStream(errBuf));
 
-        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
+        if (multimoduleProjectDirectory != null) {
+            System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
+        }
+
         if (compileResult == 0) {
             log.info("Built maven project at {}", path);
         } else {
@@ -101,7 +104,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
 
         String multimoduleProjectDirectory = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
         System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
-        
+
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -112,7 +115,10 @@ public class MavenPlugin extends AbstractJavaPlugin {
                 new PrintStream(outBuf),
                 new PrintStream(errBuf));
 
-        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
+        if (multimoduleProjectDirectory != null) {
+            System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
+        }
+
         if (compileResult != 0) {
             log.error("Could not run tests for maven project at {}", path);
             throw new TestRunnerException();

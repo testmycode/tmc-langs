@@ -17,12 +17,13 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
- * Creates a complete ClassPath for a Maven project by calling the dependency:build-classpath goal.
+ * Creates a complete ClassPath for a Maven project by calling the
+ * dependency:build-classpath goal.
  */
 public class MavenClassPathBuilder {
 
-    private static final String CLASS_PATH_GOAL =
-            "org.apache.maven.plugins:maven-dependency-plugin:2.10:build-classpath";
+    private static final String CLASS_PATH_GOAL
+            = "org.apache.maven.plugins:maven-dependency-plugin:2.10:build-classpath";
     private static final String OUTPUT_FILE_PARAM_PREFIX = "-Dmdep.outputFile=";
 
     private static Logger log = LoggerFactory.getLogger(MavenClassPathBuilder.class);
@@ -40,18 +41,21 @@ public class MavenClassPathBuilder {
 
         String multimoduleProjectDirectory = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
         System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, projectPath.toAbsolutePath().toString());
-        
+
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
         int compileResult = maven.doMain(new String[]{CLASS_PATH_GOAL, outputParameter, "-e"},
-                                         projectPath.toAbsolutePath().toString(),
-                                         new PrintStream(outBuf),
-                                         new PrintStream(errBuf));
+                projectPath.toAbsolutePath().toString(),
+                new PrintStream(outBuf),
+                new PrintStream(errBuf));
 
-        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
+        if (multimoduleProjectDirectory != null) {
+            System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
+        }
+
         Scanner scanner = new Scanner(outputFile);
 
         String classPathString;

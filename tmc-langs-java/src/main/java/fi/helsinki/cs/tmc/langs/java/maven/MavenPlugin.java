@@ -23,8 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour for Java projects
- * that use Apache Maven.
+ * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
+ * for Java projects that use Apache Maven.
  */
 public class MavenPlugin extends AbstractJavaPlugin {
 
@@ -71,7 +71,9 @@ public class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Building maven project at {}", path);
 
+        String multimoduleProjectDirectory = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
         System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
+        
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -82,12 +84,12 @@ public class MavenPlugin extends AbstractJavaPlugin {
                 new PrintStream(outBuf),
                 new PrintStream(errBuf));
 
+        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
         if (compileResult == 0) {
             log.info("Built maven project at {}", path);
         } else {
             log.info("Failed to build maven project at {}", path);
         }
-
 
         return new CompileResult(compileResult, outBuf.toByteArray(), errBuf.toByteArray());
     }
@@ -97,7 +99,9 @@ public class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Running tests for maven project at {}", path);
 
+        String multimoduleProjectDirectory = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
         System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
+        
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -108,6 +112,7 @@ public class MavenPlugin extends AbstractJavaPlugin {
                 new PrintStream(outBuf),
                 new PrintStream(errBuf));
 
+        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
         if (compileResult != 0) {
             log.error("Could not run tests for maven project at {}", path);
             throw new TestRunnerException();

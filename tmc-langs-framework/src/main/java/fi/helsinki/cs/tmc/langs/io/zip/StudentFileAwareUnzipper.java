@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 
-public class StudentFileAwareUnzipper implements Unzipper{
+public class StudentFileAwareUnzipper implements Unzipper {
 
     private Logger log = LoggerFactory.getLogger(StudentFileAwareUnzipper.class);
     private StudentFilePolicy filePolicy;

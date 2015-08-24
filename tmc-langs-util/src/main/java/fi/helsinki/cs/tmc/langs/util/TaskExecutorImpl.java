@@ -5,6 +5,7 @@ import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.NothingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
 
@@ -61,6 +62,14 @@ public class TaskExecutorImpl implements TaskExecutor {
                     new StudentFileAwareUnzipper(new EverythingIsStudentFileStudentFilePolicy());
             unzipper.unzip(compressedProject, targetLocation);
         }
+    }
+
+    @Override
+    public void extractProject(Path compressedProject, Path targetLocation,
+                               boolean overwriteEverything) throws IOException {
+        StudentFileAwareUnzipper unzipper =
+                new StudentFileAwareUnzipper(new NothingIsStudentFileStudentFilePolicy());
+        unzipper.unzip(compressedProject, targetLocation);
     }
 
     @Override

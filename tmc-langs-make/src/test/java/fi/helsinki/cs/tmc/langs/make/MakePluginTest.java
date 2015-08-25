@@ -13,6 +13,8 @@ import com.google.common.base.Optional;
 
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class MakePluginTest {
@@ -230,5 +232,17 @@ public class MakePluginTest {
         RunResult result = makePlugin.runTests(path);
         assertEquals(1, result.testResults.size());
         assertEquals(false, result.testResults.get(0).passed);
+    }
+
+    @Test
+    public void isExerciseCorrectTypeDoesIsNotFooledByDirectoryNamedMakefile() throws IOException {
+        Path parent = Files.createTempDirectory("tmc-make-test");
+        Path make = parent.resolve("Makefile");
+        Files.createDirectory(make);
+
+        assertFalse(makePlugin.isExerciseTypeCorrect(parent));
+
+        Files.delete(make);
+        Files.delete(parent);
     }
 }

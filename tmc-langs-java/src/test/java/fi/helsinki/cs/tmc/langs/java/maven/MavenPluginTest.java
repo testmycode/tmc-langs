@@ -40,7 +40,7 @@ public class MavenPluginTest {
         assertEquals("Should be one erroneous file", 1, res.size());
         for (File file : res.keySet()) {
             List<ValidationError> errors = res.get(file);
-            assertEquals("Should return the right amount of errors", 25, errors.size());
+            assertEquals("Should return the right amount of errors", 24, errors.size());
         }
     }
 

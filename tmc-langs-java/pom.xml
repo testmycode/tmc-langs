@@ -46,6 +46,13 @@
         </profile>
     </profiles>
 
+    <repositories>
+        <repository>
+            <id>testmycode.net</id>
+            <url>http://maven.testmycode.net/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>

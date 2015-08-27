@@ -50,7 +50,7 @@ public class AntPlugin extends AbstractJavaPlugin {
     private static final int STATUS_CODE_SUCCESS = 0;
     private static final int STATUS_CODE_ERROR = 1;
 
-    private Logger log = LoggerFactory.getLogger(AntPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(AntPlugin.class);
 
     /**
      * Create a new AntPlugin.

@@ -1,6 +1,6 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-public class CompileResult {
+public final class CompileResult {
 
     private int statusCode;
     private byte[] stdout;

@@ -41,7 +41,7 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
      * return {@code True} for any files in the <tt>src</tt> directory.
      */
     public abstract boolean isStudentSourceFile(Path path);
-    
+
     @Override
     public boolean isStudentFile(Path path, Path projectRootPath) {
         if (!Files.exists(path)) {
@@ -57,7 +57,7 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
         }
 
         this.rootPath = projectRootPath;
-        
+
         return isExtraStudentFile(path) || isStudentSourceFile(path);
     }
 

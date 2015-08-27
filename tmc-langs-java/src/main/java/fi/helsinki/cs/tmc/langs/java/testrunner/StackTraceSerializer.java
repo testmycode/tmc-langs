@@ -11,7 +11,7 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
-public class StackTraceSerializer implements InstanceCreator<StackTraceElement>,
+public final class StackTraceSerializer implements InstanceCreator<StackTraceElement>,
         JsonSerializer<StackTraceElement>,
         JsonDeserializer<StackTraceElement> {
 

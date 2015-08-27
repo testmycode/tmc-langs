@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Builds the argument list needed to run TMC TestRunner.
  */
-public class TestRunnerArgumentBuilder {
+public final class TestRunnerArgumentBuilder {
 
     private static final String JAVA_RUNTIME = "java";
     private static final String TEST_DIRECTORY_PARAM_PREFIX = "-Dtmc.test_class_dir=";

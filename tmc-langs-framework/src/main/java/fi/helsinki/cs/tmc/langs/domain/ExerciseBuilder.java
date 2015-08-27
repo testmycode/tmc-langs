@@ -13,14 +13,14 @@ import java.util.List;
 
 public class ExerciseBuilder {
 
-    private final String beginSolution = "// BEGIN SOLUTION";
-    private final String endSolution = "// END SOLUTION";
-    private final String stubMarker = "// STUB:";
-    private final String solutionFile = "// SOLUTION FILE";
-    private final String sourceFolderName = "src";
-    private final Charset charset = StandardCharsets.UTF_8;
+    private final static String BEGIN_SOLUTION_TAG = "// BEGIN SOLUTION";
+    private final static String END_SOLUTION_TAG = "// END SOLUTION";
+    private final static String STUB_TAG = "// STUB:";
+    private final static String SOLUTION_FILE_TAG = "// SOLUTION FILE";
+    private final static String SOURCE_FOLDER_NAME = "src";
+    private final static Charset CHARSET = StandardCharsets.UTF_8;
 
-    private Logger log = LoggerFactory.getLogger(ExerciseBuilder.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExerciseBuilder.class);
 
     /**
      * Prepares a stub exercise from the original.
@@ -28,7 +28,7 @@ public class ExerciseBuilder {
      * <p>Implements LanguagePlugin.prepareStub
      */
     public void prepareStub(Path path) {
-        Path projectRoot = path.resolve(sourceFolderName);
+        Path projectRoot = path.resolve(SOURCE_FOLDER_NAME);
         List<Path> projectFiles = getFileList(projectRoot);
 
         for (Path projectFile : projectFiles) {
@@ -38,29 +38,29 @@ public class ExerciseBuilder {
 
     private void prepareStubFile(Path file) {
         try {
-            List<String> lines = Files.readAllLines(file, charset);
+            List<String> lines = Files.readAllLines(file, CHARSET);
             List<String> filteredLines = new ArrayList<>();
             boolean skipLine = false;
             for (String line : lines) {
-                if (line.contains(solutionFile)) {
+                if (line.contains(SOLUTION_FILE_TAG)) {
                     Files.deleteIfExists(file);
                     return;
                 }
-                if (line.contains(beginSolution)) {
+                if (line.contains(BEGIN_SOLUTION_TAG)) {
                     skipLine = true;
-                } else if (skipLine && line.contains(endSolution)) {
+                } else if (skipLine && line.contains(END_SOLUTION_TAG)) {
                     skipLine = false;
-                } else if (line.contains(stubMarker)) {
-                    String start = line.substring(0, line.indexOf(stubMarker) - 1);
-                    String end = line.substring(line.indexOf(stubMarker) + stubMarker.length());
+                } else if (line.contains(STUB_TAG)) {
+                    String start = line.substring(0, line.indexOf(STUB_TAG) - 1);
+                    String end = line.substring(line.indexOf(STUB_TAG) + STUB_TAG.length());
                     filteredLines.add(start + end);
                 } else if (!skipLine) {
                     filteredLines.add(line);
                 }
             }
-            Files.write(file, filteredLines, charset);
+            Files.write(file, filteredLines, CHARSET);
         } catch (IOException ex) {
-            log.error("Unexpected IOException, preparation of file {} was interrupted",
+            logger.error("Unexpected IOException, preparation of file {} was interrupted",
                     file.toAbsolutePath().toString(),
                     ex);
         }
@@ -80,7 +80,7 @@ public class ExerciseBuilder {
                 result.add(file);
             }
         } catch (IOException e) {
-            log.error("Unexpected IOException, getting file list of {} was interrupted",
+            logger.error("Unexpected IOException, getting file list of {} was interrupted",
                     folder.toAbsolutePath().toString(),
                     e);
         }
@@ -93,7 +93,7 @@ public class ExerciseBuilder {
      * <p>Implements LanguagePlugin.prepareSolution
      */
     public void prepareSolution(Path path) {
-        Path projectRoot = path.resolve(sourceFolderName);
+        Path projectRoot = path.resolve(SOURCE_FOLDER_NAME);
         List<Path> projectFiles = getFileList(projectRoot);
 
         for (Path projectFile : projectFiles) {
@@ -103,23 +103,22 @@ public class ExerciseBuilder {
 
     private void prepareSolutionFile(Path file) {
         try {
-            List<String> lines = Files.readAllLines(file, charset);
+            List<String> lines = Files.readAllLines(file, CHARSET);
             List<String> filteredLines = new ArrayList<>();
             for (String line : lines) {
-                if (line.contains(beginSolution)
-                        || line.contains(endSolution)
-                        || line.contains(stubMarker)
-                        || line.contains(solutionFile)) {
+                if (line.contains(BEGIN_SOLUTION_TAG)
+                        || line.contains(END_SOLUTION_TAG)
+                        || line.contains(STUB_TAG)
+                        || line.contains(SOLUTION_FILE_TAG)) {
                     continue;
                 }
                 filteredLines.add(line);
             }
-            Files.write(file, filteredLines, charset);
+            Files.write(file, filteredLines, CHARSET);
         } catch (IOException ex) {
-            log.error("Unexpected IOException, preparation of file {} was interrupted",
+            logger.error("Unexpected IOException, preparation of file {} was interrupted",
                     file.toAbsolutePath().toString(),
                     ex);
         }
     }
-
 }

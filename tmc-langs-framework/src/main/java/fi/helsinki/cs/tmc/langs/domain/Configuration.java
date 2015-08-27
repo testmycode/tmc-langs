@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Configuration {
+public final class Configuration {
 
     private Map<String, ValueObject> options;
 

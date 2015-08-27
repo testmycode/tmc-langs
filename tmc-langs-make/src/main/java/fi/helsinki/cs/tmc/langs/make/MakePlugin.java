@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class MakePlugin extends AbstractLanguagePlugin {
+public final class MakePlugin extends AbstractLanguagePlugin {
 
     private static final Path TEST_DIR = Paths.get("test");
     private static final Path AVAILABLE_POINTS = Paths.get("tmc_available_points.txt");

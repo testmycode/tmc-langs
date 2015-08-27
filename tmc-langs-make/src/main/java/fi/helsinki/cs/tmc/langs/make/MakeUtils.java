@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 
-public class MakeUtils {
+public final class MakeUtils {
 
     private static final String FILE_NOT_FOUND_ERROR_MESSAGE = "Couldn't initialize file scanner.";
 
@@ -80,7 +80,7 @@ public class MakeUtils {
         }
 
         String[] points = value.split(" ");
-        
+
         for (String point : points) {
             idsToPoints.get(key).add(point);
         }

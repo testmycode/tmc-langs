@@ -5,7 +5,7 @@ import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class AntStudentFilePolicy extends ConfigurableStudentFilePolicy {
+public final class AntStudentFilePolicy extends ConfigurableStudentFilePolicy {
 
     public AntStudentFilePolicy(Path configFileParent) {
         super(configFileParent);

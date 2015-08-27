@@ -16,12 +16,12 @@ import java.util.concurrent.Callable;
  * <p>
  * TODO: make cancellable
  */
-public class ProcessRunner implements Callable<ProcessResult> {
+public final class ProcessRunner implements Callable<ProcessResult> {
+
+    private static final Logger log = LoggerFactory.getLogger(ProcessRunner.class);
 
     private final String[] command;
     private final Path workDir;
-
-    private static final Logger log = LoggerFactory.getLogger(ProcessRunner.class);
 
     public ProcessRunner(String[] command, Path workDir) {
         this.command = command;
@@ -57,7 +57,7 @@ public class ProcessRunner implements Callable<ProcessResult> {
 
     private Thread startReadingThread(InputStream inputStream, StringWriter stringWriter) {
         Thread thread = new Thread(new ProcessOutputReader(inputStream, stringWriter));
-        thread.run();
+        thread.start();
         return thread;
     }
 

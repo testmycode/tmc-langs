@@ -26,7 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Python3Plugin extends AbstractLanguagePlugin {
+public final class Python3Plugin extends AbstractLanguagePlugin {
 
     private static final Path SETUP_PY_PATH = Paths.get("setup.py");
     private static final Path REQUIREMENTS_TXT_PATH = Paths.get("requirements.txt");

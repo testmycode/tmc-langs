@@ -17,11 +17,11 @@ import java.util.List;
 /**
  * Helper class for generating ClassPath.
  */
-public class ClassPath {
+public final class ClassPath {
+
+    private static final Logger log = LoggerFactory.getLogger(ClassPath.class);
 
     private final List<Path> subPaths = new ArrayList<>();
-
-    private Logger log = LoggerFactory.getLogger(ClassPath.class);
 
     /**
      * Create a ClassPath where each provided Path is a component.

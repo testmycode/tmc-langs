@@ -20,13 +20,13 @@ import java.util.Scanner;
  * Creates a complete ClassPath for a Maven project by calling the
  * dependency:build-classpath goal.
  */
-public class MavenClassPathBuilder {
+public final class MavenClassPathBuilder {
 
     private static final String CLASS_PATH_GOAL
             = "org.apache.maven.plugins:maven-dependency-plugin:2.10:build-classpath";
     private static final String OUTPUT_FILE_PARAM_PREFIX = "-Dmdep.outputFile=";
 
-    private static Logger log = LoggerFactory.getLogger(MavenClassPathBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(MavenClassPathBuilder.class);
 
     /**
      * Create a complete ClassPath for the given Maven project.

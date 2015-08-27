@@ -5,7 +5,7 @@ import java.nio.file.Path;
 /**
  * A {@link StudentFilePolicy} that defines all files as student files.
  */
-public class EverythingIsStudentFileStudentFilePolicy implements StudentFilePolicy {
+public final class EverythingIsStudentFileStudentFilePolicy implements StudentFilePolicy {
 
     @Override
     public boolean isStudentFile(Path path, Path projectRootPath) {

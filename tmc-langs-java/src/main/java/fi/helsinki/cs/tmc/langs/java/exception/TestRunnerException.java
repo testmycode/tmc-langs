@@ -3,7 +3,7 @@ package fi.helsinki.cs.tmc.langs.java.exception;
 /**
  * Thrown when a exception occurs when running the TestRunner.
  */
-public class TestRunnerException extends Exception {
+public final class TestRunnerException extends Exception {
 
     /**
      * Create a new TestRunnerException.

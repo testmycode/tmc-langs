@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Python3TestResultParser {
+public final class Python3TestResultParser {
     private static Path RESULT_FILE = Paths.get(".tmc_test_results.json");
 
     private Path path;

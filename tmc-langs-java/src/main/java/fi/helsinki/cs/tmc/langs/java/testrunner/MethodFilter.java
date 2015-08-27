@@ -3,7 +3,7 @@ package fi.helsinki.cs.tmc.langs.java.testrunner;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 
-public class MethodFilter extends Filter {
+public final class MethodFilter extends Filter {
 
     private final String methodName;
 

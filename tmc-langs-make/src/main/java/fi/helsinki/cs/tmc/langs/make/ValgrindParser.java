@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ValgrindParser {
+public final class ValgrindParser {
 
     private static final String VALGRIND_PID_WARNING
             = "Valgrind output has more PIDs than the expected (# of test cases + 1).";

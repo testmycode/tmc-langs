@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CTestCase {
+public final class CTestCase {
 
     private static final String VALGRIND_FAIL_MESSAGE =
               " - Failed due to errors in valgrind log; see log below. "

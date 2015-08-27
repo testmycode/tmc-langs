@@ -23,7 +23,7 @@ public enum ProjectType {
     PYTHON3(new Python3Plugin());
 
     private final LanguagePlugin languagePlugin;
-    private static Logger log = LoggerFactory.getLogger(ProjectType.class);
+    private static final Logger log = LoggerFactory.getLogger(ProjectType.class);
 
     ProjectType(LanguagePlugin languagePlugin) {
         this.languagePlugin = languagePlugin;

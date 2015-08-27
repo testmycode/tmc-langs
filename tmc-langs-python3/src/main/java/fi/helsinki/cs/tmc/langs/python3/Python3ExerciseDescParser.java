@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Python3ExerciseDescParser {
+public final class Python3ExerciseDescParser {
 
     private static final TypeReference<Map<String, List<String>>> MAP_TYPE_REFERENCE
             = new TypeReference<Map<String, List<String>>>(){};

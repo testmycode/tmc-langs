@@ -1,5 +1,6 @@
-target/
+iitarget/
 *dependency-reduced-pom.xml
+*.*~
 /tmc-langs-framework/src/test/resources/example_ant_project/nbproject/private/
 /tmc-langs-framework/src/test/resources/example_ant_project/build/
 /tmc-langs-framework/src/test/resources/example_ant_project/dist/
@@ -7,3 +8,35 @@ target/
 /tmc-langs-ant/src/test/resources/example_ant_project/dist/
 /tmc-langs-ant/src/test/resources/example_ant_project/nbproject/private/
 /tmc-langs-ant/src/test/resources/most_errors/nbproject/private/
+/tmc-langs-ant/src/test/resources/most_errors/build/
+/tmc-langs-ant/src/test/resources/trivial/build/
+/tmc-langs-ant/src/test/resources/ant_arith_funcs/build/
+
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion
+*.iml
+.idea/
+*.ipr
+*.iws
+/out/
+.idea_modules/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+
+# Maven
+target/
+**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+*.log
+
+# Python
+__pycache__/

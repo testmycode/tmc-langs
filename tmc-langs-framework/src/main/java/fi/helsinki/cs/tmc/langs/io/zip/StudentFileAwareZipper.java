@@ -16,9 +16,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class StudentFileAwareZipper implements Zipper {
+public final class StudentFileAwareZipper implements Zipper {
 
-    private Logger log = LoggerFactory.getLogger(StudentFileAwareZipper.class);
+    private static final Logger log = LoggerFactory.getLogger(StudentFileAwareZipper.class);
     private StudentFilePolicy filePolicy;
 
     public StudentFileAwareZipper() { }
@@ -42,12 +42,10 @@ public class StudentFileAwareZipper implements Zipper {
         }
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(buffer);
-
-        zipRecursively(rootDirectory, zipStream, rootDirectory.getParent());
-
-        zipStream.finish();
-        zipStream.close();
+        try (ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(buffer)) {
+            zipRecursively(rootDirectory, zipStream, rootDirectory.getParent());
+            zipStream.finish();
+        }
 
         return buffer.toByteArray();
     }

@@ -30,7 +30,7 @@ import javax.lang.model.element.TypeElement;
 
 @SupportedSourceVersion(value = SourceVersion.RELEASE_7)
 @SupportedAnnotationTypes(value = {"fi.helsinki.cs.tmc.testrunner.Exercise", "org.junit.Test"})
-class TestMethodAnnotationProcessor extends AbstractProcessor {
+final class TestMethodAnnotationProcessor extends AbstractProcessor {
 
     private final List<TestDesc> testDescs = new ArrayList<>();
 

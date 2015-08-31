@@ -5,7 +5,7 @@ import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MavenStudentFilePolicy extends ConfigurableStudentFilePolicy {
+public final class MavenStudentFilePolicy extends ConfigurableStudentFilePolicy {
 
     public MavenStudentFilePolicy(Path configFileParent) {
         super(configFileParent);

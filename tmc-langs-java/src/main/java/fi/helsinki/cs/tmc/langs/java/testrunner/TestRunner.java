@@ -18,7 +18,7 @@ import org.junit.runners.model.InitializationError;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-public class TestRunner {
+public final class TestRunner {
 
     private final ClassLoader testClassLoader;
 

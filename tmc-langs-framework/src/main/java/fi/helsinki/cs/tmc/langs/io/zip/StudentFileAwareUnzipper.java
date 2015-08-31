@@ -16,9 +16,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 
-public class StudentFileAwareUnzipper implements Unzipper {
+public final class StudentFileAwareUnzipper implements Unzipper {
 
-    private Logger log = LoggerFactory.getLogger(StudentFileAwareUnzipper.class);
+    private static final Logger log = LoggerFactory.getLogger(StudentFileAwareUnzipper.class);
+
     private StudentFilePolicy filePolicy;
 
     public StudentFileAwareUnzipper() { }
@@ -45,29 +46,28 @@ public class StudentFileAwareUnzipper implements Unzipper {
             Files.createDirectories(target);
         }
 
-        ZipFile zipFile = new ZipFile(zip.toFile());
-        Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-        while (entries.hasMoreElements()) {
-            ZipArchiveEntry entry = entries.nextElement();
-            Path entryTargetPath = target.resolve(entry.getName());
+        try (ZipFile zipFile = new ZipFile(zip.toFile())) {
+            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+            while (entries.hasMoreElements()) {
+                ZipArchiveEntry entry = entries.nextElement();
+                Path entryTargetPath = target.resolve(entry.getName());
 
-            log.debug("Processing zipEntry with name {} to {}", entry.getName(), entryTargetPath);
-            if (entry.isDirectory()) {
-                Files.createDirectories(entryTargetPath);
-            } else {
-                if (allowedToUnzip(entryTargetPath, target)) {
-                    log.trace("Allowed to unzip, unzipping");
-                    InputStream entryContent = zipFile.getInputStream(entry);
-                    FileUtils.copyInputStreamToFile(entryContent, entryTargetPath.toFile());
+                log.debug("Processing zipEntry with name {} to {}", entry.getName(), entryTargetPath);
+                if (entry.isDirectory()) {
+                    Files.createDirectories(entryTargetPath);
                 } else {
-                    log.trace("Not allowed to unzip, skipping file");
+                    if (allowedToUnzip(entryTargetPath, target)) {
+                        log.trace("Allowed to unzip, unzipping");
+                        InputStream entryContent = zipFile.getInputStream(entry);
+                        FileUtils.copyInputStreamToFile(entryContent, entryTargetPath.toFile());
+                    } else {
+                        log.trace("Not allowed to unzip, skipping file");
+                    }
                 }
+
+                log.debug("Done with file {}", entryTargetPath);
             }
-
-            log.debug("Done with file {}", entryTargetPath);
         }
-
-        zipFile.close();
         log.debug("Done unzipping");
     }
 

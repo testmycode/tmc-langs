@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TestResultParser {
+public final class TestResultParser {
 
-    Logger log = LoggerFactory.getLogger(TestResultParser.class);
+    private static final Logger log = LoggerFactory.getLogger(TestResultParser.class);
 
     /**
      * Parse tmc-testrunner output file for RunResult information.

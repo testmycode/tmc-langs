@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * The result of running an exercise's test suite against a submission.
  */
-public class RunResult {
+public final class RunResult {
 
     public enum Status {
 

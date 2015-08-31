@@ -5,7 +5,7 @@ import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Python3StudentFilePolicy extends ConfigurableStudentFilePolicy {
+public final class Python3StudentFilePolicy extends ConfigurableStudentFilePolicy {
 
     public Python3StudentFilePolicy(Path configFileParent) {
         super(configFileParent);

@@ -17,7 +17,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TestCaseList extends ArrayList<TestCase> {
+public final class TestCaseList extends ArrayList<TestCase> {
 
     /**
      * Creates a TestCaseList from a given ExerciseDesc.
@@ -108,5 +108,4 @@ public class TestCaseList extends ArrayList<TestCase> {
 
         return clone;
     }
-
 }

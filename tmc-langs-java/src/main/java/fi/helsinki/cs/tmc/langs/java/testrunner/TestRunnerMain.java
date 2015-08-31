@@ -9,7 +9,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 
-public class TestRunnerMain {
+public final class TestRunnerMain {
 
     private static final int DEFAULT_SUITE_TIMEOUT = 180;
 

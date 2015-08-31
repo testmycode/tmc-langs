@@ -2,10 +2,9 @@ package fi.helsinki.cs.tmc.langs.domain;
 
 import org.junit.runner.notification.Failure;
 
-public class TestCase {
+public final class TestCase {
 
     public enum Status {
-
         PASSED, FAILED, RUNNING, NOT_STARTED
     }
 
@@ -19,9 +18,9 @@ public class TestCase {
     /**
      * Creates a new TestCase with given parameters.
      *
-     * @param className     Test class' name
-     * @param methodName    Test method's name
-     * @param pointNames    List of point names associated with this method
+     * @param className test class' name
+     * @param methodName test method's name
+     * @param pointNames list of point names associated with this method
      */
     public TestCase(String className, String methodName, String[] pointNames) {
         this.methodName = methodName;
@@ -35,7 +34,7 @@ public class TestCase {
     /**
      * Creates a new TestCase based on the provided TestCase.
      *
-     * @param testCase TestCase to copy values from
+     * @param testCase testCase to copy values from
      */
     public TestCase(TestCase testCase) {
         this.methodName = testCase.methodName;

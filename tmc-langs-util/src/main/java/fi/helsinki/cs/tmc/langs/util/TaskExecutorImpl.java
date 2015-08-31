@@ -17,9 +17,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class TaskExecutorImpl implements TaskExecutor {
+public final class TaskExecutorImpl implements TaskExecutor {
 
-    private static Logger log = LoggerFactory.getLogger(TaskExecutorImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(TaskExecutorImpl.class);
 
     @Override
     public ValidationResult runCheckCodeStyle(Path path) throws NoLanguagePluginFoundException {

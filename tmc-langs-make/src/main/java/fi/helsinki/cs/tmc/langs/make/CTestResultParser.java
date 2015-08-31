@@ -34,7 +34,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class CTestResultParser {
+public final class CTestResultParser {
 
     private static final Path AVAILABLE_POINTS = Paths.get("tmc_available_points.txt");
     private static final Path TEST_DIR = Paths.get("test");

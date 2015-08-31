@@ -17,9 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TmcProjectYmlParser implements ConfigurationParser {
+public final class TmcProjectYmlParser implements ConfigurationParser {
 
-    private Logger log = LoggerFactory.getLogger(TmcProjectYmlParser.class);
+    private static final Logger log = LoggerFactory.getLogger(TmcProjectYmlParser.class);
 
     private Path rootPath;
     private List<Path> extraStudentFiles;

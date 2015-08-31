@@ -5,7 +5,7 @@ import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MakeStudentFilePolicy extends ConfigurableStudentFilePolicy {
+public final class MakeStudentFilePolicy extends ConfigurableStudentFilePolicy {
 
     private static final Path MAKEFILE_PATH = Paths.get("Makefile");
     private static final Path SOURCE_FOLDER_PATH = Paths.get("src");

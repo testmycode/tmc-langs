@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SourceFiles {
+public final class SourceFiles {
 
     private final List<File> sourceFiles;
 

@@ -9,7 +9,7 @@ import java.nio.file.Path;
 /**
  * Utility for converting objects into JSON format and writing them into a file.
  */
-public class JsonWriter {
+public final class JsonWriter {
 
     /**
      * Convert and save object into outputFile as JSON.

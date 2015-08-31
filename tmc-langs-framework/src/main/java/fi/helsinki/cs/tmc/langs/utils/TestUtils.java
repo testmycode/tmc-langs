@@ -24,7 +24,7 @@ import java.util.List;
 
 public final class TestUtils {
 
-    private static Logger log = LoggerFactory.getLogger(TestUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(TestUtils.class);
 
     /**
      * Returns a path to a resource residing in the ResourceDir of the given class.

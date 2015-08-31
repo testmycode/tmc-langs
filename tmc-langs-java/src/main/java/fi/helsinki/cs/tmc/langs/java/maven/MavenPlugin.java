@@ -26,15 +26,15 @@ import java.nio.file.Paths;
  * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
  * for Java projects that use Apache Maven.
  */
-public class MavenPlugin extends AbstractJavaPlugin {
+public final class MavenPlugin extends AbstractJavaPlugin {
+
+    private static final Logger log = LoggerFactory.getLogger(MavenPlugin.class);
 
     private static final Path POM_FILE = Paths.get("pom.xml");
     private static final Path RESULT_FILE = Paths.get("target", "test_output.txt");
     private static final Path TEST_FOLDER = Paths.get("src");
 
     private static final String TEST_RUNNER_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test";
-
-    private Logger log = LoggerFactory.getLogger(MavenPlugin.class);
 
     /**
      * Creates a new MavenPlugin.

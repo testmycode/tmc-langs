@@ -49,13 +49,12 @@ public class StudentFileAwareSubmissionProcessor implements SubmissionProcessor 
      * <p>As an end result, a file with the path <tt>source/foo.java</tt> will be in path
      * <tt>target/foo.java</tt>.
      *
-     * @param source    Directory from which the contents are moved. The directory itself is not
-     *                  moved.
-     * @param target    Directory to which the source files are moved to.
+     * @param source    directory from which the contents are moved. The directory itself is not
+     *                  moved
+     * @param target    directory to which the source files are moved to
      */
     @Override
     public void moveFiles(final Path source, final Path target) {
-
         try {
             Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
                 @Override
@@ -85,7 +84,6 @@ public class StudentFileAwareSubmissionProcessor implements SubmissionProcessor 
             });
         } catch (IOException exception) {
             log.log(Level.WARNING, null, exception);
-            return;
         }
     }
 

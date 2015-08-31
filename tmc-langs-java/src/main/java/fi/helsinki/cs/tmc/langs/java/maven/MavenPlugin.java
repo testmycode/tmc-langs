@@ -71,8 +71,11 @@ public final class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Building maven project at {}", path);
 
-        String multimoduleProjectDirectory = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
-        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
+        String multimoduleProjectDirectory
+                = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
+        System.setProperty(
+                MavenCli.MULTIMODULE_PROJECT_DIRECTORY,
+                path.toAbsolutePath().toString());
 
         MavenCli maven = new MavenCli();
 
@@ -102,8 +105,11 @@ public final class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Running tests for maven project at {}", path);
 
-        String multimoduleProjectDirectory = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
-        System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
+        String multimoduleProjectDirectory
+                = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
+        System.setProperty(
+                MavenCli.MULTIMODULE_PROJECT_DIRECTORY,
+                path.toAbsolutePath().toString());
 
         MavenCli maven = new MavenCli();
 

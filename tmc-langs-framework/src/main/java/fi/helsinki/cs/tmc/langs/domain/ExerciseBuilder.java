@@ -13,12 +13,12 @@ import java.util.List;
 
 public class ExerciseBuilder {
 
-    private final static String BEGIN_SOLUTION_TAG = "// BEGIN SOLUTION";
-    private final static String END_SOLUTION_TAG = "// END SOLUTION";
-    private final static String STUB_TAG = "// STUB:";
-    private final static String SOLUTION_FILE_TAG = "// SOLUTION FILE";
-    private final static String SOURCE_FOLDER_NAME = "src";
-    private final static Charset CHARSET = StandardCharsets.UTF_8;
+    private static final String BEGIN_SOLUTION_TAG = "// BEGIN SOLUTION";
+    private static final String END_SOLUTION_TAG = "// END SOLUTION";
+    private static final String STUB_TAG = "// STUB:";
+    private static final String SOLUTION_FILE_TAG = "// SOLUTION FILE";
+    private static final String SOURCE_FOLDER_NAME = "src";
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private static final Logger logger = LoggerFactory.getLogger(ExerciseBuilder.class);
 

@@ -1,83 +1,136 @@
 package fi.helsinki.cs.tmc.langs;
 
-import com.google.common.collect.ImmutableList;
+import static org.junit.Assert.assertTrue;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
+import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationError;
-import fi.helsinki.cs.tmc.stylerunner.validation.ValidationResult;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+
+import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import static org.junit.Assert.assertTrue;
+import java.nio.file.Paths;
 
 public class AbstractLanguagePluginTest {
 
-    private PluginImplLanguagePlugin pluginImpl;
+    private class StubLanguagePlugin extends AbstractLanguagePlugin {
 
-    public AbstractLanguagePluginTest() {
-        pluginImpl = new PluginImplLanguagePlugin();
-    }
-
-    class PluginImplLanguagePlugin extends AbstractLanguagePlugin {
+        public StubLanguagePlugin(ExerciseBuilder exerciseBuilder,
+                                  SubmissionProcessor submissionProcessor) {
+            super(exerciseBuilder, submissionProcessor, null, null);
+        }
 
         @Override
-        protected boolean isExerciseTypeCorrect(Path path) {
-            return new File(path.toString() + File.separatorChar + "build.xml").exists();
+        public boolean isExerciseTypeCorrect(Path path) {
+            return Files.exists(path.resolve("build.xml"));
+        }
+
+        @Override
+        protected StudentFilePolicy getStudentFilePolicy(Path projectPath) {
+            return null;
         }
 
         @Override
         public String getLanguageName() {
-            throw new UnsupportedOperationException();
+            return null;
         }
 
         @Override
-        public ExerciseDesc scanExercise(Path path, String exerciseName) {
-            throw new UnsupportedOperationException();
+        public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+            return null;
         }
 
         @Override
         public RunResult runTests(Path path) {
-            throw new UnsupportedOperationException();
+            return null;
         }
+
+        @Override
+        public ValidationResult checkCodeStyle(Path path) {
+            return null;
+        }
+    }
+
+    private LanguagePlugin plugin;
+    private ExerciseBuilder exerciseBuilder;
+    private SubmissionProcessor submissionProcessor;
+
+    @Before
+    public void setUp() {
+        exerciseBuilder = mock(ExerciseBuilder.class);
+        submissionProcessor = mock(StudentFileAwareSubmissionProcessor.class);
+        plugin = new StubLanguagePlugin(exerciseBuilder, submissionProcessor);
     }
 
     @Test
     public void findExercisesReturnsAListOfExerciseDirectories() {
-        ImmutableList<Path> dirs = pluginImpl.findExercises(TestUtils.getPath(getClass(), "ant_project"));
+        Path project = TestUtils.getPath(getClass(), "ant_project");
+
+        ImmutableList<Path> dirs = plugin.findExercises(project);
+
         Path pathOne = TestUtils.getPath(getClass(), "ant_project");
         Path pathTwo = TestUtils.getPath(getClass(), "ant_project/ant_sub_project");
+
         assertTrue(dirs.contains(pathOne) && dirs.contains(pathTwo));
     }
 
     @Test
     public void findExercisesReturnsAnEmptyListWhenInvalidPath() {
-        assertTrue(pluginImpl.findExercises(TestUtils.getPath(getClass(), "ant_project/build.xml")).isEmpty());
+        Path buildFile = TestUtils.getPath(getClass(), "ant_project/build.xml");
+
+        assertTrue(plugin.findExercises(buildFile).isEmpty());
+    }
+
+    @Test
+    public void findExercisesReturnsAnEmptyListWhenTargetDoesNotExist() {
+        Path buildFile = TestUtils.getPath(getClass(), "");
+        buildFile = buildFile.resolve("no-such-directory");
+
+        assertTrue(plugin.findExercises(buildFile).isEmpty());
     }
 
     @Test
     public void findExercisesReturnsAnEmptyListWhenNoExercisesFound() {
-        assertTrue(pluginImpl.findExercises(TestUtils.getPath(getClass(), "dummy_project")).isEmpty());
+        Path project = TestUtils.getPath(getClass(), "dummy_project");
+
+        assertTrue(plugin.findExercises(project).isEmpty());
     }
 
     @Test
-    public void testCheckCodeStyle() {
-        ValidationResult result = pluginImpl.checkCodeStyle(TestUtils.getPath(getClass(), "most_errors"));
-        Map<File, List<ValidationError>> res = result.getValidationErrors();
-        assertEquals("Should be one erroneous file", 1, res.size());
-        for (File file : res.keySet()) {
-            List<ValidationError> errors = res.get(file);
-            assertEquals("Should return the right amount of errors", 23, errors.size());
-        }
+    public void prepareStubDelegatesRequestToExerciseBuilder() {
+        Path path = Paths.get("testPath");
+        plugin.prepareStub(path);
+
+        verify(exerciseBuilder).prepareStub(path);
     }
 
     @Test
-    public void testCheckCodeStyleWithUntestableProject() {
-        ValidationResult result = pluginImpl.checkCodeStyle(TestUtils.getPath(getClass(), "dummy_project"));
-        assertNull(result);
+    public void prepareSolutionDelegatesRequestToExerciseBuilder() {
+        Path path = Paths.get("testPath");
+        plugin.prepareSolution(path);
+
+        verify(exerciseBuilder).prepareSolution(path);
+    }
+
+    @Test
+    public void prepareSubmissionDelegatesRequestToSubmissionProcessor() {
+        Path source = Paths.get("source");
+        Path target = Paths.get("target");
+
+        plugin.prepareSubmission(source, target);
+        verify(submissionProcessor).moveFiles(source, target);
     }
 }

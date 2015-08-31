@@ -40,3 +40,7 @@ buildNumber.properties
 
 # Python
 __pycache__/
+
+# eclipse
+.project
+.classpath

@@ -54,7 +54,8 @@ public final class MakePlugin extends AbstractLanguagePlugin {
      * Creates a new MakePlugin.
      */
     public MakePlugin() {
-        super(new ExerciseBuilder(),
+        super(
+                new ExerciseBuilder(),
                 new StudentFileAwareSubmissionProcessor(),
                 new StudentFileAwareZipper(),
                 new StudentFileAwareUnzipper());
@@ -81,8 +82,8 @@ public final class MakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        final Path availablePoints = path.toAbsolutePath().resolve(TEST_DIR)
-                .resolve(AVAILABLE_POINTS);
+        final Path availablePoints =
+                path.toAbsolutePath().resolve(TEST_DIR).resolve(AVAILABLE_POINTS);
 
         if (!Files.exists(availablePoints)) {
             log.info(CANT_PARSE_EXERCISE_DESCRIPTION);
@@ -151,8 +152,10 @@ public final class MakePlugin extends AbstractLanguagePlugin {
 
         if (!builds(path)) {
             log.info(COMPILE_FAILED_MESSAGE);
-            return new RunResult(RunResult.Status.COMPILE_FAILED,
-                ImmutableList.<TestResult>of(), new ImmutableMap.Builder<String, byte[]>().build());
+            return new RunResult(
+                    RunResult.Status.COMPILE_FAILED,
+                    ImmutableList.<TestResult>of(),
+                    new ImmutableMap.Builder<String, byte[]>().build());
         }
 
         try {
@@ -181,8 +184,7 @@ public final class MakePlugin extends AbstractLanguagePlugin {
         String target = withValgrind ? "run-test-with-valgrind" : "run-test";
         String[] command = {"make", target};
 
-        log.info("Running tests with command {0}",
-                new Object[]{Arrays.deepToString(command)});
+        log.info("Running tests with command {0}", new Object[] {Arrays.deepToString(command)});
 
         ProcessRunner runner = new ProcessRunner(command, dir);
         ProcessResult result = runner.call();

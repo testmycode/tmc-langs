@@ -38,8 +38,8 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
     private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
     private static final String CANNOT_SCAN_EXERCISE_MESSAGE = "Failed to scan exercise.";
-    private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE
-            = "Failed to parse exercise description.";
+    private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE =
+            "Failed to parse exercise description.";
 
     private static Logger log = LoggerFactory.getLogger(Python3Plugin.class);
 
@@ -47,7 +47,8 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
      * Instantiates a new Python3Plugin.
      */
     public Python3Plugin() {
-        super(new ExerciseBuilder(),
+        super(
+                new ExerciseBuilder(),
                 new StudentFileAwareSubmissionProcessor(),
                 new StudentFileAwareZipper(),
                 new StudentFileAwareUnzipper());
@@ -58,8 +59,7 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
         return Files.exists(path.resolve(SETUP_PY_PATH))
                 || Files.exists(path.resolve(REQUIREMENTS_TXT_PATH))
                 || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(INIT_PY_PATH))
-                || Files.exists(path.resolve(TMC_TEST_LIBRARY_PATH)
-                    .resolve(MAIN_PY_PATH));
+                || Files.exists(path.resolve(TMC_TEST_LIBRARY_PATH).resolve(MAIN_PY_PATH));
     }
 
     @Override

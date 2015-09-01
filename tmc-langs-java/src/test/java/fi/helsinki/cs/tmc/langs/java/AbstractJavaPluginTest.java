@@ -40,9 +40,10 @@ public class AbstractJavaPluginTest {
 
     private class StubLanguagePlugin extends AbstractJavaPlugin {
 
-        public StubLanguagePlugin(Path testFolderPath,
-                                  SubmissionProcessor submissionProcessor,
-                                  TestScanner testScanner) {
+        public StubLanguagePlugin(
+                Path testFolderPath,
+                SubmissionProcessor submissionProcessor,
+                TestScanner testScanner) {
             super(testFolderPath, submissionProcessor, testScanner);
         }
 
@@ -110,43 +111,46 @@ public class AbstractJavaPluginTest {
     @Test
     public void exceptionOnGetClassPathReturnsAbsentDuringScanExercise() {
         Path path = TestUtils.getPath(getClass(), "trivial");
-        AbstractJavaPlugin plugin = new StubLanguagePlugin(path) {
-            @Override
-            public boolean isExerciseTypeCorrect(Path path) {
-                return true;
-            }
+        AbstractJavaPlugin plugin =
+                new StubLanguagePlugin(path) {
+                    @Override
+                    public boolean isExerciseTypeCorrect(Path path) {
+                        return true;
+                    }
 
-            @Override
-            protected ClassPath getProjectClassPath(Path path) throws IOException {
-                throw new IOException();
-            }
-        };
+                    @Override
+                    protected ClassPath getProjectClassPath(Path path) throws IOException {
+                        throw new IOException();
+                    }
+                };
 
         assertFalse(plugin.scanExercise(path, "").isPresent());
     }
 
     @Test
     public void testRunnerExceptionDuringRunTestsReturnsNull() {
-        AbstractJavaPlugin plugin = new StubLanguagePlugin(Paths.get("")) {
-            @Override
-            protected File createRunResultFile(Path path)
-                    throws TestRunnerException, TestScannerException {
-                throw new TestRunnerException();
-            }
-        };
+        AbstractJavaPlugin plugin =
+                new StubLanguagePlugin(Paths.get("")) {
+                    @Override
+                    protected File createRunResultFile(Path path)
+                            throws TestRunnerException, TestScannerException {
+                        throw new TestRunnerException();
+                    }
+                };
 
         assertNull(plugin.runTests(null));
     }
 
     @Test
     public void testScannerExceptionDuringRunTestsReturnsNull() {
-        AbstractJavaPlugin plugin = new StubLanguagePlugin(Paths.get("")) {
-            @Override
-            protected File createRunResultFile(Path path)
-                    throws TestRunnerException, TestScannerException {
-                throw new TestScannerException();
-            }
-        };
+        AbstractJavaPlugin plugin =
+                new StubLanguagePlugin(Paths.get("")) {
+                    @Override
+                    protected File createRunResultFile(Path path)
+                            throws TestRunnerException, TestScannerException {
+                        throw new TestScannerException();
+                    }
+                };
 
         assertNull(plugin.runTests(null));
     }
@@ -162,12 +166,13 @@ public class AbstractJavaPluginTest {
     public void scanExerciseAddsSourceFilesFromProject() {
         Path path = TestUtils.getPath(getClass(), "trivial");
         TestScanner scanner = mock(TestScanner.class);
-        AbstractJavaPlugin plugin = new StubLanguagePlugin(
-                Paths.get(""), new StudentFileAwareSubmissionProcessor(), scanner) {
-            public boolean isExerciseTypeCorrect(Path path) {
-                return true;
-            }
-        };
+        AbstractJavaPlugin plugin =
+                new StubLanguagePlugin(
+                        Paths.get(""), new StudentFileAwareSubmissionProcessor(), scanner) {
+                    public boolean isExerciseTypeCorrect(Path path) {
+                        return true;
+                    }
+                };
         ArgumentCaptor<SourceFiles> sourceFilesCaptor = ArgumentCaptor.forClass(SourceFiles.class);
 
         plugin.scanExercise(path, "trivial");

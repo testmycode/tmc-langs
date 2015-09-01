@@ -15,8 +15,7 @@ import java.nio.file.Path;
 
 public class ProjectTypeTest {
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
+    @Rule public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void testProjectTypeOnJavaAntExercise() {

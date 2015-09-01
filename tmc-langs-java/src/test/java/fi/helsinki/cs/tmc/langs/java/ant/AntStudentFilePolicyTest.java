@@ -61,17 +61,35 @@ public class AntStudentFilePolicyTest {
         TestUtils.collectPaths(projectPath, toBeMoved, antFileMovingPolicy);
 
         assertEquals(1, toBeMoved.size());
-        assertFalse(toBeMoved.contains("lib"
-                + File.separatorChar + "edu-test-utils-0.4.1.jar"));
-        assertFalse(toBeMoved.contains("lib"
-                + File.separatorChar + "junit-4.10.jar"));
-        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"
-                + File.separatorChar + "gson-2.2.4.jar"));
-        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"
-                + File.separatorChar + "hamcrest-core-1.3.jar"));
-        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"
-                + File.separatorChar + "junit-4.11.jar"));
-        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "testrunner"
-                + File.separatorChar + "tmc-junit-runner.jar"));
+        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "edu-test-utils-0.4.1.jar"));
+        assertFalse(toBeMoved.contains("lib" + File.separatorChar + "junit-4.10.jar"));
+        assertFalse(
+                toBeMoved.contains(
+                        "lib"
+                                + File.separatorChar
+                                + "testrunner"
+                                + File.separatorChar
+                                + "gson-2.2.4.jar"));
+        assertFalse(
+                toBeMoved.contains(
+                        "lib"
+                                + File.separatorChar
+                                + "testrunner"
+                                + File.separatorChar
+                                + "hamcrest-core-1.3.jar"));
+        assertFalse(
+                toBeMoved.contains(
+                        "lib"
+                                + File.separatorChar
+                                + "testrunner"
+                                + File.separatorChar
+                                + "junit-4.11.jar"));
+        assertFalse(
+                toBeMoved.contains(
+                        "lib"
+                                + File.separatorChar
+                                + "testrunner"
+                                + File.separatorChar
+                                + "tmc-junit-runner.jar"));
     }
 }

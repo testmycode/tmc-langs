@@ -15,7 +15,5 @@ public class TestRunnerMainTest {
     /**
      * Test of run method, of class TestRunnerMain.
      */
-    public void testRun() throws Exception {
-    }
-
+    public void testRun() throws Exception {}
 }

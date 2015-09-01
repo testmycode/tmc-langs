@@ -13,8 +13,8 @@ import java.util.List;
 public final class CTestCase {
 
     private static final String VALGRIND_FAIL_MESSAGE =
-              " - Failed due to errors in valgrind log; see log below. "
-            + "Try submitting to server, some leaks might be platform dependent";
+            " - Failed due to errors in valgrind log; see log below. "
+                    + "Try submitting to server, some leaks might be platform dependent";
 
     private String name;
     private boolean passed;
@@ -24,13 +24,14 @@ public final class CTestCase {
     private boolean failOnValgrindError;
 
     /**
-    * Create a test case for C-tests.
-    */
-    public CTestCase(String name,
-                     boolean passed,
-                     String message,
-                     List<String> points,
-                     boolean failOnValgrindError) {
+     * Create a test case for C-tests.
+     */
+    public CTestCase(
+            String name,
+            boolean passed,
+            String message,
+            List<String> points,
+            boolean failOnValgrindError) {
         this.name = name;
         this.passed = passed;
         this.message = message;
@@ -43,14 +44,13 @@ public final class CTestCase {
         this(name, passed, message, points, true);
     }
 
-
     private boolean failedDueToValgrind(String valgrindTrace) {
         return failOnValgrindError && StringUtils.isNotBlank(valgrindTrace);
     }
 
     /**
-    * Get the test result of this test case.
-    */
+     * Get the test result of this test case.
+     */
     public TestResult getTestResult() {
         String msg = message;
 
@@ -73,8 +73,7 @@ public final class CTestCase {
             points = ImmutableList.copyOf(this.points);
         }
 
-        return new TestResult(name, successful, points, msg, ImmutableList
-                .copyOf(trace));
+        return new TestResult(name, successful, points, msg, ImmutableList.copyOf(trace));
     }
 
     public String getName() {

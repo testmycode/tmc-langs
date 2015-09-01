@@ -8,15 +8,12 @@ public class TimeoutTestSubject {
 
     @Test
     public void infinite() {
-        for (;;) {
-        }
+        for (; ; ) {}
     }
 
     @Test
-    public void empty() {
-    }
+    public void empty() {}
 
     @Test
-    public void empty2() {
-    }
+    public void empty2() {}
 }

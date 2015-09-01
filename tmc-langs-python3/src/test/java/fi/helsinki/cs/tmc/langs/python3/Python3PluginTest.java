@@ -125,5 +125,4 @@ public class Python3PluginTest {
         assertEquals(RunResult.Status.PASSED, runResult.status);
         assertEquals(38, runResult.testResults.size());
     }
-
 }

@@ -109,27 +109,29 @@ public class AntPluginTest {
         TestResult testResult = runResult.testResults.get(0);
         assertTestResult(testResult, "", "TrivialTest testF", true);
         assertEquals("trivial", testResult.points.get(0));
-        assertEquals("When all tests pass backtrace should be empty.",
-                0,
-                testResult.backtrace.size());
+        assertEquals(
+                "When all tests pass backtrace should be empty.", 0, testResult.backtrace.size());
     }
 
     @Test
     public void testRunTestsReturnsCompileFailedCorrectly() throws IOException {
         Path project = TestUtils.getPath(getClass(), "failing_trivial");
         RunResult runResult = antPlugin.runTests(project);
-        assertEquals("When the build fails the returned status should report it.",
+        assertEquals(
+                "When the build fails the returned status should report it.",
                 RunResult.Status.COMPILE_FAILED,
                 runResult.status);
-        assertTrue("When the build fails no test results should be returned",
+        assertTrue(
+                "When the build fails no test results should be returned",
                 runResult.testResults.isEmpty());
         assertFalse(runResult.logs.isEmpty());
     }
 
-    private void assertTestResult(TestResult testResult,
-                                  String expectedErrorMessage,
-                                  String expectedName,
-                                  boolean expectedPassed) {
+    private void assertTestResult(
+            TestResult testResult,
+            String expectedErrorMessage,
+            String expectedName,
+            boolean expectedPassed) {
         assertEquals(expectedErrorMessage, testResult.errorMessage);
         assertEquals(expectedName, testResult.name);
         assertEquals(expectedPassed, testResult.passed);
@@ -157,12 +159,13 @@ public class AntPluginTest {
     @Test(expected = TestScannerException.class)
     public void createRunResultFileThrowsTestScannerExceptionOnTestScannerFailure()
             throws TestScannerException, TestRunnerException {
-        AntPlugin plugin = new AntPlugin() {
-            @Override
-            public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-                return Optional.absent();
-            }
-        };
+        AntPlugin plugin =
+                new AntPlugin() {
+                    @Override
+                    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+                        return Optional.absent();
+                    }
+                };
 
         plugin.createRunResultFile(Paths.get(""));
     }

@@ -59,8 +59,9 @@ public class MakePluginTest {
         Path path = TestUtils.getPath(getClass(), "failing");
         RunResult result = makePlugin.runTests(path);
 
-        assertEquals("[Task 1.1] one returned 2. Should have returned: 1", result.testResults.get(0)
-                .errorMessage);
+        assertEquals(
+                "[Task 1.1] one returned 2. Should have returned: 1",
+                result.testResults.get(0).errorMessage);
     }
 
     @Test

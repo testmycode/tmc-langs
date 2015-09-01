@@ -88,22 +88,22 @@ public class MavenPluginTest {
         assertEquals(1, result.testResults.size());
     }
 
-//    @Test
-//    public void testFailingMavenProjectHasCorrectError() {
-//        Path path = TestUtils.getPath(getClass(), "maven_exercise");
-//        RunResult result = mavenPlugin.runTests(path);
-//
-//        assertEquals("ComparisonFailure: expected:\u003c[Hello Maven!\n]\u003e but "
-//                + "was:\u003c[]\u003e", result.testResults.get(0).errorMessage);
-//    }
+    //    @Test
+    //    public void testFailingMavenProjectHasCorrectError() {
+    //        Path path = TestUtils.getPath(getClass(), "maven_exercise");
+    //        RunResult result = mavenPlugin.runTests(path);
+    //
+    //        assertEquals("ComparisonFailure: expected:\u003c[Hello Maven!\n]\u003e but "
+    //                + "was:\u003c[]\u003e", result.testResults.get(0).errorMessage);
+    //    }
 
-//    @Test
-//    public void testFailingMavenProjectHasStackTrace() {
-//        Path path = TestUtils.getPath(getClass(), "maven_exercise");
-//        RunResult result = mavenPlugin.runTests(path);
-//
-//        assertTrue(result.testResults.get(0).backtrace.size() > 0);
-//    }
+    //    @Test
+    //    public void testFailingMavenProjectHasStackTrace() {
+    //        Path path = TestUtils.getPath(getClass(), "maven_exercise");
+    //        RunResult result = mavenPlugin.runTests(path);
+    //
+    //        assertTrue(result.testResults.get(0).backtrace.size() > 0);
+    //    }
 
     @Test
     public void testMavenProjectWithPassingTestsCompilesAndPassesTests() {

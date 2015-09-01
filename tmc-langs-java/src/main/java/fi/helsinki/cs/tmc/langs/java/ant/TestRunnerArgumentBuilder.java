@@ -27,11 +27,12 @@ public final class TestRunnerArgumentBuilder {
     /**
      * Create TestRunnerArguments with all the necessary information for creating an argument list.
      */
-    public TestRunnerArgumentBuilder(Path projectBasePath,
-                                     Path testDirectory,
-                                     Path resultFile,
-                                     ClassPath classPath,
-                                     ExerciseDesc exercise) {
+    public TestRunnerArgumentBuilder(
+            Path projectBasePath,
+            Path testDirectory,
+            Path resultFile,
+            ClassPath classPath,
+            ExerciseDesc exercise) {
         arguments = new ArrayList<>();
         arguments.add(JAVA_RUNTIME);
         arguments.add(TEST_DIRECTORY_PARAM_PREFIX + testDirectory.toString());

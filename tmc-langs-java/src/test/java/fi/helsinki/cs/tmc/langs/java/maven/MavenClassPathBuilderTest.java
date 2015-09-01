@@ -34,5 +34,4 @@ public class MavenClassPathBuilderTest {
         Path path = TestUtils.getPath(getClass(), "non_ant_project");
         ClassPath classPath = MavenClassPathBuilder.fromProjectBasePath(path);
     }
-
 }

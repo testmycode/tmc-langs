@@ -29,11 +29,9 @@ public class MakeUtilsTest {
 
     @Before
     public void setup() throws IOException {
-        correctFile = TestUtils.initTempFileWithContent(
-                "tmc_available_points",
-                "txt",
-                "[test] [test_one] 1.1"
-        );
+        correctFile =
+                TestUtils.initTempFileWithContent(
+                        "tmc_available_points", "txt", "[test] [test_one] 1.1");
 
         incorrectFile = Paths.get("some", "path", "that", "does", "not", "exist");
         incorrectFile.toFile().deleteOnExit();
@@ -50,11 +48,11 @@ public class MakeUtilsTest {
 
     @Test
     public void testMapIdsToPointsWithCorrectFileAndMultiplePoints() throws IOException {
-        correctFile = TestUtils.initTempFileWithContent(
-                "tmc_available_points",
-                "txt",
-                "[test] [test_one] 1.1\n[test] [test_one] 1.2"
-        );
+        correctFile =
+                TestUtils.initTempFileWithContent(
+                        "tmc_available_points",
+                        "txt",
+                        "[test] [test_one] 1.1\n[test] [test_one] 1.2");
         Map<String, List<String>> testMap = this.makeUtils.mapIdsToPoints(correctFile);
 
         assertTrue(testMap.containsKey("test_one"));
@@ -66,11 +64,11 @@ public class MakeUtilsTest {
 
     @Test
     public void testMapIdsToPointsWithCorrectFileAndMultipleTestMethods() throws IOException {
-        correctFile = TestUtils.initTempFileWithContent(
-                "tmc_available_points",
-                "txt",
-                "[test] [test_one] 1.1\n[test] [test_two] 1.2"
-        );
+        correctFile =
+                TestUtils.initTempFileWithContent(
+                        "tmc_available_points",
+                        "txt",
+                        "[test] [test_one] 1.1\n[test] [test_two] 1.2");
         Map<String, List<String>> testMap = this.makeUtils.mapIdsToPoints(correctFile);
 
         assertEquals(2, testMap.size());

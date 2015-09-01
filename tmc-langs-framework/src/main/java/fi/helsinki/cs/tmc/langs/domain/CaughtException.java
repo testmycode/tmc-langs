@@ -10,7 +10,8 @@ public class CaughtException implements Cloneable {
     public StackTraceElement[] stackTrace;
     public CaughtException cause; // May be null
 
-    private CaughtException() {}
+    private CaughtException() {
+    }
 
     /**
      * Creates a CaughtException encapsulating the given Throwable.

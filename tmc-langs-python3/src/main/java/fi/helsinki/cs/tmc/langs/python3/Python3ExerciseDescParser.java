@@ -20,8 +20,8 @@ import java.util.Map;
 
 public final class Python3ExerciseDescParser {
 
-    private static final TypeReference<Map<String, List<String>>> MAP_TYPE_REFERENCE =
-            new TypeReference<Map<String, List<String>>>() {};
+    private static final TypeReference<Map<String, List<String>>> MAP_TYPE_REFERENCE
+            = new TypeReference<Map<String, List<String>>>(){};
 
     private static Path RESULT_FILE = Paths.get(".available_points.json");
 

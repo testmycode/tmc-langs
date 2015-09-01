@@ -22,7 +22,7 @@ public final class StudentFileAwareUnzipper implements Unzipper {
 
     private StudentFilePolicy filePolicy;
 
-    public StudentFileAwareUnzipper() {}
+    public StudentFileAwareUnzipper() { }
 
     public StudentFileAwareUnzipper(StudentFilePolicy filePolicy) {
         this.filePolicy = filePolicy;
@@ -52,8 +52,9 @@ public final class StudentFileAwareUnzipper implements Unzipper {
                 ZipArchiveEntry entry = entries.nextElement();
                 Path entryTargetPath = target.resolve(entry.getName());
 
-                log.debug(
-                        "Processing zipEntry with name {} to {}", entry.getName(), entryTargetPath);
+                log.debug("Processing zipEntry with name {} to {}",
+                        entry.getName(),
+                        entryTargetPath);
                 if (entry.isDirectory()) {
                     Files.createDirectories(entryTargetPath);
                 } else {

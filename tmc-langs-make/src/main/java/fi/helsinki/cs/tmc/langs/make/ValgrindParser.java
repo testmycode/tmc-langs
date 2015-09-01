@@ -12,13 +12,12 @@ import java.util.regex.Pattern;
 
 public final class ValgrindParser {
 
-    private static final String VALGRIND_PID_WARNING =
-            "Valgrind output has more PIDs than the expected (# of test cases + 1).";
+    private static final String VALGRIND_PID_WARNING
+            = "Valgrind output has more PIDs than the expected (# of test cases + 1).";
     private static final String VALGRIND_ERROR_SUMMARY_PATTERN =
             "==[0-9]+== ERROR SUMMARY: ([0-9]+)";
-    private static final String LINUX_VALGRIND_WARNING =
-            "Please install valgrind. "
-                    + "For Debian-based distributions, run `sudo apt-get install valgrind`.";
+    private static final String LINUX_VALGRIND_WARNING = "Please install valgrind. "
+            + "For Debian-based distributions, run `sudo apt-get install valgrind`.";
     private static final String OSX_VALGRIND_WARNING =
             "Please install valgrind. For OS X we recommend using homebrew"
                     + "(http://mxcl.github.com/homebrew/) and `brew install valgrind`.";
@@ -26,8 +25,8 @@ public final class ValgrindParser {
     private static final String OTHER_VALGRIND_WARNING = "Please install valgrind if possible.";
     private static final String NO_VALGRIND_MESSAGE =
             "Warning, valgrind not available - unable to run local memory tests\n";
-    private static final String VALGRIND_SUBMIT_MESSAGE =
-            "\nYou may also submit the exercise " + "to the server to have it memory-tested.";
+    private static final String VALGRIND_SUBMIT_MESSAGE = "\nYou may also submit the exercise "
+            + "to the server to have it memory-tested.";
     private static final String CANT_PARSE_PID = "Couldn't parse PID from Valgrind log";
 
     private Path output;

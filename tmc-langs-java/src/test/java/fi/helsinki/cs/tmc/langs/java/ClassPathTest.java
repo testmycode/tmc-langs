@@ -23,8 +23,7 @@ public class ClassPathTest {
 
     @Test
     public void testConstructor() {
-        assertTrue(
-                "ClassPath didn't contain path that was passed in constructor",
+        assertTrue("ClassPath didn't contain path that was passed in constructor",
                 cp.toString().contains("ant_project"));
         assertEquals("Wrong amount of subpaths ", 1, cp.getPaths().size());
     }
@@ -46,8 +45,7 @@ public class ClassPathTest {
     @Test
     public void testAddingPath() {
         cp.add(TestUtils.getPath(getClass(), "ant_arith_funcs"));
-        assertTrue(
-                "ClassPath didn't contain path that was added",
+        assertTrue("ClassPath didn't contain path that was added",
                 cp.toString().contains("ant_arith_funcs"));
         assertEquals("Wrong amount of subpaths ", 2, cp.getPaths().size());
     }
@@ -56,8 +54,7 @@ public class ClassPathTest {
     public void testAddingSamePathDoesntAddItTwice() {
         cp.add(TestUtils.getPath(getClass(), "ant_arith_funcs"));
         cp.add(TestUtils.getPath(getClass(), "ant_arith_funcs"));
-        assertTrue(
-                "ClassPath didn't contain path that was added",
+        assertTrue("ClassPath didn't contain path that was added",
                 cp.toString().contains("arith_funcs"));
         assertEquals("Wrong amount of subpaths ", 2, cp.getPaths().size());
     }
@@ -67,8 +64,7 @@ public class ClassPathTest {
         ClassPath classPath = new ClassPath(TestUtils.getPath(getClass(), "ant_arith_funcs"));
         assertFalse(cp.toString().contains("ant_arith_funcs"));
         cp.add(classPath);
-        assertTrue(
-                "ClassPath didn't contain path that was added",
+        assertTrue("ClassPath didn't contain path that was added",
                 cp.toString().contains("ant_arith_funcs"));
         assertEquals("Wrong amount of subpaths ", 2, cp.getPaths().size());
     }
@@ -77,8 +73,7 @@ public class ClassPathTest {
     public void testAddDirAndContents() {
         Path path = TestUtils.getPath(getClass(), "ant_arith_funcs" + File.separatorChar + "lib");
         cp.addDirAndContents(path);
-        assertTrue(
-                "Base path didn't get added to the ClassPath",
+        assertTrue("Base path didn't get added to the ClassPath",
                 cp.toString().contains("lib" + File.pathSeparatorChar));
         assertTrue(".jars should be added to the ClassPath", cp.toString().contains(".jar"));
         assertEquals("There should be 9 subpaths", 9, cp.getPaths().size());

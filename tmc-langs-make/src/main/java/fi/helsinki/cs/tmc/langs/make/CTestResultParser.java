@@ -39,8 +39,8 @@ public final class CTestResultParser {
     private static final Path AVAILABLE_POINTS = Paths.get("tmc_available_points.txt");
     private static final Path TEST_DIR = Paths.get("test");
 
-    private static final String DOC_NULL_ERROR_MESSAGE =
-            "doc cannot be null " + "- can't parse test results :(";
+    private static final String DOC_NULL_ERROR_MESSAGE = "doc cannot be null "
+            + "- can't parse test results :(";
     private static final String SAX_PARSER_ERROR = "SAX parser error occured";
     private static final String PARSING_DONE_MESSAGE = "C test cases parsed.";
 
@@ -59,14 +59,13 @@ public final class CTestResultParser {
     private boolean failOnValgrindError;
 
     /**
-     * Create a parser that will parse test results from a file.
-     */
-    public CTestResultParser(
-            Path projectDir,
-            Path testResults,
-            Path valgrindOutput,
-            Configuration configuration,
-            boolean valgrindWasRun) {
+    * Create a parser that will parse test results from a file.
+    */
+    public CTestResultParser(Path projectDir,
+                             Path testResults,
+                             Path valgrindOutput,
+                             Configuration configuration,
+                             boolean valgrindWasRun) {
         this.projectDir = projectDir;
         this.testResults = testResults;
         // These last three lines need to be in this exact order.
@@ -93,8 +92,8 @@ public final class CTestResultParser {
             return new ArrayList<>();
         }
 
-        Path availablePoints =
-                projectDir.toAbsolutePath().resolve(TEST_DIR).resolve(AVAILABLE_POINTS);
+        Path availablePoints = projectDir.toAbsolutePath().resolve(TEST_DIR)
+                .resolve(AVAILABLE_POINTS);
         Map<String, List<String>> idsToPoints = new MakeUtils().mapIdsToPoints(availablePoints);
         NodeList nodeList = doc.getElementsByTagName("test");
         List<CTestCase> cases = createCTestCases(nodeList, idsToPoints);
@@ -134,8 +133,8 @@ public final class CTestResultParser {
         return doc;
     }
 
-    private List<CTestCase> createCTestCases(
-            NodeList nodeList, Map<String, List<String>> idsToPoints) {
+    private List<CTestCase> createCTestCases(NodeList nodeList,
+                                             Map<String, List<String>> idsToPoints) {
         List<CTestCase> cases = new ArrayList<>();
 
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -177,7 +176,9 @@ public final class CTestResultParser {
                                 passed,
                                 message,
                                 idsToPoints.get(key),
-                                failOnValgrindError));
+                                failOnValgrindError
+                        )
+                );
             }
         }
     }
@@ -200,8 +201,8 @@ public final class CTestResultParser {
     }
 
     /**
-     * Returns the test results of the tests in this file.
-     */
+    * Returns the test results of the tests in this file.
+    */
     public List<TestResult> getTestResults() {
         ArrayList<TestResult> testResults = new ArrayList<>();
         for (CTestCase testCase : this.tests) {
@@ -211,8 +212,8 @@ public final class CTestResultParser {
     }
 
     /**
-     * Returns the combined status of the tests in this file.
-     */
+    * Returns the combined status of the tests in this file.
+    */
     public Status getResultStatus() {
         if (!Files.exists(testResults)) {
             return Status.COMPILE_FAILED;
@@ -228,12 +229,10 @@ public final class CTestResultParser {
     }
 
     /**
-     * Returns the run result of this file.
-     */
+    * Returns the run result of this file.
+    */
     public RunResult result() {
-        return new RunResult(
-                getResultStatus(),
-                ImmutableList.copyOf(getTestResults()),
+        return new RunResult(getResultStatus(), ImmutableList.copyOf(getTestResults()),
                 new ImmutableMap.Builder<String, byte[]>().build());
     }
 }

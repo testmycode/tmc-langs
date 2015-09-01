@@ -15,7 +15,7 @@ public class TestCaseFailureMessageTest {
 
     @Before
     public void setUp() {
-        this.testCase = new TestCase("foo", "bar", new String[] {"pt1", "pt2"});
+        this.testCase = new TestCase("foo", "bar", new String[]{"pt1", "pt2"});
     }
 
     private Failure makeFailure(Throwable throwable) {

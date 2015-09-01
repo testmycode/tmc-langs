@@ -51,7 +51,7 @@ public final class TestRunner {
         }
 
         synchronized (lock) {
-            thread.interrupt(); // The thread should now no longer mutate anything.
+            thread.interrupt();  // The thread should now no longer mutate anything.
             if (currentCaseIndex < cases.size()) {
                 TestCase currentCase = cases.get(this.currentCaseIndex);
                 currentCase.status = TestCase.Status.FAILED;
@@ -150,9 +150,8 @@ public final class TestRunner {
 
             Class<? extends Runner> runnerCls = rw.value();
             if (!ParentRunner.class.isAssignableFrom(runnerCls)) {
-                throw new InitializationError(
-                        "TMC requires @RunWith to specify a class inheriting "
-                                + "org.junit.runners.ParentRunner");
+                throw new InitializationError("TMC requires @RunWith to specify a class inheriting "
+                                              + "org.junit.runners.ParentRunner");
             }
             // Could check the type parameter too, but the code to do that
             // would be very complex it seems.
@@ -161,18 +160,15 @@ public final class TestRunner {
             try {
                 ctor = runnerCls.getConstructor(Class.class);
             } catch (NoSuchMethodException ex) {
-                throw new InitializationError(
-                        "Runner specified with @RunWith lacks a public "
-                                + "constructor taking a test class");
+                throw new InitializationError("Runner specified with @RunWith lacks a public "
+                                              + "constructor taking a test class");
             }
 
             try {
                 return ((ParentRunner<?>) ctor.newInstance(testClass));
             } catch (InstantiationException | InvocationTargetException ex) {
-                throw new InitializationError(
-                        "Failed to initialize test runner specified with "
-                                + "@RunWith: "
-                                + ex.getMessage());
+                throw new InitializationError("Failed to initialize test runner specified with "
+                                              + "@RunWith: " + ex.getMessage());
             } catch (IllegalAccessException ex) {
                 throw new InitializationError(ex);
             }
@@ -188,13 +184,16 @@ public final class TestRunner {
         }
 
         @Override
-        public void testRunStarted(Description description) throws Exception {}
+        public void testRunStarted(Description description) throws Exception {
+        }
 
         @Override
-        public void testRunFinished(Result result) throws Exception {}
+        public void testRunFinished(Result result) throws Exception {
+        }
 
         @Override
-        public void testIgnored(Description description) throws Exception {}
+        public void testIgnored(Description description) throws Exception {
+        }
 
         @Override
         public void testStarted(Description desc) throws Exception {

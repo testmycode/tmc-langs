@@ -56,34 +56,32 @@ public class StudentFileAwareSubmissionProcessor implements SubmissionProcessor 
     @Override
     public void moveFiles(final Path source, final Path target) {
         try {
-            Files.walkFileTree(
-                    source,
-                    new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                            if (studentFilePolicy.isStudentFile(file, source)) {
-                                try {
-                                    moveFile(source, file, target);
-                                } catch (IOException exception) {
-                                    log.log(Level.WARNING, null, exception);
-                                }
-                            }
-
-                            return FileVisitResult.CONTINUE;
+            Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    if (studentFilePolicy.isStudentFile(file, source)) {
+                        try {
+                            moveFile(source, file, target);
+                        } catch (IOException exception) {
+                            log.log(Level.WARNING, null, exception);
                         }
+                    }
 
-                        @Override
-                        public FileVisitResult postVisitDirectory(Path dir, IOException exception)
-                                throws IOException {
-                            if (exception == null) {
-                                return FileVisitResult.CONTINUE;
-                            } else {
-                                // directory iteration failed
-                                log.log(Level.WARNING, null, exception);
-                                throw exception;
-                            }
-                        }
-                    });
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exception)
+                        throws IOException {
+                    if (exception == null) {
+                        return FileVisitResult.CONTINUE;
+                    } else {
+                        // directory iteration failed
+                        log.log(Level.WARNING, null, exception);
+                        throw exception;
+                    }
+                }
+            });
         } catch (IOException exception) {
             log.log(Level.WARNING, null, exception);
         }

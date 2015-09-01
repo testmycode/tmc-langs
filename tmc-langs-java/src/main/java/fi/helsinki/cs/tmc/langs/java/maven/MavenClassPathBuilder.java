@@ -22,8 +22,8 @@ import java.util.Scanner;
  */
 public final class MavenClassPathBuilder {
 
-    private static final String CLASS_PATH_GOAL =
-            "org.apache.maven.plugins:maven-dependency-plugin:2.10:build-classpath";
+    private static final String CLASS_PATH_GOAL
+            = "org.apache.maven.plugins:maven-dependency-plugin:2.10:build-classpath";
     private static final String OUTPUT_FILE_PARAM_PREFIX = "-Dmdep.outputFile=";
 
     private static final Logger log = LoggerFactory.getLogger(MavenClassPathBuilder.class);
@@ -39,22 +39,21 @@ public final class MavenClassPathBuilder {
 
         String outputParameter = OUTPUT_FILE_PARAM_PREFIX + outputFile.getAbsolutePath();
 
-        String multimoduleProjectDirectory =
-                System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
+        String multimoduleProjectDirectory = System.getProperty(
+                MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
         System.setProperty(
-                MavenCli.MULTIMODULE_PROJECT_DIRECTORY, projectPath.toAbsolutePath().toString());
+                MavenCli.MULTIMODULE_PROJECT_DIRECTORY,
+                projectPath.toAbsolutePath().toString());
 
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
-        int compileResult =
-                maven.doMain(
-                        new String[] {CLASS_PATH_GOAL, outputParameter, "-e"},
-                        projectPath.toAbsolutePath().toString(),
-                        new PrintStream(outBuf),
-                        new PrintStream(errBuf));
+        int compileResult = maven.doMain(new String[]{CLASS_PATH_GOAL, outputParameter, "-e"},
+                projectPath.toAbsolutePath().toString(),
+                new PrintStream(outBuf),
+                new PrintStream(errBuf));
 
         if (multimoduleProjectDirectory != null) {
             System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
@@ -66,8 +65,7 @@ public final class MavenClassPathBuilder {
         try {
             classPathString = scanner.nextLine();
         } catch (NoSuchElementException exception) {
-            log.error(
-                    "Class path output file at {} was empty",
+            log.error("Class path output file at {} was empty",
                     outputFile.getAbsolutePath(),
                     exception);
             throw new IOException("Class path output file is empty", exception);

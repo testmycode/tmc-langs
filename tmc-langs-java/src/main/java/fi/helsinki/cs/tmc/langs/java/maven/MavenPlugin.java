@@ -71,22 +71,21 @@ public final class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Building maven project at {}", path);
 
-        String multimoduleProjectDirectory =
-                System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
+        String multimoduleProjectDirectory
+                = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
         System.setProperty(
-                MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
+                MavenCli.MULTIMODULE_PROJECT_DIRECTORY,
+                path.toAbsolutePath().toString());
 
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
-        int compileResult =
-                maven.doMain(
-                        new String[] {"clean", "compile", "test-compile"},
-                        path.toAbsolutePath().toString(),
-                        new PrintStream(outBuf),
-                        new PrintStream(errBuf));
+        int compileResult = maven.doMain(new String[]{"clean", "compile", "test-compile"},
+                path.toAbsolutePath().toString(),
+                new PrintStream(outBuf),
+                new PrintStream(errBuf));
 
         if (multimoduleProjectDirectory != null) {
             System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
@@ -106,22 +105,21 @@ public final class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Running tests for maven project at {}", path);
 
-        String multimoduleProjectDirectory =
-                System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
+        String multimoduleProjectDirectory
+                = System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
         System.setProperty(
-                MavenCli.MULTIMODULE_PROJECT_DIRECTORY, path.toAbsolutePath().toString());
+                MavenCli.MULTIMODULE_PROJECT_DIRECTORY,
+                path.toAbsolutePath().toString());
 
         MavenCli maven = new MavenCli();
 
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
 
-        int compileResult =
-                maven.doMain(
-                        new String[] {TEST_RUNNER_GOAL},
-                        path.toAbsolutePath().toString(),
-                        new PrintStream(outBuf),
-                        new PrintStream(errBuf));
+        int compileResult = maven.doMain(new String[]{TEST_RUNNER_GOAL},
+                path.toAbsolutePath().toString(),
+                new PrintStream(outBuf),
+                new PrintStream(errBuf));
 
         if (multimoduleProjectDirectory != null) {
             System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);

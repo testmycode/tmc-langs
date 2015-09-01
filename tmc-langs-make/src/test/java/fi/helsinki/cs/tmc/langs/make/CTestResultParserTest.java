@@ -27,7 +27,8 @@ public class CTestResultParserTest {
 
     private ArrayList<CTestCase> oneOfEachTest;
 
-    public CTestResultParserTest() {}
+    public CTestResultParserTest() {
+    }
 
     @Before
     public void setUp() {
@@ -55,9 +56,13 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(0));
             Path tmp = constructTestOutput(testCases);
-            cpar =
-                    new CTestResultParser(
-                            tmpFolder(), tmp, emptyValgrindOutput(), new Configuration(), true);
+            cpar = new CTestResultParser(
+                    tmpFolder(),
+                    tmp,
+                    emptyValgrindOutput(),
+                    new Configuration(),
+                    true
+            );
             Files.delete(tmp);
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
@@ -86,10 +91,8 @@ public class CTestResultParserTest {
         assertEquals("There should only be one test result", 1, results.size());
         TestResult result = results.get(0);
         assertFalse("The test should not be successful", result.passed);
-        assertEquals(
-                "The test should contain the message: This test should've failed",
-                "This test should've failed",
-                result.errorMessage);
+        assertEquals("The test should contain the message: This test should've failed",
+            "This test should've failed", result.errorMessage);
         assertEquals("The name of the test should be \"failing\"", "failing", result.name);
     }
 
@@ -98,9 +101,12 @@ public class CTestResultParserTest {
         CTestResultParser cpar = null;
         try {
             Path tmp = constructTestOutput(oneOfEachTest);
-            cpar =
-                    new CTestResultParser(
-                            tmpFolder(), tmp, emptyValgrindOutput(), new Configuration(), true);
+            cpar = new CTestResultParser(
+                    tmpFolder(),
+                    tmp,
+                    emptyValgrindOutput(),
+                    new Configuration(),
+                    true);
             tmp.toFile().delete();
 
         } catch (Exception e) {
@@ -131,10 +137,8 @@ public class CTestResultParserTest {
         assertEquals("There should only be one test result", 1, results.size());
         TestResult result = results.get(0);
         assertFalse("The test should not be successful", result.passed);
-        assertEquals(
-                "The test should contain the message: This test should've failed",
-                "This test should've failed",
-                result.errorMessage);
+        assertEquals("The test should contain the message: This test should've failed",
+                "This test should've failed", result.errorMessage);
         assertEquals("The name of the test should be \"failing\"", "failing", result.name);
     }
 
@@ -153,13 +157,11 @@ public class CTestResultParserTest {
         }
         List<TestResult> results = cpar.getTestResults();
         assertEquals("There should be two test results", 2, results.size());
-        assertNotNull("Valgrind errors should go in backtrace", results.get(0).backtrace);
-        assertTrue(
-                "Valgrind errors should go in backtrace",
+        assertNotNull("Valgrind errors should go in backtrace",
+                results.get(0).backtrace);
+        assertTrue("Valgrind errors should go in backtrace",
                 results.get(0).backtrace.contains("==1== 1"));
-        assertEquals(
-                "Valgrind output should go into backtrace if there were not errors",
-                0,
+        assertEquals("Valgrind output should go into backtrace if there were not errors", 0,
                 results.get(1).backtrace.size());
     }
 
@@ -179,9 +181,7 @@ public class CTestResultParserTest {
         List<TestResult> results = cpar.getTestResults();
         assertEquals("There should be two test results", 2, results.size());
         for (TestResult r : results) {
-            assertEquals(
-                    "Valgrind output should be empty when there was no error",
-                    0,
+            assertEquals("Valgrind output should be empty when there was no error", 0,
                     r.backtrace.size());
         }
     }
@@ -239,7 +239,7 @@ public class CTestResultParserTest {
         pw.println("  <suite>");
         pw.println("    <title>tests</title>");
         for (CTestCase t : testCases) {
-            String result = t.getResult() ? "success" : "failure";
+            String result =  t.getResult() ? "success" : "failure";
             pw.println("    <test result=\"" + result + "\">");
             pw.println("      <path>.</path>");
             pw.println("      <fn>test.c:1</fn>");
@@ -259,7 +259,7 @@ public class CTestResultParserTest {
     }
 
     private Path constructNotMemoryFailingValgrindOutput(ArrayList<CTestCase> testCases)
-            throws IOException {
+        throws IOException {
         Path tmp = mkTempFile("valgrind", ".log");
         PrintWriter pw = new PrintWriter(tmp.toFile());
         pw.println("==" + testCases.size() * 2 + 1 + "== Main process");

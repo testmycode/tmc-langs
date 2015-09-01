@@ -26,11 +26,9 @@ public final class TestCaseList extends ArrayList<TestCase> {
         TestCaseList result = new TestCaseList();
         for (TestDesc method : methods.get().tests) {
 
-            TestCase testCase =
-                    new TestCase(
-                            getClassName(method.name),
-                            getMethodName(method.name),
-                            pointsAsArray(method));
+            TestCase testCase = new TestCase(getClassName(method.name),
+                                             getMethodName(method.name),
+                                             pointsAsArray(method));
             result.add(testCase);
         }
         return result;
@@ -87,18 +85,16 @@ public final class TestCaseList extends ArrayList<TestCase> {
      * Writes this TestCaseList to a file as JSON.
      */
     public void writeToJsonFile(File file) throws IOException {
-        Writer writer =
-                new OutputStreamWriter(
-                        new BufferedOutputStream(new FileOutputStream(file)), "UTF-8");
+        Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)),
+                                               "UTF-8");
         writeToJson(writer);
         writer.close();
     }
 
     private void writeToJson(Writer writer) {
-        Gson gson =
-                new GsonBuilder()
-                        .registerTypeAdapter(StackTraceElement.class, new StackTraceSerializer())
-                        .create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(StackTraceElement.class, new StackTraceSerializer())
+                .create();
         gson.toJson(this, writer);
     }
 

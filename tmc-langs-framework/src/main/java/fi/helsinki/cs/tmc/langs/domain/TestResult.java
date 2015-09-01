@@ -51,8 +51,7 @@ public class TestResult {
     /**
      * Creates a new TestResult from the provided parameters.
      */
-    public TestResult(
-            String name,
+    public TestResult(String name,
             boolean passed,
             ImmutableList<String> points,
             String errorMessage,

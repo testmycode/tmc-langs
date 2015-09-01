@@ -53,8 +53,9 @@ public class Python3StudentFilePolicyTest {
         TestUtils.collectPaths(projectPath, studentFiles, python3StudentFilePolicy);
 
         assertEquals(1, studentFiles.size());
-        assertFalse(
-                studentFiles.contains(
-                        "test" + File.separatorChar + "tmc" + File.separator + "runner.py"));
+        assertFalse(studentFiles.contains("test"
+                + File.separatorChar + "tmc"
+                + File.separator + "runner.py"));
     }
+
 }

@@ -27,26 +27,29 @@ public class ProcessRunnerTest extends TestCase {
 
     @Test
     public void testFailingProcessHasCorrectStatus() throws Exception {
-        ProcessRunner runner = new ProcessRunner(new String[] {"java"}, this.folder);
+        ProcessRunner runner = new ProcessRunner(new String[]{"java"}, this.folder);
         assertEquals(1, runner.call().statusCode);
     }
 
     @Test
     public void testProcessHasCorrectStatus() throws Exception {
-        ProcessRunner runner = new ProcessRunner(new String[] {"java", "-version"}, this.folder);
+        ProcessRunner runner = new ProcessRunner(new String[]{"java", "-version"}, this.folder);
         assertEquals(0, runner.call().statusCode);
     }
 
     @Test
     public void testProcessHasCorrectOutput() throws Exception {
-        ProcessRunner runner = new ProcessRunner(new String[] {"git", "--help"}, this.folder);
+        ProcessRunner runner = new ProcessRunner(
+                new String[]{"git", "--help"},
+                this.folder
+        );
         String output = runner.call().output;
         assertTrue(output.contains("git"));
     }
 
     @Test
     public void testProcessHasCorrectErrorOutput() throws Exception {
-        ProcessRunner runner = new ProcessRunner(new String[] {"java", "-version"}, this.folder);
+        ProcessRunner runner = new ProcessRunner(new String[]{"java", "-version"}, this.folder);
         String error = runner.call().errorOutput;
         assertTrue(error.contains("version"));
     }

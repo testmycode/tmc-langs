@@ -10,5 +10,6 @@ public final class SpecialLogs {
     public static final String COMPILER_OUTPUT = "compiler_output";
     public static final String GENERIC_ERROR_MESSAGE = "generic_error_message";
 
-    private SpecialLogs() {}
+    private SpecialLogs() {
+    }
 }

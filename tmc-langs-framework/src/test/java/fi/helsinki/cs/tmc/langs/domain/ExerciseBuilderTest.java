@@ -54,17 +54,11 @@ public class ExerciseBuilderTest {
 
     @Test
     public void prepareSolutionHandlesNonFolderPath() {
-        File originProject =
-                new File(
-                        "src"
-                                + File.separator
-                                + "test"
-                                + File.separator
-                                + "resources"
-                                + File.separator
-                                + "arith_funcs"
-                                + File.separator
-                                + "build.xml");
+        File originProject = new File("src"
+                + File.separator + "test"
+                + File.separator + "resources"
+                + File.separator + "arith_funcs"
+                + File.separator + "build.xml");
 
         exerciseBuilder.prepareSolution(originProject.toPath());
     }
@@ -109,9 +103,11 @@ public class ExerciseBuilderTest {
             for (int i = 0; i < expectedLines.size(); ++i) {
                 String expectedLine = expectedLines.get(i);
                 String actualLine = actualLines.get(i);
-                assertEquals(
-                        "Line in file " + fileName + " did not match ", expectedLine, actualLine);
+                assertEquals("Line in file " + fileName + " did not match ",
+                        expectedLine,
+                        actualLine);
             }
+
         }
     }
 
@@ -129,4 +125,5 @@ public class ExerciseBuilderTest {
         }
         return result;
     }
+
 }

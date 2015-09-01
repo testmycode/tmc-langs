@@ -20,9 +20,12 @@ public class StackTraceSerializerTest {
     @Test
     public void testSerializingAndDeserializing() {
         StackTraceElement original = new StackTraceElement("Cls", "method", "Cls.java", 123);
-        JsonElement serialized = serializer.serialize(original, StackTraceElement.class, null);
-        StackTraceElement result =
-                serializer.deserialize(serialized, StackTraceElement.class, null);
+        JsonElement serialized = serializer.serialize(original,
+                StackTraceElement.class,
+                null);
+        StackTraceElement result = serializer.deserialize(serialized,
+                StackTraceElement.class,
+                null);
 
         assertEquals(original.getClassName(), result.getClassName());
         assertEquals(original.getMethodName(), result.getMethodName());
@@ -33,9 +36,12 @@ public class StackTraceSerializerTest {
     @Test
     public void testSerializingAndDeserializingWithNullFileName() {
         StackTraceElement original = new StackTraceElement("Cls", "method", null, 123);
-        JsonElement serialized = serializer.serialize(original, StackTraceElement.class, null);
-        StackTraceElement result =
-                serializer.deserialize(serialized, StackTraceElement.class, null);
+        JsonElement serialized = serializer.serialize(original,
+                StackTraceElement.class,
+                null);
+        StackTraceElement result = serializer.deserialize(serialized,
+                StackTraceElement.class,
+                null);
 
         assertNull(result.getFileName());
     }
@@ -43,10 +49,13 @@ public class StackTraceSerializerTest {
     @Test
     public void testDeserializingWithMissingFileName() {
         StackTraceElement original = new StackTraceElement("Cls", "method", null, 123);
-        JsonElement serialized = serializer.serialize(original, StackTraceElement.class, null);
+        JsonElement serialized = serializer.serialize(original,
+                StackTraceElement.class,
+                null);
         serialized.getAsJsonObject().remove("fileName");
-        StackTraceElement result =
-                serializer.deserialize(serialized, StackTraceElement.class, null);
+        StackTraceElement result = serializer.deserialize(serialized,
+                StackTraceElement.class,
+                null);
 
         assertNull(result.getFileName());
     }

@@ -40,37 +40,35 @@ public class StudentFileAwareUnzipperTest {
 
     @After
     public void tearDown() throws IOException {
-        Files.walkFileTree(
-                tmpDir,
-                new FileVisitor<Path>() {
+        Files.walkFileTree(tmpDir, new FileVisitor<Path>() {
 
-                    @Override
-                    public FileVisitResult preVisitDirectory(
-                            Path path, BasicFileAttributes basicFileAttributes) throws IOException {
-                        return FileVisitResult.CONTINUE;
-                    }
+            @Override
+            public FileVisitResult preVisitDirectory(Path path,
+                                                     BasicFileAttributes basicFileAttributes)
+                    throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
 
-                    @Override
-                    public FileVisitResult visitFile(
-                            Path path, BasicFileAttributes basicFileAttributes) throws IOException {
-                        Files.delete(path);
-                        return FileVisitResult.CONTINUE;
-                    }
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes)
+                    throws IOException {
+                Files.delete(path);
+                return FileVisitResult.CONTINUE;
+            }
 
-                    @Override
-                    public FileVisitResult visitFileFailed(Path path, IOException ex)
-                            throws IOException {
-                        fail("Unable to clean temporary files!");
-                        return FileVisitResult.CONTINUE;
-                    }
+            @Override
+            public FileVisitResult visitFileFailed(Path path, IOException ex) throws IOException {
+                fail("Unable to clean temporary files!");
+                return FileVisitResult.CONTINUE;
+            }
 
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path path, IOException ex)
-                            throws IOException {
-                        Files.delete(path);
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
+            @Override
+            public FileVisitResult postVisitDirectory(Path path, IOException ex)
+                    throws IOException {
+                Files.delete(path);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     @Test(expected = FileNotFoundException.class)

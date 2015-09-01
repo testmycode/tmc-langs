@@ -60,8 +60,7 @@ public class ExerciseBuilder {
             }
             Files.write(file, filteredLines, CHARSET);
         } catch (IOException ex) {
-            logger.error(
-                    "Unexpected IOException, preparation of file {} was interrupted",
+            logger.error("Unexpected IOException, preparation of file {} was interrupted",
                     file.toAbsolutePath().toString(),
                     ex);
         }
@@ -81,8 +80,7 @@ public class ExerciseBuilder {
                 result.add(file);
             }
         } catch (IOException e) {
-            logger.error(
-                    "Unexpected IOException, getting file list of {} was interrupted",
+            logger.error("Unexpected IOException, getting file list of {} was interrupted",
                     folder.toAbsolutePath().toString(),
                     e);
         }
@@ -118,8 +116,7 @@ public class ExerciseBuilder {
             }
             Files.write(file, filteredLines, CHARSET);
         } catch (IOException ex) {
-            logger.error(
-                    "Unexpected IOException, preparation of file {} was interrupted",
+            logger.error("Unexpected IOException, preparation of file {} was interrupted",
                     file.toAbsolutePath().toString(),
                     ex);
         }

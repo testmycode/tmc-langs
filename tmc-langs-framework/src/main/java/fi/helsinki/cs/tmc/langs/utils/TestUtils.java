@@ -52,34 +52,30 @@ public final class TestUtils {
             return;
         }
 
-        Files.walkFileTree(
-                path,
-                new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                            throws IOException {
-                        Files.delete(file);
-                        return FileVisitResult.CONTINUE;
-                    }
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                    throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
 
-                    @Override
-                    public FileVisitResult visitFileFailed(Path file, IOException ex)
-                            throws IOException {
-                        Files.delete(file);
-                        return FileVisitResult.CONTINUE;
-                    }
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException ex) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
 
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException ex)
-                            throws IOException {
-                        if (ex == null) {
-                            Files.delete(dir);
-                            return FileVisitResult.CONTINUE;
-                        } else {
-                            throw ex;
-                        }
-                    }
-                });
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException ex) throws IOException {
+                if (ex == null) {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                } else {
+                    throw ex;
+                }
+            }
+        });
     }
 
     /**
@@ -93,35 +89,32 @@ public final class TestUtils {
      * Collects a list of paths that the provided {@link ConfigurableStudentFilePolicy}
      * considers student files.
      */
-    public static void collectPaths(
-            final Path path,
-            final List<String> toBeMoved,
-            final ConfigurableStudentFilePolicy fileMovingPolicy)
+    public static void collectPaths(final Path path,
+                                    final List<String> toBeMoved,
+                                    final ConfigurableStudentFilePolicy fileMovingPolicy)
             throws IOException {
-        Files.walkFileTree(
-                path,
-                new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                            throws IOException {
-                        if (fileMovingPolicy.isStudentSourceFile(path.relativize(file))) {
-                            toBeMoved.add(path.relativize(file).toString());
-                        }
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                    throws IOException {
+                if (fileMovingPolicy.isStudentSourceFile(path.relativize(file))) {
+                    toBeMoved.add(path.relativize(file).toString());
+                }
 
-                        return FileVisitResult.CONTINUE;
-                    }
+                return FileVisitResult.CONTINUE;
+            }
 
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir, IOException exception)
-                            throws IOException {
-                        if (exception == null) {
-                            return FileVisitResult.CONTINUE;
-                        } else {
-                            // directory iteration failed
-                            throw exception;
-                        }
-                    }
-                });
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exception)
+                    throws IOException {
+                if (exception == null) {
+                    return FileVisitResult.CONTINUE;
+                } else {
+                    // directory iteration failed
+                    throw exception;
+                }
+            }
+        });
     }
 
     /**
@@ -135,8 +128,8 @@ public final class TestUtils {
     /**
      * Initializes a temporary file in a specific directory with content.
      */
-    public static Path initTempFileWithContent(
-            String prefix, String suffix, File directory, String content) throws IOException {
+    public static Path initTempFileWithContent(String prefix, String suffix, File directory,
+                                               String content) throws IOException {
         String suffixWithDot = "." + suffix;
         File file = File.createTempFile(prefix, suffixWithDot, directory);
         file.deleteOnExit();

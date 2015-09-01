@@ -20,8 +20,8 @@ public class CaughtExceptionTest {
     public void setUp() {
         subCause = new IOException("subCauseMessage");
         cause = new Exception("causeMessage", subCause);
-        stackTraceElements =
-                new StackTraceElement[] {new StackTraceElement("class", "method", "file", 1)};
+        stackTraceElements = new StackTraceElement[]{new StackTraceElement("class",
+                "method", "file", 1 )};
         cause.setStackTrace(stackTraceElements);
 
         caughtException = new CaughtException(cause);

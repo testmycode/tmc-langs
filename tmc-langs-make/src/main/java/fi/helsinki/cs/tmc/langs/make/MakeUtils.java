@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+
 public final class MakeUtils {
 
     private static final String FILE_NOT_FOUND_ERROR_MESSAGE = "Couldn't initialize file scanner.";
@@ -70,7 +71,7 @@ public final class MakeUtils {
         String testMethod = parts[1];
         String testPoint = parts[2];
 
-        return new String[] {testClass, testMethod, testPoint};
+        return new String[]{testClass, testMethod, testPoint};
     }
 
     private void addPointsToId(Map<String, List<String>> idsToPoints, String key, String value) {

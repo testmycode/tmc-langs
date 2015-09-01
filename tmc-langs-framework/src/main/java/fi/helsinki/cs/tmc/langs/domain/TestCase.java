@@ -5,10 +5,7 @@ import org.junit.runner.notification.Failure;
 public final class TestCase {
 
     public enum Status {
-        PASSED,
-        FAILED,
-        RUNNING,
-        NOT_STARTED
+        PASSED, FAILED, RUNNING, NOT_STARTED
     }
 
     public final String className;

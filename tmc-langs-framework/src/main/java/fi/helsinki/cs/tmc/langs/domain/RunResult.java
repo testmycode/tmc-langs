@@ -60,7 +60,8 @@ public final class RunResult {
     /**
      * Create a new RunResult to represent the results of run of the test suite.
      */
-    public RunResult(Status status,
+    public RunResult(
+            Status status,
             ImmutableList<TestResult> testResults,
             ImmutableMap<String, byte[]> logs) {
         Preconditions.checkNotNull(status);

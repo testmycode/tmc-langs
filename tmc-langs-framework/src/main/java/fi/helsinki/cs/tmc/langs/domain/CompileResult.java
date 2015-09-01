@@ -38,5 +38,4 @@ public final class CompileResult {
     public void setStderr(byte[] stderr) {
         this.stderr = stderr;
     }
-
 }

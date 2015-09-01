@@ -84,10 +84,11 @@ public final class TestResultParser {
         boolean passed = testCase.status == TestCase.Status.PASSED;
         String message = testCase.message == null ? "" : testCase.message;
 
-        return new TestResult(name,
-                             passed,
-                             ImmutableList.copyOf(points),
-                             message,
-                             ImmutableList.copyOf(exception));
+        return new TestResult(
+                name,
+                passed,
+                ImmutableList.copyOf(points),
+                message,
+                ImmutableList.copyOf(exception));
     }
 }

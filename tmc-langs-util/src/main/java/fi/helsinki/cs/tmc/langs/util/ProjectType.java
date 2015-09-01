@@ -16,7 +16,6 @@ import java.nio.file.Path;
  * All the possible project types.
  */
 public enum ProjectType {
-
     JAVA_ANT(new AntPlugin()),
     JAVA_MAVEN(new MavenPlugin()),
     MAKEFILE(new MakePlugin()),

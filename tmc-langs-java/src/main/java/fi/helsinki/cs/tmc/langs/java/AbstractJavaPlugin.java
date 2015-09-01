@@ -48,10 +48,10 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     /**
      * Creates a new AbstractJavaPlugin.
      */
-    public AbstractJavaPlugin(Path testFolderPath,
-                              SubmissionProcessor submissionProcessor,
-                              TestScanner testScanner) {
-        super(new ExerciseBuilder(),
+    public AbstractJavaPlugin(
+            Path testFolderPath, SubmissionProcessor submissionProcessor, TestScanner testScanner) {
+        super(
+                new ExerciseBuilder(),
                 submissionProcessor,
                 new StudentFileAwareZipper(),
                 new StudentFileAwareUnzipper());
@@ -124,7 +124,8 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         logs.put(SpecialLogs.STDOUT, compileResult.getStdout());
         logs.put(SpecialLogs.STDERR, compileResult.getStderr());
 
-        return new RunResult(RunResult.Status.COMPILE_FAILED,
+        return new RunResult(
+                RunResult.Status.COMPILE_FAILED,
                 ImmutableList.copyOf(new ArrayList<TestResult>()),
                 ImmutableMap.copyOf(logs));
     }

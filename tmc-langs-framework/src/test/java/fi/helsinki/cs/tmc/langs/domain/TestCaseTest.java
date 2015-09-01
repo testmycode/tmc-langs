@@ -20,7 +20,7 @@ public class TestCaseTest {
 
     @Before
     public void setUp() {
-        testCase = new TestCase("Test", "Method", new String[]{"a", "b", "c"});
+        testCase = new TestCase("Test", "Method", new String[] {"a", "b", "c"});
     }
 
     @Test

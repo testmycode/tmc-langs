@@ -65,8 +65,9 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public void extractProject(Path compressedProject, Path targetLocation,
-                               boolean overwriteEverything) throws IOException {
+    public void extractProject(
+            Path compressedProject, Path targetLocation, boolean overwriteEverything)
+            throws IOException {
         if (overwriteEverything) {
             StudentFileAwareUnzipper unzipper =
                     new StudentFileAwareUnzipper(new NothingIsStudentFileStudentFilePolicy());

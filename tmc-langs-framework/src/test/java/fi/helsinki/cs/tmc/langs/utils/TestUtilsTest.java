@@ -91,11 +91,11 @@ public class TestUtilsTest {
         List<String> toBeMoved = new ArrayList<>();
         ConfigurableStudentFilePolicy fileMovingPolicy =
                 new ConfigurableStudentFilePolicy(Paths.get("")) {
-            @Override
-            public boolean isStudentSourceFile(Path path) {
-                return true;
-            }
-        };
+                    @Override
+                    public boolean isStudentSourceFile(Path path) {
+                        return true;
+                    }
+                };
 
         TestUtils.collectPaths(dir, toBeMoved, fileMovingPolicy);
 
@@ -110,11 +110,11 @@ public class TestUtilsTest {
         List<String> toBeMoved = new ArrayList<>();
         ConfigurableStudentFilePolicy fileMovingPolicy =
                 new ConfigurableStudentFilePolicy(Paths.get("")) {
-            @Override
-            public boolean isStudentSourceFile(Path path) {
-                return false;
-            }
-        };
+                    @Override
+                    public boolean isStudentSourceFile(Path path) {
+                        return false;
+                    }
+                };
 
         TestUtils.collectPaths(dir, toBeMoved, fileMovingPolicy);
 

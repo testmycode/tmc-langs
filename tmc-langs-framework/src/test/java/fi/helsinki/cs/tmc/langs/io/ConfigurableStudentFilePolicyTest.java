@@ -32,15 +32,14 @@ public class ConfigurableStudentFilePolicyTest {
         sourceDir = Files.createTempDirectory(rootPath, "source");
         targetDir = Files.createTempDirectory(rootPath, "target");
 
-        studentFilePolicy = new ConfigurableStudentFilePolicy(targetDir) {
-            @Override
-            public boolean isStudentSourceFile(Path path) {
-                return false;
-            }
-        };
+        studentFilePolicy =
+                new ConfigurableStudentFilePolicy(targetDir) {
+                    @Override
+                    public boolean isStudentSourceFile(Path path) {
+                        return false;
+                    }
+                };
         processor = new StudentFileAwareSubmissionProcessor(studentFilePolicy);
-
-
     }
 
     /**
@@ -156,8 +155,7 @@ public class ConfigurableStudentFilePolicyTest {
         assertTrue(Files.exists(targetTemp));
         assertEquals(
                 "extra_student_files:\n  - .tmcproject.yml",
-                FileUtils.readFileToString(targetTemp.toFile())
-        );
+                FileUtils.readFileToString(targetTemp.toFile()));
 
         path.toFile().delete();
         temp.toFile().delete();

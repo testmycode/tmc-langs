@@ -28,8 +28,8 @@ public class AbstractLanguagePluginTest {
 
     private class StubLanguagePlugin extends AbstractLanguagePlugin {
 
-        public StubLanguagePlugin(ExerciseBuilder exerciseBuilder,
-                                  SubmissionProcessor submissionProcessor) {
+        public StubLanguagePlugin(
+                ExerciseBuilder exerciseBuilder, SubmissionProcessor submissionProcessor) {
             super(exerciseBuilder, submissionProcessor, null, null);
         }
 

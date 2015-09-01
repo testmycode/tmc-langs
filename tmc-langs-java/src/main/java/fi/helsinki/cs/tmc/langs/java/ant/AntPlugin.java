@@ -115,7 +115,8 @@ public class AntPlugin extends AbstractJavaPlugin {
 
             log.info("Successfully built project at {}", path);
 
-            return new CompileResult(STATUS_CODE_SUCCESS,
+            return new CompileResult(
+                    STATUS_CODE_SUCCESS,
                     Files.readAllBytes(buildLog.toPath()),
                     Files.readAllBytes(errorLog.toPath()));
 
@@ -124,7 +125,8 @@ public class AntPlugin extends AbstractJavaPlugin {
             try {
                 buildProject.fireBuildFinished(buildException);
 
-                return new CompileResult(STATUS_CODE_ERROR,
+                return new CompileResult(
+                        STATUS_CODE_ERROR,
                         Files.readAllBytes(buildLog.toPath()),
                         Files.readAllBytes(errorLog.toPath()));
             } catch (IOException ioException) {
@@ -137,7 +139,6 @@ public class AntPlugin extends AbstractJavaPlugin {
             throw Throwables.propagate(ioException);
         }
     }
-
 
     @Override
     protected ClassPath getProjectClassPath(Path path) {
@@ -155,8 +156,8 @@ public class AntPlugin extends AbstractJavaPlugin {
 
         log.info("Running tests for project at {}", projectBasePath);
 
-        Optional<ExerciseDesc> exercise = scanExercise(projectBasePath,
-                                                       projectBasePath.toString() + TEST_DIR);
+        Optional<ExerciseDesc> exercise =
+                scanExercise(projectBasePath, projectBasePath.toString() + TEST_DIR);
         if (!exercise.isPresent()) {
             log.error("Unable to create run result file due to absent ExerciseDesc");
             throw new TestScannerException();
@@ -165,12 +166,9 @@ public class AntPlugin extends AbstractJavaPlugin {
         Path testDir = projectBasePath.resolve(TEST_DIR);
         Path resultFile = projectBasePath.resolve(RESULT_FILE);
         ClassPath classPath = getProjectClassPath(projectBasePath);
-        TestRunnerArgumentBuilder argumentBuilder =  new TestRunnerArgumentBuilder(
-                projectBasePath,
-                testDir,
-                resultFile,
-                classPath,
-                exercise.get());
+        TestRunnerArgumentBuilder argumentBuilder =
+                new TestRunnerArgumentBuilder(
+                        projectBasePath, testDir, resultFile, classPath, exercise.get());
         List<String> testRunnerArguments = argumentBuilder.getArguments();
 
         try {

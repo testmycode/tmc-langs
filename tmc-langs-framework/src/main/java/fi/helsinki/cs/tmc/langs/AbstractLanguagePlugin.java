@@ -28,10 +28,11 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     /**
      * Instantiates a new AbstractLanguagePlugin.
      */
-    public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder,
-                                  SubmissionProcessor submissionProcessor,
-                                  Zipper zipper,
-                                  Unzipper unzipper) {
+    public AbstractLanguagePlugin(
+            ExerciseBuilder exerciseBuilder,
+            SubmissionProcessor submissionProcessor,
+            Zipper zipper,
+            Unzipper unzipper) {
         this.exerciseBuilder = exerciseBuilder;
         this.submissionProcessor = submissionProcessor;
         this.zipper = zipper;
@@ -119,8 +120,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @param listBuilder a listBuilder the found exercises should be appended to
      * @return a list of all directories that contain build files for this language.
      */
-    private ImmutableList<Path> searchForExercises(File file,
-                                                   ImmutableList.Builder<Path> listBuilder) {
+    private ImmutableList<Path> searchForExercises(
+            File file, ImmutableList.Builder<Path> listBuilder) {
         Stack<File> stack = new Stack<>();
         // Push the initial directory onto the stack.
         stack.push(file);

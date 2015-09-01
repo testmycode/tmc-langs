@@ -27,9 +27,8 @@ public class TestScanner {
     /**
      * Finds all tests for a given exercise.
      */
-    public Optional<ExerciseDesc> findTests(ClassPath classPath,
-                                            SourceFiles sourceFiles,
-                                            String exerciseName) {
+    public Optional<ExerciseDesc> findTests(
+            ClassPath classPath, SourceFiles sourceFiles, String exerciseName) {
         if (sourceFiles.isEmpty()) {
             return Optional.absent();
         }
@@ -39,13 +38,14 @@ public class TestScanner {
         options.add(classPath.toString());
         options.add("-proc:only");
 
-        JavaCompiler.CompilationTask task = compiler.getTask(
-                null,
-                null,
-                null,
-                options,
-                null,
-                fileManager.getJavaFileObjectsFromFiles(sourceFiles.getSources()));
+        JavaCompiler.CompilationTask task =
+                compiler.getTask(
+                        null,
+                        null,
+                        null,
+                        options,
+                        null,
+                        fileManager.getJavaFileObjectsFromFiles(sourceFiles.getSources()));
 
         TestMethodAnnotationProcessor processor = new TestMethodAnnotationProcessor();
         task.setProcessors(Collections.singletonList(processor));

@@ -202,5 +202,6 @@
         <module>tmc-langs-java</module>
         <module>tmc-langs-make</module>
         <module>tmc-langs-python3</module>
+        <module>tmc-langs-rust</module>
     </modules>
 </project>

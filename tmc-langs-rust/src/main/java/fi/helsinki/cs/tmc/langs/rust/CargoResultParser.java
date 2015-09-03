@@ -27,10 +27,10 @@ public class CargoResultParser {
             .build());
 
     //test result: FAILED. 25 passed; 1 failed; 0 ignored; 0 measured
-    private static final Pattern RESULT = Pattern.compile("test result: .*\\. (?<passed>\\d*) passed; (?<fails>\\d*) failed; \\d* ignored; \\d* measured");
+    private static final Pattern RESULT = Pattern.compile("test result: .*\\. (?<passes>\\d*) passed; (?<fails>\\d*) failed; \\d* ignored; \\d* measured");
 
     public RunResult parse(ProcessResult processResult) {
-        String[] lines = processResult.output.split(System.lineSeparator());
+        String[] lines = processResult.output.split("\\r?\\n");
         String last = lines[lines.length - 1];
         Matcher matcher = RESULT.matcher(last);
         if (matcher.matches()) {

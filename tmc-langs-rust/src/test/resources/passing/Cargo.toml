@@ -1,4 +1,4 @@
 [package]
-name = "passing_suite"
+name = "passing"
 version = "0.1.0"
-authors = [""]
+authors = ["Example"]

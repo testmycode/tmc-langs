@@ -81,6 +81,11 @@ public class AbstractJavaPluginTest {
         public String getLanguageName() {
             return null;
         }
+
+        @Override
+        public String getPluginName() {
+            return null;
+        }
     }
 
     private PluginImplLanguagePlugin pluginImpl;
@@ -111,8 +116,8 @@ public class AbstractJavaPluginTest {
     @Test
     public void exceptionOnGetClassPathReturnsAbsentDuringScanExercise() {
         Path path = TestUtils.getPath(getClass(), "trivial");
-        AbstractJavaPlugin plugin =
-                new StubLanguagePlugin(path) {
+        AbstractJavaPlugin plugin
+                = new StubLanguagePlugin(path) {
                     @Override
                     public boolean isExerciseTypeCorrect(Path path) {
                         return true;
@@ -129,11 +134,11 @@ public class AbstractJavaPluginTest {
 
     @Test
     public void testRunnerExceptionDuringRunTestsReturnsNull() {
-        AbstractJavaPlugin plugin =
-                new StubLanguagePlugin(Paths.get("")) {
+        AbstractJavaPlugin plugin
+                = new StubLanguagePlugin(Paths.get("")) {
                     @Override
                     protected File createRunResultFile(Path path)
-                            throws TestRunnerException, TestScannerException {
+                    throws TestRunnerException, TestScannerException {
                         throw new TestRunnerException();
                     }
                 };
@@ -143,11 +148,11 @@ public class AbstractJavaPluginTest {
 
     @Test
     public void testScannerExceptionDuringRunTestsReturnsNull() {
-        AbstractJavaPlugin plugin =
-                new StubLanguagePlugin(Paths.get("")) {
+        AbstractJavaPlugin plugin
+                = new StubLanguagePlugin(Paths.get("")) {
                     @Override
                     protected File createRunResultFile(Path path)
-                            throws TestRunnerException, TestScannerException {
+                    throws TestRunnerException, TestScannerException {
                         throw new TestScannerException();
                     }
                 };
@@ -166,23 +171,23 @@ public class AbstractJavaPluginTest {
     public void scanExerciseAddsSourceFilesFromProject() {
         Path path = TestUtils.getPath(getClass(), "trivial");
         TestScanner scanner = mock(TestScanner.class);
-        AbstractJavaPlugin plugin =
-                new StubLanguagePlugin(
+        AbstractJavaPlugin plugin
+                = new StubLanguagePlugin(
                         Paths.get(""), new StudentFileAwareSubmissionProcessor(), scanner) {
-                    public boolean isExerciseTypeCorrect(Path path) {
-                        return true;
-                    }
-                };
-        ArgumentCaptor<SourceFiles> sourceFilesCaptor = ArgumentCaptor.forClass(SourceFiles.class);
+                            public boolean isExerciseTypeCorrect(Path path) {
+                                return true;
+                            }
+                        };
+                ArgumentCaptor<SourceFiles> sourceFilesCaptor = ArgumentCaptor.forClass(SourceFiles.class);
 
-        plugin.scanExercise(path, "trivial");
+                plugin.scanExercise(path, "trivial");
 
-        verify(scanner).findTests(any(ClassPath.class), sourceFilesCaptor.capture(), anyString());
+                verify(scanner).findTests(any(ClassPath.class), sourceFilesCaptor.capture(), anyString());
 
-        SourceFiles sourceFiles = sourceFilesCaptor.getValue();
-        File expected = TestUtils.getPath(getClass(), "trivial/test/TrivialTest.java").toFile();
+                SourceFiles sourceFiles = sourceFilesCaptor.getValue();
+                File expected = TestUtils.getPath(getClass(), "trivial/test/TrivialTest.java").toFile();
 
-        assertFalse(sourceFiles.getSources().isEmpty());
-        assertTrue(sourceFiles.getSources().contains(expected));
+                assertFalse(sourceFiles.getSources().isEmpty());
+                assertTrue(sourceFiles.getSources().contains(expected));
     }
 }

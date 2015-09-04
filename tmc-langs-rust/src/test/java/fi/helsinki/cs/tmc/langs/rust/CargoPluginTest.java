@@ -20,9 +20,6 @@ public class CargoPluginTest {
 
     private CargoPlugin cargoPlugin;
 
-    public CargoPluginTest() {
-    }
-
     @Before
     public void setUp() {
         cargoPlugin = new CargoPlugin();

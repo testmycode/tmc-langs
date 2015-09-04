@@ -30,6 +30,10 @@ public class CargoResultParser {
 
     //test result: FAILED. 25 passed; 1 failed; 0 ignored; 0 measured
     private static final Pattern RESULT = Pattern.compile("test result: .*\\. (?<passes>\\d*) passed; (?<fails>\\d*) failed; \\d* ignored; \\d* measured");
+    //test test::dim4::test_4d_1_80_perioditic ... ok
+    private static final Pattern TEST = Pattern.compile("test (?<name>.*) \\.\\.\\. .*");
+    //thread 'test::dim2::test_2d_1_80_normal' panicked at 'assertion failed: false', src\test\dim2.rs:12
+    private static final Pattern FAILURES = Pattern.compile(".*thread '(?<name>.*)' panicked at '(?<description>.*)', .*");
 
     public RunResult parse(ProcessResult processResult) {
         String output = processResult.output;
@@ -58,9 +62,6 @@ public class CargoResultParser {
         return PARSING_FAILED;
     }
 
-    //test test::dim4::test_4d_1_80_perioditic ... ok
-    private static final Pattern TEST = Pattern.compile("test (?<name>.*) \\.\\.\\. .*");
-
     private Optional<List<String>> parseResults(String[] lines) {
         List<String> result = new ArrayList<>();
         for (String line : lines) {
@@ -71,9 +72,6 @@ public class CargoResultParser {
         }
         return Optional.of(result);
     }
-
-    //thread 'test::dim2::test_2d_1_80_normal' panicked at 'assertion failed: false', src\test\dim2.rs:12
-    private static final Pattern FAILURES = Pattern.compile(".*thread '(?<name>.*)' panicked at '(?<description>.*)', .*");
 
     private Optional<Map<String, String>> findFailures(String errorOutput, int fails) {
         Map<String, String> result = new HashMap<>();

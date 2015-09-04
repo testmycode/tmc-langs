@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.rust;
 
-
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
@@ -113,6 +112,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
         try {
             return Optional.of(runner.call());
         } catch (Exception e) {
+            log.error("Running command failed {0}", e);
             return Optional.absent();
         }
     }
@@ -120,13 +120,14 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     private RunResult filledFailure(ProcessResult processResult) {
         byte[] output = processResult.output.getBytes(StandardCharsets.UTF_8);
         byte[] errorOutput = processResult.errorOutput.getBytes(StandardCharsets.UTF_8);
-        ImmutableMap.Builder<String, byte[]> logs = new ImmutableMap.Builder<>();
-        logs.put(SpecialLogs.STDOUT, output);
-        logs.put(SpecialLogs.STDERR, errorOutput);
+        ImmutableMap<String, byte[]> logs = new ImmutableMap.Builder()
+                .put(SpecialLogs.STDOUT, output)
+                .put(SpecialLogs.STDERR, errorOutput)
+                .<String, byte[]>build();
         return new RunResult(
                 Status.COMPILE_FAILED,
                 ImmutableList.<TestResult>of(),
-                logs.build());
+                logs);
     }
 
     private RunResult parseResult(ProcessResult processResult, Path path) {

@@ -1,9 +1,6 @@
 package fi.helsinki.cs.tmc.langs.rust;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
@@ -15,28 +12,23 @@ import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
-import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
-import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
-import fi.helsinki.cs.tmc.langs.io.zip.Zipper;
 import fi.helsinki.cs.tmc.langs.rust.util.Constants;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javafx.concurrent.Worker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CargoPlugin extends AbstractLanguagePlugin {
 
@@ -74,6 +66,10 @@ public class CargoPlugin extends AbstractLanguagePlugin {
         return "cargo";
     }
 
+    public String getPluginName() {
+        return "cargo";
+    }
+
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -107,10 +103,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
         log.info("Running tests with command {0}", Arrays.deepToString(command));
         Optional<ProcessResult> result = run(command, dir);
         if (result.isPresent()) {
-            if (result.get().statusCode == 0) {
-                return parseResult(result.get(), dir);
-            }
-            return filledFailure(result.get());
+            return parseResult(result.get(), dir);
         }
         return EMPTY_FAILURE;
     }

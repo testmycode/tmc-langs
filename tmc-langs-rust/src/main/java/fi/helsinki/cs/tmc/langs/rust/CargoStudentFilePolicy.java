@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.rust;
 
 import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.rust.util.Constants;
+
 import java.nio.file.Path;
 
 public class CargoStudentFilePolicy extends ConfigurableStudentFilePolicy {

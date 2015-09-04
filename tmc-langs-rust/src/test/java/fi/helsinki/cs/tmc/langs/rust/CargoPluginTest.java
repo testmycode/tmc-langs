@@ -29,7 +29,7 @@ public class CargoPluginTest {
     }
 
     @Test
-    public void isExerciseCorrectTypeDoesntBreakByDirectoryNamedCargoToml() throws IOException {
+    public void testIsExerciseCorrectTypeDoesntBreakByDirectoryNamedCargoToml() throws IOException {
         Path parent = Files.createTempDirectory("tmc-cargo-test");
         Path cargoToml = parent.resolve("Cargo.toml");
         Files.createDirectory(cargoToml);
@@ -41,11 +41,23 @@ public class CargoPluginTest {
     }
 
     @Test
-    public void testMakeProjectWithPassingTestsCompilesAndPassesTests() {
+    public void testProjectWithPassingTestCompilesAndPassesTests() {
         Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = cargoPlugin.runTests(path);
 
         assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(1, result.testResults.size());
+        assertTrue(result.testResults.get(0).passed);
+    }
+
+    @Test
+    public void testProjectWithFailingTestCompilesAndFailsTest() {
+        Path path = TestUtils.getPath(getClass(), "failing");
+        RunResult result = cargoPlugin.runTests(path);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(1, result.testResults.size());
+        assertFalse(result.testResults.get(0).passed);
     }
 
 }

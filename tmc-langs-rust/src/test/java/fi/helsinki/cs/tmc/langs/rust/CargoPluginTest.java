@@ -56,5 +56,15 @@ public class CargoPluginTest {
         assertEquals(1, result.testResults.size());
         assertFalse(result.testResults.get(0).passed);
     }
+    
+    @Test
+    public void testTryingToCheatByAddingTestFails() {
+        Path path = TestUtils.getPath(getClass(), "testCheat");
+        RunResult result = cargoPlugin.runTests(path);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(1, result.testResults.size());
+        assertFalse(result.testResults.get(0).passed);
+    }
 
 }

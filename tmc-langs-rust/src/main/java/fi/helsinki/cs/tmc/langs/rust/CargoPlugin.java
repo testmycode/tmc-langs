@@ -84,10 +84,10 @@ public class CargoPlugin extends AbstractLanguagePlugin {
         return runBuiltTests(path);
     }
 
-    private Optional<RunResult> build(Path dir) {
+    private Optional<RunResult> build(Path path) {
         String[] command = {"cargo", "test", "--no-run"};
         log.info("Building project with command {0}", Arrays.deepToString(command));
-        Optional<ProcessResult> result = run(command, dir);
+        Optional<ProcessResult> result = run(command, path);
         if (result.isPresent()) {
             if (result.get().statusCode == 0) {
                 return Optional.absent();
@@ -118,11 +118,9 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     }
 
     private RunResult filledFailure(ProcessResult processResult) {
-        byte[] output = processResult.output.getBytes(StandardCharsets.UTF_8);
         byte[] errorOutput = processResult.errorOutput.getBytes(StandardCharsets.UTF_8);
         ImmutableMap<String, byte[]> logs = new ImmutableMap.Builder()
-                .put(SpecialLogs.STDOUT, output)
-                .put(SpecialLogs.STDERR, errorOutput)
+                .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
                 .<String, byte[]>build();
         return new RunResult(
                 Status.COMPILE_FAILED,

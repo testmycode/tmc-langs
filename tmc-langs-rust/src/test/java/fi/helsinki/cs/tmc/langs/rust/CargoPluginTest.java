@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 public class CargoPluginTest {
 
@@ -48,6 +50,17 @@ public class CargoPluginTest {
     }
 
     @Test
+    public void testProjectWithMultiplePassingTestCompilesAndPassesTests() {
+        Path path = TestUtils.getPath(getClass(), "multiPassing");
+        RunResult result = cargoPlugin.runTests(path);
+
+        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(2, result.testResults.size());
+        assertTrue(result.testResults.get(0).passed);
+        assertTrue(result.testResults.get(1).passed);
+    }
+
+    @Test
     public void testProjectWithFailingTestCompilesAndFailsTest() {
         Path path = TestUtils.getPath(getClass(), "failing");
         RunResult result = cargoPlugin.runTests(path);
@@ -56,7 +69,22 @@ public class CargoPluginTest {
         assertEquals(1, result.testResults.size());
         assertFalse(result.testResults.get(0).passed);
     }
-    
+
+    @Test
+    public void testProjectPartiallyFailingTestCompilesAndFailsTest() {
+        Path path = TestUtils.getPath(getClass(), "semiFailing");
+        RunResult result = cargoPlugin.runTests(path);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(2, result.testResults.size());
+        boolean first = result.testResults.get(0).passed;
+        if (first) {
+            assertFalse(result.testResults.get(1).passed);
+        } else {
+            assertTrue(result.testResults.get(1).passed);
+        }
+    }
+
     @Test
     public void testTryingToCheatByAddingTestFails() {
         Path path = TestUtils.getPath(getClass(), "testCheat");
@@ -67,4 +95,14 @@ public class CargoPluginTest {
         assertFalse(result.testResults.get(0).passed);
     }
 
+    @Test
+    public void compilationFailurePreserversCompilationOutput() {
+        Path path = TestUtils.getPath(getClass(), "compileFail");
+        RunResult result = cargoPlugin.runTests(path);
+
+        assertEquals(RunResult.Status.COMPILE_FAILED, result.status);
+        assertTrue(result.logs.containsKey(SpecialLogs.COMPILER_OUTPUT));
+        assertTrue(new String(result.logs.get(SpecialLogs.COMPILER_OUTPUT)).contains("aborting due to previous error"));
+        assertEquals(0, result.testResults.size());
+    }
 }

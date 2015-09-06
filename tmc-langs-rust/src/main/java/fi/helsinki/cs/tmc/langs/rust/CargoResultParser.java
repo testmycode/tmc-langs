@@ -8,6 +8,7 @@ import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -53,7 +54,12 @@ public class CargoResultParser {
                         return new RunResult(
                                 status,
                                 buildTestResults(tests.get(), failures.get()),
-                                ImmutableMap.<String, byte[]>of());
+                                new ImmutableMap.Builder()
+                                .put(SpecialLogs.STDOUT,
+                                        processResult.output.getBytes(StandardCharsets.UTF_8))
+                                .put(SpecialLogs.STDERR,
+                                        processResult.errorOutput.getBytes(StandardCharsets.UTF_8))
+                                .build());
                     }
                 }
                 break;

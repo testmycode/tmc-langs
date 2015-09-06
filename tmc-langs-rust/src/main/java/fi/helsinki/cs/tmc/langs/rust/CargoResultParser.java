@@ -32,13 +32,13 @@ public class CargoResultParser {
             .build());
 
     //test result: FAILED. 25 passed; 1 failed; 0 ignored; 0 measured
-    private static final Pattern RESULT =
-            Pattern.compile("test result: .*\\. (?<passes>\\d*) passed; (?<fails>\\d*) failed; \\d* ignored; \\d* measured");
+    private static final Pattern RESULT
+            = Pattern.compile("test result: .*\\. (?<passes>\\d*) passed; (?<fails>\\d*) failed; \\d* ignored; \\d* measured");
     //test test::dim4::test_4d_1_80_perioditic ... ok
     private static final Pattern TEST = Pattern.compile("test (?<name>.*) \\.\\.\\. .*");
     //thread 'test::dim2::test_2d_1_80_normal' panicked at 'assertion failed: false', src\test\dim2.rs:12
-    private static final Pattern FAILURES =
-            Pattern.compile(".*thread '(?<name>.*)' panicked at '(?<description>.*)', .*");
+    private static final Pattern FAILURES
+            = Pattern.compile(".*thread '(?<name>.*)' panicked at '(?<description>.*)', .*");
 
     /**
      * Parses given process results outputs to a run result.
@@ -56,18 +56,16 @@ public class CargoResultParser {
                         = findFailures(processResult.output, fails);
                 if (failures.isPresent()) {
                     Status status = fails == 0 ? Status.PASSED : Status.TESTS_FAILED;
-                    Optional<List<String>> tests = parseResults(lines);
-                    if (tests.isPresent()) {
-                        return new RunResult(
-                                status,
-                                buildTestResults(tests.get(), failures.get()),
-                                new ImmutableMap.Builder()
-                                .put(SpecialLogs.STDOUT,
-                                        processResult.output.getBytes(StandardCharsets.UTF_8))
-                                .put(SpecialLogs.STDERR,
-                                        processResult.errorOutput.getBytes(StandardCharsets.UTF_8))
-                                .build());
-                    }
+                    List<String> tests = parseResults(lines);
+                    return new RunResult(
+                            status,
+                            buildTestResults(tests, failures.get()),
+                            new ImmutableMap.Builder()
+                            .put(SpecialLogs.STDOUT,
+                                    processResult.output.getBytes(StandardCharsets.UTF_8))
+                            .put(SpecialLogs.STDERR,
+                                    processResult.errorOutput.getBytes(StandardCharsets.UTF_8))
+                            .build());
                 }
                 break;
             }
@@ -75,7 +73,7 @@ public class CargoResultParser {
         return PARSING_FAILED;
     }
 
-    private Optional<List<String>> parseResults(String[] lines) {
+    private List<String> parseResults(String[] lines) {
         List<String> result = new ArrayList<>();
         for (String line : lines) {
             Matcher matcher = TEST.matcher(line);
@@ -83,7 +81,7 @@ public class CargoResultParser {
                 result.add(matcher.group("name"));
             }
         }
-        return Optional.of(result);
+        return result;
     }
 
     private Optional<Map<String, String>> findFailures(String errorOutput, int fails) {
@@ -98,7 +96,7 @@ public class CargoResultParser {
         return Optional.of(result);
     }
 
-    private ImmutableList<TestResult>buildTestResults(List<String> results,
+    private ImmutableList<TestResult> buildTestResults(List<String> results,
             Map<String, String> failures) {
         ImmutableList.Builder<TestResult> testResults = ImmutableList.builder();
         for (String test : results) {

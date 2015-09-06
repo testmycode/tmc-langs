@@ -112,7 +112,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
         try {
             return Optional.of(runner.call());
         } catch (Exception e) {
-            log.error("Running command failed {0}", e);
+            log.error("Running command {0} failed {1}", Arrays.deepToString(command), e);
             return Optional.absent();
         }
     }

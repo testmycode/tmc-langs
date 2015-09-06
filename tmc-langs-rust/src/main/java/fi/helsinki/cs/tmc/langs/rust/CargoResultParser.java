@@ -2,23 +2,25 @@ package fi.helsinki.cs.tmc.langs.rust;
 
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Parses Cargos test output.
+ */
 public class CargoResultParser {
 
     private static final RunResult PARSING_FAILED = new RunResult(
@@ -30,12 +32,17 @@ public class CargoResultParser {
             .build());
 
     //test result: FAILED. 25 passed; 1 failed; 0 ignored; 0 measured
-    private static final Pattern RESULT = Pattern.compile("test result: .*\\. (?<passes>\\d*) passed; (?<fails>\\d*) failed; \\d* ignored; \\d* measured");
+    private static final Pattern RESULT =
+            Pattern.compile("test result: .*\\. (?<passes>\\d*) passed; (?<fails>\\d*) failed; \\d* ignored; \\d* measured");
     //test test::dim4::test_4d_1_80_perioditic ... ok
     private static final Pattern TEST = Pattern.compile("test (?<name>.*) \\.\\.\\. .*");
     //thread 'test::dim2::test_2d_1_80_normal' panicked at 'assertion failed: false', src\test\dim2.rs:12
-    private static final Pattern FAILURES = Pattern.compile(".*thread '(?<name>.*)' panicked at '(?<description>.*)', .*");
+    private static final Pattern FAILURES =
+            Pattern.compile(".*thread '(?<name>.*)' panicked at '(?<description>.*)', .*");
 
+    /**
+     * Parses given process results outputs to a run result.
+     */
     public RunResult parse(ProcessResult processResult) {
         String output = processResult.output;
         String[] lines = output.split("\\r?\\n");
@@ -91,7 +98,8 @@ public class CargoResultParser {
         return Optional.of(result);
     }
 
-    private ImmutableList<TestResult> buildTestResults(List<String> results, Map<String, String> failures) {
+    private ImmutableList<TestResult>buildTestResults(List<String> results,
+            Map<String, String> failures) {
         ImmutableList.Builder<TestResult> testResults = ImmutableList.builder();
         for (String test : results) {
             String description = failures.get(test);

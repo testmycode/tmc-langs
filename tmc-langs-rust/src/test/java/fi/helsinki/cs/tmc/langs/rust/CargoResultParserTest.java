@@ -1,16 +1,15 @@
 package fi.helsinki.cs.tmc.langs.rust;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
-import javafx.concurrent.Worker;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class CargoResultParserTest {
 
@@ -31,7 +30,7 @@ public class CargoResultParserTest {
         builder.append("failures:\n");
         builder.append("\n");
         builder.append("---- name stdout ----\n");
-        builder.append("	thread 'name' panicked at 'description', tests\\mod.rs:line\n");
+        builder.append("\tthread 'name' panicked at 'description', tests\\mod.rs:line\n");
         builder.append("\n");
         builder.append("\n");
         builder.append("failures:\n");

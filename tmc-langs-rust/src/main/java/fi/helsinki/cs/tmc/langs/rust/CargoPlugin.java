@@ -129,7 +129,6 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     }
 
     private RunResult parseResult(ProcessResult processResult, Path path) {
-        Configuration configuration = new Configuration(path);
         return new CargoResultParser().parse(processResult);
     }
 

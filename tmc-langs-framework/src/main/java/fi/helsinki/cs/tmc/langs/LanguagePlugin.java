@@ -28,13 +28,11 @@ public interface LanguagePlugin {
 
     /**
      * Returns the name of the plug-in.
-     *
      */
     String getPluginName();
 
     /**
      * Returns the name of the programming language supported by this plug-in.
-     *
      */
     @Deprecated
     String getLanguageName();

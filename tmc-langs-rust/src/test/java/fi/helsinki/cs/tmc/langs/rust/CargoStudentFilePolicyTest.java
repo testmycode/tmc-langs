@@ -7,10 +7,10 @@ import java.nio.file.Paths;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class CargoStudentFilePolicyTest {
+
     private CargoStudentFilePolicy policy;
-    
+
     @Before
     public void setUp() {
         policy = new CargoStudentFilePolicy(Paths.get(""));
@@ -18,11 +18,11 @@ public class CargoStudentFilePolicyTest {
 
     @Test
     public void testCargoTomlIsNotStudentFile() {
-        assertFalse(policy.isStudentSourceFile(Paths.get("src/Cargo.toml")));
+        assertFalse(policy.isStudentSourceFile(Paths.get("src", "Cargo.toml")));
     }
-    
+
     @Test
     public void testSourceFileIsSourceFile() {
-        assertTrue(policy.isStudentSourceFile(Paths.get("src/hello.rs")));
+        assertTrue(policy.isStudentSourceFile(Paths.get("src", "hello.rs")));
     }
 }

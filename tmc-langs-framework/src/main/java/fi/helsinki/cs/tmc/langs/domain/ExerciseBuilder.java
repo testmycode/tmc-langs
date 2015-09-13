@@ -10,17 +10,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExerciseBuilder {
 
-    private static final String BEGIN_SOLUTION_TAG = "// BEGIN SOLUTION";
-    private static final String END_SOLUTION_TAG = "// END SOLUTION";
-    private static final String STUB_TAG = "// STUB:";
-    private static final String SOLUTION_FILE_TAG = "// SOLUTION FILE";
+    private static final String BEGIN_SOLUTION_REGEX = "[ \\t]*\\/\\/[ \\t]*BEGIN[ \\t]+SOLUTION.*";
+    private static final String END_SOLUTION_REGEX = "[ \\t]*\\/\\/[ \\t]*END[ \\t]+SOLUTION.*";
+    private static final String SOLUTION_FILE_REGEX = "[ \\t]*\\/\\/[ \\t]*SOLUTION[ \\t]+FILE.*";
+    private static final String STUB_REGEX = "([ \\t]*)\\/\\/[ \\t]*STUB:[ \\t]*(.*)";
     private static final String SOURCE_FOLDER_NAME = "src";
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private static final Logger logger = LoggerFactory.getLogger(ExerciseBuilder.class);
+    private static final Pattern stubReplacePattern = Pattern.compile(STUB_REGEX);
 
     /**
      * Prepares a stub exercise from the original.
@@ -42,18 +45,17 @@ public class ExerciseBuilder {
             List<String> filteredLines = new ArrayList<>();
             boolean skipLine = false;
             for (String line : lines) {
-                if (line.contains(SOLUTION_FILE_TAG)) {
+                if (line.matches(SOLUTION_FILE_REGEX)) {
                     Files.deleteIfExists(file);
                     return;
                 }
-                if (line.contains(BEGIN_SOLUTION_TAG)) {
+                if (line.matches(BEGIN_SOLUTION_REGEX)) {
                     skipLine = true;
-                } else if (skipLine && line.contains(END_SOLUTION_TAG)) {
+                } else if (skipLine && line.matches(END_SOLUTION_REGEX)) {
                     skipLine = false;
-                } else if (line.contains(STUB_TAG)) {
-                    String start = line.substring(0, line.indexOf(STUB_TAG) - 1);
-                    String end = line.substring(line.indexOf(STUB_TAG) + STUB_TAG.length());
-                    filteredLines.add(start + end);
+                } else if (line.matches(STUB_REGEX)) {
+                    Matcher stubMatcher = stubReplacePattern.matcher(line);
+                    filteredLines.add(stubMatcher.replaceAll("$1$2"));
                 } else if (!skipLine) {
                     filteredLines.add(line);
                 }
@@ -106,10 +108,10 @@ public class ExerciseBuilder {
             List<String> lines = Files.readAllLines(file, CHARSET);
             List<String> filteredLines = new ArrayList<>();
             for (String line : lines) {
-                if (line.contains(BEGIN_SOLUTION_TAG)
-                        || line.contains(END_SOLUTION_TAG)
-                        || line.contains(STUB_TAG)
-                        || line.contains(SOLUTION_FILE_TAG)) {
+                if (line.matches(BEGIN_SOLUTION_REGEX)
+                        || line.matches(END_SOLUTION_REGEX)
+                        || line.matches(STUB_REGEX)
+                        || line.matches(SOLUTION_FILE_REGEX)) {
                     continue;
                 }
                 filteredLines.add(line);

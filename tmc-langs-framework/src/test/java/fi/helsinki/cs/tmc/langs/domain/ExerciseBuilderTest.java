@@ -86,6 +86,7 @@ public class ExerciseBuilderTest {
         
         assertFalse(solutionFile.toFile().exists());
         assertFalse(solutionFile2.toFile().exists());
+        assertFalse(solutionFile3.toFile().exists());
     }
 
     private Path createTemporaryCopyOf(Path path) throws IOException {

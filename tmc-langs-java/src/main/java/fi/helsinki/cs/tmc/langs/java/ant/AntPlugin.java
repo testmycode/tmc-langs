@@ -60,7 +60,7 @@ public class AntPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    public String getLanguageName() {
+    public String getPluginName() {
         return "apache-ant";
     }
 

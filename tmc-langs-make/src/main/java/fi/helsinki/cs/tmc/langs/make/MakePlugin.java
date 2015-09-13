@@ -63,7 +63,7 @@ public final class MakePlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public String getLanguageName() {
+    public String getPluginName() {
         return "make";
     }
 

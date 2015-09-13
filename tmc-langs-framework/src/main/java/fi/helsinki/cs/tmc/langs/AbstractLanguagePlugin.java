@@ -60,6 +60,11 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     public abstract ValidationResult checkCodeStyle(Path path);
 
     @Override
+    public String getLanguageName() {
+        return getPluginName();
+    }
+
+    @Override
     public void prepareSubmission(Path submissionPath, Path destPath) {
         submissionProcessor.setStudentFilePolicy(getStudentFilePolicy(destPath));
         submissionProcessor.moveFiles(submissionPath, destPath);

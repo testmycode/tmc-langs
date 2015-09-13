@@ -49,7 +49,7 @@ public final class MavenPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    public String getLanguageName() {
+    public String getPluginName() {
         return "apache-maven";
     }
 

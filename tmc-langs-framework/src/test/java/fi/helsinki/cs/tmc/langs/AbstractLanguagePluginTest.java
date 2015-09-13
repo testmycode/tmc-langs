@@ -62,6 +62,11 @@ public class AbstractLanguagePluginTest {
         public ValidationResult checkCodeStyle(Path path) {
             return null;
         }
+
+        @Override
+        public String getPluginName() {
+            return null;
+        }
     }
 
     private LanguagePlugin plugin;

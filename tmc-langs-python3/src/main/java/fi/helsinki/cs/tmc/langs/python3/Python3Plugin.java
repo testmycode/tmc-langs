@@ -68,7 +68,7 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public String getLanguageName() {
+    public String getPluginName() {
         return "python3";
     }
 

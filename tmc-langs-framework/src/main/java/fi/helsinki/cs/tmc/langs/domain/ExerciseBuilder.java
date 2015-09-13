@@ -15,10 +15,10 @@ import java.util.regex.Pattern;
 
 public class ExerciseBuilder {
 
-    private static final String BEGIN_SOLUTION_REGEX = ".*\\/\\/[ \\t]?BEGIN[ \\t]SOLUTION.*";
-    private static final String END_SOLUTION_REGEX = ".*\\/\\/[ \\t]?END[ \\t]SOLUTION.*";
-    private static final String SOLUTION_FILE_REGEX = ".*\\/\\/[ \\t]?SOLUTION[ \\t]FILE.*";
-    private static final String STUB_REGEX = "(.*)\\/\\/[ \\t]?STUB: (.*)";
+    private static final String BEGIN_SOLUTION_REGEX = ".*\\/\\/[ \\t]*BEGIN[ \\t]+SOLUTION.*";
+    private static final String END_SOLUTION_REGEX = ".*\\/\\/[ \\t]*END[ \\t]+SOLUTION.*";
+    private static final String SOLUTION_FILE_REGEX = ".*\\/\\/[ \\t]*SOLUTION[ \\t]+FILE.*";
+    private static final String STUB_REGEX = "(.*)\\/\\/[ \\t]*STUB:[ \\t]*(.*)";
     private static final String SOURCE_FOLDER_NAME = "src";
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 

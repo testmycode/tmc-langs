@@ -52,22 +52,18 @@ public class CargoResultParser {
             int fails = Integer.parseInt(matcher.group("fails"));
             int passes = Integer.parseInt(matcher.group("passes"));
             if (fails + passes > 0) {
-                Optional<Map<String, String>> failures
-                        = findFailures(processResult.output, fails);
-                if (failures.isPresent()) {
-                    Status status = fails == 0 ? Status.PASSED : Status.TESTS_FAILED;
-                    List<String> tests = parseResults(lines);
-                    return new RunResult(
-                            status,
-                            buildTestResults(tests, failures.get()),
-                            new ImmutableMap.Builder()
-                            .put(SpecialLogs.STDOUT,
-                                    processResult.output.getBytes(StandardCharsets.UTF_8))
-                            .put(SpecialLogs.STDERR,
-                                    processResult.errorOutput.getBytes(StandardCharsets.UTF_8))
-                            .build());
-                }
-                break;
+                Map<String, String> failures = findFailures(processResult.output, fails);
+                Status status = fails == 0 ? Status.PASSED : Status.TESTS_FAILED;
+                List<String> tests = parseResults(lines);
+                return new RunResult(
+                        status,
+                        buildTestResults(tests, failures),
+                        new ImmutableMap.Builder()
+                        .put(SpecialLogs.STDOUT,
+                                processResult.output.getBytes(StandardCharsets.UTF_8))
+                        .put(SpecialLogs.STDERR,
+                                processResult.errorOutput.getBytes(StandardCharsets.UTF_8))
+                        .build());
             }
         }
         return PARSING_FAILED;
@@ -84,7 +80,7 @@ public class CargoResultParser {
         return result;
     }
 
-    private Optional<Map<String, String>> findFailures(String errorOutput, int fails) {
+    private Map<String, String> findFailures(String errorOutput, int fails) {
         Map<String, String> result = new HashMap<>();
         String[] lines = errorOutput.split("\\r?\\n");
         for (String line : lines) {
@@ -93,7 +89,7 @@ public class CargoResultParser {
                 result.put(matcher.group("name"), matcher.group("description"));
             }
         }
-        return Optional.of(result);
+        return result;
     }
 
     private ImmutableList<TestResult> buildTestResults(List<String> results,

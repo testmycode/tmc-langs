@@ -99,7 +99,8 @@ public class CargoPluginTest {
 
         assertEquals(RunResult.Status.COMPILE_FAILED, result.status);
         assertTrue(result.logs.containsKey(SpecialLogs.COMPILER_OUTPUT));
-        assertTrue(new String(result.logs.get(SpecialLogs.COMPILER_OUTPUT)).contains("aborting due to previous error"));
+        assertTrue(new String(result.logs.get(SpecialLogs.COMPILER_OUTPUT))
+                .contains("aborting due to previous error"));
         assertEquals(0, result.testResults.size());
     }
 }

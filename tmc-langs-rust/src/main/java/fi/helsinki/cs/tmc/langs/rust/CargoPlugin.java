@@ -57,7 +57,14 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     @Override
     public ValidationResult checkCodeStyle(Path path) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String[] command = {"cargo", "rustc", "--forbid warnings"};
+        log.info("Building for lints with command {0}", Arrays.deepToString(command));
+        Optional<ProcessResult> result = run(command, path);
+        if (result.isPresent()) {
+            return parseLints(result.get());
+        }
+        log.error("Build for lints failed.}");
+        return null;
     }
 
     @Override
@@ -130,6 +137,10 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     private RunResult parseResult(ProcessResult processResult, Path path) {
         return new CargoResultParser().parse(processResult);
+    }
+
+    private ValidationResult parseLints(ProcessResult processResult) {
+        return LinterResult.parse(processResult);
     }
 
 }

@@ -6,8 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.io.FileUtils;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,12 +17,22 @@ import java.nio.file.Path;
 public class ConfigurationTest {
 
     private Configuration configuration;
+    private Path folder;
+    private Path file;
 
     @Before
     public void setUp() throws IOException {
-        Path path = Files.createTempFile("temp", ".txt");
-        FileUtils.writeStringToFile(path.toFile(), "simple_option: true");
-        this.configuration = new Configuration(path);
+        folder = Files.createTempDirectory("tmc-config");
+        file = folder.resolve(".tmcproject.yml");
+        Files.createFile(file);
+        Files.write(file, "simple_option: true".getBytes());
+        this.configuration = new Configuration(folder);
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        Files.deleteIfExists(file);
+        Files.deleteIfExists(folder);
     }
 
     @Test
@@ -49,14 +58,13 @@ public class ConfigurationTest {
 
     @Test
     public void testParseOptions() throws IOException {
-        Path path = Files.createTempFile("options", ".txt");
-        FileUtils.writeStringToFile(path.toFile(), "option: true");
+        Files.write(file, "option: true".getBytes());
 
         this.configuration = new Configuration();
 
         assertFalse(configuration.isSet("option"));
 
-        configuration.parseOptions(path);
+        configuration.parseOptions(folder);
 
         assertTrue(configuration.isSet("option"));
         assertEquals(true, configuration.get("option").asBoolean());

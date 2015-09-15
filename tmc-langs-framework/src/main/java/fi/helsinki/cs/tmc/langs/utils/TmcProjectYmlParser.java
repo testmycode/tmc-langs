@@ -48,11 +48,10 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
     }
 
     @Override
-    public Map<String, ValueObject> parseOptions(Path path) {
+    public Map<String, ValueObject> parseOptions(Path configFile) {
+        log.debug("Parsing configuration from {}", configFile);
 
-        log.debug("Parsing configuration from {}", path);
-
-        Object yamlSpecifications = getYamlSpecs(path);
+        Object yamlSpecifications = getYamlSpecs(configFile);
 
         if (!(yamlSpecifications instanceof Map)) {
             return new HashMap<>();

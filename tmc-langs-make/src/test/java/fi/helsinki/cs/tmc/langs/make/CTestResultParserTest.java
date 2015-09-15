@@ -9,8 +9,6 @@ import static org.junit.Assert.fail;
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
-import org.apache.commons.io.FileUtils;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -207,9 +205,11 @@ public class CTestResultParserTest {
 
     @Test
     public void testTestsPassWhenValgrindFailuresAllowed() throws IOException {
-        Path config = Files.createTempFile("temp", ".txt");
-        FileUtils.writeStringToFile(config.toFile(), "fail_on_valgrind_error: false");
-        Configuration configuration = new Configuration(config);
+        Path folder = Files.createTempDirectory("tmc-config");
+        Path file = folder.resolve(".tmcproject.yml");
+        Files.createFile(file);
+        Files.write(file, "fail_on_valgrind_error: false".getBytes());
+        Configuration configuration = new Configuration(folder);
 
         CTestResultParser cpar = null;
         try {

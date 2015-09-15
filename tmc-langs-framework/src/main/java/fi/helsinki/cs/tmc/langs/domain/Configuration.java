@@ -4,12 +4,14 @@ import fi.helsinki.cs.tmc.langs.utils.ConfigurationParser;
 import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class Configuration {
 
     private Map<String, ValueObject> options;
+    public static final Path TMC_PROJECT_YML = Paths.get(".tmcproject.yml");
 
     public Configuration() {
         options = new HashMap<>();
@@ -42,7 +44,12 @@ public final class Configuration {
      * @param path Absolute path to configuration, e.g. .tmcproject.yml -file.
      */
     public void parseOptions(Path path) {
+        this.options = parseTmcProjectYmlOptions(path);
+    }
+
+    private Map<String, ValueObject> parseTmcProjectYmlOptions(Path path) {
         ConfigurationParser parser = new TmcProjectYmlParser();
-        options = parser.parseOptions(path);
+        Path configFile = path.resolve(TMC_PROJECT_YML);
+        return parser.parseOptions(configFile);
     }
 }

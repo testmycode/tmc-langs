@@ -1,9 +1,9 @@
-
 package fi.helsinki.cs.tmc.langs.rust;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 
 public class LintError implements ValidationError {
+
     private final int start_line;
     private final int start_column;
     private final String description;
@@ -22,22 +22,22 @@ public class LintError implements ValidationError {
 
     @Override
     public int getColumn() {
-        return 0;
+        return start_column;
     }
 
     @Override
     public int getLine() {
-        return 0;
+        return start_line;
     }
 
     @Override
     public String getMessage() {
-        return "";
+        return description;
     }
 
     @Override
     public String getSourceName() {
-        return "";
+        return file;
     }
-    
+
 }

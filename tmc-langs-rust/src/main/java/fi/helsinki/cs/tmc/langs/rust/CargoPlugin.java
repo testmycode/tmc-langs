@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs.rust;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
-import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
@@ -57,21 +56,20 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     @Override
     public ValidationResult checkCodeStyle(Path path) {
-        String[] command = {"cargo", "rustc", "--forbid warnings"};
+        run(new String[]{"cargo", "clean"}, path);
+        String[] command = {"cargo", "rustc", "-- --f warnings"};
         log.info("Building for lints with command {0}", Arrays.deepToString(command));
         Optional<ProcessResult> result = run(command, path);
         if (result.isPresent()) {
+            log.debug(result.get().output);
+            log.debug(result.get().errorOutput);
             return parseLints(result.get());
         }
-        log.error("Build for lints failed.}");
+        log.error("Build for lints failed.");
         return null;
     }
 
     @Override
-    public String getLanguageName() {
-        return "cargo";
-    }
-
     public String getPluginName() {
         return "cargo";
     }

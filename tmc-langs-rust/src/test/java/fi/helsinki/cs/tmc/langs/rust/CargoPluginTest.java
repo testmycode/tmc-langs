@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
@@ -102,5 +103,13 @@ public class CargoPluginTest {
         assertTrue(new String(result.logs.get(SpecialLogs.COMPILER_OUTPUT))
                 .contains("aborting due to previous error"));
         assertEquals(0, result.testResults.size());
+    }
+
+    @Test
+    public void lintingWorks() {
+        Path path = TestUtils.getPath(getClass(), "warning");
+        ValidationResult result = cargoPlugin.checkCodeStyle(path);
+        assertEquals(1, result.getValidationErrors().size());
+        assertEquals(1, result.getValidationErrors().values().iterator().next().size());
     }
 }

@@ -6,6 +6,8 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 
 import java.io.File;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,7 @@ public class LinterResult implements ValidationResult {
 
     //src\lib.rs:3:9: 3:14 error: variable does not need to be mutable, #[forbid(unused_mut)] on by default
     private static final Pattern ERROR_START
-            = Pattern.compile("(?<file>.+):(?<start_line>\\d+):(?<start_column>\\d+): (?<end_line>\\d+):(?<end_column>\\d+) error: (?<description>.*), #[forbid\\(.*\\)] on by default");
+            = Pattern.compile("(?<file>.+):(?<startLine>\\d+):(?<startColumn>\\d+): (?<endLine>\\d+):(?<endColumn>\\d+) error: (?<description>.*), #[forbid\\(.*\\)] on by default");
     //src\lib.rs:3     let mut x = a * b;
     private static final Pattern ERROR_CONTINUE
             = Pattern.compile("(?<before>(?<file>.+):(?<line>\\d+) )(?<code>.*)");
@@ -25,7 +27,7 @@ public class LinterResult implements ValidationResult {
             = Pattern.compile("(?<before> *)^(?<stem>~*)");
 
     private Strategy strategy;
-    private Map<File, List<ValidationError>> errors;
+    private final Map<File, List<ValidationError>> errors;
 
     private LinterResult() {
         errors = new HashMap<>();
@@ -43,42 +45,40 @@ public class LinterResult implements ValidationResult {
         String output = processResult.output;
         String[] lines = output.split("\\r?\\n");
         LinterResult result = new LinterResult();
-        State state = State.FIND_ERROR;
-        LintError current;
-        Matcher matcher;
-        for (String line : lines) {
-            switch (state) {
-                case FIND_ERROR:
-                    matcher = ERROR_START.matcher(line);
-                    if (matcher.matches()) {
-                        String file = matcher.group("file");
-                        String description = matcher.group("description");
-                        int start_line = Integer.parseInt(matcher.group("start_line"));
-                        int start_column = Integer.parseInt(matcher.group("start_column"));
-                        int end_line = Integer.parseInt(matcher.group("end_line"));
-                        int end_column = Integer.parseInt(matcher.group("end_column"));
-                        current = new LintError(file, description, start_line, start_column, end_line, end_column);
-                    }
-                    state = State.INSPECT_ERROR;
-                    break;
-                case INSPECT_ERROR:
+        errorFind:
+        for (int n = 0; n < lines.length;) {
+            String line = lines[n];
+            Matcher matcher = ERROR_START.matcher(line);
+            if (matcher.matches()) {
+                String file_name = matcher.group("file");
+                String description = matcher.group("description");
+                int start_line = Integer.parseInt(matcher.group("startLine"));
+                int start_column = Integer.parseInt(matcher.group("startColumn"));
+                int end_line = Integer.parseInt(matcher.group("endLine"));
+                int end_column = Integer.parseInt(matcher.group("endColumn"));
+                LintError current = new LintError(file_name, description, start_line, start_column, end_line, end_column);
+                for (; n < lines.length; n++) {
+                    line = lines[n];
                     matcher = ERROR_CONTINUE.matcher(line);
-                    if(matcher.matches()) {
-
+                    if (matcher.matches()) {
                     } else {
                         matcher = ARROW.matcher(line);
-                        if(matcher.matches()) {
-
+                        if (matcher.matches()) {
                         } else {
-                            matcher = ERROR_START.matcher(line);
-                            if (matcher.matches()) {
-
+                            File file = Paths.get(file_name).toFile();
+                            List<ValidationError> errors = result.errors.get(file);
+                            if (errors == null) {
+                                errors = new ArrayList<>();
+                                result.errors.put(file, errors);
                             }
+                            errors.add(current);
+                            continue errorFind;
                         }
                     }
-                    break;
+                }
+            } else {
+                n++;
             }
-
         }
         return result;
     }
@@ -91,11 +91,5 @@ public class LinterResult implements ValidationResult {
     @Override
     public Map<File, List<ValidationError>> getValidationErrors() {
         return errors;
-    }
-
-    private static enum State {
-
-        FIND_ERROR,
-        INSPECT_ERROR,
     }
 }

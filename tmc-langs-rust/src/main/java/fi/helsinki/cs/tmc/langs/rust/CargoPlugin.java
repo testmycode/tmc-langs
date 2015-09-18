@@ -36,6 +36,9 @@ public class CargoPlugin extends AbstractLanguagePlugin {
             ImmutableList.<TestResult>of(),
             new ImmutableMap.Builder<String, byte[]>().build());
 
+    /**
+     * Creates new plugin for cargo with all default stuff set.
+     */
     public CargoPlugin() {
         super(
                 new ExerciseBuilder(),
@@ -140,7 +143,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     }
 
     private ValidationResult parseLints(ProcessResult processResult) {
-        return LinterResult.parse(processResult);
+        return new LinterResultParser().parse(processResult);
     }
 
 }

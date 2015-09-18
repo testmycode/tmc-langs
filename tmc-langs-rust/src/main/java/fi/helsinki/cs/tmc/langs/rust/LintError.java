@@ -16,6 +16,7 @@ public class LintError implements ValidationError {
 
     /**
      * Creates new error that failing lints generate.
+     * 
      * @param file file that the error is in
      * @param description describes what is wrong
      * @param code list of code lines the error is in

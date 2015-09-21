@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs.rust;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
-import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
@@ -37,6 +36,9 @@ public class CargoPlugin extends AbstractLanguagePlugin {
             ImmutableList.<TestResult>of(),
             new ImmutableMap.Builder<String, byte[]>().build());
 
+    /**
+     * Creates new plugin for cargo with all default stuff set.
+     */
     public CargoPlugin() {
         super(
                 new ExerciseBuilder(),
@@ -57,10 +59,18 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     @Override
     public ValidationResult checkCodeStyle(Path path) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (run(new String[]{"cargo", "clean"}, path).isPresent()) {
+            String[] command = {"cargo", "rustc", "--", "--forbid", "warnings"};
+            log.info("Building for lints with command {0}", Arrays.deepToString(command));
+            Optional<ProcessResult> result = run(command, path);
+            if (result.isPresent()) {
+                return parseLints(result.get());
+            }
+        }
+        log.error("Build for lints failed.");
+        return null;
     }
 
-    @Override
     public String getLanguageName() {
         return "cargo";
     }
@@ -130,6 +140,10 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     private RunResult parseResult(ProcessResult processResult, Path path) {
         return new CargoResultParser().parse(processResult);
+    }
+
+    private ValidationResult parseLints(ProcessResult processResult) {
+        return new LinterResultParser().parse(processResult);
     }
 
 }

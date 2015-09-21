@@ -19,6 +19,8 @@ import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CargoPlugin extends AbstractLanguagePlugin {
 
@@ -83,7 +88,84 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (!isExerciseTypeCorrect(path)) {
+            log.error("Failed to scan exercise due to missing Cargo.toml.");
+            return Optional.absent();
+        }
+
+        try {
+            runTests(path);
+        } catch (Exception e) {
+            log.error("Failed to run tests: {}", e);
+            return Optional.absent();
+        }
+        try {
+            return Optional.of(parseExercisePoints(new Scanner(path.resolve(Constants.TESTS)), exerciseName));
+        } catch (IOException e) {
+            log.error("Failed to parse test points: {}", e);
+            return Optional.absent();
+        }
+    }
+    
+    //#[cfg(points = "10")]
+    private static final Pattern POINTS = Pattern.compile("\\s*#\\[cfg\\(points = \"(?<points>\\d+)\"\\)\\]\\s*");
+    //fn it_shall_work() {
+    private static final Pattern TEST = Pattern.compile("\\s*fn (?<name>.+)\\(\\) \\{\\s*");
+    //mod test1 {
+    private static final Pattern MODULE = Pattern.compile("\\s*mod (?<name>.+) \\{\\s*");
+    
+    private ExerciseDesc parseExercisePoints(Scanner scanner, String exerciseName) {
+        ImmutableList.Builder<TestDesc> tests = ImmutableList.builder();
+        String points = "";
+        ImmutableList.Builder<String> testsInModule = ImmutableList.builder();
+        String module = "";
+        String module_points = "";
+        int counter = 0;
+        while(scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            if(!module.isEmpty()) {
+                char last = ' ';
+                for(char c: line.toCharArray()) {
+                    if(c == '{' && last != '\\' && last != '\'') {
+                        counter++;
+                    }else if(c == '}' && last != '\\'  && last != '\'') {
+                        counter--;
+                    }
+                    last = c;
+                }
+                if (counter == 0) {
+                    module = "";
+                }
+            }
+            Matcher matcher = POINTS.matcher(line);
+            if(matcher.matches()) {
+                points = matcher.group("points");
+            } else {
+                matcher = TEST.matcher(line);
+                if(matcher.matches()) {
+                    String name = matcher.group("name");
+                    tests.add(new TestDesc(name, ImmutableList.of(points)));
+                    if(!module.isEmpty()) {
+                        testsInModule.add(points);
+                    }
+                    points = "";
+                } else {
+                    matcher = MODULE.matcher(line);
+                    if(matcher.matches()) {
+                        counter = 1;
+                        ImmutableList<String> a = testsInModule.add(module_points).build();
+                        if(!a.isEmpty()) {
+                            tests.add(new TestDesc(module, a));
+                        }
+                        testsInModule = ImmutableList.builder();
+                        module_points = points;
+                        points = "";
+                        module = matcher.group("name");
+                    }
+                }
+            }
+        }
+        return new ExerciseDesc(exerciseName, tests.build());
     }
 
     @Override

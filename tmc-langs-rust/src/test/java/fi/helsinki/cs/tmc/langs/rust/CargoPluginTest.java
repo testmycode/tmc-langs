@@ -1,17 +1,18 @@
 package fi.helsinki.cs.tmc.langs.rust;
 
-import com.google.common.base.Optional;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
+import com.google.common.base.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -250,5 +251,15 @@ public class CargoPluginTest {
         assertEquals("it_shall_work2", test2.name);
         assertEquals(1, test2.points.size());
         assertEquals("7", test2.points.get(0));
+    }
+
+    @Test
+    public void scanningWithSuiteWorks() {
+        Path path = TestUtils.getPath(getClass(), "multiplePointsSuite");
+        Optional<ExerciseDesc> desc = cargoPlugin.scanExercise(path, "test");
+        assertTrue(desc.isPresent());
+        assertEquals("test", desc.get().name);
+        assertEquals(2, desc.get().tests.size());
+        //TODO: Figure out how the suites should actually work
     }
 }

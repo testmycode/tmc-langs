@@ -258,7 +258,7 @@ public class CargoPluginTest {
         Optional<ExerciseDesc> desc = cargoPlugin.scanExercise(path, "test");
         assertTrue(desc.isPresent());
         assertEquals("test", desc.get().name);
-        assertEquals(2, desc.get().tests.size());
+        assertEquals(3, desc.get().tests.size());
         //TODO: Figure out how the suites should actually work
     }
 }

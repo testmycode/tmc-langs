@@ -2,3 +2,6 @@
 name = "passing"
 version = "0.1.0"
 authors = ["Example"]
+
+[dependencies.points]
+git = "https://github.com/WaDelma/points.git"

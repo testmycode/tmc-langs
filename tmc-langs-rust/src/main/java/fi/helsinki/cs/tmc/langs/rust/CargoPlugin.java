@@ -7,7 +7,6 @@ import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
-import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
@@ -30,8 +29,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CargoPlugin extends AbstractLanguagePlugin {
 
@@ -98,83 +95,12 @@ public class CargoPlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
         try {
-            Scanner scanner = new Scanner(path.resolve(Constants.TESTS));
+            Scanner scanner = new Scanner(path.resolve(Constants.POINTS));
             return Optional.of(parseExercisePoints(scanner, exerciseName));
         } catch (IOException e) {
             log.error("Failed to parse test points: {}", e);
             return Optional.absent();
         }
-    }
-
-    //#[cfg(points = "10")]
-    private static final Pattern POINTS
-            = Pattern.compile("\\s*#\\[cfg\\(points = \"(?<points>\\d+)\"\\)\\]\\s*");
-    //fn it_shall_work() {
-    private static final Pattern TEST = Pattern.compile("\\s*fn (?<name>.+)\\(\\) \\{\\s*");
-    //mod test1 {
-    private static final Pattern MODULE = Pattern.compile("\\s*mod (?<name>.+) \\{\\s*");
-
-    private ExerciseDesc parseExercisePoints(Scanner scanner, String exerciseName) {
-        ImmutableList.Builder<TestDesc> tests = ImmutableList.builder();
-        String points = "";
-        ImmutableList.Builder<String> testsInModule = ImmutableList.builder();
-        String module = "";
-        String modulePoints = "";
-        int counter = 0;
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            if (!module.isEmpty()) {
-                counter = countCurlyBraces(line, counter);
-                if (counter == 0) {
-                    ImmutableList<String> list
-                            = testsInModule.add(modulePoints).build();
-                    if (!list.isEmpty()) {
-                        tests.add(new TestDesc(module, list));
-                    }
-                    testsInModule = ImmutableList.builder();
-                    module = "";
-                }
-            }
-            Matcher matcher = POINTS.matcher(line);
-            if (matcher.matches()) {
-                points = matcher.group("points");
-            } else {
-                matcher = TEST.matcher(line);
-                if (matcher.matches()) {
-                    String name = matcher.group("name");
-                    tests.add(new TestDesc(name, ImmutableList.of(points)));
-                    if (!module.isEmpty()) {
-                        testsInModule.add(points);
-                    }
-                    points = "";
-                } else {
-                    matcher = MODULE.matcher(line);
-                    if (matcher.matches()) {
-                        counter = 1;
-                        modulePoints = points;
-                        points = "";
-                        module = matcher.group("name");
-                    }
-                }
-            }
-        }
-        return new ExerciseDesc(exerciseName, tests.build());
-    }
-
-    //TODO: Doesn't consider string literals, multiline string literals, comments
-    private int countCurlyBraces(String line, int counter) {
-        char last = ' ';
-        for (char c : line.toCharArray()) {
-            if (last != '\'') {
-                if (c == '{') {
-                    counter++;
-                } else if (c == '}') {
-                    counter--;
-                }
-            }
-            last = c;
-        }
-        return counter;
     }
 
     @Override
@@ -189,7 +115,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     private Optional<RunResult> build(Path path) {
         String[] command = {"cargo", "test", "--no-run"};
-        log.info("Building project with command {0}", Arrays.deepToString(command));
+        log.info("Building project with command {}", Arrays.deepToString(command));
         Optional<ProcessResult> result = run(command, path);
         if (result.isPresent()) {
             if (result.get().statusCode == 0) {
@@ -202,7 +128,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     private RunResult runBuiltTests(Path dir) {
         String[] command = {"cargo", "test"};
-        log.info("Running tests with command {0}", Arrays.deepToString(command));
+        log.info("Running tests with command {}", Arrays.deepToString(command));
         Optional<ProcessResult> result = run(command, dir);
         if (result.isPresent()) {
             return parseResult(result.get(), dir);
@@ -215,7 +141,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
         try {
             return Optional.of(runner.call());
         } catch (Exception e) {
-            log.error("Running command {0} failed {1}", Arrays.deepToString(command), e);
+            log.error("Running command {} failed {}", Arrays.deepToString(command), e);
             return Optional.absent();
         }
     }
@@ -239,4 +165,12 @@ public class CargoPlugin extends AbstractLanguagePlugin {
         return new LinterResultParser().parse(processResult);
     }
 
+    private ExerciseDesc parseExercisePoints(Scanner scanner, String exerciseName) {
+        Optional<ExerciseDesc> result = new RustPointsParser().parse(scanner, exerciseName);
+        if (result.isPresent()) {
+            return result.get();
+        }
+        log.error("Parsing points file failed.");
+        return null;
+    }
 }

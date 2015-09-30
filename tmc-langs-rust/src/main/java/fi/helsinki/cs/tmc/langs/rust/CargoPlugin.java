@@ -29,7 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Scanner;
+import java.util.List;
 
 public class CargoPlugin extends AbstractLanguagePlugin {
 
@@ -97,8 +97,9 @@ public class CargoPlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
         try {
-            Scanner scanner = new Scanner(path.resolve(Constants.POINTS));
-            return Optional.of(parseExercisePoints(scanner, exerciseName));
+            Path pointsFile = path.resolve(Constants.POINTS);
+            List<String> lines = Files.readAllLines(pointsFile, StandardCharsets.UTF_8);
+            return Optional.of(parseExercisePoints(lines, exerciseName));
         } catch (IOException e) {
             log.error("Failed to parse test points: {}", e);
             return Optional.absent();
@@ -165,14 +166,13 @@ public class CargoPlugin extends AbstractLanguagePlugin {
         return new LinterResultParser().parse(processResult);
     }
 
-
     @Override
     public void clean(Path path) {
         // no op?
     }
 
-    private ExerciseDesc parseExercisePoints(Scanner scanner, String exerciseName) {
-        Optional<ExerciseDesc> result = new RustPointsParser().parse(scanner, exerciseName);
+    private ExerciseDesc parseExercisePoints(List<String> lines, String exerciseName) {
+        Optional<ExerciseDesc> result = new RustPointsParser().parse(lines, exerciseName);
         if (result.isPresent()) {
             return result.get();
         }

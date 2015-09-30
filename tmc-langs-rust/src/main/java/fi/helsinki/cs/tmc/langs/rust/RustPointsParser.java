@@ -26,16 +26,22 @@ public class RustPointsParser {
                 return Optional.absent();
             }
             addAndInitialise(map, keyValue[0], keyValue[1]);
-            handleSuites(map, keyValue[0], keyValue[1]);
+            if (!handleSuites(map, keyValue[0], keyValue[1])) {
+                return Optional.absent();
+            }
         }
         return Optional.of(buildResult(map, exerciseName));
     }
 
-    private void handleSuites(Map<String, List<String>> map, String key, String value) {
+    private boolean handleSuites(Map<String, List<String>> map, String key, String value) {
         String[] keySplit = key.split("\\.");
         if (keySplit.length > 1) {
+            if (keySplit.length > 2) {
+                return false;
+            }
             addAndInitialise(map, keySplit[0], value);
         }
+        return true;
     }
 
     private void addAndInitialise(Map<String, List<String>> map, String key, String value) {

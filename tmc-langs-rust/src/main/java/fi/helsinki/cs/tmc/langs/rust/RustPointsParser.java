@@ -12,18 +12,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
 
 public class RustPointsParser {
 
     /**
      * Parses a file containing information of points of exercise.
      */
-    public Optional<ExerciseDesc> parse(Scanner scanner, String exerciseName) {
+    public Optional<ExerciseDesc> parse(List<String> lines, String exerciseName) {
         Map<String, List<String>> map = new HashMap<>();
-        while (scanner.hasNextLine()) {
-            String[] keyValue = scanner.nextLine().split(" = ");
-            if (keyValue.length == 1) {
+        for (String line : lines) {
+            String[] keyValue = line.split(" = ");
+            if (keyValue.length != 2) {
                 return Optional.absent();
             }
             addAndInitialise(map, keyValue[0], keyValue[1]);

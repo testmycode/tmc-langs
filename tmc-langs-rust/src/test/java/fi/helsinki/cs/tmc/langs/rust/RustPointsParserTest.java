@@ -1,15 +1,19 @@
 package fi.helsinki.cs.tmc.langs.rust;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.TestDesc;
-import java.util.Collections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 public class RustPointsParserTest {
 

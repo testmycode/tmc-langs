@@ -1,10 +1,12 @@
-#![feature(plugin, custom_attribute)]
-#![plugin(points)]
+#[macro_use]
+extern crate points;
 
 extern crate passing;
 
-#[points = "10"]
-#[test]
-fn it_shall_work() {
-    assert_eq!(9, passing::mul_xor_add(2, 3));
+points! {
+    #[points = "10"]
+    test it_shall_work {
+        assert_eq!(9, passing::mul_xor_add(2, 3));
+    }
 }
+

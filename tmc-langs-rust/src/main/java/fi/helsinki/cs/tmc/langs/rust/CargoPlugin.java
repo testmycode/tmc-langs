@@ -63,7 +63,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     public ValidationResult checkCodeStyle(Path path) {
         if (run(new String[]{"cargo", "clean"}, path).isPresent()) {
             String[] command = {"cargo", "rustc", "--", "--forbid", "warnings"};
-            log.info("Building for lints with command {0}", Arrays.deepToString(command));
+            log.info("Building for lints with command {}", Arrays.deepToString(command));
             Optional<ProcessResult> result = run(command, path);
             if (result.isPresent()) {
                 return parseLints(result.get());

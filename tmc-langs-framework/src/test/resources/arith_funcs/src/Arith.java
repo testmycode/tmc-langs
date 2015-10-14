@@ -22,9 +22,9 @@ public class Arith {
     }
     
     public static int div(int a, int b) {
-        // BEGIN SOLUTION
+        /* BEGIN SOLUTION */
         return a / b;
-        // END SOLUTION
-        // STUB: return 0;
+        /**END SOLUTION**/
+        /* STUB: return 0; */
     }
 }

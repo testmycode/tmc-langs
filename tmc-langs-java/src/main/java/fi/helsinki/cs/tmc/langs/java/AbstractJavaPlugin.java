@@ -51,7 +51,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     public AbstractJavaPlugin(
             Path testFolderPath, SubmissionProcessor submissionProcessor, TestScanner testScanner) {
         super(
-                new ExerciseBuilder(),
+                new ExerciseBuilder(), // Default LanguageSyntax uses Java.
                 submissionProcessor,
                 new StudentFileAwareZipper(),
                 new StudentFileAwareUnzipper());

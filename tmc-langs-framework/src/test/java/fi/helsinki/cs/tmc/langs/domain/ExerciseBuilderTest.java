@@ -83,10 +83,12 @@ public class ExerciseBuilderTest {
         Path solutionFile = temp.resolve(Paths.get("src", "SolutionFile.java"));
         Path solutionFile2 = temp.resolve(Paths.get("src", "SolutionFileWithNoSpace.java"));
         Path solutionFile3 = temp.resolve(Paths.get("src", "SolutionFileWithExtraSpaces.java"));
+        Path solutionFile4 = temp.resolve(Paths.get("src", "MultilineSolutionFile.java"));
         
         assertFalse(solutionFile.toFile().exists());
         assertFalse(solutionFile2.toFile().exists());
         assertFalse(solutionFile3.toFile().exists());
+        assertFalse(solutionFile4.toFile().exists());
     }
 
     private Path createTemporaryCopyOf(Path path) throws IOException {

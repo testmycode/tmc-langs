@@ -28,9 +28,9 @@ public class ExerciseBuilderTest {
     @Before
     public void setUp() {
         exerciseBuilder = new ExerciseBuilder(new CommentSyntaxBuilder()
-				.addSingleLineComment("\\/\\/")
-				.addMultiLineComment("\\/\\*+", "\\*+\\/")
-				.build());
+                .addSingleLineComment("\\/\\/")
+                .addMultiLineComment("\\/\\*+", "\\*+\\/")
+                .build());
     }
 
     @Test

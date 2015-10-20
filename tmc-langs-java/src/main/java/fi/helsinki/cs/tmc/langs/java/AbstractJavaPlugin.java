@@ -21,6 +21,7 @@ import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.CommentSyntaxBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,10 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     public AbstractJavaPlugin(
             Path testFolderPath, SubmissionProcessor submissionProcessor, TestScanner testScanner) {
         super(
-                new ExerciseBuilder(), // Default LanguageSyntax uses Java.
+                new ExerciseBuilder(new CommentSyntaxBuilder()
+                        .addSingleLineComment("\\/\\/")
+                        .addMultiLineComment("\\/\\*+", "\\*+\\/")
+                        .build()),
                 submissionProcessor,
                 new StudentFileAwareZipper(),
                 new StudentFileAwareUnzipper());

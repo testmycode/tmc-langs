@@ -38,7 +38,6 @@ public class ExerciseBuilder {
         solutionFileRegex = commentSyntax.getSolutionFile();
         stubRegex = commentSyntax.getStub();
         stubReplacePattern = commentSyntax.getStubReplacePattern();
-		System.out.println(beginSolutionRegex);
     }
 
     /**

@@ -16,36 +16,36 @@ public class CommentSyntax {
     private final String stubRegex;
     private final Pattern stubReplacePattern;
 
-	public CommentSyntax(
-			String beginSolutionRegex,
-			String endSolutionRegex,
-			String solutionFileRegex,
-			String stubRegex) {
-		this.beginSolutionRegex = beginSolutionRegex;
-		this.endSolutionRegex = endSolutionRegex;
-		this.solutionFileRegex = solutionFileRegex;
-		this.stubRegex = stubRegex;
-		
-		this.stubReplacePattern = Pattern.compile(stubRegex);
+    public CommentSyntax(
+            String beginSolutionRegex,
+            String endSolutionRegex,
+            String solutionFileRegex,
+            String stubRegex) {
+        this.beginSolutionRegex = beginSolutionRegex;
+        this.endSolutionRegex = endSolutionRegex;
+        this.solutionFileRegex = solutionFileRegex;
+        this.stubRegex = stubRegex;
+
+        this.stubReplacePattern = Pattern.compile(stubRegex);
 	}
 
-	public String getBeginSolution() {
-		return beginSolutionRegex;
-	}
+    public String getBeginSolution() {
+        return beginSolutionRegex;
+    }
 
-	public String getEndSolution() {
-		return endSolutionRegex;
-	}
+    public String getEndSolution() {
+        return endSolutionRegex;
+    }
 
-	public String getSolutionFile() {
-		return solutionFileRegex;
-	}
+    public String getSolutionFile() {
+        return solutionFileRegex;
+    }
 
-	public String getStub() {
-		return stubRegex;
-	}
+    public String getStub() {
+        return stubRegex;
+    }
 
-	public Pattern getStubReplacePattern() {
-		return stubReplacePattern;
-	}
+    public Pattern getStubReplacePattern() {
+        return stubReplacePattern;
+    }
 }

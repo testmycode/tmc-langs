@@ -1,7 +1,6 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-import fi.helsinki.cs.tmc.langs.DefaultSyntax;
-import fi.helsinki.cs.tmc.langs.LanguageSyntax;
+import fi.helsinki.cs.tmc.langs.CommentSyntaxBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +17,6 @@ import java.util.regex.Pattern;
 
 public class ExerciseBuilder {
 
-    private static final String BEGIN_SOLUTION = "BEGIN[ \\t]+SOLUTION";
-    private static final String END_SOLUTION = "END[ \\t]+SOLUTION";
-    private static final String SOLUTION_FILE = "SOLUTION[ \\t]+FILE";
-    private static final String STUB = "STUB:[ \\t]*";
     private static final String SOURCE_FOLDER_NAME = "src";
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
@@ -34,29 +29,16 @@ public class ExerciseBuilder {
     private Pattern stubReplacePattern;
 
     public ExerciseBuilder() {
-        this(new DefaultSyntax());
+        this(new CommentSyntaxBuilder().build());
     }
 
-    public ExerciseBuilder(LanguageSyntax language) {
-        String spaces = "[ \\t]*";
-        String lineStart = "(" + spaces + ")" + language.getSingleLineComment() + spaces;
-
-        beginSolutionRegex = "(" + lineStart + BEGIN_SOLUTION + ".*)";
-        endSolutionRegex = "(" + lineStart + END_SOLUTION + ".*)";
-        solutionFileRegex = "(" + lineStart + SOLUTION_FILE + ".*)";
-        stubRegex = "(" + lineStart + STUB + "(.*))";
-
-        if (language.hasMultiLineComments()) {
-            String beginComment = "|((" + spaces + ")" + language.getBeginComment() + spaces;
-            String endComment = spaces + language.getEndComment() + spaces + ")";
-
-            beginSolutionRegex += beginComment + BEGIN_SOLUTION + endComment + ".*";
-            endSolutionRegex += beginComment + END_SOLUTION + endComment + ".*";
-            solutionFileRegex += beginComment + SOLUTION_FILE + endComment + ".*";
-            stubRegex += beginComment + STUB + "(.*[^ \\t])" + endComment;
-        }
-
-        stubReplacePattern = Pattern.compile(stubRegex);
+    public ExerciseBuilder(CommentSyntax commentSyntax) {
+        beginSolutionRegex = commentSyntax.getBeginSolution();
+        endSolutionRegex = commentSyntax.getEndSolution();
+        solutionFileRegex = commentSyntax.getSolutionFile();
+        stubRegex = commentSyntax.getStub();
+        stubReplacePattern = commentSyntax.getStubReplacePattern();
+		System.out.println(beginSolutionRegex);
     }
 
     /**

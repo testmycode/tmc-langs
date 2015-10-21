@@ -3,8 +3,6 @@ package fi.helsinki.cs.tmc.langs.domain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import fi.helsinki.cs.tmc.langs.CommentSyntaxBuilder;
-
 import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
@@ -27,7 +25,7 @@ public class ExerciseBuilderTest {
 
     @Before
     public void setUp() {
-        exerciseBuilder = new ExerciseBuilder(new CommentSyntaxBuilder()
+        exerciseBuilder = new ExerciseBuilder(CommentSyntax.newBuilder()
                 .addSingleLineComment("\\/\\/")
                 .addMultiLineComment("\\/\\*+", "\\*+\\/")
                 .build());

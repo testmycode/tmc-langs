@@ -1,7 +1,5 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-import fi.helsinki.cs.tmc.langs.CommentSyntaxBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +27,7 @@ public class ExerciseBuilder {
     private Pattern stubReplacePattern;
 
     public ExerciseBuilder() {
-        this(new CommentSyntaxBuilder().build());
+        this(CommentSyntax.newBuilder().build());
     }
 
     public ExerciseBuilder(CommentSyntax commentSyntax) {

@@ -21,6 +21,7 @@ public class ExerciseBuilder {
     private static final Logger logger = LoggerFactory.getLogger(ExerciseBuilder.class);
 
     private String beginSolutionRegex;
+    private String capturingGroups;
     private String endSolutionRegex;
     private String solutionFileRegex;
     private String stubRegex;
@@ -32,6 +33,7 @@ public class ExerciseBuilder {
 
     public ExerciseBuilder(CommentSyntax commentSyntax) {
         beginSolutionRegex = commentSyntax.getBeginSolution();
+        capturingGroups = commentSyntax.getCapturingGroups();
         endSolutionRegex = commentSyntax.getEndSolution();
         solutionFileRegex = commentSyntax.getSolutionFile();
         stubRegex = commentSyntax.getStub();
@@ -68,7 +70,7 @@ public class ExerciseBuilder {
                     skipLine = false;
                 } else if (line.matches(stubRegex)) {
                     Matcher stubMatcher = stubReplacePattern.matcher(line);
-                    filteredLines.add(stubMatcher.replaceAll("$2$5$3$6"));
+                    filteredLines.add(stubMatcher.replaceAll(capturingGroups));
                 } else if (!skipLine) {
                     filteredLines.add(line);
                 }

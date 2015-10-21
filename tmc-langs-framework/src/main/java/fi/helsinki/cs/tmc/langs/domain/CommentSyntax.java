@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 public class CommentSyntax {
 
     private final String beginSolutionRegex;
+    private final String capturingGroups;
     private final String endSolutionRegex;
     private final String solutionFileRegex;
     private final String stubRegex;
@@ -18,16 +19,18 @@ public class CommentSyntax {
 
     private CommentSyntax(
             String beginSolutionRegex,
+            String capturingGroups,
             String endSolutionRegex,
             String solutionFileRegex,
             String stubRegex) {
         this.beginSolutionRegex = beginSolutionRegex;
+        this.capturingGroups = capturingGroups;
         this.endSolutionRegex = endSolutionRegex;
         this.solutionFileRegex = solutionFileRegex;
         this.stubRegex = stubRegex;
 
         this.stubReplacePattern = Pattern.compile(stubRegex);
-	}
+    }
 
     /**
      * Will create a new Comment syntax with the specified comment syntaxes.
@@ -41,6 +44,10 @@ public class CommentSyntax {
 
     public String getBeginSolution() {
         return beginSolutionRegex;
+    }
+
+    public String getCapturingGroups() {
+        return capturingGroups;
     }
 
     public String getEndSolution() {
@@ -70,13 +77,22 @@ public class CommentSyntax {
         private static final String SPACES = "[ \\t]*";
         private static final String STUB = "STUB:[ \\t]*";
 
+        private String beginCapturingGroups;
         private String beginSolutionRegex;
+        private int capturingIndex;
+        private String endCapturingGroups;
         private String endSolutionRegex;
         private String solutionFileRegex;
         private String stubRegex;
 
+        /**
+         * Creates a new CommentSyntac Builder.
+         */
         public Builder() {
+            beginCapturingGroups = "";
             beginSolutionRegex = "";
+            capturingIndex = 2;
+            endCapturingGroups = "";
             endSolutionRegex = "";
             solutionFileRegex = "";
             stubRegex = "";
@@ -92,11 +108,12 @@ public class CommentSyntax {
             }
             String lineStart = "((" + SPACES + ")" + singleLine + SPACES;
 
-            beginSolutionRegex += lineStart + BEGIN_SOLUTION + ".*)";
-            endSolutionRegex += lineStart + END_SOLUTION + ".*)";
-            solutionFileRegex += lineStart + SOLUTION_FILE + ".*)";
+            beginSolutionRegex += lineStart + BEGIN_SOLUTION + "(.*))";
+            endSolutionRegex += lineStart + END_SOLUTION + "(.*))";
+            solutionFileRegex += lineStart + SOLUTION_FILE + "(.*))";
             stubRegex += lineStart + STUB + "(.*))";
 
+            increaseCapturingGroups();
             return this;
         }
 
@@ -119,6 +136,7 @@ public class CommentSyntax {
             solutionFileRegex += beginComment + SOLUTION_FILE + endComment;
             stubRegex += beginComment + STUB + "(.*[^ \\t])" + endComment;
 
+            increaseCapturingGroups();
             return this;
         }
 
@@ -133,9 +151,16 @@ public class CommentSyntax {
             }
             return new CommentSyntax(
                     beginSolutionRegex,
+                    beginCapturingGroups + endCapturingGroups,
                     endSolutionRegex,
                     solutionFileRegex,
                     stubRegex);
+        }
+        
+        private void increaseCapturingGroups() {
+            beginCapturingGroups += "$" + capturingIndex++;
+            endCapturingGroups += "$" + capturingIndex++;
+            capturingIndex++;
         }
 
         private void addOrPunctuations() {

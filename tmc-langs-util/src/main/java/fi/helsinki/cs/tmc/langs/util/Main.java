@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import com.google.common.annotations.VisibleForTesting;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
@@ -32,7 +33,9 @@ public final class Main {
 
     private static final String EXERCISE_PATH = "exercisePath";
     private static final String OUTPUT_PATH = "outputPath";
-    private static final String HELP_TEXT =
+
+    @VisibleForTesting
+    static final String HELP_TEXT =
             "\n"
                     + " Usage: Main <command> [<command-arguments>] \n\n"
                     + " Commands:\n"

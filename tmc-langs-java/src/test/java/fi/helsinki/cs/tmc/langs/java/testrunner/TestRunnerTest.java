@@ -38,7 +38,7 @@ public class TestRunnerTest {
         testCase = seekResults.get(0);
         assertEquals(TestCase.Status.FAILED, testCase.status);
         assertEquals("java.lang.AssertionError", testCase.exception.className);
-        assertEquals(16, testCase.exception.stackTrace[1].getLineNumber());
+        assertEquals(15, testCase.exception.stackTrace[1].getLineNumber());
 
         seekResults = allCases.findByPointName("one");
         assertEquals(1, seekResults.size());

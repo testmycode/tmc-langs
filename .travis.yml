@@ -2,7 +2,7 @@ language: java
 sudo: false
 cache:
   directories:
-    - $HOME/.m2
+    - "$HOME/.m2"
 addons:
   apt:
     sources:
@@ -29,4 +29,7 @@ jdk:
   - oraclejdk7
 matrix:
   allow_failures:
-    - os: osx
+  - os: osx
+notifications:
+  slack:
+    secure: elwVbriXdc/RkeP3UfVpSC0N6mbdk60ro7Pu1+2ddktmgQIEHjAVSdzpy2FLGTz/gK2MEXo2XU1rSg3t8GqlJNh1RTASzhyhcCUJTa7UdKe84mcRWDxJffunQKsBpUJv71tXBy1OyL8pcdnw1qkpr5NDyqXvBk67VwepVqy8em4=

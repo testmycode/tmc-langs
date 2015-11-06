@@ -20,28 +20,34 @@ public class RustPointsParser {
      */
     public Optional<ExerciseDesc> parse(List<String> lines, String exerciseName) {
         Map<String, List<String>> map = new HashMap<>();
+        Map<String, List<String>> suites = new HashMap<>();
         for (String line : lines) {
             String[] keyValue = line.split(" = ");
             if (keyValue.length != 2) {
                 return Optional.absent();
             }
-            addAndInitialise(map, keyValue[0], keyValue[1]);
-            if (!handleSuites(map, keyValue[0], keyValue[1])) {
+            String[] values = keyValue[1].split(" ");
+            for (String value: values) {
+                addAndInitialise(map, keyValue[0], value);
+            }
+            if (!keyValue[0].contains(".")) {
+                for (String value: values) {
+                    addAndInitialise(suites, keyValue[0], value);
+                }
+            }
+        }
+        for (Entry<String, List<String>> e: map.entrySet()) {
+            String[] keySplit = e.getKey().split("\\.");
+            if (keySplit.length > 2) {
                 return Optional.absent();
+            }
+            if (keySplit.length > 1 && suites.containsKey(keySplit[0])) {
+                for (String v: suites.get(keySplit[0])) {
+                    e.getValue().add(v);
+                }
             }
         }
         return Optional.of(buildResult(map, exerciseName));
-    }
-
-    private boolean handleSuites(Map<String, List<String>> map, String key, String value) {
-        String[] keySplit = key.split("\\.");
-        if (keySplit.length > 1) {
-            if (keySplit.length > 2) {
-                return false;
-            }
-            addAndInitialise(map, keySplit[0], value);
-        }
-        return true;
     }
 
     private void addAndInitialise(Map<String, List<String>> map, String key, String value) {

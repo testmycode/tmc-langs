@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.java;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
+import fi.helsinki.cs.tmc.langs.domain.CommentSyntax;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
@@ -51,7 +52,10 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     public AbstractJavaPlugin(
             Path testFolderPath, SubmissionProcessor submissionProcessor, TestScanner testScanner) {
         super(
-                new ExerciseBuilder(),
+                new ExerciseBuilder(CommentSyntax.newBuilder()
+                        .addSingleLineComment("\\/\\/")
+                        .addMultiLineComment("\\/\\*+", "\\*+\\/")
+                        .build()),
                 submissionProcessor,
                 new StudentFileAwareZipper(),
                 new StudentFileAwareUnzipper());

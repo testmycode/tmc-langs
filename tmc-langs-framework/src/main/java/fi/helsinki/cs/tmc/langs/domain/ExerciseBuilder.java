@@ -15,15 +15,30 @@ import java.util.regex.Pattern;
 
 public class ExerciseBuilder {
 
-    private static final String BEGIN_SOLUTION_REGEX = "[ \\t]*\\/\\/[ \\t]*BEGIN[ \\t]+SOLUTION.*";
-    private static final String END_SOLUTION_REGEX = "[ \\t]*\\/\\/[ \\t]*END[ \\t]+SOLUTION.*";
-    private static final String SOLUTION_FILE_REGEX = "[ \\t]*\\/\\/[ \\t]*SOLUTION[ \\t]+FILE.*";
-    private static final String STUB_REGEX = "([ \\t]*)\\/\\/[ \\t]*STUB:[ \\t]*(.*)";
     private static final String SOURCE_FOLDER_NAME = "src";
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private static final Logger logger = LoggerFactory.getLogger(ExerciseBuilder.class);
-    private static final Pattern stubReplacePattern = Pattern.compile(STUB_REGEX);
+
+    private String beginSolutionRegex;
+    private String capturingGroups;
+    private String endSolutionRegex;
+    private String solutionFileRegex;
+    private String stubRegex;
+    private Pattern stubReplacePattern;
+
+    public ExerciseBuilder() {
+        this(CommentSyntax.newBuilder().build());
+    }
+
+    public ExerciseBuilder(CommentSyntax commentSyntax) {
+        beginSolutionRegex = commentSyntax.getBeginSolution();
+        capturingGroups = commentSyntax.getCapturingGroups();
+        endSolutionRegex = commentSyntax.getEndSolution();
+        solutionFileRegex = commentSyntax.getSolutionFile();
+        stubRegex = commentSyntax.getStub();
+        stubReplacePattern = commentSyntax.getStubReplacePattern();
+    }
 
     /**
      * Prepares a stub exercise from the original.
@@ -45,17 +60,17 @@ public class ExerciseBuilder {
             List<String> filteredLines = new ArrayList<>();
             boolean skipLine = false;
             for (String line : lines) {
-                if (line.matches(SOLUTION_FILE_REGEX)) {
+                if (line.matches(solutionFileRegex)) {
                     Files.deleteIfExists(file);
                     return;
                 }
-                if (line.matches(BEGIN_SOLUTION_REGEX)) {
+                if (line.matches(beginSolutionRegex)) {
                     skipLine = true;
-                } else if (skipLine && line.matches(END_SOLUTION_REGEX)) {
+                } else if (skipLine && line.matches(endSolutionRegex)) {
                     skipLine = false;
-                } else if (line.matches(STUB_REGEX)) {
+                } else if (line.matches(stubRegex)) {
                     Matcher stubMatcher = stubReplacePattern.matcher(line);
-                    filteredLines.add(stubMatcher.replaceAll("$1$2"));
+                    filteredLines.add(stubMatcher.replaceAll(capturingGroups));
                 } else if (!skipLine) {
                     filteredLines.add(line);
                 }
@@ -108,10 +123,10 @@ public class ExerciseBuilder {
             List<String> lines = Files.readAllLines(file, CHARSET);
             List<String> filteredLines = new ArrayList<>();
             for (String line : lines) {
-                if (line.matches(BEGIN_SOLUTION_REGEX)
-                        || line.matches(END_SOLUTION_REGEX)
-                        || line.matches(STUB_REGEX)
-                        || line.matches(SOLUTION_FILE_REGEX)) {
+                if (line.matches(beginSolutionRegex)
+                        || line.matches(endSolutionRegex)
+                        || line.matches(stubRegex)
+                        || line.matches(solutionFileRegex)) {
                     continue;
                 }
                 filteredLines.add(line);

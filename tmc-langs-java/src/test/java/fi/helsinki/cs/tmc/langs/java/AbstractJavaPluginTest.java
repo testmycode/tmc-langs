@@ -171,23 +171,24 @@ public class AbstractJavaPluginTest {
     public void scanExerciseAddsSourceFilesFromProject() {
         Path path = TestUtils.getPath(getClass(), "trivial");
         TestScanner scanner = mock(TestScanner.class);
-        AbstractJavaPlugin plugin
-                = new StubLanguagePlugin(
-                        Paths.get(""), new StudentFileAwareSubmissionProcessor(), scanner) {
-                            public boolean isExerciseTypeCorrect(Path path) {
-                                return true;
-                            }
-                        };
-                ArgumentCaptor<SourceFiles> sourceFilesCaptor = ArgumentCaptor.forClass(SourceFiles.class);
+        AbstractJavaPlugin plugin = new StubLanguagePlugin(Paths.get(""),
+                new StudentFileAwareSubmissionProcessor(), scanner) {
+            @Override
+            public boolean isExerciseTypeCorrect(Path path) {
+                return true;
+            }
+        };
 
-                plugin.scanExercise(path, "trivial");
+        ArgumentCaptor<SourceFiles> sourceFilesCaptor = ArgumentCaptor.forClass(SourceFiles.class);
 
-                verify(scanner).findTests(any(ClassPath.class), sourceFilesCaptor.capture(), anyString());
+        plugin.scanExercise(path, "trivial");
 
-                SourceFiles sourceFiles = sourceFilesCaptor.getValue();
-                File expected = TestUtils.getPath(getClass(), "trivial/test/TrivialTest.java").toFile();
+        verify(scanner).findTests(any(ClassPath.class), sourceFilesCaptor.capture(), anyString());
 
-                assertFalse(sourceFiles.getSources().isEmpty());
-                assertTrue(sourceFiles.getSources().contains(expected));
+        SourceFiles sourceFiles = sourceFilesCaptor.getValue();
+        File expected = TestUtils.getPath(getClass(), "trivial/test/TrivialTest.java").toFile();
+
+        assertFalse(sourceFiles.getSources().isEmpty());
+        assertTrue(sourceFiles.getSources().contains(expected));
     }
 }

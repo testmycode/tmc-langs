@@ -159,8 +159,8 @@ public class AntPluginTest {
     @Test(expected = TestScannerException.class)
     public void createRunResultFileThrowsTestScannerExceptionOnTestScannerFailure()
             throws TestScannerException, TestRunnerException {
-        AntPlugin plugin =
-                new AntPlugin() {
+        AntPlugin plugin
+                = new AntPlugin() {
                     @Override
                     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
                         return Optional.absent();

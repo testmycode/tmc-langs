@@ -33,13 +33,15 @@ public class CTestCaseTest {
 
         this.valgrindFail = new CTestCase("test_valgrindFail", true, "", points);
         String valgrindTrace =
-                "\n"
+                        "\n"
                         + "==20737== \n"
                         + "==20737== HEAP SUMMARY:\n"
                         + "==20737==     in use at exit: 1,744 bytes in 31 blocks\n"
-                        + "==20737==   total heap usage: 46 allocs, 15 frees, 4,839 bytes allocated\n"
+                        + "==20737==   total heap usage: 46 allocs, 15 frees, 4,839 bytes "
+                        + "allocated\n"
                         + "==20737== \n"
-                        + "==20737== 32 bytes in 1 blocks are definitely lost in loss record 27 of 31\n"
+                        + "==20737== 32 bytes in 1 blocks are definitely lost in loss record "
+                        + "27 of 31\n"
                         + "==20737==    at 0x4C2AB80: malloc "
                         + "(in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)\n"
                         + "==20737==    by 0x4025A9: passing (source.c:11)\n"
@@ -55,11 +57,14 @@ public class CTestCaseTest {
                         + "==20737==      possibly lost: 0 bytes in 0 blocks\n"
                         + "==20737==    still reachable: 1,712 bytes in 30 blocks\n"
                         + "==20737==         suppressed: 0 bytes in 0 blocks\n"
-                        + "==20737== Reachable blocks (those to which a pointer was found) are not shown.\n"
-                        + "==20737== To see them, rerun with: --leak-check=full --show-leak-kinds=all\n"
+                        + "==20737== Reachable blocks (those to which a pointer was found) "
+                        + "are not shown.\n"
+                        + "==20737== To see them, rerun with: --leak-check=full "
+                        + "--show-leak-kinds=all\n"
                         + "==20737== \n"
                         + "==20737== For counts of detected and suppressed errors, rerun with: -v\n"
-                        + "==20737== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)";
+                        + "==20737== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0"
+                        + " from 0)";
         this.valgrindFail.setValgrindTrace(valgrindTrace);
 
         this.bothFail = new CTestCase("test_bothFail", false, "Some tests failed", points);

@@ -57,8 +57,7 @@ public final class TestCase {
     /**
      * Marks a test as finished.
      *
-     * <p>
-     * If the test status was previously non-failed, the test is interpreted
+     * <p>If the test status was previously non-failed, the test is interpreted
      * as having passed.
      */
     public void testFinished() {

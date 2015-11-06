@@ -4,8 +4,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
@@ -13,8 +13,7 @@ import java.util.concurrent.Callable;
 /**
  * Used to run subprocesses with a timeout and capture their output.
  *
- * <p>
- * TODO: make cancellable
+ * <p>TODO: make cancellable
  */
 public final class ProcessRunner implements Callable<ProcessResult> {
 

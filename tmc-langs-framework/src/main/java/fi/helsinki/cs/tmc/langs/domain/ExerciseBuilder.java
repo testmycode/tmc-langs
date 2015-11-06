@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Builder for generating stubs and model solutions.
+ */
 public class ExerciseBuilder {
 
     private static final String SOURCE_FOLDER_NAME = "src";
@@ -31,6 +34,9 @@ public class ExerciseBuilder {
         this(CommentSyntax.newBuilder().build());
     }
 
+    /**
+     * Builder for generating stubs and model solutions.
+     */
     public ExerciseBuilder(CommentSyntax commentSyntax) {
         beginSolutionRegex = commentSyntax.getBeginSolution();
         capturingGroups = commentSyntax.getCapturingGroups();

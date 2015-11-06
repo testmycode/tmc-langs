@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 /**
  * Information about a language comment syntax used to parse solution and stub
  * files with ExerciseBuilder.
- * 
+ *
  * <p>Use CommentSyntaxBuilder for easy setup.
  */
 public class CommentSyntax {
@@ -34,7 +34,7 @@ public class CommentSyntax {
 
     /**
      * Will create a new Comment syntax with the specified comment syntaxes.
-     * 
+     *
      * <p>If no syntax is specified, will use single line comment syntax from
      * Java.
      */
@@ -120,7 +120,7 @@ public class CommentSyntax {
         /**
          * Adds a multi line comment to the comment syntax.
          * @param beginning Beginning tag for the multi line comment as Java
-         * regex.
+         *        regex.
          * @param end End tag for the multi line comment as Java regex.
          */
         public Builder addMultiLineComment(String beginning,
@@ -156,7 +156,7 @@ public class CommentSyntax {
                     solutionFileRegex,
                     stubRegex);
         }
-        
+
         private void increaseCapturingGroups() {
             beginCapturingGroups += "$" + capturingIndex++;
             endCapturingGroups += "$" + capturingIndex++;

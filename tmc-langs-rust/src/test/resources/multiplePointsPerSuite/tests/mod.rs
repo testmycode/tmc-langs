@@ -4,7 +4,7 @@ extern crate points;
 extern crate passing;
 
 points! {
-    #[points = {"4"}]
+    #[points = {"4", "3"}]
     suite exercise1 {
         #[points = {"6"}]
         test it_shall_work {

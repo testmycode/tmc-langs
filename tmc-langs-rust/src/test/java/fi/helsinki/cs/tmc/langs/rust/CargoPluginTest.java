@@ -259,6 +259,148 @@ public class CargoPluginTest {
         assertTrue(desc.isPresent());
         assertEquals("test", desc.get().name);
         assertEquals(3, desc.get().tests.size());
-        //TODO: Figure out how the suites should actually work
+        TestDesc test1 = desc.get().tests.get(0);
+        TestDesc test2 = desc.get().tests.get(1);
+        TestDesc test3 = desc.get().tests.get(2);
+        if (test2.name.equals("exercise1")) {
+            TestDesc tmp = test1;
+            test1 = test2;
+            test2 = tmp;
+        } else if (test3.name.equals("exercise1")) {
+            TestDesc tmp = test1;
+            test1 = test3;
+            test3 = tmp;
+        }
+        if (test2.name.contains("2")) {
+            TestDesc tmp = test2;
+            test2 = test3;
+            test3 = tmp;
+        }
+        assertEquals("exercise1", test1.name);
+        assertEquals("exercise1.it_shall_work", test2.name);
+        assertEquals("exercise1.it_shall_work2", test3.name);
+        assertEquals(1, test1.points.size());
+        assertEquals("4", test1.points.get(0));
+        assertEquals(2, test2.points.size());
+        String point1 = test2.points.get(0);
+        String point2 = test2.points.get(1);
+        if (point2.equals("4")) {
+            String tmp = point1;
+            point1 = point2;
+            point2 = tmp;
+        }
+        assertEquals("4", point1);
+        assertEquals("6", point2);
+        assertEquals(2, test3.points.size());
+        point1 = test3.points.get(0);
+        point2 = test3.points.get(1);
+        if (point2.equals("4")) {
+            String tmp = point1;
+            point1 = point2;
+            point2 = tmp;
+        }
+        assertEquals("4", point1);
+        assertEquals("7", point2);
+    }
+
+    @Test
+    public void scanningWithMultiplePointsPerTestsWorks() {
+        Path path = TestUtils.getPath(getClass(), "multiplePointsPerTest");
+        Optional<ExerciseDesc> desc = cargoPlugin.scanExercise(path, "test");
+        assertTrue(desc.isPresent());
+        assertEquals("test", desc.get().name);
+        assertEquals(1, desc.get().tests.size());
+        assertEquals("it_shall_work", desc.get().tests.get(0).name);
+        assertEquals(2, desc.get().tests.get(0).points.size());
+        String test1 = desc.get().tests.get(0).points.get(0);
+        String test2 = desc.get().tests.get(0).points.get(1);
+        if (test2.equals("10")) {
+            String tmp = test1;
+            test1 = test2;
+            test2 = tmp;
+        }
+        assertEquals("10", test1);
+        assertEquals("9", test2);
+    }
+
+    @Test
+    public void scanningWithMultiplePointPerSuiteWorks() {
+        Path path = TestUtils.getPath(getClass(), "multiplePointsPerSuite");
+        Optional<ExerciseDesc> desc = cargoPlugin.scanExercise(path, "test");
+        assertTrue(desc.isPresent());
+        assertEquals("test", desc.get().name);
+        assertEquals(3, desc.get().tests.size());
+        TestDesc test1 = desc.get().tests.get(0);
+        TestDesc test2 = desc.get().tests.get(1);
+        TestDesc test3 = desc.get().tests.get(2);
+        if (test2.name.equals("exercise1")) {
+            TestDesc tmp = test1;
+            test1 = test2;
+            test2 = tmp;
+        } else if (test3.name.equals("exercise1")) {
+            TestDesc tmp = test1;
+            test1 = test3;
+            test3 = tmp;
+        }
+        if (test2.name.contains("2")) {
+            TestDesc tmp = test2;
+            test2 = test3;
+            test3 = tmp;
+        }
+        assertEquals("exercise1", test1.name);
+        assertEquals("exercise1.it_shall_work", test2.name);
+        assertEquals("exercise1.it_shall_work2", test3.name);
+        assertEquals(2, test1.points.size());
+        String point1 = test1.points.get(0);
+        String point2 = test1.points.get(1);
+        if (point2.equals("4")) {
+            String tmp = point1;
+            point1 = point2;
+            point2 = tmp;
+        }
+        assertEquals("4", point1);
+        assertEquals("3", point2);
+        assertEquals(3, test2.points.size());
+        point1 = test2.points.get(0);
+        point2 = test2.points.get(1);
+        String point3 = test2.points.get(2);
+        if (point2.equals("4")) {
+            String tmp = point1;
+            point1 = point2;
+            point2 = tmp;
+        } else if (point3.equals("4")) {
+            String tmp = point1;
+            point1 = point3;
+            point3 = tmp;
+        }
+        if (point3.equals("3")) {
+            String tmp = point2;
+            point2 = point3;
+            point3 = tmp;
+        }
+        assertEquals("4", point1);
+        assertEquals("3", point2);
+        assertEquals("6", point3);
+        assertEquals(3, test3.points.size());
+        point1 = test3.points.get(0);
+        point2 = test3.points.get(1);
+        point3 = test2.points.get(2);
+        if (point2.equals("4")) {
+            String tmp = point1;
+            point1 = point2;
+            point2 = tmp;
+        } else if (point3.equals("4")) {
+            String tmp = point1;
+            point1 = point3;
+            point3 = tmp;
+        }
+        if (point3.equals("3")) {
+            String tmp = point2;
+            point2 = point3;
+            point3 = tmp;
+        }
+        assertEquals("4", point1);
+        assertEquals("3", point2);
+        assertEquals("7", point3);
     }
 }

@@ -103,13 +103,13 @@ public class RustPointsParserTest {
             desc2 = temp;
         }
         assertEquals("test", desc1.name);
-        assertEquals(2, desc1.points.size());
+        assertEquals(1, desc1.points.size());
         assertTrue(desc1.points.contains("1"));
-        assertTrue(desc1.points.contains("2"));
 
         assertEquals("test.asd", desc2.name);
-        assertEquals(1, desc2.points.size());
-        assertEquals("2", desc2.points.get(0));
+        assertEquals(2, desc2.points.size());
+        assertTrue(desc2.points.contains("1"));
+        assertTrue(desc2.points.contains("2"));
     }
 
     @Test

@@ -6,9 +6,13 @@ import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
+import com.google.common.base.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -211,5 +215,50 @@ public class CargoPluginTest {
         assertEquals(1, error2.getValue().get(0).getColumn());
         assertTrue(error2.getValue().get(0).getMessage().contains("snake case"));
         assertTrue(error2.getValue().get(0).getSourceName().contains("xor_adder.rs"));
+    }
+
+    @Test
+    public void scanningExerciseWorks() {
+        Path path = TestUtils.getPath(getClass(), "points");
+        Optional<ExerciseDesc> desc = cargoPlugin.scanExercise(path, "test");
+        assertTrue(desc.isPresent());
+        assertEquals("test", desc.get().name);
+        assertEquals(1, desc.get().tests.size());
+        assertEquals("it_shall_work", desc.get().tests.get(0).name);
+        assertEquals(1, desc.get().tests.get(0).points.size());
+        assertEquals("10", desc.get().tests.get(0).points.get(0));
+    }
+
+    @Test
+    public void scanningWithMultipleExerciseWorks() {
+        Path path = TestUtils.getPath(getClass(), "multiplePoints");
+        Optional<ExerciseDesc> desc = cargoPlugin.scanExercise(path, "test");
+        assertTrue(desc.isPresent());
+        assertEquals("test", desc.get().name);
+        assertEquals(2, desc.get().tests.size());
+        TestDesc test1 = desc.get().tests.get(0);
+        TestDesc test2 = desc.get().tests.get(1);
+        if (test2.name.equals("it_shall_work")) {
+            TestDesc tmp = test1;
+            test1 = test2;
+            test2 = tmp;
+        }
+        assertEquals("it_shall_work", test1.name);
+        assertEquals(1, test1.points.size());
+        assertEquals("4", test1.points.get(0));
+
+        assertEquals("it_shall_work2", test2.name);
+        assertEquals(1, test2.points.size());
+        assertEquals("7", test2.points.get(0));
+    }
+
+    @Test
+    public void scanningWithSuiteWorks() {
+        Path path = TestUtils.getPath(getClass(), "multiplePointsSuite");
+        Optional<ExerciseDesc> desc = cargoPlugin.scanExercise(path, "test");
+        assertTrue(desc.isPresent());
+        assertEquals("test", desc.get().name);
+        assertEquals(3, desc.get().tests.size());
+        //TODO: Figure out how the suites should actually work
     }
 }

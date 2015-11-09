@@ -18,8 +18,8 @@ before_install:
   - mkdir $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"
   - mvn install -Dmaven.test.skip=true
 script:
-  - mvn checkstyle:check
   - mvn clean test
+  - mvn checkstyle:check
 after_success:
   - mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
 os:

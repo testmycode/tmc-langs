@@ -30,7 +30,6 @@
         </license>
     </licenses>
 
-
     <dependencies>
         <dependency>
             <groupId>com.puppycrawl.tools</groupId>
@@ -43,6 +42,7 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.12</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -56,6 +56,7 @@
             <version>18.0</version>
             <type>jar</type>
         </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -67,6 +68,7 @@
             <artifactId>junit</artifactId>
             <version>4.11</version>
         </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>

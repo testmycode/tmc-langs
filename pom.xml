@@ -110,7 +110,7 @@
                 <configuration>
                     <configLocation>checkstyle/tmc-checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
-                    <failsOnError>true</failsOnError>
+                    <failsOnError>false</failsOnError>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <propertyExpansion>basedir = ${project.basedir}</propertyExpansion>
                 </configuration>

@@ -38,7 +38,7 @@ public class MainTest {
 
     @Before
     public void setUp() {
-        TestUtils.skipTestIfOnWindowsContinuosIntegration();
+        TestUtils.maybeSkipTests();
         mainClass = new Main();
         Main.setExecutor(executor);
     }

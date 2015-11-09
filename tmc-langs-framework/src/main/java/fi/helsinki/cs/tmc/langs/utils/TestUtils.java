@@ -9,8 +9,10 @@ import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -21,6 +23,9 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public final class TestUtils {
 
@@ -52,30 +57,34 @@ public final class TestUtils {
             return;
         }
 
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                    throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
+        Files.walkFileTree(
+                path,
+                new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                            throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult visitFileFailed(Path file, IOException ex) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException ex)
+                            throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException ex) throws IOException {
-                if (ex == null) {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                } else {
-                    throw ex;
-                }
-            }
-        });
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException ex)
+                            throws IOException {
+                        if (ex == null) {
+                            Files.delete(dir);
+                            return FileVisitResult.CONTINUE;
+                        } else {
+                            throw ex;
+                        }
+                    }
+                });
     }
 
     /**
@@ -89,32 +98,35 @@ public final class TestUtils {
      * Collects a list of paths that the provided {@link ConfigurableStudentFilePolicy}
      * considers student files.
      */
-    public static void collectPaths(final Path path,
-                                    final List<String> toBeMoved,
-                                    final ConfigurableStudentFilePolicy fileMovingPolicy)
+    public static void collectPaths(
+            final Path path,
+            final List<String> toBeMoved,
+            final ConfigurableStudentFilePolicy fileMovingPolicy)
             throws IOException {
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                    throws IOException {
-                if (fileMovingPolicy.isStudentSourceFile(path.relativize(file))) {
-                    toBeMoved.add(path.relativize(file).toString());
-                }
+        Files.walkFileTree(
+                path,
+                new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                            throws IOException {
+                        if (fileMovingPolicy.isStudentSourceFile(path.relativize(file))) {
+                            toBeMoved.add(path.relativize(file).toString());
+                        }
 
-                return FileVisitResult.CONTINUE;
-            }
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exception)
-                    throws IOException {
-                if (exception == null) {
-                    return FileVisitResult.CONTINUE;
-                } else {
-                    // directory iteration failed
-                    throw exception;
-                }
-            }
-        });
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exception)
+                            throws IOException {
+                        if (exception == null) {
+                            return FileVisitResult.CONTINUE;
+                        } else {
+                            // directory iteration failed
+                            throw exception;
+                        }
+                    }
+                });
     }
 
     /**
@@ -128,8 +140,8 @@ public final class TestUtils {
     /**
      * Initializes a temporary file in a specific directory with content.
      */
-    public static Path initTempFileWithContent(String prefix, String suffix, File directory,
-                                               String content) throws IOException {
+    public static Path initTempFileWithContent(
+            String prefix, String suffix, File directory, String content) throws IOException {
         String suffixWithDot = "." + suffix;
         File file = File.createTempFile(prefix, suffixWithDot, directory);
         file.deleteOnExit();
@@ -142,8 +154,22 @@ public final class TestUtils {
         return file.toPath();
     }
 
-    public static void skipTestIfOnWindowsContinuosIntegration() {
-        String message = "This test is not supported on Windows CI.";
-        Assume.assumeTrue(message, System.getenv("APPVEYOR") == null);
+    public static void maybeSkipTests() {
+        isFeatureAvailable("valgrind", "Skipping makefile tests since no valgring is found");
+        Assume.assumeTrue(
+                "This test is not supported on Windows CI.", System.getenv("APPVEYOR") == null);
+        isFeatureAvailable("rust", "Skipping rust tests since no rust installation is found");
+    }
+
+    public static void isFeatureAvailable(String cmd, String message) {
+        try {
+            Process tr = Runtime.getRuntime().exec("which "+ cmd);
+            tr.waitFor(1, TimeUnit.MINUTES);
+            Assume.assumeTrue(message, 0 == tr.destroyForcibly().exitValue());
+        } catch (IOException ignore) {
+            System.out.println(ignore);
+        } catch (InterruptedException ex) {
+            java.util.logging.Logger.getLogger(TestUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

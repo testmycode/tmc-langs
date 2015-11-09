@@ -22,7 +22,7 @@ public class MakePluginTest {
     private MakePlugin makePlugin;
 
     public MakePluginTest() {
-        TestUtils.skipTestIfOnWindowsContinuosIntegration();
+        TestUtils.maybeSkipTests();
         makePlugin = new MakePlugin();
     }
 

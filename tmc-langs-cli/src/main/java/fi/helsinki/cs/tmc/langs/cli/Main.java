@@ -25,6 +25,13 @@ import java.util.Map;
 
 public final class Main {
 
+    private static TaskExecutor executor = new TaskExecutorImpl();
+
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
+    private static final String EXERCISE_PATH = "exercisePath";
+    private static final String OUTPUT_PATH = "outputPath";
+
     private static final Map<String, Integer> COMMAND_ARGUMENT_COUNTS =
             ImmutableMap.of(
                     "checkstyle", 2,
@@ -33,13 +40,9 @@ public final class Main {
                     "prepare-stub", 1,
                     "prepare-solution", 1);
 
-    private static final String EXERCISE_PATH = "exercisePath";
-    private static final String OUTPUT_PATH = "outputPath";
-
     @VisibleForTesting
     static final String HELP_TEXT =
-            "\n"
-                    + " Usage: Main <command> [<command-arguments>] \n\n"
+                    " Usage: Main <command> [<command-arguments>] \n\n"
                     + " Commands:\n"
                     + " checkstyle <exercise path> <output path>"
                     + "     Run checkstyle or similar plugin to project if applicable.\n"
@@ -54,9 +57,6 @@ public final class Main {
                     + " scan-exercise <exercise path> <output path>"
                     + "  Produce an exercise description of an exercise directory.";
 
-    private static TaskExecutor executor = new TaskExecutorImpl();
-
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     /**
      * Main entry point for the CLI.
@@ -80,7 +80,7 @@ public final class Main {
 
     private static void printHelpAndExit() {
         System.out.println(HELP_TEXT);
-        System.exit(0);
+        System.exit(0); // Make sure to kill non daemon threads.
     }
 
     private static void run(String[] args) {

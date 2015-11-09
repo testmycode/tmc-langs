@@ -8,6 +8,7 @@ import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.NothingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
+import fi.helsinki.cs.tmc.langs.util.ProjectType;
 
 import com.google.common.base.Optional;
 

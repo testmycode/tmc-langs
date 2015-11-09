@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs.util;
+package fi.helsinki.cs.tmc.langs.cli;
 
 import com.google.gson.Gson;
 

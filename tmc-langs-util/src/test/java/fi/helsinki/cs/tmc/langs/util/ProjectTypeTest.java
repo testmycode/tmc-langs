@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
+import fi.helsinki.cs.tmc.langs.util.ProjectType;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import org.junit.Rule;

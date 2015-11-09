@@ -1,9 +1,11 @@
-package fi.helsinki.cs.tmc.langs.util;
+package fi.helsinki.cs.tmc.langs.cli;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.util.TaskExecutor;
+import fi.helsinki.cs.tmc.langs.util.TaskExecutorImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;

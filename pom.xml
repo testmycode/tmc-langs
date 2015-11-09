@@ -167,6 +167,8 @@
                 <configuration>
                     <compilerId>javac-with-errorprone</compilerId>
                     <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
                 <dependencies>
                     <dependency>

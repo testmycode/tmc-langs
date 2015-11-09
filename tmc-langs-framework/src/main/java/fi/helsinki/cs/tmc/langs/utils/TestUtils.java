@@ -163,13 +163,11 @@ public final class TestUtils {
 
     public static void isFeatureAvailable(String cmd, String message) {
         try {
-            Process tr = Runtime.getRuntime().exec("which "+ cmd);
-            tr.waitFor(1, TimeUnit.MINUTES);
-            Assume.assumeTrue(message, 0 == tr.destroyForcibly().exitValue());
-        } catch (IOException ignore) {
-            System.out.println(ignore);
-        } catch (InterruptedException ex) {
-            java.util.logging.Logger.getLogger(TestUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Process process = Runtime.getRuntime().exec("which " + cmd);
+            process.waitFor();
+            process.destroy();
+            Assume.assumeTrue(message, 0 == process.exitValue());
+        } catch (IOException | InterruptedException ignore) {
         }
     }
 }

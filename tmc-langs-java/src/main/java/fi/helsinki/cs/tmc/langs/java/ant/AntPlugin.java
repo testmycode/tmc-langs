@@ -36,6 +36,7 @@ import java.util.List;
 public class AntPlugin extends AbstractJavaPlugin {
 
     private static final Path TEST_DIR = Paths.get("test");
+    private static final Path SRC_DIR = Paths.get("src");
     private static final Path RESULT_FILE = Paths.get("results.txt");
     private static final Path BUILD_FILE = Paths.get("build.xml");
     private static final Path BUILD_LOG_FILE = Paths.get("build_log.txt");
@@ -66,7 +67,8 @@ public class AntPlugin extends AbstractJavaPlugin {
 
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
-        return Files.exists(path.resolve(BUILD_FILE));
+        return Files.exists(path.resolve(BUILD_FILE))
+                || Files.exists(path.resolve(TEST_DIR)) && Files.exists(path.resolve(SRC_DIR));
     }
 
     @Override

@@ -209,6 +209,9 @@ public final class Main {
                         @Override
                         public FileVisitResult preVisitDirectory(
                                 Path dir, BasicFileAttributes attrs) throws IOException {
+                            if (isIrrelevantDirectory(dir)) {
+                                return FileVisitResult.SKIP_SUBTREE;
+                            }
                             if (executor.isExerciseRootDirectory(dir)) {
                                 exercises.add(dir.toAbsolutePath().toString());
                             }
@@ -246,6 +249,11 @@ public final class Main {
             logger.error("Could not write output to {}", paths.get(OUTPUT_PATH), e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
+    }
+
+    private static boolean isIrrelevantDirectory(Path dir) {
+        return Files.exists(Paths.get(dir.toAbsolutePath().toString(), ".tmcignore"))
+                || dir.startsWith(".");
     }
 
     private static void runTests(Map<String, Path> paths) {

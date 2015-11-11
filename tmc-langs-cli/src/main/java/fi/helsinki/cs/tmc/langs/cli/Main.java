@@ -214,6 +214,7 @@ public final class Main {
                             }
                             if (executor.isExerciseRootDirectory(dir)) {
                                 exercises.add(dir.toAbsolutePath().toString());
+                                return FileVisitResult.SKIP_SUBTREE;
                             }
                             return FileVisitResult.CONTINUE;
                         }

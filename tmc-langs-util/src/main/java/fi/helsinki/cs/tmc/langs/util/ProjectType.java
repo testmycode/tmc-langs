@@ -16,10 +16,11 @@ import java.nio.file.Path;
  * All the possible project types.
  */
 public enum ProjectType {
-    JAVA_ANT(new AntPlugin()),
     JAVA_MAVEN(new MavenPlugin()),
     MAKEFILE(new MakePlugin()),
-    PYTHON3(new Python3Plugin());
+    PYTHON3(new Python3Plugin()),
+    // for legacy and matching reasons keep the java ant as the last choise.
+    JAVA_ANT(new AntPlugin());
 
     private final LanguagePlugin languagePlugin;
     private static final Logger log = LoggerFactory.getLogger(ProjectType.class);
@@ -45,7 +46,7 @@ public enum ProjectType {
         log.info("Finding plugin for {}", path);
         for (ProjectType type : ProjectType.values()) {
             if (type.getLanguagePlugin().isExerciseTypeCorrect(path)) {
-                log.info("Detected project as {}", type.getLanguagePlugin().getLanguageName());
+                log.info("Detected project as {}", type.getLanguagePlugin().getPluginName());
                 return type;
             }
         }

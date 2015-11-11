@@ -16,12 +16,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class Main {
 
@@ -33,16 +39,18 @@ public final class Main {
     private static final String OUTPUT_PATH = "outputPath";
 
     private static final Map<String, Integer> COMMAND_ARGUMENT_COUNTS =
-            ImmutableMap.of(
-                    "checkstyle", 2,
-                    "scan-exercise", 2,
-                    "run-tests", 2,
-                    "prepare-stub", 1,
-                    "prepare-solution", 1);
+            new ImmutableMap.Builder<String, Integer>()
+                    .put("checkstyle", 2)
+                    .put("scan-exercises", 2)
+                    .put("run-tests", 2)
+                    .put("prepare-stub", 1)
+                    .put("prepare-solution", 1)
+                    .put("find-exercises", 2)
+                    .build();
 
     @VisibleForTesting
     static final String HELP_TEXT =
-                    " Usage: Main <command> [<command-arguments>] \n\n"
+            " Usage: Main <command> [<command-arguments>] \n\n"
                     + " Commands:\n"
                     + " checkstyle <exercise path> <output path>"
                     + "     Run checkstyle or similar plugin to project if applicable.\n"
@@ -54,14 +62,16 @@ public final class Main {
                     + "                 Prepare a stub exercise from the original.\n"
                     + " run-tests <exercise path> <output path>"
                     + "      Run the tests for the exercise.\n"
-                    + " scan-exercise <exercise path> <output path>"
-                    + "  Produce an exercise description of an exercise directory.";
-
+                    + " scan-exercises <exercise path> <output path>"
+                    + "  Produce an exercise description of an exercise directory."
+                    + " find-exercises <scan path> <output path>"
+                    + "  Produce list of found exercises.";
 
     /**
      * Main entry point for the CLI.
      */
     public static void main(String[] args) {
+        System.out.println(Arrays.deepToString(args));
         if (args == null || args.length == 0) {
             printHelpAndExit();
         }
@@ -115,8 +125,11 @@ public final class Main {
             case "checkstyle":
                 runCheckCodeStyle(paths);
                 break;
-            case "scan-exercise":
-                runScanExercise(paths);
+            case "scan-exercises":
+                runScanExercises(paths);
+                break;
+            case "find-exercises":
+                runFindExercises(paths);
                 break;
             case "run-tests":
                 runTests(paths);
@@ -156,8 +169,8 @@ public final class Main {
         }
     }
 
-    private static void runScanExercise(Map<String, Path> paths) {
-        // Exercise name, should it be something else than directory name?
+    private static void runScanExercises(Map<String, Path> paths) {
+        System.out.println(paths);
         String exerciseName = paths.get(EXERCISE_PATH).toFile().getName();
         Optional<ExerciseDesc> exerciseDesc = Optional.absent();
         try {
@@ -180,6 +193,55 @@ public final class Main {
             System.out.println(
                     "Exercises scanned successfully, results can be found in "
                             + paths.get(OUTPUT_PATH).toString());
+        } catch (IOException e) {
+            logger.error("Could not write output to {}", paths.get(OUTPUT_PATH), e);
+            printErrAndExit("ERROR: Could not write the results to the given file.");
+        }
+    }
+
+    private static void runFindExercises(Map<String, Path> paths) {
+        Path clonePath = paths.get(EXERCISE_PATH);
+        final Set<String> exercises = new HashSet<String>();
+        try {
+            Files.walkFileTree(
+                    clonePath,
+                    new FileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(
+                                Path dir, BasicFileAttributes attrs) throws IOException {
+                            if (executor.isExerciseRootDirectory(dir)) {
+                                exercises.add(dir.toAbsolutePath().toString());
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFileFailed(Path file, IOException exc)
+                                throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                                throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                                throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(1);
+        }
+
+        try {
+            JsonWriter.writeObjectIntoJsonFormat(exercises, paths.get(OUTPUT_PATH));
+            System.out.println("Results can be found in " + paths.get(OUTPUT_PATH));
         } catch (IOException e) {
             logger.error("Could not write output to {}", paths.get(OUTPUT_PATH), e);
             printErrAndExit("ERROR: Could not write the results to the given file.");

@@ -124,7 +124,6 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>classworlds:classworlds</exclude>
-                                    <exclude>junit:junit</exclude>
                                     <exclude>org.apache.maven:lib:tests</exclude>
                                     <exclude>log4j:log4j:jar:</exclude>
                                 </excludes>

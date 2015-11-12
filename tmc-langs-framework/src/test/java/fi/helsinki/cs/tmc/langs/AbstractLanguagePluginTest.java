@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
+import fi.helsinki.cs.tmc.langs.util.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;

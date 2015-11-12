@@ -1,12 +1,14 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
 import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -15,12 +17,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-abstract class Filer {
+public class Filer {
 
     private static final Logger logger = LoggerFactory.getLogger(Filer.class);
 
-    // TODO - need a more generic one for binary files?
-    abstract List<String> prepareFile(List<String> file);
+    private Path toPath;
+
+    private LanguagePlugin languagePlugin;
+
+    public Filer setToPath(Path toPath) {
+        this.toPath = toPath;
+        return this;
+    }
+
+    public Filer setLanguagePlugin(LanguagePlugin languagePlugin) {
+        this.languagePlugin = languagePlugin;
+        return this;
+    }
+
+    public FileVisitResult decideOnDirectory(Path directory) {
+        return FileVisitResult.CONTINUE;
+    }
+
+    public List<String> prepareFile(List<String> file) {
+        return file;
+    }
 
     List<CommentStyleFileFilter> getCommentStyleFileFilters() {
         return new ImmutableList.Builder<CommentStyleFileFilter>()
@@ -32,12 +53,12 @@ abstract class Filer {
                                         .addSingleLineComment("\\/\\/")
                                         .addMultiLineComment("\\/\\*+", "\\*+\\/")
                                         .build()))
-                .add(new CommentStyleFileFilter(
-                        // XML comment syntax
-                        CommentSyntax.newBuilder()
-                        .addMultiLineComment("/\\*", "\\*/")
-                        .build()
-                ))
+                .add(
+                        new CommentStyleFileFilter(
+                                // XML comment syntax
+                                CommentSyntax.newBuilder()
+                                        .addMultiLineComment("/\\*", "\\*/")
+                                        .build()))
                 .build();
     }
 
@@ -52,32 +73,22 @@ abstract class Filer {
     }
 
     // TODO: refactor, I don't like this.
-    public void maybeCopyAndFilterFile(Path file, Path fromPath, Path toPath) {
-        Path relativePath = file.subpath(fromPath.getNameCount(), file.getNameCount());
-        Path toFile = toPath.resolve(relativePath);
-        logger.info(
-                "Maybe copying file from: {} to:{} - name: {}",
-                file,
-                toFile,
-                file.getFileName().toString());
+    public void maybeCopyAndFilterFile(Path file, Path fromPath) {
+        Path relativePath = file.subpath(fromPath.getNameCount() - 1, file.getNameCount());
+        logger.info("relativePath: {}", relativePath);
+        logger.info("Looking into file: {} ", file);
         try {
             if (skipFile(file)) {
-                logger.info("not for stub while copying from: {} to:{}", file, toFile);
+                logger.info("Skipping file: {} ", file);
                 return;
             }
+            Path toFile = toPath.resolve(relativePath);
             if (justCopy(file)) {
                 Files.createDirectories(toFile.getParent());
                 Files.copy(file, toFile);
                 logger.info("Just copying file from: {} to:{}", file, toFile);
             } else {
-                List<String> data = new ArrayList<>();
-                try (Scanner scanner = new Scanner(Files.newInputStream(file))) {
-                    while (scanner.hasNextLine()) {
-                        data.add(scanner.nextLine());
-                    }
-                } catch (IOException ex) {
-                    throw new IllegalStateException(ex);
-                }
+                List<String> data = readFile(file);
                 List<String> output = prepareFile(data);
                 if (!output.isEmpty()) {
                     Files.createDirectories(toFile.getParent());
@@ -90,6 +101,18 @@ abstract class Filer {
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+
+    private List<String> readFile(Path file) {
+        List<String> data = new ArrayList<>();
+        try (Scanner scanner = new Scanner(Files.newInputStream(file))) {
+            while (scanner.hasNextLine()) {
+                data.add(scanner.nextLine());
+            }
+        } catch (IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        return data;
     }
 
     protected final String getFileExtension(Path file) {

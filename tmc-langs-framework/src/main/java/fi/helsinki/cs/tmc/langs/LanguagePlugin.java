@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * The interface that each language plug-in must implement.
@@ -97,10 +98,10 @@ public interface LanguagePlugin {
      * <p>The stub is a copy of the original where the model solution and special
      * comments have been stripped and stubs like ('return 0') have been added.
      *
-     * @param clonePath path in which the original exercise is located.
+     * @param exerciseMap consists of exercise locations and which plugin belongs to it.
      * @param destPath path to which directory with prepared files will be copied.
      */
-    void prepareStubs(Path clonePath, Path destPath);
+    void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath);
 
     /**
      * Prepares a presentable solution from the original.

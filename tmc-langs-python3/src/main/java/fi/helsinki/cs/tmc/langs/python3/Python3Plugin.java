@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs.python3;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
@@ -11,6 +10,7 @@ import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

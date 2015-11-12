@@ -1,13 +1,14 @@
 
 package fi.helsinki.cs.tmc.langs.domain;
 
+import fi.helsinki.cs.tmc.langs.domain.DirectorySkipper;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-final class GeneralDirectorySkipper implements DirectorySkipper {
+public final class GeneralDirectorySkipper implements DirectorySkipper {
 
     private static final List<String> skipList = Arrays.asList(new String[] {".git", "private"});
 

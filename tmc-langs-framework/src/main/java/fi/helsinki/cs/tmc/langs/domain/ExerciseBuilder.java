@@ -1,11 +1,13 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Builder for generating stubs and model solutions.
@@ -22,13 +24,17 @@ public class ExerciseBuilder {
      *
      * <p>Implements LanguagePlugin.prepareStub
      */
-    public void prepareStub(final Path clonePath, final Path destPath) {
-        new FilterFileTreeVisitor()
-                .setClonePath(clonePath)
-                .setDestPath(destPath)
-                .addSkipper(new GeneralDirectorySkipper())
-                .setFiler(new StubFileFilterProcessor())
-                .traverse();
+    public void prepareStub(Map<Path, LanguagePlugin> exerciseMap, final Path destPath) {
+        for (Map.Entry<Path, LanguagePlugin> entrySet : exerciseMap.entrySet()) {
+            new FilterFileTreeVisitor()
+                    .setClonePath(entrySet.getKey())
+                    .addSkipper(new GeneralDirectorySkipper())
+                    .setFiler(
+                            new StubFileFilterProcessor()
+                                    .setToPath(destPath)
+                                    .setLanguagePlugin(entrySet.getValue()))
+                    .traverse();
+        }
     }
 
     /**
@@ -39,7 +45,7 @@ public class ExerciseBuilder {
     public void prepareSolution(final Path clonePath, final Path destPath) {
         new FilterFileTreeVisitor()
                 .setClonePath(clonePath)
-                .setDestPath(destPath)
+                //                .setDestPath(destPath)
                 .addSkipper(new GeneralDirectorySkipper())
                 .setFiler(new SolutionFileFilterProcessor())
                 .traverse();

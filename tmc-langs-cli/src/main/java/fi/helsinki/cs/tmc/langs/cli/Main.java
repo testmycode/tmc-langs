@@ -6,11 +6,16 @@ import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.util.TaskExecutor;
 import fi.helsinki.cs.tmc.langs.util.TaskExecutorImpl;
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+import fi.helsinki.cs.tmc.langs.domain.Filer;
+import fi.helsinki.cs.tmc.langs.domain.FilterFileTreeVisitor;
+import fi.helsinki.cs.tmc.langs.util.ProjectType;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.domain.GeneralDirectorySkipper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -280,7 +285,39 @@ public final class Main {
 
     private static void runPrepareStubs(Map<String, Path> paths) {
         try {
-            executor.prepareStubs(paths.get(EXERCISE_PATH), paths.get(OUTPUT_PATH));
+            final Map<Path, LanguagePlugin> map = new HashMap<>();
+            Filer exerciseMatchingFiler =
+                    new Filer() {
+
+                        @Override
+                        public FileVisitResult decideOnDirectory(Path directory) {
+                            if (executor.isExerciseRootDirectory(directory)) {
+                                try {
+                                    map.put(
+                                            directory,
+                                            ProjectType.getProjectType(directory)
+                                                    .getLanguagePlugin());
+                                } catch (NoLanguagePluginFoundException ex) {
+                                    throw new IllegalStateException(ex);
+                                }
+                                return FileVisitResult.SKIP_SUBTREE;
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public void maybeCopyAndFilterFile(Path file, Path fromPath) {
+                            // Just skip
+                        }
+                    };
+            new FilterFileTreeVisitor()
+                    .addSkipper(new GeneralDirectorySkipper())
+                    .setClonePath(paths.get(EXERCISE_PATH))
+                    .setFiler(exerciseMatchingFiler)
+                    .traverse();
+            System.out.println(map);
+
+            executor.prepareStubs(map, paths.get(OUTPUT_PATH));
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", paths.get(EXERCISE_PATH), e);

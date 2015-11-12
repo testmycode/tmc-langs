@@ -9,31 +9,25 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-final class FilterFileTreeVisitor {
+public final class FilterFileTreeVisitor {
 
-    private Path clonePath;
-    private Path destPath;
+    private Path traversePath;
 
     private List<DirectorySkipper> skippers = new ArrayList<>();
 
     private Filer filer;
 
-    FilterFileTreeVisitor addSkipper(DirectorySkipper skipper) {
+    public FilterFileTreeVisitor addSkipper(DirectorySkipper skipper) {
         skippers.add(skipper);
         return this;
     }
 
-    FilterFileTreeVisitor setClonePath(Path clonePath) {
-        this.clonePath = clonePath;
+    public FilterFileTreeVisitor setClonePath(Path clonePath) {
+        this.traversePath = clonePath;
         return this;
     }
 
-    FilterFileTreeVisitor setDestPath(Path destPath) {
-        this.destPath = destPath;
-        return this;
-    }
-
-    FilterFileTreeVisitor setFiler(Filer filer) {
+    public FilterFileTreeVisitor setFiler(Filer filer) {
         this.filer = filer;
         return this;
     }
@@ -47,10 +41,10 @@ final class FilterFileTreeVisitor {
         return false;
     }
 
-    void traverse() {
+    public void traverse() {
         try {
             Files.walkFileTree(
-                    clonePath,
+                    traversePath,
                     new FileVisitor<Path>() {
 
                         @Override
@@ -59,13 +53,14 @@ final class FilterFileTreeVisitor {
                             if (skipDirectory(dir)) {
                                 return FileVisitResult.SKIP_SUBTREE;
                             }
-                            return FileVisitResult.CONTINUE;
+
+                            return filer.decideOnDirectory(dir);
                         }
 
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                                 throws IOException {
-                            filer.maybeCopyAndFilterFile(file, clonePath, destPath);
+                            filer.maybeCopyAndFilterFile(file, traversePath);
                             return FileVisitResult.CONTINUE;
                         }
 

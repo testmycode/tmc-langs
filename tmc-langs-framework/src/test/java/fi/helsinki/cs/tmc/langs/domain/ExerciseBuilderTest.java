@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import fi.helsinki.cs.tmc.langs.util.ExerciseBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -27,12 +28,12 @@ public class ExerciseBuilderTest {
 
     @Before
     public void setUp() {
-//        exerciseBuilder =
-//                new ExerciseBuilder(
-//                        CommentSyntax.newBuilder()
-//                                .addSingleLineComment("\\/\\/")
-//                                .addMultiLineComment("\\/\\*+", "\\*+\\/")
-//                                .build());
+        //        exerciseBuilder =
+        //                new ExerciseBuilder(
+        //                        CommentSyntax.newBuilder()
+        //                                .addSingleLineComment("\\/\\/")
+        //                                .addMultiLineComment("\\/\\*+", "\\*+\\/")
+        //                                .build());
     }
 
     @Test

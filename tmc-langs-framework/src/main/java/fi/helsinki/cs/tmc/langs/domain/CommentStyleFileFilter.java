@@ -23,7 +23,7 @@ class CommentStyleFileFilter {
                 skipLine = true;
             } else if (skipLine && line.matches(commentSyntax.getEndSolution())) {
                 skipLine = false;
-            } else if (line.matches(commentSyntax.getBeginSolution())) {
+            } else if (line.matches(commentSyntax.getStub())) {
                 Matcher stubMatcher = commentSyntax.getStubReplacePattern().matcher(line);
                 output.add(stubMatcher.replaceAll(commentSyntax.getCapturingGroups()));
             } else if (!skipLine) {

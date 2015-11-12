@@ -2,9 +2,7 @@ package fi.helsinki.cs.tmc.langs.java;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
-import fi.helsinki.cs.tmc.langs.domain.CommentSyntax;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
@@ -22,6 +20,7 @@ import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

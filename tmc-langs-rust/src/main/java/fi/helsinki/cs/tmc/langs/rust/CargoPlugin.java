@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs.rust;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
@@ -15,6 +14,7 @@ import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
 import fi.helsinki.cs.tmc.langs.rust.util.Constants;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -31,10 +31,11 @@ import java.util.Arrays;
 public class CargoPlugin extends AbstractLanguagePlugin {
 
     private static final Logger log = LoggerFactory.getLogger(CargoPlugin.class);
-    private static final RunResult EMPTY_FAILURE = new RunResult(
-            Status.COMPILE_FAILED,
-            ImmutableList.<TestResult>of(),
-            new ImmutableMap.Builder<String, byte[]>().build());
+    private static final RunResult EMPTY_FAILURE =
+            new RunResult(
+                    Status.COMPILE_FAILED,
+                    ImmutableList.<TestResult>of(),
+                    new ImmutableMap.Builder<String, byte[]>().build());
 
     /**
      * Creates new plugin for cargo with all default stuff set.
@@ -59,7 +60,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     @Override
     public ValidationResult checkCodeStyle(Path path) {
-        if (run(new String[]{"cargo", "clean"}, path).isPresent()) {
+        if (run(new String[] {"cargo", "clean"}, path).isPresent()) {
             String[] command = {"cargo", "rustc", "--", "--forbid", "warnings"};
             log.info("Building for lints with command {0}", Arrays.deepToString(command));
             Optional<ProcessResult> result = run(command, path);
@@ -129,13 +130,11 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     private RunResult filledFailure(ProcessResult processResult) {
         byte[] errorOutput = processResult.errorOutput.getBytes(StandardCharsets.UTF_8);
-        ImmutableMap<String, byte[]> logs = new ImmutableMap.Builder()
-                .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
-                .<String, byte[]>build();
-        return new RunResult(
-                Status.COMPILE_FAILED,
-                ImmutableList.<TestResult>of(),
-                logs);
+        ImmutableMap<String, byte[]> logs =
+                new ImmutableMap.Builder()
+                        .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
+                        .<String, byte[]>build();
+        return new RunResult(Status.COMPILE_FAILED, ImmutableList.<TestResult>of(), logs);
     }
 
     private RunResult parseResult(ProcessResult processResult, Path path) {
@@ -145,5 +144,4 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     private ValidationResult parseLints(ProcessResult processResult) {
         return new LinterResultParser().parse(processResult);
     }
-
 }

@@ -2,17 +2,18 @@ package fi.helsinki.cs.tmc.langs;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.Zipper;
 
 import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Logger;
 
@@ -84,8 +85,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     @Override
-    public void prepareStubs(Path originalPath, Path destPath) {
-        exerciseBuilder.prepareStub(originalPath, destPath);
+    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath) {
+        exerciseBuilder.prepareStub(exerciseMap, destPath);
     }
 
     @Override

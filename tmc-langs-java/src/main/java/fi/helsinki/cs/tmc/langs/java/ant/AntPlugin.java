@@ -12,7 +12,6 @@ import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
-import java.io.BufferedReader;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
@@ -22,6 +21,7 @@ import org.apache.tools.ant.ProjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -178,9 +178,9 @@ public class AntPlugin extends AbstractJavaPlugin {
         try {
             Process process = new ProcessBuilder(testRunnerArguments).start();
             process.waitFor();
-            BufferedReader output =
+            final BufferedReader output =
                     new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader error =
+            final BufferedReader error =
                     new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
             StringBuilder stb = new StringBuilder();

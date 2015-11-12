@@ -2,15 +2,11 @@ package fi.helsinki.cs.tmc.langs.java.maven;
 
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 
-import org.apache.maven.cli.MavenCli;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
@@ -38,26 +34,14 @@ public final class MavenClassPathBuilder {
         File outputFile = File.createTempFile("tmc-classpath", ".tmp");
 
         String outputParameter = OUTPUT_FILE_PARAM_PREFIX + outputFile.getAbsolutePath();
+        String[] mavenArgs = new String[] {CLASS_PATH_GOAL, outputParameter, "-e"};
 
-        String multimoduleProjectDirectory =
-                System.getProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY);
-        System.setProperty(
-                MavenCli.MULTIMODULE_PROJECT_DIRECTORY, projectPath.toAbsolutePath().toString());
+        MavenTaskRunner.MavenExecutionResult result =
+                MavenExecutors.tryAndExec(projectPath, mavenArgs);
+        log.info("Maven runner exited with {}", result.getExitCode());
 
-        MavenCli maven = new MavenCli();
-
-        ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
-        ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
-
-        int compileResult =
-                maven.doMain(
-                        new String[] {CLASS_PATH_GOAL, outputParameter, "-e"},
-                        projectPath.toAbsolutePath().toString(),
-                        new PrintStream(outBuf),
-                        new PrintStream(errBuf));
-
-        if (multimoduleProjectDirectory != null) {
-            System.setProperty(MavenCli.MULTIMODULE_PROJECT_DIRECTORY, multimoduleProjectDirectory);
+        if (!outputFile.exists()) {
+            throw new IllegalStateException("Executing maven goal failed to write to output file");
         }
 
         Scanner scanner = new Scanner(outputFile);

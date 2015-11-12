@@ -62,20 +62,33 @@
         </dependency>
 
         <dependency>
+            <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>tmc-junit-runner</artifactId>
+            <version>0.2.6-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
             <version>1.9.6</version>
         </dependency>
-
+        
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-embedder</artifactId>
-            <version>3.3.3</version>
+            <version>3.2.5</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-aether-provider</artifactId>
-            <version>3.3.3</version>
+            <version>3.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.2.5</version>
         </dependency>
 
         <dependency>
@@ -91,13 +104,26 @@
             <version>1.6.0</version>  <!-- doesn't matter, the installed JDK's JAR is always used -->
             <systemPath>${toolsjar}</systemPath>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>2.1.1</version>
+            <type>jar</type>
+        </dependency>
 
         <!-- Connector dependecies -->
+        
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-connector-basic</artifactId>
             <version>1.0.2.v20150114</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-util</artifactId>
+            <version>1.0.2.v20150114</version>
+        </dependency>   
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-transport-wagon</artifactId>
@@ -112,7 +138,7 @@
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-provider-api</artifactId>
             <version>2.9</version>
-        </dependency>
+        </dependency>        
     </dependencies>
     <build>
         <plugins>
@@ -154,6 +180,37 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>fi.helsinki.cs.tmc</groupId>
+                                    <artifactId>tmc-junit-runner</artifactId>
+                                    <version>0.2.6-SNAPSHOT</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${basedir}/src/main/resources</outputDirectory>
+                                    <destFileName>tmc-junit-runner.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+
 </project>

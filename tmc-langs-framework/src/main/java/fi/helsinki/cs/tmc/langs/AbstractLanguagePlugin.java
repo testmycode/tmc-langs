@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Logger;
 
@@ -84,13 +85,13 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     @Override
-    public void prepareStubs(Path originalPath, Path destPath) {
-        exerciseBuilder.prepareStub(originalPath, destPath);
+    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath) {
+        exerciseBuilder.prepareStubs(exerciseMap, destPath);
     }
 
     @Override
-    public void prepareSolutions(Path originalPath, Path destPath) {
-        exerciseBuilder.prepareSolution(originalPath, destPath);
+    public void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath) {
+        exerciseBuilder.prepareSolutions(exerciseMap, destPath);
     }
 
     /**

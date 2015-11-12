@@ -23,6 +23,8 @@ import org.junit.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AbstractLanguagePluginTest {
 
@@ -114,20 +116,24 @@ public class AbstractLanguagePluginTest {
         assertTrue(plugin.findExercises(project).isEmpty());
     }
 
-    //    @Test
-    //    public void prepareStubDelegatesRequestToExerciseBuilder() {
-    //        Path path = Paths.get("testPath");
-    //        plugin.prepareStub(path);
-    //
-    //        verify(exerciseBuilder).prepareStub(path);
-    //    }
+    @Test
+    public void prepareStubDelegatesRequestToExerciseBuilder() {
+        Path path = Paths.get("testPath");
+        Map<Path, LanguagePlugin> exerciseMap = new HashMap<>();
+        exerciseMap.put(path, null);
+        plugin.prepareStubs(exerciseMap, path);
+
+        verify(exerciseBuilder).prepareStubs(exerciseMap, path);
+    }
 
     @Test
     public void prepareSolutionDelegatesRequestToExerciseBuilder() {
-        //        Path path = Paths.get("testPath");
-        //        plugin.prepareSolutions(path);
+        Path path = Paths.get("testPath");
+        Map<Path, LanguagePlugin> exerciseMap = new HashMap<>();
+        exerciseMap.put(path, null);
+        plugin.prepareSolutions(exerciseMap, path);
 
-        //        verify(exerciseBuilder).prepareSolution(path);
+        verify(exerciseBuilder).prepareSolutions(exerciseMap, path);
     }
 
     @Test

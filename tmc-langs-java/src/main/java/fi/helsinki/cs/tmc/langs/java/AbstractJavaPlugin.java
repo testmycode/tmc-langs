@@ -52,10 +52,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     public AbstractJavaPlugin(
             Path testFolderPath, SubmissionProcessor submissionProcessor, TestScanner testScanner) {
         super(
-                new ExerciseBuilder(CommentSyntax.newBuilder()
-                        .addSingleLineComment("\\/\\/")
-                        .addMultiLineComment("\\/\\*+", "\\*+\\/")
-                        .build()),
+                new ExerciseBuilder(),
                 submissionProcessor,
                 new StudentFileAwareZipper(),
                 new StudentFileAwareUnzipper());

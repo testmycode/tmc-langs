@@ -1,10 +1,13 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +16,19 @@ abstract class Filer {
     private static final Logger logger = LoggerFactory.getLogger(Filer.class);
 
     // TODO - need a more generic one for binary files?
+    abstract List<String> prepareFile(List<String> file, String extension);
 
-    abstract List<String> prepareFile(Path file);
+    // TODO: implement register and get filefilters.
+    List<CommentStyleFileFilter> getCommentStyleFileFilters(String extension) {
+        return new ImmutableList.Builder<CommentStyleFileFilter>()
+                .add(
+                        new JavaStyleCommentStyleFileFilter(
+                                CommentSyntax.newBuilder()
+                                        .addSingleLineComment("\\/\\/")
+                                        .addMultiLineComment("\\/\\*+", "\\*+\\/")
+                                        .build()))
+                .build();
+    }
 
     protected boolean skipFile(Path file) {
         List<String> nameSkipList = Arrays.asList(new String[] {"hidden", "Hidden", ".tmcrc"});
@@ -26,6 +40,7 @@ abstract class Filer {
         return false;
     }
 
+    // TODO: refactor, I don't like this.
     public void maybeCopyAndFilterFile(Path file, Path fromPath, Path toPath) {
         Path relativePath = file.subpath(fromPath.getNameCount(), file.getNameCount());
         Path toFile = toPath.resolve(relativePath);
@@ -44,7 +59,15 @@ abstract class Filer {
                 Files.copy(file, toFile);
                 logger.info("Just copying file from: {} to:{}", file, toFile);
             } else {
-                List<String> output = prepareFile(file);
+                List<String> data = new ArrayList<>();
+                try (Scanner scanner = new Scanner(Files.newInputStream(file))) {
+                    while (scanner.hasNextLine()) {
+                        data.add(scanner.nextLine());
+                    }
+                } catch (IOException ex) {
+                    throw new IllegalStateException(ex);
+                }
+                List<String> output = prepareFile(data, getFileExtension(file));
                 if (!output.isEmpty()) {
                     Files.createDirectories(toFile.getParent());
                     Files.write(toFile, output);

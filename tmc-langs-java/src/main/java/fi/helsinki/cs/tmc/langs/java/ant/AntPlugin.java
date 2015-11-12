@@ -12,6 +12,7 @@ import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
+import java.io.BufferedReader;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -176,6 +178,22 @@ public class AntPlugin extends AbstractJavaPlugin {
         try {
             Process process = new ProcessBuilder(testRunnerArguments).start();
             process.waitFor();
+            BufferedReader output =
+                    new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader error =
+                    new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+            StringBuilder stb = new StringBuilder();
+            String line;
+            stb.append("Stdout from running tests:");
+            while ((line = output.readLine()) != null) {
+                stb.append(line);
+            }
+            stb.append("Stderr from running tests:");
+            while ((line = error.readLine()) != null) {
+                stb.append(line);
+            }
+            log.info(stb.toString());
         } catch (InterruptedException | IOException e) {
             log.error("Failed to run tests", e);
             throw new TestRunnerException(e);

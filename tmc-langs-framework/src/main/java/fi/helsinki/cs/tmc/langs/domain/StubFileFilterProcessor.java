@@ -5,8 +5,8 @@ import java.util.List;
 final class StubFileFilterProcessor extends Filer {
 
     @Override
-    List<String> prepareFile(List<String> data, String extension) {
-        for (CommentStyleFileFilter filter : getCommentStyleFileFilters(extension)) {
+    List<String> prepareFile(List<String> data) {
+        for (CommentStyleFileFilter filter : getCommentStyleFileFilters()) {
             data = filter.filterForStub(data);
         }
         return data;

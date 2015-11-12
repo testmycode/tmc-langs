@@ -18,10 +18,9 @@ abstract class Filer {
     private static final Logger logger = LoggerFactory.getLogger(Filer.class);
 
     // TODO - need a more generic one for binary files?
-    abstract List<String> prepareFile(List<String> file, String extension);
+    abstract List<String> prepareFile(List<String> file);
 
-    // TODO: implement register and get filefilters.
-    List<CommentStyleFileFilter> getCommentStyleFileFilters(String extension) {
+    List<CommentStyleFileFilter> getCommentStyleFileFilters() {
         return new ImmutableList.Builder<CommentStyleFileFilter>()
                 .add(
                         // Basic java
@@ -77,7 +76,7 @@ abstract class Filer {
                 } catch (IOException ex) {
                     throw new IllegalStateException(ex);
                 }
-                List<String> output = prepareFile(data, getFileExtension(file));
+                List<String> output = prepareFile(data);
                 if (!output.isEmpty()) {
                     Files.createDirectories(toFile.getParent());
                     Files.write(toFile, output);

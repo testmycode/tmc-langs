@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-import com.sun.tools.javac.parser.Tokens.Comment.CommentStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

@@ -5,9 +5,9 @@ import java.util.List;
 final class SolutionFileFilterProcessor extends Filer {
 
     @Override
-    List<String> prepareFile(List<String> data, String extension) {
+    List<String> prepareFile(List<String> data) {
 
-        for (CommentStyleFileFilter filter : getCommentStyleFileFilters(extension)) {
+        for (CommentStyleFileFilter filter : getCommentStyleFileFilters()) {
             data = filter.filterForSolution(data);
         }
 

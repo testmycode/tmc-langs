@@ -111,7 +111,7 @@ public interface LanguagePlugin {
      * @param clonePath path in which the original exercise is located.
      * @param destPath path to which directory with prepared files will be copied.
      */
-    void prepareSolutions(Path clonePath, Path destPath);
+    void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath);
 
     /**
      * Run checkstyle or similar plugin to project if applicable

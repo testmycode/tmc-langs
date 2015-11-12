@@ -90,8 +90,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     @Override
-    public void prepareSolutions(Path originalPath, Path destPath) {
-        exerciseBuilder.prepareSolution(originalPath, destPath);
+    public void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath) {
+        exerciseBuilder.prepareSolution(exerciseMap, destPath);
     }
 
     /**

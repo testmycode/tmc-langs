@@ -329,7 +329,39 @@ public final class Main {
 
     private static void runPrepareSolutions(Map<String, Path> paths) {
         try {
-            executor.prepareSolutions(paths.get(EXERCISE_PATH), paths.get(OUTPUT_PATH));
+            final Map<Path, LanguagePlugin> map = new HashMap<>();
+            Filer exerciseMatchingFiler =
+                    new Filer() {
+
+                        @Override
+                        public FileVisitResult decideOnDirectory(Path directory) {
+                            if (executor.isExerciseRootDirectory(directory)) {
+                                try {
+                                    map.put(
+                                            directory,
+                                            ProjectType.getProjectType(directory)
+                                                    .getLanguagePlugin());
+                                } catch (NoLanguagePluginFoundException ex) {
+                                    throw new IllegalStateException(ex);
+                                }
+                                return FileVisitResult.SKIP_SUBTREE;
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public void maybeCopyAndFilterFile(Path file, Path fromPath) {
+                            // Just skip
+                        }
+                    };
+            new FilterFileTreeVisitor()
+                    .addSkipper(new GeneralDirectorySkipper())
+                    .setClonePath(paths.get(EXERCISE_PATH))
+                    .setFiler(exerciseMatchingFiler)
+                    .traverse();
+            System.out.println(map);
+
+            executor.prepareSolutions(map, paths.get(OUTPUT_PATH));
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", paths.get(EXERCISE_PATH), e);

@@ -28,7 +28,8 @@ public interface TaskExecutor {
      * {@link fi.helsinki.cs.tmc.langs.LanguagePlugin#prepareSolution(java.nio.file.Path)
      * prepareSolution(Path path)} task.
      */
-    void prepareSolutions(Path clonePath, Path destPath) throws NoLanguagePluginFoundException;
+    void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+            throws NoLanguagePluginFoundException;
 
     /**
      * Finds the correct language plug-in for the given exercise path. After which calls the

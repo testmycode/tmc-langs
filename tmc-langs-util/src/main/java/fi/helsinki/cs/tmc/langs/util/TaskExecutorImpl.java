@@ -86,9 +86,9 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public void prepareSolutions(Path clonePath, Path destPath)
+    public void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
             throws NoLanguagePluginFoundException {
-        new ExerciseBuilder().prepareSolution(clonePath, destPath);
+        new ExerciseBuilder().prepareSolution(exerciseMap, destPath);
     }
 
     @Override

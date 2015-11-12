@@ -42,12 +42,17 @@ public class ExerciseBuilder {
      *
      * <p>Implements LanguagePlugin.prepareSolution
      */
-    public void prepareSolution(final Path clonePath, final Path destPath) {
-        new FilterFileTreeVisitor()
-                .setClonePath(clonePath)
-                //                .setDestPath(destPath)
-                .addSkipper(new GeneralDirectorySkipper())
-                .setFiler(new SolutionFileFilterProcessor())
-                .traverse();
+    public void prepareSolution(Map<Path, LanguagePlugin> exerciseMap, final Path destPath) {
+
+        for (Map.Entry<Path, LanguagePlugin> entrySet : exerciseMap.entrySet()) {
+            new FilterFileTreeVisitor()
+                    .setClonePath(entrySet.getKey())
+                    .addSkipper(new GeneralDirectorySkipper())
+                    .setFiler(
+                            new SolutionFileFilterProcessor()
+                                    .setToPath(destPath)
+                                    .setLanguagePlugin(entrySet.getValue()))
+                    .traverse();
+        }
     }
 }

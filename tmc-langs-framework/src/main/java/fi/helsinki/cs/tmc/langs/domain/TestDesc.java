@@ -35,4 +35,9 @@ public final class TestDesc {
         this.name = name;
         this.points = points;
     }
+
+    @Override
+    public String toString() {
+        return "<TestDesc name: " + name + ", points: " + points + ">";
+    }
 }

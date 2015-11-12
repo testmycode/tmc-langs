@@ -29,4 +29,9 @@ public final class ExerciseDesc {
         this.name = name;
         this.tests = tests;
     }
+
+    @Override
+    public String toString() {
+        return "<ExerciseDesc name: " + name + ", tests: " + tests + ">";
+    }
 }

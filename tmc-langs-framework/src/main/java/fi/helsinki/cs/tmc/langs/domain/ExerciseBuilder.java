@@ -73,6 +73,10 @@ public class ExerciseBuilder {
                         @Override
                         public FileVisitResult preVisitDirectory(
                                 Path dir, BasicFileAttributes attrs) throws IOException {
+                            List<String> skipList = Arrays.asList(new String[] {".git", "private"});
+                            if (skipList.contains(dir.getFileName().toString())) {
+                                return FileVisitResult.SKIP_SUBTREE;
+                            }
                             return FileVisitResult.CONTINUE;
                         }
 
@@ -100,14 +104,30 @@ public class ExerciseBuilder {
         }
     }
 
+    private boolean notForStub(Path file) {
+        List<String> nameSkipList = Arrays.asList(new String[] {"hidden", "Hidden", ".tmcrc"});
+        for (String item : nameSkipList) {
+            if (file.getFileName().toString().contains(item)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean justCopy(Path file) {
+        List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
+        return file.toFile().isFile() && skipList.contains(getFileExtension(file));
+    }
+
     private void maybeCopyAndFilterFile(Path file, Path clonePath, Path destPath) {
         Path relativePath = file.subpath(clonePath.getNameCount(), file.getNameCount());
         Path toFile = destPath.resolve(relativePath);
         logger.info("Maybe copying file from: {} to:{}", file, toFile);
         try {
-
-            List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
-            if (file.toFile().isFile() && skipList.contains(getFileExtension(file))) {
+            if (notForStub(file)) {
+                return;
+            }
+            if (justCopy(file)) {
                 Files.createDirectories(toFile.getParent());
                 Files.copy(file, toFile);
                 logger.info("Just copying file from: {} to:{}", file, toFile);
@@ -209,9 +229,7 @@ public class ExerciseBuilder {
         Path toFile = destPath.resolve(relativePath);
         logger.info("Maybe copying file from: {} to:{}", file, toFile);
         try {
-
-            List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
-            if (file.toFile().isFile() && skipList.contains(getFileExtension(file))) {
+            if (justCopy(file)) {
                 Files.createDirectories(toFile.getParent());
                 Files.copy(file, toFile);
                 logger.info("Just copying file from: {} to:{}", file, toFile);

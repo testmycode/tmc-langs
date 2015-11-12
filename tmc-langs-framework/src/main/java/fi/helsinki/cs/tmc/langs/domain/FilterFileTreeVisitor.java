@@ -11,8 +11,11 @@ import java.util.List;
 
 final class FilterFileTreeVisitor {
 
-    private Path clonePath, destPath;
+    private Path clonePath;
+    private Path destPath;
+
     private List<DirectorySkipper> skippers = new ArrayList<>();
+
     private Filer filer;
 
     FilterFileTreeVisitor addSkipper(DirectorySkipper skipper) {

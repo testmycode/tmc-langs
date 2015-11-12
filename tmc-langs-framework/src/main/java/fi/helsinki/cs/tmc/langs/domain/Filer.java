@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +80,7 @@ abstract class Filer {
                 List<String> output = prepareFile(data);
                 if (!output.isEmpty()) {
                     Files.createDirectories(toFile.getParent());
-                    Files.write(toFile, output);
+                    Files.write(toFile, output, StandardOpenOption.CREATE);
                     logger.info("Filtered file while copying from: {} to:{}", file, toFile);
                 } else {
                     logger.info("skipped file as empty while copying from: {} to:{}", file, toFile);

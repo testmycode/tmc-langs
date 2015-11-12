@@ -22,7 +22,7 @@ abstract class Filer {
     List<CommentStyleFileFilter> getCommentStyleFileFilters(String extension) {
         return new ImmutableList.Builder<CommentStyleFileFilter>()
                 .add(
-                        new JavaStyleCommentStyleFileFilter(
+                        new CommentStyleFileFilter(
                                 CommentSyntax.newBuilder()
                                         .addSingleLineComment("\\/\\/")
                                         .addMultiLineComment("\\/\\*+", "\\*+\\/")

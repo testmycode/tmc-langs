@@ -25,15 +25,18 @@ public class ExerciseBuilder {
      * <p>Implements LanguagePlugin.prepareStub
      */
     public void prepareStub(Map<Path, LanguagePlugin> exerciseMap, final Path destPath) {
-        for (Map.Entry<Path, LanguagePlugin> entrySet : exerciseMap.entrySet()) {
+        for (Map.Entry<Path, LanguagePlugin> project : exerciseMap.entrySet()) {
             new FilterFileTreeVisitor()
-                    .setClonePath(entrySet.getKey())
+                    .setClonePath(project.getKey())
                     .addSkipper(new GeneralDirectorySkipper())
                     .setFiler(
                             new StubFileFilterProcessor()
                                     .setToPath(destPath)
-                                    .setLanguagePlugin(entrySet.getValue()))
+                                    .setLanguagePlugin(project.getValue()))
                     .traverse();
+            // Add shared stuff there too
+//            project.getValue().
+
         }
     }
 

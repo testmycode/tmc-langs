@@ -41,7 +41,7 @@ public final class Main {
     private static final Map<String, Integer> COMMAND_ARGUMENT_COUNTS =
             new ImmutableMap.Builder<String, Integer>()
                     .put("checkstyle", 2)
-                    .put("scan-exercises", 2)
+                    .put("scan-exercise", 2)
                     .put("run-tests", 2)
                     .put("prepare-stub", 1)
                     .put("prepare-solution", 1)
@@ -62,7 +62,7 @@ public final class Main {
                     + "                 Prepare a stub exercise from the original.\n"
                     + " run-tests <exercise path> <output path>"
                     + "      Run the tests for the exercise.\n"
-                    + " scan-exercises <exercise path> <output path>"
+                    + " scan-exercise <exercise path> <output path>"
                     + "  Produce an exercise description of an exercise directory."
                     + " find-exercises <scan path> <output path>"
                     + "  Produce list of found exercises.";
@@ -125,8 +125,8 @@ public final class Main {
             case "checkstyle":
                 runCheckCodeStyle(paths);
                 break;
-            case "scan-exercises":
-                runScanExercises(paths);
+            case "scan-exercise":
+                runScanExercise(paths);
                 break;
             case "find-exercises":
                 runFindExercises(paths);
@@ -169,7 +169,7 @@ public final class Main {
         }
     }
 
-    private static void runScanExercises(Map<String, Path> paths) {
+    private static void runScanExercise(Map<String, Path> paths) {
         System.out.println(paths);
         String exerciseName = paths.get(EXERCISE_PATH).toFile().getName();
         Optional<ExerciseDesc> exerciseDesc = Optional.absent();

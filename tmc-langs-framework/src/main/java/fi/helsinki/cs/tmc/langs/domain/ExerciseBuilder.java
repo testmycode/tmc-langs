@@ -1,15 +1,28 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import com.google.common.io.ByteSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,24 +64,86 @@ public class ExerciseBuilder {
      *
      * <p>Implements LanguagePlugin.prepareStub
      */
-    public void prepareStub(Path path) {
-        Path projectRoot = path.resolve(SOURCE_FOLDER_NAME);
-        List<Path> projectFiles = getFileList(projectRoot);
+    public void prepareStub(final Path clonePath, final Path destPath) {
+        try {
+            Files.walkFileTree(
+                    clonePath,
+                    new FileVisitor<Path>() {
 
-        for (Path projectFile : projectFiles) {
-            prepareStubFile(projectFile);
+                        @Override
+                        public FileVisitResult preVisitDirectory(
+                                Path dir, BasicFileAttributes attrs) throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                                throws IOException {
+                            maybeCopyAndFilterFile(file, clonePath, destPath);
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFileFailed(Path file, IOException exc)
+                                throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                                throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+        } catch (IOException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 
-    private void prepareStubFile(Path file) {
+    private void maybeCopyAndFilterFile(Path file, Path clonePath, Path destPath) {
+        Path relativePath = file.subpath(clonePath.getNameCount(), file.getNameCount());
+        Path toFile = destPath.resolve(relativePath);
+        logger.info("Maybe copying file from: {} to:{}", file, toFile);
         try {
-            List<String> lines = Files.readAllLines(file, CHARSET);
-            List<String> filteredLines = new ArrayList<>();
+
+            List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
+            if (file.toFile().isFile() && skipList.contains(getFileExtension(file))) {
+                Files.createDirectories(toFile.getParent());
+                Files.copy(file, toFile);
+                logger.info("Just copying file from: {} to:{}", file, toFile);
+            } else {
+                List<String> output = prepareStubFile(file);
+                if (!output.isEmpty()) {
+                    Files.createDirectories(toFile.getParent());
+                    Files.write(toFile, output);
+                    logger.info("Filtered file while copying from: {} to:{}", file, toFile);
+                }
+            }
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(ExerciseBuilder.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private String getFileExtension(Path file) {
+        String name = file.getFileName().toString();
+        try {
+            return name.substring(name.lastIndexOf(".") + 1);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private List<String> prepareStubFile(Path from) {
+        try {
             boolean skipLine = false;
-            for (String line : lines) {
+            Scanner scanner = new Scanner(Files.newInputStream(from));
+            List<String> result = new ArrayList<>();
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
                 if (line.matches(solutionFileRegex)) {
-                    Files.deleteIfExists(file);
-                    return;
+                    scanner.close();
+                    return new ArrayList<>();
                 }
                 if (line.matches(beginSolutionRegex)) {
                     skipLine = true;
@@ -76,38 +151,16 @@ public class ExerciseBuilder {
                     skipLine = false;
                 } else if (line.matches(stubRegex)) {
                     Matcher stubMatcher = stubReplacePattern.matcher(line);
-                    filteredLines.add(stubMatcher.replaceAll(capturingGroups));
+                    result.add(stubMatcher.replaceAll(capturingGroups));
                 } else if (!skipLine) {
-                    filteredLines.add(line);
+                    result.add(line);
                 }
             }
-            Files.write(file, filteredLines, CHARSET);
+            scanner.close();
+            return result;
         } catch (IOException ex) {
-            logger.error("Unexpected IOException, preparation of file {} was interrupted",
-                    file.toAbsolutePath().toString(),
-                    ex);
+            throw new IllegalStateException(ex);
         }
-    }
-
-    private List<Path> getFileList(Path folder) {
-        if (!folder.toFile().isDirectory()) {
-            return new ArrayList<>();
-        }
-        ArrayList<Path> result = new ArrayList<>();
-        try {
-            for (Path file : Files.newDirectoryStream(folder)) {
-                if (file.toFile().isDirectory()) {
-                    result.addAll(getFileList(file));
-                    continue;
-                }
-                result.add(file);
-            }
-        } catch (IOException e) {
-            logger.error("Unexpected IOException, getting file list of {} was interrupted",
-                    folder.toAbsolutePath().toString(),
-                    e);
-        }
-        return result;
     }
 
     /**
@@ -115,33 +168,85 @@ public class ExerciseBuilder {
      *
      * <p>Implements LanguagePlugin.prepareSolution
      */
-    public void prepareSolution(Path path) {
-        Path projectRoot = path.resolve(SOURCE_FOLDER_NAME);
-        List<Path> projectFiles = getFileList(projectRoot);
+    public void prepareSolution(final Path clonePath, final Path destPath) {
+        try {
+            Files.walkFileTree(
+                    clonePath,
+                    new FileVisitor<Path>() {
 
-        for (Path projectFile : projectFiles) {
-            prepareSolutionFile(projectFile);
+                        @Override
+                        public FileVisitResult preVisitDirectory(
+                                Path dir, BasicFileAttributes attrs) throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                                throws IOException {
+                            maybeCopyAndFilterSolutionFile(file, clonePath, destPath);
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFileFailed(Path file, IOException exc)
+                                throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                                throws IOException {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+        } catch (IOException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 
-    private void prepareSolutionFile(Path file) {
+    private void maybeCopyAndFilterSolutionFile(Path file, Path clonePath, Path destPath) {
+        Path relativePath = file.subpath(clonePath.getNameCount(), file.getNameCount());
+        Path toFile = destPath.resolve(relativePath);
+        logger.info("Maybe copying file from: {} to:{}", file, toFile);
         try {
-            List<String> lines = Files.readAllLines(file, CHARSET);
-            List<String> filteredLines = new ArrayList<>();
-            for (String line : lines) {
+
+            List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
+            if (file.toFile().isFile() && skipList.contains(getFileExtension(file))) {
+                Files.createDirectories(toFile.getParent());
+                Files.copy(file, toFile);
+                logger.info("Just copying file from: {} to:{}", file, toFile);
+            } else {
+                List<String> output = prepareSolutionFile(file);
+                if (!output.isEmpty()) {
+                    Files.createDirectories(toFile.getParent());
+                    Files.write(toFile, output);
+                    logger.info("Filtered file while copying from: {} to:{}", file, toFile);
+                }
+            }
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(ExerciseBuilder.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private List<String> prepareSolutionFile(Path file) {
+        try {
+            Scanner scanner = new Scanner(Files.newInputStream(file));
+            List<String> result = new ArrayList<>();
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
                 if (line.matches(beginSolutionRegex)
                         || line.matches(endSolutionRegex)
                         || line.matches(stubRegex)
                         || line.matches(solutionFileRegex)) {
                     continue;
                 }
-                filteredLines.add(line);
+                result.add(line);
             }
-            Files.write(file, filteredLines, CHARSET);
+            scanner.close();
+            return result;
         } catch (IOException ex) {
-            logger.error("Unexpected IOException, preparation of file {} was interrupted",
-                    file.toAbsolutePath().toString(),
-                    ex);
+            throw new IllegalStateException(ex);
         }
     }
 }

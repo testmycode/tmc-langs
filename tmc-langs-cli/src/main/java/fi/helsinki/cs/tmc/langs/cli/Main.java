@@ -43,8 +43,8 @@ public final class Main {
                     .put("checkstyle", 2)
                     .put("scan-exercise", 2)
                     .put("run-tests", 2)
-                    .put("prepare-stub", 1)
-                    .put("prepare-solution", 1)
+                    .put("prepare-stubs", 2)
+                    .put("prepare-solutions", 2)
                     .put("find-exercises", 2)
                     .build();
 
@@ -134,11 +134,11 @@ public final class Main {
             case "run-tests":
                 runTests(paths);
                 break;
-            case "prepare-stub":
-                runPrepareStub(paths);
+            case "prepare-stubs":
+                runPrepareStubs(paths);
                 break;
-            case "prepare-solution":
-                runPrepareSolution(paths);
+            case "prepare-solutions":
+                runPrepareSolutions(paths);
                 break;
             default:
                 printHelpAndExit();
@@ -278,9 +278,9 @@ public final class Main {
         }
     }
 
-    private static void runPrepareStub(Map<String, Path> paths) {
+    private static void runPrepareStubs(Map<String, Path> paths) {
         try {
-            executor.prepareStub(paths.get(EXERCISE_PATH));
+            executor.prepareStubs(paths.get(EXERCISE_PATH), paths.get(OUTPUT_PATH));
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", paths.get(EXERCISE_PATH), e);
@@ -290,9 +290,9 @@ public final class Main {
         }
     }
 
-    private static void runPrepareSolution(Map<String, Path> paths) {
+    private static void runPrepareSolutions(Map<String, Path> paths) {
         try {
-            executor.prepareSolution(paths.get(EXERCISE_PATH));
+            executor.prepareSolutions(paths.get(EXERCISE_PATH), paths.get(OUTPUT_PATH));
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", paths.get(EXERCISE_PATH), e);
@@ -317,9 +317,11 @@ public final class Main {
             return argsMap;
         }
         argsMap.put(EXERCISE_PATH, Paths.get(args[1]));
+
         if (pathsCount == 2) {
             argsMap.put(OUTPUT_PATH, Paths.get(args[2]));
         }
+
         checkTestPath(argsMap.get(EXERCISE_PATH));
 
         return argsMap;

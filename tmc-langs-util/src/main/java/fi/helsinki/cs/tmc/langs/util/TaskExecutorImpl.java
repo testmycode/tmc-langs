@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.util;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
@@ -79,13 +80,14 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public void prepareStub(Path path) throws NoLanguagePluginFoundException {
-        getLanguagePlugin(path).prepareStub(path);
+    public void prepareStubs(Path clonePath, Path destPath) throws NoLanguagePluginFoundException {
+        new ExerciseBuilder().prepareStub(clonePath, destPath);
     }
 
     @Override
-    public void prepareSolution(Path path) throws NoLanguagePluginFoundException {
-        getLanguagePlugin(path).prepareSolution(path);
+    public void prepareSolutions(Path clonePath, Path destPath)
+            throws NoLanguagePluginFoundException {
+        new ExerciseBuilder().prepareSolution(clonePath, destPath);
     }
 
     @Override

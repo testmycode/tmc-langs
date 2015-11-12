@@ -97,20 +97,20 @@ public interface LanguagePlugin {
      * <p>The stub is a copy of the original where the model solution and special
      * comments have been stripped and stubs like ('return 0') have been added.
      *
-     * @param path A path to a directory where the original exercise has been
-     *     copied. This method should modify the contents of this directory.
+     * @param clonePath path in which the original exercise is located.
+     * @param destPath path to which directory with prepared files will be copied.
      */
-    void prepareStub(Path path);
+    void prepareStubs(Path clonePath, Path destPath);
 
     /**
      * Prepares a presentable solution from the original.
      *
      * <p>The solution usually has stubs and special comments stripped.
      *
-     * @param path A path to a directory where the original exercise has been
-     *     copied. This method should modify the contents of this directory.
+     * @param clonePath path in which the original exercise is located.
+     * @param destPath path to which directory with prepared files will be copied.
      */
-    void prepareSolution(Path path);
+    void prepareSolutions(Path clonePath, Path destPath);
 
     /**
      * Run checkstyle or similar plugin to project if applicable

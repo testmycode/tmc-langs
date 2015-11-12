@@ -1,6 +1,10 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
 import com.google.common.collect.ImmutableList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 abstract class Filer {
 
@@ -22,11 +24,19 @@ abstract class Filer {
     List<CommentStyleFileFilter> getCommentStyleFileFilters(String extension) {
         return new ImmutableList.Builder<CommentStyleFileFilter>()
                 .add(
+                        // Basic java
                         new CommentStyleFileFilter(
+                                // JavaishCommentSyntax
                                 CommentSyntax.newBuilder()
                                         .addSingleLineComment("\\/\\/")
                                         .addMultiLineComment("\\/\\*+", "\\*+\\/")
                                         .build()))
+                .add(new CommentStyleFileFilter(
+                        // XML comment syntax
+                        CommentSyntax.newBuilder()
+                        .addMultiLineComment("/\\*", "\\*/")
+                        .build()
+                ))
                 .build();
     }
 

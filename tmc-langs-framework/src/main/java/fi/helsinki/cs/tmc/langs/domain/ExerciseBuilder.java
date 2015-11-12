@@ -75,10 +75,6 @@ public class ExerciseBuilder {
         }
     }
 
-    interface Filer {
-        void maybeCopyAndFilterFile(Path file, Path fromPath, Path toPath);
-    }
-
     private static class FilterFileTreeVisitor {
 
         private Path clonePath, destPath;
@@ -154,9 +150,21 @@ public class ExerciseBuilder {
         }
     }
 
-    private class StubFileFilterProcessor implements Filer {
+    abstract class Filer {
 
-        @Override
+        // TODO - need a more generic one for binary files?
+        abstract List<String> prepareFile(Path file);
+
+        protected boolean skipFile(Path file) {
+            List<String> nameSkipList = Arrays.asList(new String[] {"hidden", "Hidden", ".tmcrc"});
+            for (String item : nameSkipList) {
+                if (file.getFileName().toString().contains(item)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void maybeCopyAndFilterFile(Path file, Path fromPath, Path toPath) {
             Path relativePath = file.subpath(fromPath.getNameCount(), file.getNameCount());
             Path toFile = toPath.resolve(relativePath);
@@ -166,7 +174,7 @@ public class ExerciseBuilder {
                     toFile,
                     file.getFileName().toString());
             try {
-                if (notForStub(file)) {
+                if (skipFile(file)) {
                     logger.info("not for stub while copying from: {} to:{}", file, toFile);
                     return;
                 }
@@ -175,7 +183,7 @@ public class ExerciseBuilder {
                     Files.copy(file, toFile);
                     logger.info("Just copying file from: {} to:{}", file, toFile);
                 } else {
-                    List<String> output = prepareStubFile(file);
+                    List<String> output = prepareFile(file);
                     if (!output.isEmpty()) {
                         Files.createDirectories(toFile.getParent());
                         Files.write(toFile, output);
@@ -186,27 +194,11 @@ public class ExerciseBuilder {
                     }
                 }
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(ExerciseBuilder.class.getName())
-                        .log(Level.SEVERE, null, ex);
+                throw new IllegalStateException(ex);
             }
         }
 
-        private boolean notForStub(Path file) {
-            List<String> nameSkipList = Arrays.asList(new String[] {"hidden", "Hidden", ".tmcrc"});
-            for (String item : nameSkipList) {
-                if (file.getFileName().toString().contains(item)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private boolean justCopy(Path file) {
-            List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
-            return file.toFile().isFile() && skipList.contains(getFileExtension(file));
-        }
-
-        private String getFileExtension(Path file) {
+        protected final String getFileExtension(Path file) {
             String name = file.getFileName().toString();
             try {
                 return name.substring(name.lastIndexOf(".") + 1);
@@ -215,29 +207,38 @@ public class ExerciseBuilder {
             }
         }
 
-        private List<String> prepareStubFile(Path from) {
+        protected final boolean justCopy(Path file) {
+            List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
+            return file.toFile().isFile() && skipList.contains(getFileExtension(file));
+        }
+    }
+
+    private class StubFileFilterProcessor extends Filer {
+        @Override
+        List<String> prepareFile(Path from) {
             try {
                 boolean skipLine = false;
-                Scanner scanner = new Scanner(Files.newInputStream(from));
-                List<String> result = new ArrayList<>();
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
-                    if (line.matches(solutionFileRegex)) {
-                        scanner.close();
-                        return new ArrayList<>();
-                    }
-                    if (line.matches(beginSolutionRegex)) {
-                        skipLine = true;
-                    } else if (skipLine && line.matches(endSolutionRegex)) {
-                        skipLine = false;
-                    } else if (line.matches(stubRegex)) {
-                        Matcher stubMatcher = stubReplacePattern.matcher(line);
-                        result.add(stubMatcher.replaceAll(capturingGroups));
-                    } else if (!skipLine) {
-                        result.add(line);
+                List<String> result;
+                try (Scanner scanner = new Scanner(Files.newInputStream(from))) {
+                    result = new ArrayList<>();
+                    while (scanner.hasNextLine()) {
+                        String line = scanner.nextLine();
+                        if (line.matches(solutionFileRegex)) {
+                            scanner.close();
+                            return new ArrayList<>();
+                        }
+                        if (line.matches(beginSolutionRegex)) {
+                            skipLine = true;
+                        } else if (skipLine && line.matches(endSolutionRegex)) {
+                            skipLine = false;
+                        } else if (line.matches(stubRegex)) {
+                            Matcher stubMatcher = stubReplacePattern.matcher(line);
+                            result.add(stubMatcher.replaceAll(capturingGroups));
+                        } else if (!skipLine) {
+                            result.add(line);
+                        }
                     }
                 }
-                scanner.close();
                 return result;
             } catch (IOException ex) {
                 throw new IllegalStateException(ex);
@@ -248,8 +249,7 @@ public class ExerciseBuilder {
     /**
      * Prepares a stub exercise from the original.
      *
-     * <p>
-     * Implements LanguagePlugin.prepareStub
+     * <p>Implements LanguagePlugin.prepareStub
      */
     public void prepareStub(final Path clonePath, final Path destPath) {
         new FilterFileTreeVisitor()
@@ -275,47 +275,9 @@ public class ExerciseBuilder {
                 .traverse();
     }
 
-    private class SolutionFileFilterProcessor implements Filer {
+    private class SolutionFileFilterProcessor extends Filer {
 
-        @Override
-        public void maybeCopyAndFilterFile(Path file, Path fromPath, Path toPath) {
-            Path relativePath = file.subpath(fromPath.getNameCount(), file.getNameCount());
-            Path toFile = toPath.resolve(relativePath);
-            logger.info("Maybe copying file from: {} to:{}", file, toFile);
-            try {
-                if (justCopy(file)) {
-                    Files.createDirectories(toFile.getParent());
-                    Files.copy(file, toFile);
-                    logger.info("Just copying file from: {} to:{}", file, toFile);
-                } else {
-                    List<String> output = prepareSolutionFile(file);
-                    if (!output.isEmpty()) {
-                        Files.createDirectories(toFile.getParent());
-                        Files.write(toFile, output);
-                        logger.info("Filtered file while copying from: {} to:{}", file, toFile);
-                    }
-                }
-            } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(ExerciseBuilder.class.getName())
-                        .log(Level.SEVERE, null, ex);
-            }
-        }
-
-        private boolean justCopy(Path file) {
-            List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
-            return file.toFile().isFile() && skipList.contains(getFileExtension(file));
-        }
-
-        private String getFileExtension(Path file) {
-            String name = file.getFileName().toString();
-            try {
-                return name.substring(name.lastIndexOf(".") + 1);
-            } catch (Exception e) {
-                return "";
-            }
-        }
-
-        private List<String> prepareSolutionFile(Path file) {
+        List<String> prepareFile(Path file) {
             try {
                 List<String> result;
                 try (Scanner scanner = new Scanner(Files.newInputStream(file))) {

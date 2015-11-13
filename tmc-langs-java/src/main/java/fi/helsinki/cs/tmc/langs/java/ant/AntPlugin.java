@@ -24,12 +24,17 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour for Java projects
@@ -91,6 +96,7 @@ public class AntPlugin extends AbstractJavaPlugin {
 
         File buildFile = path.resolve(BUILD_FILE).toFile();
         Project buildProject = new Project();
+
         buildProject.setUserProperty(ANT_BUILD_FILE_PROPERTY, buildFile.getAbsolutePath());
         buildProject.setProperty(ANT_JAVAC_FORK_PROPERTY, ANT_JAVAC_FORK_VALUE);
         buildProject.init();
@@ -151,6 +157,16 @@ public class AntPlugin extends AbstractJavaPlugin {
         classPath.add(path.resolve(Paths.get("build", "test", "classes")));
         classPath.add(path.resolve(Paths.get("build", "classes")));
 
+        try {
+            InputStream data = getClass().getResourceAsStream("/tmc-junit-runner.jar");
+            Files.copy(
+                    data,
+                    path.resolve("lib/tmc-junit-runner.jar"),
+                    StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(AntPlugin.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
         return classPath;
     }
 

@@ -44,3 +44,5 @@ __pycache__/
 # eclipse
 .project
 .classpath
+
+/tmc-langs-java/src/main/resources/tmc-junit-runner.jar

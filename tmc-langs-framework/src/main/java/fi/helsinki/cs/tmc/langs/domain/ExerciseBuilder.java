@@ -26,6 +26,7 @@ public class ExerciseBuilder {
      */
     public void prepareStub(Map<Path, LanguagePlugin> exerciseMap, final Path destPath) {
         for (Map.Entry<Path, LanguagePlugin> project : exerciseMap.entrySet()) {
+            // Copy exercises over file by file
             new FilterFileTreeVisitor()
                     .setClonePath(project.getKey())
                     .addSkipper(new GeneralDirectorySkipper())
@@ -34,7 +35,7 @@ public class ExerciseBuilder {
                                     .setToPath(destPath)
                                     .setLanguagePlugin(project.getValue()))
                     .traverse();
-            // Add shared stuff there too
+            // TODO: Add shared stuff there too
 //            project.getValue().
 
         }

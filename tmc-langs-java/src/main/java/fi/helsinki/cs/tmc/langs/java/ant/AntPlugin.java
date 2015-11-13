@@ -11,6 +11,7 @@ import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
 import org.apache.tools.ant.BuildException;
@@ -30,6 +31,7 @@ import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -37,8 +39,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour for Java projects
- * that use Apache Ant.
+ * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
+ * for Java projects that use Apache Ant.
  */
 public class AntPlugin extends AbstractJavaPlugin {
 
@@ -157,17 +159,24 @@ public class AntPlugin extends AbstractJavaPlugin {
         classPath.add(path.resolve(Paths.get("build", "test", "classes")));
         classPath.add(path.resolve(Paths.get("build", "classes")));
 
-        try {
-            InputStream data = getClass().getResourceAsStream("/tmc-junit-runner.jar");
-            Files.copy(
-                    data,
-                    path.resolve("lib/tmc-junit-runner.jar"),
-                    StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(AntPlugin.class.getName())
-                    .log(Level.SEVERE, null, ex);
-        }
+        copyTmcJunitRunner(path);
         return classPath;
+    }
+
+    private void copyTmcJunitRunner(Path path) {
+        try {
+            if (Files.notExists(
+                    path.resolve("lib/tmc-junit-runner.jar"), LinkOption.NOFOLLOW_LINKS)) {
+                InputStream data = getClass().getResourceAsStream("/tmc-junit-runner.jar");
+                Preconditions.checkNotNull(data);
+                Files.copy(
+                        data,
+                        path.resolve("lib/tmc-junit-runner.jar"),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException ex) {
+            throw Throwables.propagate(ex);
+        }
     }
 
     @Override

@@ -10,15 +10,12 @@ import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenTaskRunner.MavenExecutionResult;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 
-import org.apache.maven.cli.MavenCli;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

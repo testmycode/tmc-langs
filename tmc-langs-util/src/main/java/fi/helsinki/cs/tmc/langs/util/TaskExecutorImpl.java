@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.util;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
@@ -10,7 +11,6 @@ import fi.helsinki.cs.tmc.langs.io.NothingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 
 import com.google.common.base.Optional;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

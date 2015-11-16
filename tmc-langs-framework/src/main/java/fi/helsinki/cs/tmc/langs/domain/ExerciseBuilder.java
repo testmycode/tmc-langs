@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

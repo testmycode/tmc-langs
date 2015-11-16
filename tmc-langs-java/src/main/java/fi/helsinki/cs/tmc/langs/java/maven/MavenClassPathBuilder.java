@@ -1,26 +1,16 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
-import com.google.common.io.ByteSink;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
-import java.io.ByteArrayOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import org.apache.maven.cli.MavenCli;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.MavenInvocationException;
 
 /**
  * Creates a complete ClassPath for a Maven project by calling the

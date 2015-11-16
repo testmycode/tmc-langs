@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
-import java.io.PrintStream;
 import java.nio.file.Path;
 
 public interface MavenTaskRunner {

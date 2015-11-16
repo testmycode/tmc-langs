@@ -1,10 +1,13 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
-import com.google.common.base.Strings;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenTaskRunner.MavenExecutionResult;
-import java.nio.file.Path;
+
+import com.google.common.base.Strings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
 
 public class MavenExecutors {
     private static final Logger log = LoggerFactory.getLogger(MavenExecutors.class);

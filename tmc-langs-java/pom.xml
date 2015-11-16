@@ -64,7 +64,7 @@
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-junit-runner</artifactId>
-            <version>0.2.6-SNAPSHOT</version>
+            <version>0.2.6</version>
             <type>jar</type>
         </dependency>
 
@@ -73,7 +73,7 @@
             <artifactId>ant</artifactId>
             <version>1.9.6</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-embedder</artifactId>
@@ -104,7 +104,7 @@
             <version>1.6.0</version>  <!-- doesn't matter, the installed JDK's JAR is always used -->
             <systemPath>${toolsjar}</systemPath>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-invoker</artifactId>
@@ -113,7 +113,7 @@
         </dependency>
 
         <!-- Connector dependecies -->
-        
+
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-connector-basic</artifactId>
@@ -123,7 +123,7 @@
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-util</artifactId>
             <version>1.0.2.v20150114</version>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>org.eclipse.aether</groupId>
             <artifactId>aether-transport-wagon</artifactId>
@@ -138,8 +138,9 @@
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-provider-api</artifactId>
             <version>2.9</version>
-        </dependency>        
+        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -196,7 +197,6 @@
                                 <artifactItem>
                                     <groupId>fi.helsinki.cs.tmc</groupId>
                                     <artifactId>tmc-junit-runner</artifactId>
-                                    <version>0.2.6-SNAPSHOT</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${basedir}/src/main/resources</outputDirectory>

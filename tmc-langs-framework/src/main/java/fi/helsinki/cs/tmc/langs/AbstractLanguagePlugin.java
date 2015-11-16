@@ -95,6 +95,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     /**
+     * TODO: rewrite using the exercise finder used by find exercises of the tmc-langs-cli.
+     *
      * @param basePath The file path to search in.
      * @return A list of directories that contain a build file in this language.
      */

@@ -76,6 +76,11 @@
 
         <dependency>
             <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
             <artifactId>maven-embedder</artifactId>
             <version>3.3.3</version>
         </dependency>
@@ -119,6 +124,12 @@
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-provider-api</artifactId>
             <version>2.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>2.1.1</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
     <build>

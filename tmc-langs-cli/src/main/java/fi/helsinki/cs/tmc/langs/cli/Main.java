@@ -16,7 +16,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.domain.GeneralDirectorySkipper;
-import fi.helsinki.cs.tmc.langs.java.maven.MavenClassPathBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +24,10 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -68,26 +69,22 @@ public final class Main {
                     + " find-exercises <scan path> <output path>"
                     + "  Produce list of found exercises.";
 
-    public static void main(String[] args) throws IOException {
-        MavenClassPathBuilder.fromProjectBasePath(Paths.get("/Users/jamo/git/cs/s2015-wepa/wk1/W1E01.HelloWorld"));
-    }
+    /**
+     * Main entry point for the CLI.
+     */
+    public static void main(String[] args) {
+        System.out.println(Arrays.deepToString(args));
+        if (args == null || args.length == 0) {
+            printHelpAndExit();
+        }
+        List<String> argsList = Arrays.asList(args);
+        if (argsList.contains("-h") || argsList.contains("--help")) {
+            printHelpAndExit();
+        }
 
-//    /**
-//     * Main entry point for the CLI.
-//     */
-//    public static void main(String[] args) {
-//        System.out.println(Arrays.deepToString(args));
-//        if (args == null || args.length == 0) {
-//            printHelpAndExit();
-//        }
-//        List<String> argsList = Arrays.asList(args);
-//        if (argsList.contains("-h") || argsList.contains("--help")) {
-//            printHelpAndExit();
-//        }
-//
-//        run(args);
-//        System.exit(0); // Make sure to kill non daemon threads.
-//    }
+        run(args);
+        System.exit(0); // Make sure to kill non daemon threads.
+    }
 
     public static void setExecutor(TaskExecutor taskExecutor) {
         executor = taskExecutor;

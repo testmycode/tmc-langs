@@ -68,7 +68,7 @@ public class Filer {
     protected boolean skipFile(Path file) {
         List<String> nameSkipList = Arrays.asList(new String[] {"hidden", "Hidden", ".tmcrc", "metadata.yml"});
         for (String item : nameSkipList) {
-            if (file.getFileName().toString().contains(item)) {
+            if (file.getFileName().toString().equals(item)) {
                 return true;
             }
         }

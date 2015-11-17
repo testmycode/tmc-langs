@@ -101,7 +101,7 @@ public interface LanguagePlugin {
      * @param exerciseMap consists of exercise locations and which plugin belongs to it.
      * @param destPath path to which directory with prepared files will be copied.
      */
-    void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath);
+    void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath);
 
     /**
      * Prepares a presentable solution from the original.
@@ -111,7 +111,7 @@ public interface LanguagePlugin {
      * @param clonePath path in which the original exercise is located.
      * @param destPath path to which directory with prepared files will be copied.
      */
-    void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath);
+    void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath);
 
     /**
      * Run checkstyle or similar plugin to project if applicable

@@ -28,7 +28,7 @@ public interface TaskExecutor {
      * {@link fi.helsinki.cs.tmc.langs.LanguagePlugin#prepareSolution(java.nio.file.Path)
      * prepareSolution(Path path)} task.
      */
-    void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+    void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath)
             throws NoLanguagePluginFoundException;
 
     /**
@@ -36,7 +36,7 @@ public interface TaskExecutor {
      * {@link fi.helsinki.cs.tmc.langs.LanguagePlugin#prepareStub(java.nio.file.Path)
      * prepareStub(Path path)} task.
      */
-    void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+    void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath)
             throws NoLanguagePluginFoundException;
 
     /**

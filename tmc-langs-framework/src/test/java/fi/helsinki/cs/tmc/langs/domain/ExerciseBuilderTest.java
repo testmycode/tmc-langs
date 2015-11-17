@@ -45,7 +45,6 @@ public class ExerciseBuilderTest {
         tempDir.resolve("stub").toFile().mkdirs();
 
         final Path cloneDir = tempDir.resolve(Paths.get("clone"));
-
         final Path stubDir = tempDir.resolve(Paths.get("stub"));
 
         createTemporaryCopyOf(originProject, cloneDir.resolve("arith_funcs"));
@@ -53,10 +52,10 @@ public class ExerciseBuilderTest {
         final Map<Path, LanguagePlugin> exerciseMap =
                 ImmutableMap.of(cloneDir.resolve("arith_funcs"), languagePlugin);
 
-        exerciseBuilder.prepareStubs(exerciseMap, stubDir);
+        exerciseBuilder.prepareStubs(exerciseMap, cloneDir, stubDir);
 
-        Path expected = Paths.get("src", "test", "resources", "arith_funcs_stub", "src");
-        assertFileLines(expected, stubDir.resolve("arith_funcs").resolve("src"));
+        Path expected = Paths.get("src", "test", "resources", "arith_funcs_stub");
+        assertFileLines(expected, stubDir.resolve("arith_funcs"));
     }
 
     @Test
@@ -77,7 +76,7 @@ public class ExerciseBuilderTest {
         final Map<Path, LanguagePlugin> exerciseMap =
                 ImmutableMap.of(cloneDir.resolve("arith_funcs"), languagePlugin);
 
-        exerciseBuilder.prepareSolutions(exerciseMap, solutionDir);
+        exerciseBuilder.prepareSolutions(exerciseMap, cloneDir, solutionDir);
 
         Path expected = Paths.get("src", "test", "resources", "arith_funcs_solution", "src");
         assertFileLines(expected, solutionDir.resolve("arith_funcs").resolve("src"));
@@ -106,7 +105,7 @@ public class ExerciseBuilderTest {
 
     private Map<String, Path> getFileMap(Path folder) throws IOException {
         if (!folder.toFile().isDirectory()) {
-            throw new IOException("Supplied path was not a directory");
+            throw new IOException("Supplied path was not a directory: " + folder);
         }
         Map<String, Path> result = new HashMap<>();
         for (File file : folder.toFile().listFiles()) {

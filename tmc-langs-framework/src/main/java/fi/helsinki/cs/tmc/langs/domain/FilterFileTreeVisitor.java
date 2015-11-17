@@ -11,7 +11,8 @@ import java.util.List;
 
 public class FilterFileTreeVisitor {
 
-    private Path traversePath;
+    private Path repoPath;
+    private Path exercisePath;
 
     private List<DirectorySkipper> skippers = new ArrayList<>();
 
@@ -22,8 +23,13 @@ public class FilterFileTreeVisitor {
         return this;
     }
 
-    public FilterFileTreeVisitor setClonePath(Path clonePath) {
-        this.traversePath = clonePath;
+    public FilterFileTreeVisitor setClonePath(Path repoPath) {
+        this.repoPath = repoPath;
+        return this;
+    }
+
+    public FilterFileTreeVisitor setExercisePath(Path exercisePath) {
+        this.exercisePath = exercisePath;
         return this;
     }
 
@@ -42,9 +48,10 @@ public class FilterFileTreeVisitor {
     }
 
     public void traverse() {
+        System.out.println(repoPath);
         try {
             Files.walkFileTree(
-                    traversePath,
+                    repoPath,
                     new FileVisitor<Path>() {
 
                         @Override
@@ -60,7 +67,7 @@ public class FilterFileTreeVisitor {
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                                 throws IOException {
-                            filer.maybeCopyAndFilterFile(file, traversePath);
+                            filer.maybeCopyAndFilterFile(file, repoPath, exercisePath);
                             return FileVisitResult.CONTINUE;
                         }
 

@@ -80,15 +80,16 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath)
             throws NoLanguagePluginFoundException {
-        new ExerciseBuilder().prepareStubs(exerciseMap, destPath);
+        new ExerciseBuilder().prepareStubs(exerciseMap, repoPath, destPath);
     }
 
     @Override
-    public void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+    public void prepareSolutions(
+            Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath)
             throws NoLanguagePluginFoundException {
-        new ExerciseBuilder().prepareSolutions(exerciseMap, destPath);
+        new ExerciseBuilder().prepareSolutions(exerciseMap, repoPath, destPath);
     }
 
     @Override

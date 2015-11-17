@@ -216,7 +216,7 @@ public final class Main {
                     }
 
                     @Override
-                    public void maybeCopyAndFilterFile(Path file, Path fromPath) {
+                    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path fromPath) {
                         // Just skip
                     }
                 };
@@ -259,7 +259,9 @@ public final class Main {
     private static void runPrepareStubs(Map<String, Path> paths) {
         try {
             executor.prepareStubs(
-                    findExerciseDirectoriesAndGetLanguagePlugins(paths), paths.get(OUTPUT_PATH));
+                    findExerciseDirectoriesAndGetLanguagePlugins(paths),
+                    paths.get(EXERCISE_PATH),
+                    paths.get(OUTPUT_PATH));
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", paths.get(EXERCISE_PATH), e);
@@ -291,7 +293,7 @@ public final class Main {
                     }
 
                     @Override
-                    public void maybeCopyAndFilterFile(Path file, Path fromPath) {
+                    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path fromPath) {
                         // Just skip
                     }
                 };
@@ -300,7 +302,6 @@ public final class Main {
                 .setClonePath(paths.get(EXERCISE_PATH))
                 .setFiler(exerciseMatchingFiler)
                 .traverse();
-        System.out.println(map);
         return map;
     }
 
@@ -308,7 +309,9 @@ public final class Main {
         try {
 
             executor.prepareSolutions(
-                    findExerciseDirectoriesAndGetLanguagePlugins(paths), paths.get(OUTPUT_PATH));
+                    findExerciseDirectoriesAndGetLanguagePlugins(paths),
+                    paths.get(EXERCISE_PATH),
+                    paths.get(OUTPUT_PATH));
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", paths.get(EXERCISE_PATH), e);

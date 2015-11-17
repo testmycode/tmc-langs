@@ -80,8 +80,8 @@ public class Filer {
      *
      * <p>TODO: refactor, I don't like this.
      */
-    public void maybeCopyAndFilterFile(Path file, Path fromPath) {
-        Path relativePath = file.subpath(fromPath.getNameCount() - 1, file.getNameCount());
+    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path exercisePath) {
+        Path relativePath = file.subpath(repoPath.getNameCount(), file.getNameCount());
         logger.info("Looking into file: {} ", file);
         try {
             if (skipFile(file)) {

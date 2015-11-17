@@ -23,11 +23,14 @@ public class ExerciseBuilder {
     /**
      * Prepares a stub exercise from the original.
      */
-    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, final Path destPath) {
+    public void prepareStubs(
+            Map<Path, LanguagePlugin> exerciseMap, final Path repoPath, final Path destPath) {
+        System.out.println(exerciseMap);
         for (Map.Entry<Path, LanguagePlugin> project : exerciseMap.entrySet()) {
             // Copy exercises over file by file
             new FilterFileTreeVisitor()
-                    .setClonePath(project.getKey())
+                    .setClonePath(repoPath)
+                    .setExercisePath(project.getKey())
                     .addSkipper(new GeneralDirectorySkipper())
                     .setFiler(
                             new StubFileFilterProcessor()
@@ -46,16 +49,18 @@ public class ExerciseBuilder {
     /**
      * Prepares a presentable solution from the original.
      */
-    public void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, final Path destPath) {
+    public void prepareSolutions(
+            Map<Path, LanguagePlugin> exerciseMap, final Path repoPath, final Path destPath) {
 
-        for (Map.Entry<Path, LanguagePlugin> entrySet : exerciseMap.entrySet()) {
+        for (Map.Entry<Path, LanguagePlugin> project : exerciseMap.entrySet()) {
             new FilterFileTreeVisitor()
-                    .setClonePath(entrySet.getKey())
+                    .setClonePath(repoPath)
+                    .setExercisePath(project.getKey())
                     .addSkipper(new GeneralDirectorySkipper())
                     .setFiler(
                             new SolutionFileFilterProcessor()
                                     .setToPath(destPath)
-                                    .setLanguagePlugin(entrySet.getValue()))
+                                    .setLanguagePlugin(project.getValue()))
                     .traverse();
         }
     }

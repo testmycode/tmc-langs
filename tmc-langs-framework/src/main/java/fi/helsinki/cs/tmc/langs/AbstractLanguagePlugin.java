@@ -85,13 +85,14 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     @Override
-    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath) {
-        exerciseBuilder.prepareStubs(exerciseMap, destPath);
+    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath) {
+        exerciseBuilder.prepareStubs(exerciseMap, repoPath, destPath);
     }
 
     @Override
-    public void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath) {
-        exerciseBuilder.prepareSolutions(exerciseMap, destPath);
+    public void prepareSolutions(
+            Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath) {
+        exerciseBuilder.prepareSolutions(exerciseMap, repoPath, destPath);
     }
 
     /**
@@ -151,8 +152,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         return listBuilder.build();
     }
 
-  @Override
-  public void maybeCopySharedStuff(Path destPath) {
-      // Ignore
-  }
+    @Override
+    public void maybeCopySharedStuff(Path destPath) {
+        // Ignore
+    }
 }

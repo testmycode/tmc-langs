@@ -126,9 +126,9 @@ public class AbstractLanguagePluginTest {
         Path path = Paths.get("testPath");
         Map<Path, LanguagePlugin> exerciseMap = new HashMap<>();
         exerciseMap.put(path, null);
-        plugin.prepareStubs(exerciseMap, path);
+        plugin.prepareStubs(exerciseMap, path, path);
 
-        verify(exerciseBuilder).prepareStubs(exerciseMap, path);
+        verify(exerciseBuilder).prepareStubs(exerciseMap, path, path);
     }
 
     @Test
@@ -136,9 +136,9 @@ public class AbstractLanguagePluginTest {
         Path path = Paths.get("testPath");
         Map<Path, LanguagePlugin> exerciseMap = new HashMap<>();
         exerciseMap.put(path, null);
-        plugin.prepareSolutions(exerciseMap, path);
+        plugin.prepareSolutions(exerciseMap, path, path);
 
-        verify(exerciseBuilder).prepareSolutions(exerciseMap, path);
+        verify(exerciseBuilder).prepareSolutions(exerciseMap, path, path);
     }
 
     @Test

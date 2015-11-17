@@ -171,7 +171,7 @@ public class AntPlugin extends AbstractJavaPlugin {
             if (Files.notExists(path.resolve(toPath), LinkOption.NOFOLLOW_LINKS)) {
                 Files.createDirectories(toPath.getParent());
                 InputStream data = getClass().getResourceAsStream("/tmc-junit-runner.jar");
-                Preconditions.checkNotNull(data);
+                Preconditions.checkNotNull(data, "Couldn't load tmc-junit-runner from jar.");
                 Files.copy(data, toPath, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException ex) {

@@ -42,7 +42,7 @@ public enum ProjectType {
      * @param path The path to the exercise directory.
      * @return The project type that recognizes the project.
      */
-    static ProjectType getProjectType(Path path) throws NoLanguagePluginFoundException {
+    public static ProjectType getProjectType(Path path) throws NoLanguagePluginFoundException {
         log.info("Finding plugin for {}", path);
         for (ProjectType type : ProjectType.values()) {
             if (type.getLanguagePlugin().isExerciseTypeCorrect(path)) {

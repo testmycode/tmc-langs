@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Logger;
 
@@ -28,10 +29,11 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     /**
      * Instantiates a new AbstractLanguagePlugin.
      */
-    public AbstractLanguagePlugin(ExerciseBuilder exerciseBuilder,
-                                  SubmissionProcessor submissionProcessor,
-                                  Zipper zipper,
-                                  Unzipper unzipper) {
+    public AbstractLanguagePlugin(
+            ExerciseBuilder exerciseBuilder,
+            SubmissionProcessor submissionProcessor,
+            Zipper zipper,
+            Unzipper unzipper) {
         this.exerciseBuilder = exerciseBuilder;
         this.submissionProcessor = submissionProcessor;
         this.zipper = zipper;
@@ -83,16 +85,18 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     @Override
-    public void prepareStub(Path path) {
-        exerciseBuilder.prepareStub(path);
+    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath) {
+        exerciseBuilder.prepareStubs(exerciseMap, destPath);
     }
 
     @Override
-    public void prepareSolution(Path path) {
-        exerciseBuilder.prepareSolution(path);
+    public void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath) {
+        exerciseBuilder.prepareSolutions(exerciseMap, destPath);
     }
 
     /**
+     * TODO: rewrite using the exercise finder used by find exercises of the tmc-langs-cli.
+     *
      * @param basePath The file path to search in.
      * @return A list of directories that contain a build file in this language.
      */
@@ -124,8 +128,8 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @param listBuilder a listBuilder the found exercises should be appended to
      * @return a list of all directories that contain build files for this language.
      */
-    private ImmutableList<Path> searchForExercises(File file,
-                                                   ImmutableList.Builder<Path> listBuilder) {
+    private ImmutableList<Path> searchForExercises(
+            File file, ImmutableList.Builder<Path> listBuilder) {
         Stack<File> stack = new Stack<>();
         // Push the initial directory onto the stack.
         stack.push(file);

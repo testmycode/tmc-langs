@@ -183,11 +183,12 @@
     <modules>
         <module>build-tools</module>
         <module>tmc-langs-framework</module>
-        <module>tmc-langs-cli</module>
-        <module>tmc-langs-util</module>
-        <!-- TODO: add plugins and support libraries here -->
         <module>tmc-langs-java</module>
         <module>tmc-langs-make</module>
         <module>tmc-langs-python3</module>
+         <!-- TODO: add plugins and support libraries here -->
+       
+        <module>tmc-langs-cli</module>
+        <module>tmc-langs-util</module>
     </modules>
 </project>

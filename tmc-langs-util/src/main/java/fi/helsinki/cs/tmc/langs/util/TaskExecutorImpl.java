@@ -2,13 +2,13 @@ package fi.helsinki.cs.tmc.langs.util;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.NothingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
-import fi.helsinki.cs.tmc.langs.util.ProjectType;
 
 import com.google.common.base.Optional;
 
@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 
 public class TaskExecutorImpl implements TaskExecutor {
 
@@ -79,13 +80,15 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public void prepareStub(Path path) throws NoLanguagePluginFoundException {
-        getLanguagePlugin(path).prepareStub(path);
+    public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+            throws NoLanguagePluginFoundException {
+        new ExerciseBuilder().prepareStubs(exerciseMap, destPath);
     }
 
     @Override
-    public void prepareSolution(Path path) throws NoLanguagePluginFoundException {
-        getLanguagePlugin(path).prepareSolution(path);
+    public void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+            throws NoLanguagePluginFoundException {
+        new ExerciseBuilder().prepareSolutions(exerciseMap, destPath);
     }
 
     @Override

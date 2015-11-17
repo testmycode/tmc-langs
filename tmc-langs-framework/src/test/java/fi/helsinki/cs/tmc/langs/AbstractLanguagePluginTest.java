@@ -23,13 +23,15 @@ import org.junit.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AbstractLanguagePluginTest {
 
     private class StubLanguagePlugin extends AbstractLanguagePlugin {
 
-        public StubLanguagePlugin(ExerciseBuilder exerciseBuilder,
-                                  SubmissionProcessor submissionProcessor) {
+        public StubLanguagePlugin(
+                ExerciseBuilder exerciseBuilder, SubmissionProcessor submissionProcessor) {
             super(exerciseBuilder, submissionProcessor, null, null);
         }
 
@@ -117,17 +119,21 @@ public class AbstractLanguagePluginTest {
     @Test
     public void prepareStubDelegatesRequestToExerciseBuilder() {
         Path path = Paths.get("testPath");
-        plugin.prepareStub(path);
+        Map<Path, LanguagePlugin> exerciseMap = new HashMap<>();
+        exerciseMap.put(path, null);
+        plugin.prepareStubs(exerciseMap, path);
 
-        verify(exerciseBuilder).prepareStub(path);
+        verify(exerciseBuilder).prepareStubs(exerciseMap, path);
     }
 
     @Test
     public void prepareSolutionDelegatesRequestToExerciseBuilder() {
         Path path = Paths.get("testPath");
-        plugin.prepareSolution(path);
+        Map<Path, LanguagePlugin> exerciseMap = new HashMap<>();
+        exerciseMap.put(path, null);
+        plugin.prepareSolutions(exerciseMap, path);
 
-        verify(exerciseBuilder).prepareSolution(path);
+        verify(exerciseBuilder).prepareSolutions(exerciseMap, path);
     }
 
     @Test

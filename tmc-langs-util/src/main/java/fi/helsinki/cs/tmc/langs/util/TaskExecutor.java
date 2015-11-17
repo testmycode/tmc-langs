@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.util;
 
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
@@ -9,6 +10,7 @@ import com.google.common.base.Optional;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Interface for calling different tasks of TMC-langs language plug-ins.
@@ -26,14 +28,16 @@ public interface TaskExecutor {
      * {@link fi.helsinki.cs.tmc.langs.LanguagePlugin#prepareSolution(java.nio.file.Path)
      * prepareSolution(Path path)} task.
      */
-    void prepareSolution(Path path) throws NoLanguagePluginFoundException;
+    void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+            throws NoLanguagePluginFoundException;
 
     /**
      * Finds the correct language plug-in for the given exercise path. After which calls the
      * {@link fi.helsinki.cs.tmc.langs.LanguagePlugin#prepareStub(java.nio.file.Path)
      * prepareStub(Path path)} task.
      */
-    void prepareStub(Path path) throws NoLanguagePluginFoundException;
+    void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path destPath)
+            throws NoLanguagePluginFoundException;
 
     /**
      * Finds the correct language plug-in for the given exercise path. After which calls the

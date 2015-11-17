@@ -81,7 +81,9 @@ public class ClassPathTest {
                 "Base path didn't get added to the ClassPath",
                 cp.toString().contains("lib" + File.pathSeparatorChar));
         assertTrue(".jars should be added to the ClassPath", cp.toString().contains(".jar"));
-        assertEquals("There should be 9 subpaths", 9, cp.getPaths().size());
+        assertTrue(
+                "There should be 4 - 5 subpaths (depending on java version",
+                cp.getPaths().size() == 4 || cp.getPaths().size() == 5);
     }
 
     @Test

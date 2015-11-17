@@ -8,19 +8,8 @@
     </parent>
     <artifactId>tmc-langs-util</artifactId>
     <packaging>jar</packaging>
-    
+
     <dependencies>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-embedder</artifactId>
-            <version>3.3.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>3.3.3</version>
-            <type>jar</type>
-        </dependency>
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>edu-test-utils</artifactId>
@@ -69,7 +58,7 @@
             <version>1.12.1</version>
         </dependency>
     </dependencies>
-   
+
     <build>
         <plugins>
             <plugin>

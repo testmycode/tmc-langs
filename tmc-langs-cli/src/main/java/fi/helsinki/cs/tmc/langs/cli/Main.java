@@ -1,9 +1,14 @@
 package fi.helsinki.cs.tmc.langs.cli;
 
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.Filer;
+import fi.helsinki.cs.tmc.langs.domain.FilterFileTreeVisitor;
+import fi.helsinki.cs.tmc.langs.domain.GeneralDirectorySkipper;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.util.ProjectType;
 import fi.helsinki.cs.tmc.langs.util.TaskExecutor;
 import fi.helsinki.cs.tmc.langs.util.TaskExecutorImpl;
 
@@ -17,11 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,8 +45,8 @@ public final class Main {
                     .put("checkstyle", 2)
                     .put("scan-exercise", 2)
                     .put("run-tests", 2)
-                    .put("prepare-stub", 1)
-                    .put("prepare-solution", 1)
+                    .put("prepare-stubs", 2)
+                    .put("prepare-solutions", 2)
                     .put("find-exercises", 2)
                     .build();
 
@@ -63,7 +65,7 @@ public final class Main {
                     + " run-tests <exercise path> <output path>"
                     + "      Run the tests for the exercise.\n"
                     + " scan-exercise <exercise path> <output path>"
-                    + "  Produce an exercise description of an exercise directory."
+                    + "  Produce an exercise description of an exercise directory.\n"
                     + " find-exercises <scan path> <output path>"
                     + "  Produce list of found exercises.";
 
@@ -71,7 +73,6 @@ public final class Main {
      * Main entry point for the CLI.
      */
     public static void main(String[] args) {
-        System.out.println(Arrays.deepToString(args));
         if (args == null || args.length == 0) {
             printHelpAndExit();
         }
@@ -134,11 +135,11 @@ public final class Main {
             case "run-tests":
                 runTests(paths);
                 break;
-            case "prepare-stub":
-                runPrepareStub(paths);
+            case "prepare-stubs":
+                runPrepareStubs(paths);
                 break;
-            case "prepare-solution":
-                runPrepareSolution(paths);
+            case "prepare-solutions":
+                runPrepareSolutions(paths);
                 break;
             default:
                 printHelpAndExit();
@@ -201,47 +202,29 @@ public final class Main {
 
     private static void runFindExercises(Map<String, Path> paths) {
         Path clonePath = paths.get(EXERCISE_PATH);
-        final Set<String> exercises = new HashSet<String>();
-        try {
-            Files.walkFileTree(
-                    clonePath,
-                    new FileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(
-                                Path dir, BasicFileAttributes attrs) throws IOException {
-                            if (isIrrelevantDirectory(dir)) {
-                                return FileVisitResult.SKIP_SUBTREE;
-                            }
-                            if (executor.isExerciseRootDirectory(dir)) {
-                                exercises.add(dir.toAbsolutePath().toString());
-                                return FileVisitResult.SKIP_SUBTREE;
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
+        final Set<String> exercises = new HashSet<>();
+        Filer exerciseMatchingFiler =
+                new Filer() {
 
-                        @Override
-                        public FileVisitResult visitFileFailed(Path file, IOException exc)
-                                throws IOException {
-                            return FileVisitResult.CONTINUE;
+                    @Override
+                    public FileVisitResult decideOnDirectory(Path directory) {
+                        if (executor.isExerciseRootDirectory(directory)) {
+                            exercises.add(directory.toString());
+                            return FileVisitResult.SKIP_SUBTREE;
                         }
+                        return FileVisitResult.CONTINUE;
+                    }
 
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                                throws IOException {
-                            return FileVisitResult.CONTINUE;
-                        }
-
-                        @Override
-                        public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-                                throws IOException {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
-
-        } catch (IOException e) {
-            System.out.println(e);
-            System.exit(1);
-        }
+                    @Override
+                    public void maybeCopyAndFilterFile(Path file, Path fromPath) {
+                        // Just skip
+                    }
+                };
+        new FilterFileTreeVisitor()
+                .addSkipper(new GeneralDirectorySkipper())
+                .setClonePath(paths.get(EXERCISE_PATH))
+                .setFiler(exerciseMatchingFiler)
+                .traverse();
 
         try {
             JsonWriter.writeObjectIntoJsonFormat(exercises, paths.get(OUTPUT_PATH));
@@ -250,11 +233,6 @@ public final class Main {
             logger.error("Could not write output to {}", paths.get(OUTPUT_PATH), e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
-    }
-
-    private static boolean isIrrelevantDirectory(Path dir) {
-        return Files.exists(Paths.get(dir.toAbsolutePath().toString(), ".tmcignore"))
-                || dir.startsWith(".");
     }
 
     private static void runTests(Map<String, Path> paths) {
@@ -278,9 +256,10 @@ public final class Main {
         }
     }
 
-    private static void runPrepareStub(Map<String, Path> paths) {
+    private static void runPrepareStubs(Map<String, Path> paths) {
         try {
-            executor.prepareStub(paths.get(EXERCISE_PATH));
+            executor.prepareStubs(
+                    findExerciseDirectoriesAndGetLanguagePlugins(paths), paths.get(OUTPUT_PATH));
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", paths.get(EXERCISE_PATH), e);
@@ -290,9 +269,46 @@ public final class Main {
         }
     }
 
-    private static void runPrepareSolution(Map<String, Path> paths) {
+    private static Map<Path, LanguagePlugin> findExerciseDirectoriesAndGetLanguagePlugins(
+            Map<String, Path> paths) {
+        final Map<Path, LanguagePlugin> map = new HashMap<>();
+        Filer exerciseMatchingFiler =
+                new Filer() {
+
+                    @Override
+                    public FileVisitResult decideOnDirectory(Path directory) {
+                        if (executor.isExerciseRootDirectory(directory)) {
+                            try {
+                                map.put(
+                                        directory,
+                                        ProjectType.getProjectType(directory).getLanguagePlugin());
+                            } catch (NoLanguagePluginFoundException ex) {
+                                throw new IllegalStateException(ex);
+                            }
+                            return FileVisitResult.SKIP_SUBTREE;
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public void maybeCopyAndFilterFile(Path file, Path fromPath) {
+                        // Just skip
+                    }
+                };
+        new FilterFileTreeVisitor()
+                .addSkipper(new GeneralDirectorySkipper())
+                .setClonePath(paths.get(EXERCISE_PATH))
+                .setFiler(exerciseMatchingFiler)
+                .traverse();
+        System.out.println(map);
+        return map;
+    }
+
+    private static void runPrepareSolutions(Map<String, Path> paths) {
         try {
-            executor.prepareSolution(paths.get(EXERCISE_PATH));
+
+            executor.prepareSolutions(
+                    findExerciseDirectoriesAndGetLanguagePlugins(paths), paths.get(OUTPUT_PATH));
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", paths.get(EXERCISE_PATH), e);
@@ -317,9 +333,11 @@ public final class Main {
             return argsMap;
         }
         argsMap.put(EXERCISE_PATH, Paths.get(args[1]));
+
         if (pathsCount == 2) {
             argsMap.put(OUTPUT_PATH, Paths.get(args[2]));
         }
+
         checkTestPath(argsMap.get(EXERCISE_PATH));
 
         return argsMap;

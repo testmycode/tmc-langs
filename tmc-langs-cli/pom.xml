@@ -17,24 +17,7 @@
     <artifactId>tmc-langs-cli</artifactId>
     <packaging>jar</packaging>
     <dependencies>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-embedder</artifactId>
-            <version>3.3.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>3.3.3</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>fi.helsinki.cs.tmc</groupId>
-            <artifactId>edu-test-utils</artifactId>
-            <version>0.4.2</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
+        
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-framework</artifactId>
@@ -54,12 +37,6 @@
         </dependency>
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
-            <artifactId>tmc-langs-util</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-java</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
@@ -76,10 +53,47 @@
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
+
         <dependency>
-            <groupId>com.github.stefanbirkner</groupId>
-            <artifactId>system-rules</artifactId>
-            <version>1.12.1</version>
+            <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>edu-test-utils</artifactId>
+            <version>0.4.2</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>tmc-langs-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        
+         <!--Connector dependecies--> 
+        <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-connector-basic</artifactId>
+            <version>1.0.2.v20150114</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-api</artifactId>
+            <version>1.0.2.v20150114</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-transport-wagon</artifactId>
+            <version>1.0.2.v20150114</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-http</artifactId>
+            <version>2.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-provider-api</artifactId>
+            <version>2.9</version>
         </dependency>
     </dependencies>
     <build>
@@ -97,21 +111,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <outputDirectory>${tmc.basedir}</outputDirectory>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>fi.helsinki.cs.tmc.langs.cli.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.1</version>
                 <executions>
@@ -121,10 +120,10 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createSourcesJar>true</createSourcesJar>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>classworlds:classworlds</exclude>
-                                    <exclude>org.apache.maven:lib:tests</exclude>
+                                    <!--<exclude>classworlds:classworlds</exclude>-->
                                     <exclude>log4j:log4j:jar:</exclude>
                                 </excludes>
                             </artifactSet>

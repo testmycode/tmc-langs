@@ -1,18 +1,22 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
-import com.google.common.io.Files;
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+
+import com.google.common.collect.ImmutableMap;
 
 import org.apache.commons.io.FileUtils;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -23,97 +27,69 @@ public class ExerciseBuilderTest {
 
     private ExerciseBuilder exerciseBuilder;
 
+    @Mock LanguagePlugin languagePlugin;
+
     @Before
     public void setUp() {
-        exerciseBuilder =
-                new ExerciseBuilder(
-                        CommentSyntax.newBuilder()
-                                .addSingleLineComment("\\/\\/")
-                                .addMultiLineComment("\\/\\*+", "\\*+\\/")
-                                .build());
+        MockitoAnnotations.initMocks(this);
+        exerciseBuilder = new ExerciseBuilder();
     }
 
     @Test
-    public void testPrepareStub() throws IOException {
-        Path originProject = Paths.get("src", "test", "resources", "arith_funcs");
-        Path targetFolder = createTemporaryCopyOf(originProject);
-        Path expectedFolder = Paths.get("src", "test", "resources", "arith_funcs_stub", "src");
-        Path outputFolder = targetFolder.toAbsolutePath().resolve("src");
+    public void testPrepareStubs() throws IOException, InterruptedException {
+        final Path originProject = Paths.get("src", "test", "resources", "arith_funcs");
+        final Path tempDir = Files.createTempDirectory("tmc-langs");
+        tempDir.toFile().deleteOnExit();
 
-        exerciseBuilder.prepareStub(targetFolder);
+        tempDir.resolve("clone").toFile().mkdirs();
+        tempDir.resolve("stub").toFile().mkdirs();
 
-        assertFileLines(expectedFolder, outputFolder);
+        final Path cloneDir = tempDir.resolve(Paths.get("clone"));
+
+        final Path stubDir = tempDir.resolve(Paths.get("stub"));
+
+        createTemporaryCopyOf(originProject, cloneDir.resolve("arith_funcs"));
+
+        final Map<Path, LanguagePlugin> exerciseMap =
+                ImmutableMap.of(cloneDir.resolve("arith_funcs"), languagePlugin);
+
+        exerciseBuilder.prepareStubs(exerciseMap, stubDir);
+
+        Path expected = Paths.get("src", "test", "resources", "arith_funcs_stub", "src");
+        assertFileLines(expected, stubDir.resolve("arith_funcs").resolve("src"));
     }
 
     @Test
-    public void testPrepareSolution() throws IOException {
-        Path originProject = Paths.get("src", "test", "resources", "arith_funcs");
-        Path targetFolder = createTemporaryCopyOf(originProject);
-        Path expectedFolder = Paths.get("src", "test", "resources", "arith_funcs_solution", "src");
-        Path outputFolder = targetFolder.toAbsolutePath().resolve("src");
+    public void testPrepareSolutions() throws IOException, InterruptedException {
+        final Path originProject = Paths.get("src", "test", "resources", "arith_funcs");
+        final Path tempDir = Files.createTempDirectory("tmc-langs");
+        tempDir.toFile().deleteOnExit();
 
-        exerciseBuilder.prepareSolution(targetFolder);
+        tempDir.resolve("clone").toFile().mkdirs();
+        tempDir.resolve("solution").toFile().mkdirs();
 
-        assertFileLines(expectedFolder, outputFolder);
+        final Path cloneDir = tempDir.resolve(Paths.get("clone"));
+
+        final Path solutionDir = tempDir.resolve(Paths.get("solution"));
+
+        createTemporaryCopyOf(originProject, cloneDir.resolve("arith_funcs"));
+
+        final Map<Path, LanguagePlugin> exerciseMap =
+                ImmutableMap.of(cloneDir.resolve("arith_funcs"), languagePlugin);
+
+        exerciseBuilder.prepareSolutions(exerciseMap, solutionDir);
+
+        Path expected = Paths.get("src", "test", "resources", "arith_funcs_solution", "src");
+        assertFileLines(expected, solutionDir.resolve("arith_funcs").resolve("src"));
     }
 
-    @Test
-    public void prepareSolutionHandlesNonFolderPath() {
-        File originProject =
-                new File(
-                        "src"
-                                + File.separator
-                                + "test"
-                                + File.separator
-                                + "resources"
-                                + File.separator
-                                + "arith_funcs"
-                                + File.separator
-                                + "build.xml");
-
-        exerciseBuilder.prepareSolution(originProject.toPath());
-    }
-
-    @Test
-    public void solutionFileLinesAreCorrectlyPrepared() throws IOException {
-        Path path = Paths.get("src", "test", "resources", "arith_funcs_solution_file");
-        Path temp = createTemporaryCopyOf(path);
-        temp.toFile().deleteOnExit();
-        exerciseBuilder.prepareSolution(temp);
-        Path solutionFile = temp.resolve(Paths.get("src", "SolutionFile.java"));
-        int size = java.nio.file.Files.readAllLines(solutionFile, Charset.defaultCharset()).size();
-        assertEquals(2, size);
-    }
-
-    @Test
-    public void solutionFilesAreIgnoredFromStub() throws IOException {
-        Path path = Paths.get("src", "test", "resources", "arith_funcs_solution_file");
-        Path temp = createTemporaryCopyOf(path);
-        temp.toFile().deleteOnExit();
-        exerciseBuilder.prepareStub(temp);
-        final Path solutionFile = temp.resolve(Paths.get("src", "SolutionFile.java"));
-        final Path solutionFile2 = temp.resolve(Paths.get("src", "SolutionFileWithNoSpace.java"));
-        final Path solutionFile3 =
-                temp.resolve(Paths.get("src", "SolutionFileWithExtraSpaces.java"));
-        final Path solutionFile4 = temp.resolve(Paths.get("src", "MultilineSolutionFile.java"));
-
-        assertFalse(solutionFile.toFile().exists());
-        assertFalse(solutionFile2.toFile().exists());
-        assertFalse(solutionFile3.toFile().exists());
-        assertFalse(solutionFile4.toFile().exists());
-    }
-
-    private Path createTemporaryCopyOf(Path path) throws IOException {
-        File tempFolder = Files.createTempDir();
-        FileUtils.copyDirectory(path.toFile(), tempFolder);
-        tempFolder.deleteOnExit();
-        return tempFolder.toPath();
+    private void createTemporaryCopyOf(Path from, Path to) throws IOException {
+        FileUtils.copyDirectory(from.toFile(), to.toFile());
     }
 
     private void assertFileLines(Path expectedFolder, Path outputFolder) throws IOException {
         Map<String, Path> expectedFiles = getFileMap(expectedFolder);
         Map<String, Path> actualFiles = getFileMap(outputFolder);
-
         for (String fileName : expectedFiles.keySet()) {
             Path expected = expectedFiles.get(fileName);
             Path actual = actualFiles.get(fileName);

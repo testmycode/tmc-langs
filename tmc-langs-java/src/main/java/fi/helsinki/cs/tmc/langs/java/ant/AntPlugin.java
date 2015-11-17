@@ -28,15 +28,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
@@ -163,16 +160,19 @@ public class AntPlugin extends AbstractJavaPlugin {
         return classPath;
     }
 
+    @Override
+    public void maybeCopySharedStuff(Path destPath) {
+        copyTmcJunitRunner(destPath);
+    }
+
     private void copyTmcJunitRunner(Path path) {
         try {
-            if (Files.notExists(
-                    path.resolve("lib/tmc-junit-runner.jar"), LinkOption.NOFOLLOW_LINKS)) {
+            Path toPath = path.resolve(Paths.get("lib", "testrunner", "tmc-junit-runner.jar"));
+            if (Files.notExists(path.resolve(toPath), LinkOption.NOFOLLOW_LINKS)) {
+                Files.createDirectories(toPath.getParent());
                 InputStream data = getClass().getResourceAsStream("/tmc-junit-runner.jar");
                 Preconditions.checkNotNull(data);
-                Files.copy(
-                        data,
-                        path.resolve("lib/tmc-junit-runner.jar"),
-                        StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(data, toPath, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException ex) {
             throw Throwables.propagate(ex);

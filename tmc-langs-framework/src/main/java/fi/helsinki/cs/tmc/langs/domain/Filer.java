@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +91,7 @@ public class Filer {
             Path toFile = toPath.resolve(relativePath);
             if (justCopy(file)) {
                 Files.createDirectories(toFile.getParent());
-                Files.copy(file, toFile);
+                Files.copy(file, toFile, StandardCopyOption.REPLACE_EXISTING);
                 logger.info("Just copying file from: {} to:{}", file, toFile);
             } else {
                 List<String> data = readFile(file);

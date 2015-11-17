@@ -147,4 +147,11 @@ public interface LanguagePlugin {
      * @return True if given path is valid directory for this language plugin
      */
     boolean isExerciseTypeCorrect(Path path);
+
+    /**
+     * Copy shared stuff to stub or solution used for example for copying tmc-junit-runner.
+     *
+     * @param destPath path of the project.
+     */
+    public void maybeCopySharedStuff(Path destPath);
 }

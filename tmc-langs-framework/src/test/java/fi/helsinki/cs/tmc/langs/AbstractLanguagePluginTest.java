@@ -69,6 +69,11 @@ public class AbstractLanguagePluginTest {
         public String getPluginName() {
             return null;
         }
+
+        @Override
+        public void maybeCopySharedStuff(Path destPath) {
+            // Nothing to do!
+        }
     }
 
     private LanguagePlugin plugin;

@@ -150,4 +150,9 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         }
         return listBuilder.build();
     }
+
+  @Override
+  public void maybeCopySharedStuff(Path destPath) {
+      // Ignore
+  }
 }

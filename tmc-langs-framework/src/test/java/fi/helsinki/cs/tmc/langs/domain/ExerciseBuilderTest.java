@@ -1,47 +1,95 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
-import com.google.common.io.Files;
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+
+import com.google.common.collect.ImmutableMap;
 
 import org.apache.commons.io.FileUtils;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Ignore
 public class ExerciseBuilderTest {
 
     private ExerciseBuilder exerciseBuilder;
 
+    @Mock LanguagePlugin languagePlugin;
+
     @Before
-    public void setUp() {}
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        exerciseBuilder = new ExerciseBuilder();
+    }
 
     @Test
-    public void test() {}
+    public void testPrepareStubs() throws IOException, InterruptedException {
+        final Path originProject = Paths.get("src", "test", "resources", "arith_funcs");
+        final Path tempDir = Files.createTempDirectory("tmc-langs");
+        tempDir.toFile().deleteOnExit();
 
-    private Path createTemporaryCopyOf(Path path) throws IOException {
-        File tempFolder = Files.createTempDir();
-        FileUtils.copyDirectory(path.toFile(), tempFolder);
-        tempFolder.deleteOnExit();
-        return tempFolder.toPath();
+        tempDir.resolve("clone").toFile().mkdirs();
+        tempDir.resolve("stub").toFile().mkdirs();
+
+        final Path cloneDir = tempDir.resolve(Paths.get("clone"));
+
+        final Path stubDir = tempDir.resolve(Paths.get("stub"));
+
+        createTemporaryCopyOf(originProject, cloneDir.resolve("arith_funcs"));
+
+        final Map<Path, LanguagePlugin> exerciseMap =
+                ImmutableMap.of(cloneDir.resolve("arith_funcs"), languagePlugin);
+
+        exerciseBuilder.prepareStubs(exerciseMap, stubDir);
+
+        Path expected = Paths.get("src", "test", "resources", "arith_funcs_stub", "src");
+        assertFileLines(expected, stubDir.resolve("arith_funcs").resolve("src"));
+    }
+
+    @Test
+    public void testPrepareSolutions() throws IOException, InterruptedException {
+        final Path originProject = Paths.get("src", "test", "resources", "arith_funcs");
+        final Path tempDir = Files.createTempDirectory("tmc-langs");
+        tempDir.toFile().deleteOnExit();
+
+        tempDir.resolve("clone").toFile().mkdirs();
+        tempDir.resolve("solution").toFile().mkdirs();
+
+        final Path cloneDir = tempDir.resolve(Paths.get("clone"));
+
+        final Path solutionDir = tempDir.resolve(Paths.get("solution"));
+
+        createTemporaryCopyOf(originProject, cloneDir.resolve("arith_funcs"));
+
+        final Map<Path, LanguagePlugin> exerciseMap =
+                ImmutableMap.of(cloneDir.resolve("arith_funcs"), languagePlugin);
+
+        exerciseBuilder.prepareSolutions(exerciseMap, solutionDir);
+
+        Path expected = Paths.get("src", "test", "resources", "arith_funcs_solution", "src");
+        assertFileLines(expected, solutionDir.resolve("arith_funcs").resolve("src"));
+    }
+
+    private void createTemporaryCopyOf(Path from, Path to) throws IOException {
+        FileUtils.copyDirectory(from.toFile(), to.toFile());
     }
 
     private void assertFileLines(Path expectedFolder, Path outputFolder) throws IOException {
         Map<String, Path> expectedFiles = getFileMap(expectedFolder);
         Map<String, Path> actualFiles = getFileMap(outputFolder);
-
         for (String fileName : expectedFiles.keySet()) {
             Path expected = expectedFiles.get(fileName);
             Path actual = actualFiles.get(fileName);

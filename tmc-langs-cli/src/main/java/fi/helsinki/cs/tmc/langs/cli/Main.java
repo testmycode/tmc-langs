@@ -65,7 +65,7 @@ public final class Main {
                     + " run-tests <exercise path> <output path>"
                     + "      Run the tests for the exercise.\n"
                     + " scan-exercise <exercise path> <output path>"
-                    + "  Produce an exercise description of an exercise directory."
+                    + "  Produce an exercise description of an exercise directory.\n"
                     + " find-exercises <scan path> <output path>"
                     + "  Produce list of found exercises.";
 
@@ -73,7 +73,6 @@ public final class Main {
      * Main entry point for the CLI.
      */
     public static void main(String[] args) {
-        System.out.println(Arrays.deepToString(args));
         if (args == null || args.length == 0) {
             printHelpAndExit();
         }

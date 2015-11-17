@@ -26,8 +26,7 @@ public class FilerTest {
         temp.toFile().deleteOnExit();
         Path toPath = Files.createTempDir().toPath();
         LanguagePlugin mockLanguagePlugin = mock(LanguagePlugin.class);
-        Filer filer = new Filer().setLanguagePlugin(mockLanguagePlugin)
-                .setToPath(toPath);
+        Filer filer = new Filer().setLanguagePlugin(mockLanguagePlugin).setToPath(toPath);
         assertEquals(FileVisitResult.CONTINUE, filer.decideOnDirectory(temp));
     }
 
@@ -37,5 +36,4 @@ public class FilerTest {
         tempFolder.deleteOnExit();
         return tempFolder.toPath();
     }
-
 }

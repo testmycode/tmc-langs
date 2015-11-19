@@ -9,10 +9,8 @@ import org.junit.Assume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -23,9 +21,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 public final class TestUtils {
 
@@ -34,7 +29,7 @@ public final class TestUtils {
     /**
      * Returns a path to a resource residing in the ResourceDir of the given class.
      */
-    public static Path getPath(Class clazz, String location) {
+    public static Path getPath(Class<?> clazz, String location) {
         try {
             URL url = clazz.getResource("/" + location);
 

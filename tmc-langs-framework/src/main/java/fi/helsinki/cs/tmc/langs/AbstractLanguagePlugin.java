@@ -15,11 +15,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Stack;
-import java.util.logging.Logger;
 
 public abstract class AbstractLanguagePlugin implements LanguagePlugin {
-
-    private static final Logger log = Logger.getLogger(AbstractLanguagePlugin.class.getName());
 
     private final ExerciseBuilder exerciseBuilder;
     private final SubmissionProcessor submissionProcessor;

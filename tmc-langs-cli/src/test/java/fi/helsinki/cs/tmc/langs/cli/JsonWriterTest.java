@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class JsonWriterTest {
 
@@ -24,20 +22,16 @@ public class JsonWriterTest {
     }
 
     @Test
-    public void testWriteObjectIntoJsonFormat() {
+    public void testWriteObjectIntoJsonFormat() throws FileNotFoundException {
+        MockClass mock = new MockClass("test");
         try {
-            MockClass mock = new MockClass("test");
-            try {
-                JsonWriter.writeObjectIntoJsonFormat(mock, outputFile.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Scanner scanner = new Scanner(outputFile);
-            assertEquals(scanner.nextLine(), "{\"arr\":[0,1,2,3,4,5,6,7,8,9],\"name\":\"test\"}");
-            scanner.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(JsonWriterTest.class.getName()).log(Level.SEVERE, null, ex);
+            JsonWriter.writeObjectIntoJsonFormat(mock, outputFile.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        Scanner scanner = new Scanner(outputFile);
+        assertEquals(scanner.nextLine(), "{\"arr\":[0,1,2,3,4,5,6,7,8,9],\"name\":\"test\"}");
+        scanner.close();
     }
 
     private class MockClass {

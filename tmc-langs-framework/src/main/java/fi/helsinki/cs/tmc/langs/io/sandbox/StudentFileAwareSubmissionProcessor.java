@@ -3,6 +3,9 @@ package fi.helsinki.cs.tmc.langs.io.sandbox;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -10,8 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Moves files from a directory containing an unzipped student submission to a TMC-sandbox.
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 public class StudentFileAwareSubmissionProcessor implements SubmissionProcessor {
 
     private static final Logger log =
-            Logger.getLogger(StudentFileAwareSubmissionProcessor.class.getName());
+            LoggerFactory.getLogger(StudentFileAwareSubmissionProcessor.class);
     private StudentFilePolicy studentFilePolicy;
 
     /**
@@ -56,34 +57,36 @@ public class StudentFileAwareSubmissionProcessor implements SubmissionProcessor 
     @Override
     public void moveFiles(final Path source, final Path target) {
         try {
-            Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (studentFilePolicy.isStudentFile(file, source)) {
-                        try {
-                            moveFile(source, file, target);
-                        } catch (IOException exception) {
-                            log.log(Level.WARNING, null, exception);
+            Files.walkFileTree(
+                    source,
+                    new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                            if (studentFilePolicy.isStudentFile(file, source)) {
+                                try {
+                                    moveFile(source, file, target);
+                                } catch (IOException exception) {
+                                    log.info("{}", exception);
+                                }
+                            }
+
+                            return FileVisitResult.CONTINUE;
                         }
-                    }
 
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exception)
-                        throws IOException {
-                    if (exception == null) {
-                        return FileVisitResult.CONTINUE;
-                    } else {
-                        // directory iteration failed
-                        log.log(Level.WARNING, null, exception);
-                        throw exception;
-                    }
-                }
-            });
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException exception)
+                                throws IOException {
+                            if (exception == null) {
+                                return FileVisitResult.CONTINUE;
+                            } else {
+                                // directory iteration failed
+                                log.info("{}", exception);
+                                throw exception;
+                            }
+                        }
+                    });
         } catch (IOException exception) {
-            log.log(Level.WARNING, null, exception);
+            log.info("{}", exception);
         }
     }
 

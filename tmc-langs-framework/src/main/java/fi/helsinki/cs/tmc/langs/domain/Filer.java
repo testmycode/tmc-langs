@@ -82,7 +82,12 @@ public class Filer {
      * <p>TODO: refactor, I don't like this.
      */
     public void maybeCopyAndFilterFile(Path file, Path repoPath, Path exercisePath) {
+//        System.out.println("file:         " + file);
+//        System.out.println("repoPath:     " + repoPath);
+//        System.out.println("exPath:       " + exercisePath);
         Path relativePath = file.subpath(repoPath.getNameCount(), file.getNameCount());
+//        System.out.println("relativePath: " + relativePath);
+//        System.out.println("");
         logger.info("Looking into file: {} ", file);
         try {
             if (skipFile(file)) {

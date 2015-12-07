@@ -38,7 +38,6 @@ public class MainTest {
 
     @Before
     public void setUp() {
-        TestUtils.maybeSkipTests();
         mainClass = new Main();
         Main.setExecutor(executor);
     }

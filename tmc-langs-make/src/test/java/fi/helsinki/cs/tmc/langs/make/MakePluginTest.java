@@ -22,7 +22,7 @@ public class MakePluginTest {
     private MakePlugin makePlugin;
 
     public MakePluginTest() {
-        TestUtils.maybeSkipTests();
+        TestUtils.skipIfNotAvailable("valgrind");
         makePlugin = new MakePlugin();
     }
 

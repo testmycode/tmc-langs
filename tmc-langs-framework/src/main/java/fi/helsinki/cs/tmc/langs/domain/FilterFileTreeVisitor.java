@@ -64,10 +64,11 @@ public class FilterFileTreeVisitor {
                             return filer.decideOnDirectory(dir);
                         }
 
+                        
                         @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                                throws IOException {
-                            filer.maybeCopyAndFilterFile(file, repoPath, exercisePath);
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                            Path relativePath = file.subpath(repoPath.getNameCount(), file.getNameCount());
+                            filer.visitFile(file, relativePath); //TODO: Whatever calls this FilterFileTreeVisitor.visitFile could just call filer.visitFile?
                             return FileVisitResult.CONTINUE;
                         }
 

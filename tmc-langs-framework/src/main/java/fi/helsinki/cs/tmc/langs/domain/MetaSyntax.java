@@ -22,7 +22,7 @@ public class MetaSyntax {
         this.beginSolutionRegex  = commentStartRegex  + BEGIN_SOLUTION + commentEndRegex;
         this.endSolutionRegex    = commentStartRegex  + END_SOLUTION   + commentEndRegex;
         this.solutionFileRegex   = commentStartRegex  + SOLUTION_FILE  + commentEndRegex;
-        this.stubRegex           = commentStartRegex  + STUB           + commentEndRegex;
+        this.stubRegex           = commentStartRegex  + STUB + "(.*)"  + commentEndRegex;
         this.stubMarker          = commentStartSyntax + STUB; // Initial spaces left outside stubMarker on purpose
     }
 

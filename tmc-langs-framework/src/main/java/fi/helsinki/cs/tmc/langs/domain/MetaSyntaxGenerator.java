@@ -6,7 +6,6 @@ import java.util.List;
 public class MetaSyntaxGenerator {
     
     public static List<MetaSyntax> listSyntaxes(String fileType) {
-        fileType = "java"; // For debugging purposes only
         List<MetaSyntax> list = new ArrayList<>();
         if (fileType.matches("java|c|cpp|h|hpp|js")) {
             list.add(new MetaSyntax("\\/\\/", ""));          //

@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-abstract public class Filer {
+public class Filer {
 
     private static final Logger logger = LoggerFactory.getLogger(Filer.class);
 
@@ -95,7 +95,9 @@ abstract public class Filer {
         }
         return data;
     }
-    abstract List<String> filterData(List<String> data, MetaSyntax m);    
+    List<String> filterData(List<String> data, MetaSyntax m) {
+        return data; // usually overridden, not always
+    }    
     
     /*
      * Note: we need to use the inputStream for reading more interesting filetypes.

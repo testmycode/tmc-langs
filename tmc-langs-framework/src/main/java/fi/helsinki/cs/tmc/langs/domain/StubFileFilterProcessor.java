@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 final class StubFileFilterProcessor extends Filer {
 
     @Override    
-    List<String> filterData(List<String> input, MetaSyntax m) {
+    private List<String> filterData(List<String> input, MetaSyntax m) {
         boolean skipLine = false;
         List<String> output = new ArrayList<>(input.size());
         for (String line : input) {

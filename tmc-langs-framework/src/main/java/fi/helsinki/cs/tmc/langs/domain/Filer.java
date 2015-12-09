@@ -48,8 +48,7 @@ public class Filer {
         }
     }
     
-    private void visitFile(Path source, Path relativePath)
-            throws IOException {
+    private void visitFile(Path source, Path relativePath) throws IOException {
         Path destination = toPath.resolve(relativePath);
         if (skipFilename(source)) {
             return;

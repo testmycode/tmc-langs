@@ -293,8 +293,8 @@ public final class Main {
                     }
 
                     @Override
-                    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path fromPath) {
-                        // Just skip
+                    public void visitFileExceptionWrapper(Path file, Path repoPath) {
+                        // Just skip <-- Why?
                     }
                 };
         new FilterFileTreeVisitor()

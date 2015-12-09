@@ -41,11 +41,11 @@ public class ExerciseBuilderTest {
         final Path tempDir = Files.createTempDirectory("tmc-langs");
         tempDir.toFile().deleteOnExit();
 
-        tempDir.resolve("clone").toFile().mkdirs();
-        tempDir.resolve("stub").toFile().mkdirs();
+        tempDir.resolve("clone.c").toFile().mkdirs();
+        tempDir.resolve("stub.c").toFile().mkdirs();
 
-        final Path cloneDir = tempDir.resolve(Paths.get("clone"));
-        final Path stubDir = tempDir.resolve(Paths.get("stub"));
+        final Path cloneDir = tempDir.resolve(Paths.get("clone.c"));
+        final Path stubDir = tempDir.resolve(Paths.get("stub.c"));
 
         createTemporaryCopyOf(originProject, cloneDir.resolve("arith_funcs"));
 
@@ -64,12 +64,12 @@ public class ExerciseBuilderTest {
         final Path tempDir = Files.createTempDirectory("tmc-langs");
         tempDir.toFile().deleteOnExit();
 
-        tempDir.resolve("clone").toFile().mkdirs();
-        tempDir.resolve("solution").toFile().mkdirs();
+        tempDir.resolve("clone.c").toFile().mkdirs();
+        tempDir.resolve("solution.c").toFile().mkdirs();
 
-        final Path cloneDir = tempDir.resolve(Paths.get("clone"));
+        final Path cloneDir = tempDir.resolve(Paths.get("clone.c"));
 
-        final Path solutionDir = tempDir.resolve(Paths.get("solution"));
+        final Path solutionDir = tempDir.resolve(Paths.get("solution.c"));
 
         createTemporaryCopyOf(originProject, cloneDir.resolve("arith_funcs"));
 

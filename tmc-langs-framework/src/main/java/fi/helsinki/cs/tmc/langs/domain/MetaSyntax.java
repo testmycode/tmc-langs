@@ -28,32 +28,32 @@ public class MetaSyntax {
     }
 
     
-    /** eg. " -->    " */
+    /** eg. {@code " -->    " } */
     public String getCommentEndRegex() {
         return commentEndRegex;
     }
 
-    /** eg. "    <!-- BEGIN SOLUTION --> " */
+    /** eg. {@code "    <!-- BEGIN SOLUTION --> " } */
     public String getBeginSolutionRegex() {
         return beginSolutionRegex;
     }
 
-    /** eg. "    <!-- END SOLUTION --> " */
+    /** eg. {@code "    <!-- END SOLUTION --> " } */
     public String getEndSolutionRegex() {
         return endSolutionRegex;
     }
 
-    /** eg. "    <!-- SOLUTION FILE --> " */
+    /** eg. {@code "    <!-- SOLUTION FILE --> " } */
     public String getSolutionFileRegex() {
         return solutionFileRegex;
     }
 
-    /** eg. "    <!-- STUB: return 0; --> " */
+    /** eg. {@code "    <!-- STUB: return 0; --> " } */
     public String getStubRegex() {
         return stubRegex;
     }
     
-    /** eg. "<!--STUB:   " */
+    /** eg. {@code "<!--STUB:   " } */
     public String getStubMarker() {
         return stubMarker;
     }

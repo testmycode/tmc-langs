@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class Filer {
+abstract public class Filer {
 
     private static final Logger logger = LoggerFactory.getLogger(Filer.class);
 
@@ -40,30 +40,46 @@ public class Filer {
         return FileVisitResult.CONTINUE;
     }
     
-    public void visitFile(Path source, Path relativePath) {
+    public void visitFileExceptionWrapper(Path source, Path relativePath) {
+        try {
+            visitFile(source, relativePath);
+        } catch (IOException ex) {
+            throw new RuntimeException();
+        }
+    }
+    private void visitFile(Path source, Path relativePath) throws IOException {
+        Path destination = toPath.resolve(relativePath);
+        if (skipFilename(source)) {
+            return;
+        }
+        if (nonTextType(source)) {
+            justCopy(source, destination);
+        }
+        else {
+            copyWithFilters(source, destination);
+        }
+    }
+    private boolean skipFilename(Path source) {
         logger.info("Looking into file: {} ", source);
         String skipRegex = "\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)";
         if (source.getFileName().toString().matches(skipRegex)) {
             logger.info("Skipping file: {} ", source);
-            return;
+            return true;
         }
-        Path destination = toPath.resolve(relativePath);
-        try {
-            copyWithFilters(source, destination);
-        } catch (IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+        return false;
     }
-
-    public void copyWithFilters(Path source, Path destination) throws IOException {
-        List<String> data = readFile(source);
-        if (!isTextFile(source)) {
-            logger.info("Just copying file from: {} to:{}", source, destination);
-        } else {
-            data = prepareFile(data, getFileExtension(source));
-            logger.info("Filtered file while copying from: {} to:{}", source, destination);
-        }
-        
+    private boolean nonTextType(Path source) {
+        String nonTextTypes = "class|jar|exe|jpg|jpeg|gif";
+        return (getFileExtension(source).matches(nonTextTypes));
+    }
+    private void justCopy(Path source, Path destination) throws IOException {
+        logger.info("Just copying file from: {} to:{}", source, destination);
+        Files.createDirectories(destination.getParent());
+        Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+    }
+    private void copyWithFilters(Path source, Path destination) throws IOException {
+        List<String> data = prepareFile(readFile(source), getFileExtension(source));
+        logger.info("Filtered file while copying from: {} to:{}", source, destination);
         if (data.isEmpty()) {
             logger.info("skipped file as empty while copying from: {} to:{}", source, destination);
         } else {
@@ -79,31 +95,7 @@ public class Filer {
         }
         return data;
     }
-    List<String> filterData(List<String> data, MetaSyntax m) {
-        return data; // Subclasses override this method
-    }
-
-    protected final boolean isTextFile(Path file) throws IOException {
-        List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
-        if (file.toFile().isFile() && skipList.contains(getFileExtension(file))) {
-            return false;
-        }
-        // If >90% of characters in file are sourcecode-text-like, interpret as a text file
-        long countNormal = 0;
-        long countOther = 0;
-        List<String> data = readFile(file);
-        for (String line : data) {
-            for (int i=0; i<line.length(); i++) {
-                char c = line.charAt(i);
-                if (c >= 32 && c <= 125) countNormal++; // 0-9,A-Z,a-z,{-]+!...
-                else if (c == 9)         countNormal++; // horizontal tab
-                else                     countOther++;
-            }
-        }
-        if (countOther == 0) return true;
-        return (countNormal / countOther > 9);
-    }
-    
+    abstract List<String> filterData(List<String> data, MetaSyntax m);    
     
     /*
      * Note: we need to use the inputStream for reading more interesting filetypes.

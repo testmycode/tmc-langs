@@ -18,7 +18,7 @@ public class MetaSyntax {
 
     public MetaSyntax(String commentStartSyntax, String commentEndSyntax) {
         this.commentStartRegex = SPACES + commentStartSyntax + SPACES;
-        this.commentEndRegex = SPACES + commentEndSyntax + SPACES;
+        this.commentEndRegex = SPACES + commentEndSyntax + SPACES + "$";
         this.beginSolutionRegex = commentStartRegex + BEGIN_SOLUTION + commentEndRegex;
         this.endSolutionRegex = commentStartRegex + END_SOLUTION + commentEndRegex;
         this.solutionFileRegex = commentStartRegex + SOLUTION_FILE + commentEndRegex;

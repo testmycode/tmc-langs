@@ -20,8 +20,7 @@ final class StubFileFilterProcessor extends Filer {
                 skipLine = false;
             } else if (line.matches(metaSyntax.getStubRegex())) {
                 String stubContent = line.replaceFirst(metaSyntax.getStubMarker(), "");
-                stubContent = stubContent.replaceAll(metaSyntax.getCommentEndRegex(), "");
-                //NOTE: will remove all instances of commentEndRegex, for example --> --> -->
+                stubContent = stubContent.replaceFirst(metaSyntax.getCommentEndRegex(), "");
                 output.add(stubContent);
             } else if (!skipLine) {
                 output.add(line);

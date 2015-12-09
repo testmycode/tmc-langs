@@ -47,18 +47,20 @@ public class Filer {
             throw new RuntimeException();
         }
     }
-    private void visitFile(Path source, Path relativePath) throws IOException {
+    
+    private void visitFile(Path source, Path relativePath)
+            throws IOException {
         Path destination = toPath.resolve(relativePath);
         if (skipFilename(source)) {
             return;
         }
         if (nonTextType(source)) {
             justCopy(source, destination);
-        }
-        else {
+        } else {
             copyWithFilters(source, destination);
         }
     }
+    
     private boolean skipFilename(Path source) {
         logger.info("Looking into file: {} ", source);
         String skipRegex = "\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)";
@@ -68,15 +70,18 @@ public class Filer {
         }
         return false;
     }
+    
     private boolean nonTextType(Path source) {
         String nonTextTypes = "class|jar|exe|jpg|jpeg|gif";
         return (getFileExtension(source).matches(nonTextTypes));
     }
+    
     private void justCopy(Path source, Path destination) throws IOException {
         logger.info("Just copying file from: {} to:{}", source, destination);
         Files.createDirectories(destination.getParent());
         Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
     }
+    
     private void copyWithFilters(Path source, Path destination) throws IOException {
         List<String> data = prepareFile(readFile(source), getFileExtension(source));
         logger.info("Filtered file while copying from: {} to:{}", source, destination);

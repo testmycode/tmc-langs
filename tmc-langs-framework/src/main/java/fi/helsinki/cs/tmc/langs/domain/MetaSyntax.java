@@ -23,7 +23,8 @@ public class MetaSyntax {
         this.endSolutionRegex = commentStartRegex + END_SOLUTION + commentEndRegex;
         this.solutionFileRegex = commentStartRegex + SOLUTION_FILE + commentEndRegex;
         this.stubRegex = commentStartRegex + STUB + "(.*)" + commentEndRegex;
-        this.stubMarker = commentStartSyntax + STUB; // Initial spaces left outside stubMarker on purpose
+        this.stubMarker = commentStartSyntax + STUB + SPACES;
+            // Initial spaces left outside stubMarker on purpose
     }
 
     
@@ -52,7 +53,7 @@ public class MetaSyntax {
         return stubRegex;
     }
     
-    /** eg. "<!--STUB: " */
+    /** eg. "<!--STUB:   " */
     public String getStubMarker() {
         return stubMarker;
     }

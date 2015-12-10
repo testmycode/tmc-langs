@@ -279,14 +279,9 @@ public class MainTest {
      * @return Absolute test target path, with file:/ stripped away.
      */
     private String getTargetPath(String location) {
-        System.out.print("!!!!!!!!!!!!!!!!! getClass=");
-        System.out.println(getClass());
-        System.out.print("!!!!!!!!!!!!!! File.separatorChar=");
-        System.out.println(File.separatorChar);
-        System.out.print("!!!!!!!!!!!!!!!! location=");
-        System.out.println(location);
-        String targetPath = getClass().getResource(File.separatorChar + location).toString();
-
+        //String targetPath = getClass().getResource(File.separatorChar + location).toString();
+        String targetPath = TestUtils.getPath(getClass(), location).toString();
+        
         if (targetPath.startsWith("file:/")) {
             return targetPath.substring(5);
         }

@@ -280,6 +280,7 @@ public class MainTest {
      */
     private String getTargetPath(String location) {
         //String targetPath = getClass().getResource(File.separatorChar + location).toString();
+        System.err.println("!!!!test");
         String targetPath = TestUtils.getPath(getClass(), location).toString();
         
         if (targetPath.startsWith("file:/")) {

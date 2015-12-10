@@ -149,7 +149,7 @@ public final class TestUtils {
         return file.toPath();
     }
 
-    public static void skipIfOnWindowsCI() {
+    public static void skipIfOnWindowsCi() {
         Assume.assumeTrue(
                 "This test is not supported on Windows CI.", System.getenv("APPVEYOR") == null);
     }

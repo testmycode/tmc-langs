@@ -19,11 +19,9 @@ final class StubFileFilterProcessor extends Filer {
             } else if (skipLine && line.matches(metaSyntax.getEndSolutionRegex())) {
                 skipLine = false;
             } else if (line.matches(metaSyntax.getStubRegex())) {
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!! STUBSYNTAX DETECTED line=" + line);
                 String stubContent = line.replaceFirst(metaSyntax.getStubMarker(), "");
                 stubContent = stubContent.replaceFirst(metaSyntax.getCommentEndRegex(), "");
                 output.add(stubContent);
-                System.out.println("!!!!!!!!!!!!!!!!!! output=" + stubContent);
             } else if (!skipLine) {
                 output.add(line);
             }

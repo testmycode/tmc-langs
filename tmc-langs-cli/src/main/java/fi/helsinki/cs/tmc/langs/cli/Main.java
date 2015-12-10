@@ -215,10 +215,10 @@ public final class Main {
                         return FileVisitResult.CONTINUE;
                     }
 
-                    @Override
-                    public void visitFileExceptionWrapper(Path source, Path relativePath) {
-                        // Just skip. <-- Why?
-                    }
+//                    @Override
+//                    public void visitFileExceptionWrapper(Path source, Path relativePath) {
+//                        // Just skip. <-- Why?
+//                    }
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())
@@ -292,10 +292,10 @@ public final class Main {
                         return FileVisitResult.CONTINUE;
                     }
 
-                    @Override
-                    public void visitFileExceptionWrapper(Path file, Path repoPath) {
-                        // Just skip <-- Why?
-                    }
+//                    @Override
+//                    public void visitFileExceptionWrapper(Path file, Path repoPath) {
+//                        // Just skip <-- Why?
+//                    }
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())

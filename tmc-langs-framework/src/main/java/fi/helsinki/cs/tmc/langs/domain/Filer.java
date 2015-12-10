@@ -53,7 +53,7 @@ public class Filer {
         if (skipFilename(source)) {
             return;
         }
-        if (nonTextType(source)) {
+        if (looksLikeBinary(source)) {
             justCopy(source, destination);
         } else {
             copyWithFilters(source, destination);
@@ -70,9 +70,9 @@ public class Filer {
         return false;
     }
     
-    private boolean nonTextType(Path source) {
+    private boolean looksLikeBinary(Path source) {
         String nonTextTypes = "class|jar|exe|jpg|jpeg|gif";
-        return (getFileExtension(source).matches(nonTextTypes));
+        return getFileExtension(source).matches(nonTextTypes);
     }
     
     private void justCopy(Path source, Path destination) throws IOException {

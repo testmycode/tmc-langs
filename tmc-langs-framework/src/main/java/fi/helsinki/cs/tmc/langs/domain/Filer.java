@@ -99,7 +99,8 @@ public class Filer {
         }
         return data;
     }
-    List<String> filterData(List<String> data, MetaSyntax m) {
+    
+    List<String> filterData(List<String> data, MetaSyntax metaSyntax) {
         return data; // usually overridden, not always
     }    
     

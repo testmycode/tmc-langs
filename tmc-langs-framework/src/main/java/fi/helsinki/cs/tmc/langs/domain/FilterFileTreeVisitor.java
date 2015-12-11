@@ -68,7 +68,8 @@ public class FilterFileTreeVisitor {
                         //      could just call filer.visitFile?
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                            Path relativePath = file.subpath(repoPath.getNameCount(), file.getNameCount());
+                            Path relativePath = file.subpath(
+                                    repoPath.getNameCount(), file.getNameCount());
                             filer.visitFileExceptionWrapper(file, relativePath);
                             return FileVisitResult.CONTINUE;
                         }

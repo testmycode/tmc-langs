@@ -17,6 +17,7 @@ Build the project with `mvn clean package`. Install the dependency to your local
 ## Test
 
 Test the project with `mvn test`.
+For the tmc-langs-java maven tests to pass it either needs to be invoced with mvn exec magic, like NetBeans does it. However, when executed from commandline `M3_HOME` must be configured. Either via `$M3_HOME` or from mavens configuration files.
 
 ## Usage
 

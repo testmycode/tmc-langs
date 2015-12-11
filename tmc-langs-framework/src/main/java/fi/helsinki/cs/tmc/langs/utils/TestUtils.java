@@ -149,11 +149,18 @@ public final class TestUtils {
         return file.toPath();
     }
 
-    public static void maybeSkipTests() {
-        isFeatureAvailable("valgrind", "Skipping makefile tests since no valgring is found");
+    public static void skipIfOnWindowsCi() {
         Assume.assumeTrue(
                 "This test is not supported on Windows CI.", System.getenv("APPVEYOR") == null);
+    }
+
+    public static void maybeSkipTests() {
+        isFeatureAvailable("valgrind", "Skipping makefile tests since no valgring is found");
         isFeatureAvailable("rust", "Skipping rust tests since no rust installation is found");
+    }
+
+    public static void skipIfNotAvailable(String command) {
+        isFeatureAvailable(command, "Skipping since " + command + " is not available");
     }
 
     public static void isFeatureAvailable(String cmd, String message) {

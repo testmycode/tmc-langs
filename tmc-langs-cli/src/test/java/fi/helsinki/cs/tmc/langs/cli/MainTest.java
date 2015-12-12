@@ -70,7 +70,8 @@ public class MainTest {
                     @Override
                     public void checkAssertion() throws Exception {
                         Mockito.verifyZeroInteractions(executor);
-                        assertTrue("Error output should be clean.", mio.getSysErr().isEmpty());
+                        assertTrue("Error output should be clean, but it was "
+                                + mio.getSysErr().toString(), mio.getSysErr().isEmpty());
                         assertContains(helpText, mio.getSysOut());
                     }
                 });
@@ -86,7 +87,8 @@ public class MainTest {
                     @Override
                     public void checkAssertion() throws Exception {
                         Mockito.verifyZeroInteractions(executor);
-                        assertTrue("Error output should be clean.", mio.getSysErr().isEmpty());
+                        assertTrue("Error output should be clean, but it was "
+                                + mio.getSysErr().toString(), mio.getSysErr().isEmpty());
                         assertContains(helpText, mio.getSysOut());
                     }
                 });
@@ -102,7 +104,8 @@ public class MainTest {
                     @Override
                     public void checkAssertion() throws Exception {
                         Mockito.verifyZeroInteractions(executor);
-                        assertTrue("Error output should be clean.", mio.getSysErr().isEmpty());
+                        assertTrue("Error output should be clean, but it was "
+                                + mio.getSysErr().toString(), mio.getSysErr().isEmpty());
                         assertContains(helpText, mio.getSysOut());
                     }
                 });
@@ -131,7 +134,8 @@ public class MainTest {
                                         + outputPath
                                         + "\n",
                                 mio.getSysOut());
-                        assertTrue("Error output should be clean.", mio.getSysErr().isEmpty());
+                        assertTrue("Error output should be clean, but it was "
+                                + mio.getSysErr().toString(), mio.getSysErr().isEmpty());
                     }
                 });
         String[] args = {"scan-exercise", EXERCISE_PATH, exercisePath, OUTPUT_PATH, outputPath};
@@ -153,7 +157,8 @@ public class MainTest {
                         assertContains(
                                 "Test results can be found in " + outputPath + "\n",
                                 mio.getSysOut());
-                        assertTrue("Error output should be clean.", mio.getSysErr().isEmpty());
+                        assertTrue("Error output should be clean, but it was "
+                                + mio.getSysErr().toString(), mio.getSysErr().isEmpty());
                     }
                 });
         Main.main(args);
@@ -174,7 +179,8 @@ public class MainTest {
                         assertContains(
                                 "Codestyle report can be found at " + outputPath + "\n",
                                 mio.getSysOut());
-                        assertTrue("Error output should be clean.", mio.getSysErr().isEmpty());
+                        assertTrue("Error output should be clean, but it was "
+                                + mio.getSysErr().toString(), mio.getSysErr().isEmpty());
                     }
                 });
         Main.main(args);

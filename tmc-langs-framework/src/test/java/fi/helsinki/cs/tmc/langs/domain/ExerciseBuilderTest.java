@@ -1,8 +1,10 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -24,28 +26,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+
 
 public class ExerciseBuilderTest {
-    
+
     ExerciseBuilder exerciseBuilder;
     Map<Path, LanguagePlugin> exerciseMap;
-    
+
     final String testFolderName = "filer_tests_in";
-    final Path originPath =
-            Paths.get("src", "test", "resources", testFolderName);
-    final Path expectedStubs = 
-            Paths.get("src", "test", "resources", "filer_tests_out_stub", "src");
-    final Path expectedSolutions = 
-            Paths.get("src", "test", "resources", "filer_tests_out_solution", "src");
-    
+    final Path originPath
+            = Paths.get("src", "test", "resources", testFolderName);
+    final Path expectedStubs
+            = Paths.get("src", "test", "resources", "filer_tests_out_stub", "src");
+    final Path expectedSolutions
+            = Paths.get("src", "test", "resources", "filer_tests_out_solution", "src");
+
     Path tempDir; // root directory for these tests
     Path clones; // input will be cloned here
     Path actualStubs; // output for stub
     Path actualSolutions; // output for solution
 
-
-    @Mock LanguagePlugin languagePlugin;
+    @Mock
+    LanguagePlugin languagePlugin;
 
     @Before
     public void setUp() throws IOException {
@@ -71,7 +73,7 @@ public class ExerciseBuilderTest {
         exerciseBuilder.prepareSolutions(exerciseMap, clones, actualSolutions);
         assertFoldersMatch(expectedSolutions, actualSolutions);
     }
-    
+
     private void assertFoldersMatch(Path expected, Path actual) throws IOException {
         assertDifferentFolders(expected, actual);
         assertFolderHasFiles(expected);
@@ -79,19 +81,19 @@ public class ExerciseBuilderTest {
         assertFileNamesMatch(actual, expected);
         assertFileContentEqual(expected, actual);
     }
-    
+
     private void assertDifferentFolders(Path expected, Path actual) {
         assertFalse("Tests are broken, expected and actual folders are the same",
                 expected.toFile().equals(actual.toFile()));
     }
-    
+
     private void assertFileNamesMatch(Path set1, Path set2) throws IOException {
         for (String fileName : getFileMap(set1).keySet()) {
             assertTrue("File " + fileName + " not found in " + set2,
                     getFileMap(set2).containsKey(fileName));
         }
     }
-    
+
     private void assertFolderHasFiles(Path folder) throws IOException {
         assertFalse("Unable to find files in " + folder,
                 getFileMap(folder).isEmpty());
@@ -115,8 +117,8 @@ public class ExerciseBuilderTest {
                 String actualLine = actualLines.get(i);
                 assertEquals(
                         "Line in file " + fileName + " did not match."
-                                + "\n Expected= " + expectedLine
-                                + "\n Actual= " + actualLine, expectedLine, actualLine);
+                        + "\n Expected= " + expectedLine
+                        + "\n Actual= " + actualLine, expectedLine, actualLine);
             }
         }
     }
@@ -135,19 +137,19 @@ public class ExerciseBuilderTest {
         }
         return result;
     }
-    
+
     public void initializeTempFolder() throws IOException {
         tempDir = Files.createTempDirectory("tmc-langs");
         tempDir.toFile().deleteOnExit(); // precaution, deleted in tearDown
-        
+
         tempDir.resolve("clone").toFile().mkdirs();
         tempDir.resolve("stub").toFile().mkdirs();
         tempDir.resolve("solution").toFile().mkdirs();
-        
+
         clones = tempDir.resolve(Paths.get("clone"));
         actualStubs = tempDir.resolve(Paths.get("stub"));
         actualSolutions = tempDir.resolve(Paths.get("solution"));
-        
+
         File from = originPath.toFile();
         File to = clones.resolve(testFolderName).toFile();
         FileUtils.copyDirectory(from, to);

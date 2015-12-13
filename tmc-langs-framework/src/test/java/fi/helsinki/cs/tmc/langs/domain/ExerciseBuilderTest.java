@@ -1,7 +1,9 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 
@@ -23,21 +25,27 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.After;
+
+
 
 public class ExerciseBuilderTest {
     
-    final private String testFolderName = "filer_tests_in";
-    final private String expectedFolderStub = "filer_tests_out_stub";
-    final private String expectedFolderSolution = "filer_tests_out_solution";
-    private Path originPath = Paths.get("src", "test", "resources", testFolderName);
-    private Path tempDir; // root directory for these tests
-    private Path cloneDir; // input will be cloned here
-    private Path stubDir; // output for stub
-    private Path solutionDir; // output for solution
-
     private ExerciseBuilder exerciseBuilder;
     private Map<Path, LanguagePlugin> exerciseMap;
+    
+    final private String testFolderName = "filer_tests_in";
+    final private Path originPath =
+            Paths.get("src", "test", "resources", testFolderName);
+    final private Path expectedStubs = 
+            Paths.get("src", "test", "resources", "filer_tests_out_stub", "src");
+    final private Path expectedSolutions = 
+            Paths.get("src", "test", "resources", "filer_tests_out_solution", "src");
+    
+    private Path tempDir; // root directory for these tests
+        private Path clones; // input will be cloned here
+        private Path actualStubs; // output for stub
+        private Path actualSolutions; // output for solution
+
 
     @Mock LanguagePlugin languagePlugin;
 
@@ -45,20 +53,10 @@ public class ExerciseBuilderTest {
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         exerciseBuilder = new ExerciseBuilder();
-        tempDir = Files.createTempDirectory("tmc-langs");
-        tempDir.toFile().deleteOnExit(); // precaution, deleted in tearDown
-        
-        tempDir.resolve("clone").toFile().mkdirs();
-        tempDir.resolve("stub").toFile().mkdirs();
-        tempDir.resolve("solution").toFile().mkdirs();
-        cloneDir = tempDir.resolve(Paths.get("clone"));
-        stubDir = tempDir.resolve(Paths.get("stub"));
-        solutionDir = tempDir.resolve(Paths.get("solution"));
-        
-        createTemporaryCopyOf(originPath, cloneDir.resolve(testFolderName));
-        exerciseMap = ImmutableMap.of(cloneDir.resolve(testFolderName), languagePlugin);
+        initializeTempFolder();
+        exerciseMap = ImmutableMap.of(clones.resolve(testFolderName), languagePlugin);
     }
-    
+
     @After
     public void tearDown() {
         tempDir.toFile().delete();
@@ -66,47 +64,51 @@ public class ExerciseBuilderTest {
 
     @Test
     public void testPrepareStubs() throws IOException, InterruptedException {
-        exerciseBuilder.prepareStubs(exerciseMap, cloneDir, stubDir);
-        Path expected = Paths.get("src", "test", "resources", expectedFolderStub, "src");
-        assertFileLines(expected, stubDir.resolve(testFolderName));
+        exerciseBuilder.prepareStubs(exerciseMap, clones, actualStubs);
+        assertFoldersMatch(expectedStubs, actualStubs);
     }
 
     @Test
     public void testPrepareSolutions() throws IOException, InterruptedException {
-        exerciseBuilder.prepareSolutions(exerciseMap, cloneDir, solutionDir);
-        Path expected = Paths.get("src", "test", "resources", expectedFolderSolution, "src");
-        assertFileLines(expected, solutionDir.resolve(testFolderName).resolve("src"));
+        exerciseBuilder.prepareSolutions(exerciseMap, clones, actualSolutions);
+        assertFoldersMatch(expectedSolutions, actualSolutions);
+    }
+    
+    private void assertFoldersMatch(Path expected, Path actual) throws IOException {
+        assertDifferentFolders(expected, actual);
+        assertFolderHasFiles(expected);
+        assertFileNamesMatch(expected, actual);
+        assertFileNamesMatch(actual, expected);
+        assertFileContentEqual(expected, actual);
+    }
+    
+    private void assertDifferentFolders(Path expected, Path actual) {
+        assertFalse("Tests are broken, expected and actual folders are the same",
+                expected.toFile().equals(actual.toFile()));
+    }
+    
+    private void assertFileNamesMatch(Path set1, Path set2) throws IOException {
+        for (String fileName : getFileMap(set1).keySet()) {
+            assertTrue("File " + fileName + " not found in " + set2,
+                    getFileMap(set2).containsKey(fileName));
+        }
+    }
+    
+    private void assertFolderHasFiles(Path folder) throws IOException {
+        assertFalse("Unable to find files in " + folder,
+                getFileMap(folder).isEmpty());
     }
 
-    private void createTemporaryCopyOf(Path from, Path to) throws IOException {
-        FileUtils.copyDirectory(from.toFile(), to.toFile());
-    }
-
-    /** Asserts that files in expected and actual folders match **/
-    private void assertFileLines(Path expectedFolder, Path actualFolder) throws IOException {
+    private void assertFileContentEqual(Path expectedFolder, Path actualFolder) throws IOException {
         Map<String, Path> expectedFiles = getFileMap(expectedFolder);
         Map<String, Path> actualFiles = getFileMap(actualFolder);
         for (String fileName : expectedFiles.keySet()) {
-            assertTrue("File " + fileName + " not found in map for " + actualFolder,
-                    actualFiles.containsKey(fileName));
-            Path expected = expectedFiles.get(fileName);
-            Path actual = actualFiles.get(fileName);
-            assertTrue("File found on map but not on disk: " + expected,
-                    Files.exists(expected));
-            assertTrue("File found on map but not on disk: " + actual,
-                    Files.exists(actual));
-            List<String> expectedLines = FileUtils.readLines(expected.toFile());
-            List<String> actualLines = FileUtils.readLines(actual.toFile());
-            for (int i = 0; i < expectedLines.size(); ++i) {
-                String expectedLine = expectedLines.get(i);
-                String actualLine = actualLines.get(i);
-                assertEquals(
-                        "Line in file " + fileName + " did not match ", expectedLine, actualLine);
-            }
-        }
-        for (String fileName : actualFiles.keySet()) {
-            assertTrue("Did not expect to find file " + fileName,
-                    expectedFiles.containsKey(fileName));
+            File expectedFile = expectedFiles.get(fileName).toFile();
+            File actualFile = actualFiles.get(fileName).toFile();
+            List<String> expectedLines = FileUtils.readLines(expectedFile);
+            List<String> actualLines = FileUtils.readLines(actualFile);
+            assertEquals("Expected data not matching found data in file " + fileName,
+                    expectedLines.equals(actualLines));
         }
     }
 
@@ -123,5 +125,22 @@ public class ExerciseBuilderTest {
             result.put(file.toPath().getFileName().toString(), file.toPath());
         }
         return result;
+    }
+    
+    public void initializeTempFolder() throws IOException {
+        tempDir = Files.createTempDirectory("tmc-langs");
+        tempDir.toFile().deleteOnExit(); // precaution, deleted in tearDown
+        
+        tempDir.resolve("clone").toFile().mkdirs();
+        tempDir.resolve("stub").toFile().mkdirs();
+        tempDir.resolve("solution").toFile().mkdirs();
+        
+        clones = tempDir.resolve(Paths.get("clone"));
+        actualStubs = tempDir.resolve(Paths.get("stub"));
+        actualSolutions = tempDir.resolve(Paths.get("solution"));
+        
+        File from = originPath.toFile();
+        File to = clones.resolve(testFolderName).toFile();
+        FileUtils.copyDirectory(from, to);
     }
 }

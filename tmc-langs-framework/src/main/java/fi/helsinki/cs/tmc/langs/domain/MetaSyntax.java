@@ -6,7 +6,7 @@ public class MetaSyntax {
     private static final String END_SOLUTION = "END[ \\t]+SOLUTION";
     private static final String SOLUTION_FILE = "SOLUTION[ \\t]+FILE";
     private static final String SPACES = "[ \\t]*";
-    private static final String STUB = "STUB:[ \\t]*";
+    private static final String STUB = "STUB:" + SPACES;
    
     private String commentStartRegex;
     private String commentEndRegex;
@@ -17,7 +17,7 @@ public class MetaSyntax {
     private String stubMarker;
 
     public MetaSyntax(String commentStartSyntax, String commentEndSyntax) {
-        this.commentStartRegex = SPACES + commentStartSyntax + SPACES;
+        this.commentStartRegex = "^" + SPACES + commentStartSyntax + SPACES;
         this.commentEndRegex = SPACES + commentEndSyntax + SPACES + "$";
         this.beginSolutionRegex = commentStartRegex + BEGIN_SOLUTION + commentEndRegex;
         this.endSolutionRegex = commentStartRegex + END_SOLUTION + commentEndRegex;

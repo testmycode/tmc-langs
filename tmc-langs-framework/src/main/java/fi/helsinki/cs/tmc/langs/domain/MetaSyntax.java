@@ -13,8 +13,9 @@ public class MetaSyntax {
     private String beginSolutionRegex;
     private String endSolutionRegex;
     private String solutionFileRegex;
-    private String stubRegex;
+    
     private String stubMarker;
+    private String stubBeginsRegex; // Either single or multi line
 
     public MetaSyntax(String commentStartSyntax, String commentEndSyntax) {
         this.commentStartRegex = "^" + SPACES + commentStartSyntax + SPACES;
@@ -22,39 +23,44 @@ public class MetaSyntax {
         this.beginSolutionRegex = commentStartRegex + BEGIN_SOLUTION + commentEndRegex;
         this.endSolutionRegex = commentStartRegex + END_SOLUTION + commentEndRegex;
         this.solutionFileRegex = commentStartRegex + SOLUTION_FILE + commentEndRegex;
-        this.stubRegex = commentStartRegex + STUB + "(.*)" + commentEndRegex;
+        
+        // Initial spaces left outside stubMarker to maintain indentation
         this.stubMarker = commentStartSyntax + SPACES + STUB + SPACES;
-            // Initial spaces left outside stubMarker on purpose
+        this.stubBeginsRegex = commentStartRegex + STUB;
     }
 
-    
-    /** eg. {@code " -->    " } */
-    public String getCommentEndRegex() {
-        return commentEndRegex;
+    /** True if line looks like {@code " <!-- BEGIN SOLUTION --> " } */
+    public boolean matchBeginSolution(String line) {
+        return line.matches(beginSolutionRegex);
     }
 
-    /** eg. {@code "    <!-- BEGIN SOLUTION --> " } */
-    public String getBeginSolutionRegex() {
-        return beginSolutionRegex;
+    /** True if line looks like {@code " <!-- END SOLUTION --> " } */
+    public boolean matchEndSolution(String line) {
+        return line.matches(endSolutionRegex);
     }
 
-    /** eg. {@code "    <!-- END SOLUTION --> " } */
-    public String getEndSolutionRegex() {
-        return endSolutionRegex;
-    }
-
-    /** eg. {@code "    <!-- SOLUTION FILE --> " } */
-    public String getSolutionFileRegex() {
-        return solutionFileRegex;
-    }
-
-    /** eg. {@code "    <!-- STUB: return 0; --> " } */
-    public String getStubRegex() {
-        return stubRegex;
+    /** True if line looks like {@code " <!-- SOLUTION FILE --> " } */
+    public boolean matchSolutionFile(String line) {
+        return line.matches(solutionFileRegex);
     }
     
-    /** eg. {@code "<!--STUB:   " } */
-    public String getStubMarker() {
-        return stubMarker;
+    /** True if line STARTS WITH {@code "*whitespace* <!-- STUB:" } */
+    public boolean matchStubBegins(String line) {
+        return line.matches(stubBeginsRegex + "(.*)");
+    }
+    
+    /** True if line ends with comment end syntax **/
+    public boolean matchEndComment(String line) {
+        return line.matches("(.*)" + commentEndRegex);
+    }
+    
+    /** Returns given String without Alexander Stubb **/
+    public String removeStubMarker(String line) {
+        return line.replaceFirst(stubMarker, "");
+    }
+    
+    /** Returns given String without end comment syntax **/
+    public String removeEndCommentSyntax(String line) {
+        return line.replaceFirst(commentEndRegex, "");
     }
 }

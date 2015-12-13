@@ -7,17 +7,38 @@ import java.util.List;
 final class SolutionFileFilterProcessor extends Filer {
     
     @Override    
-    List<String> filterData(List<String> input, MetaSyntax metaSyntax) {
+    List<String> filterData(List<String> data, MetaSyntax meta) {
+        data = removeStubs(data, meta);
+        data = cleanSolutionMarkers(data, meta);
+        return data;
+    }
+    
+    private List<String> removeStubs(List<String> input, MetaSyntax meta) {
+        boolean atStub = false;
+        List<String> output = new ArrayList<String>();
+        for (String line : input) {
+            if (meta.matchStubBegins(line)) {
+                atStub = true;
+            }
+            if (!atStub) {
+                output.add(line);
+            }
+            else if (meta.matchEndComment(line)) {
+                atStub = false;
+            }
+        }
+        return output;    
+    }
+    
+    private List<String> cleanSolutionMarkers(List<String> input, MetaSyntax meta) {
         List<String> output = new ArrayList<>(input.size());
         for (String line : input) {
-            if (line.matches(metaSyntax.getBeginSolutionRegex())
-                    || line.matches(metaSyntax.getEndSolutionRegex())
-                    || line.matches(metaSyntax.getStubRegex())
-                    || line.matches(metaSyntax.getSolutionFileRegex())) {
-                continue;
-            }
+            if (meta.matchSolutionFile(line)) continue;
+            if (meta.matchBeginSolution(line)) continue;
+            if (meta.matchEndSolution(line)) continue;
             output.add(line);
         }
         return output;
     }
+   
 }

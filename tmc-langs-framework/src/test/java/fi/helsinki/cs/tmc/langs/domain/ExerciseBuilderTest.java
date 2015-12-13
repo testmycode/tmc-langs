@@ -107,8 +107,19 @@ public class ExerciseBuilderTest {
             File actualFile = actualFiles.get(fileName).toFile();
             List<String> expectedLines = FileUtils.readLines(expectedFile);
             List<String> actualLines = FileUtils.readLines(actualFile);
-            assertEquals("Expected data not matching found data in file " + fileName,
-                    expectedLines.equals(actualLines));
+            for (int i = 0; i < expectedLines.size(); ++i) {
+                String expectedLine = expectedLines.get(i);
+                assertTrue("Did not find expected line " + expectedLine
+                        + "\n in file " + fileName
+                        + "\n Total lines =" + actualLines.size()
+                        + "\n Trying to read index i=" + i,
+                        actualLines.size() > i);
+                String actualLine = actualLines.get(i);
+                assertEquals(
+                        "Line in file " + fileName + " did not match."
+                                + "\n Expected= " + expectedLine
+                                + "\n Actual= " + actualLine, expectedLine, actualLine);
+            }
         }
     }
 

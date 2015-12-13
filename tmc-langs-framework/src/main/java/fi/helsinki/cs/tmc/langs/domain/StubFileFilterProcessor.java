@@ -33,22 +33,27 @@ final class StubFileFilterProcessor extends Filer {
         return output;    
     }
 
-    /** NOTE: traditional comments inside multiline stubs will cause problems **/
+    /** NOTE: traditional comments inside multiline stubs will cause problems. **/
     private List<String> cleanStubMarkers(List<String> input, MetaSyntax meta) {
         boolean atStub = false;
         List<String> output = new ArrayList<String>();
         for (String line : input) {
+            if (line.trim().isEmpty()) {
+                output.add(line); 
+                continue;
+            }
             if (meta.matchStubBegins(line)) {
                 atStub = true;
                 line = meta.removeStubMarker(line);
-                if (line.trim().isEmpty()) continue;
             }
             if (atStub && meta.matchEndComment(line)) {
                 atStub = false;
                 line = meta.removeEndCommentSyntax(line);
-                if (line.trim().isEmpty()) continue;
             }
-            output.add(line);
+            if (!line.trim().isEmpty()) {
+                // If stub marker was the only line content, don't add empty line
+                output.add(line);
+            }
         }
         return output;  
     }

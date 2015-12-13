@@ -1,16 +1,10 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-
-import fi.helsinki.cs.tmc.langs.LanguagePlugin;
-
 import com.google.common.collect.ImmutableMap;
 
 import org.apache.commons.io.FileUtils;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,25 +20,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class ExerciseBuilderTest {
     
-    private ExerciseBuilder exerciseBuilder;
-    private Map<Path, LanguagePlugin> exerciseMap;
+    ExerciseBuilder exerciseBuilder;
+    Map<Path, LanguagePlugin> exerciseMap;
     
-    final private String testFolderName = "filer_tests_in";
-    final private Path originPath =
+    final String testFolderName = "filer_tests_in";
+    final Path originPath =
             Paths.get("src", "test", "resources", testFolderName);
-    final private Path expectedStubs = 
+    final Path expectedStubs = 
             Paths.get("src", "test", "resources", "filer_tests_out_stub", "src");
-    final private Path expectedSolutions = 
+    final Path expectedSolutions = 
             Paths.get("src", "test", "resources", "filer_tests_out_solution", "src");
     
-    private Path tempDir; // root directory for these tests
-        private Path clones; // input will be cloned here
-        private Path actualStubs; // output for stub
-        private Path actualSolutions; // output for solution
+    Path tempDir; // root directory for these tests
+    Path clones; // input will be cloned here
+    Path actualStubs; // output for stub
+    Path actualSolutions; // output for solution
 
 
     @Mock LanguagePlugin languagePlugin;

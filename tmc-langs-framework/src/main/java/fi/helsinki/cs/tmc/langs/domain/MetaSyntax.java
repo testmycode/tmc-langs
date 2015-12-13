@@ -29,37 +29,37 @@ public class MetaSyntax {
         this.stubBeginsRegex = commentStartRegex + STUB;
     }
 
-    /** True if line looks like {@code " <!-- BEGIN SOLUTION --> " } */
+    /** True if line looks like {@code " <!-- BEGIN SOLUTION --> " }. */
     public boolean matchBeginSolution(String line) {
         return line.matches(beginSolutionRegex);
     }
 
-    /** True if line looks like {@code " <!-- END SOLUTION --> " } */
+    /** True if line looks like {@code " <!-- END SOLUTION --> " }. */
     public boolean matchEndSolution(String line) {
         return line.matches(endSolutionRegex);
     }
 
-    /** True if line looks like {@code " <!-- SOLUTION FILE --> " } */
+    /** True if line looks like {@code " <!-- SOLUTION FILE --> " }. */
     public boolean matchSolutionFile(String line) {
         return line.matches(solutionFileRegex);
     }
     
-    /** True if line STARTS WITH {@code "*whitespace* <!-- STUB:" } */
+    /** True if line STARTS WITH {@code "*whitespace* <!-- STUB:" }. */
     public boolean matchStubBegins(String line) {
         return line.matches(stubBeginsRegex + "(.*)");
     }
     
-    /** True if line ends with comment end syntax **/
+    /** True if line ends with comment end syntax. **/
     public boolean matchEndComment(String line) {
         return line.matches("(.*)" + commentEndRegex);
     }
     
-    /** Returns given String without Alexander Stubb **/
+    /** Returns given String without Alexander Stubb. **/
     public String removeStubMarker(String line) {
         return line.replaceFirst(stubMarker, "");
     }
     
-    /** Returns given String without end comment syntax **/
+    /** Returns given String without end comment syntax. **/
     public String removeEndCommentSyntax(String line) {
         return line.replaceFirst(commentEndRegex, "");
     }

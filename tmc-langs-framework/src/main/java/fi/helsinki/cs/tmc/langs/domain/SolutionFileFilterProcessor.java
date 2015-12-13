@@ -22,8 +22,7 @@ final class SolutionFileFilterProcessor extends Filer {
             }
             if (!atStub) {
                 output.add(line);
-            }
-            else if (meta.matchEndComment(line)) {
+            } else if (meta.matchEndComment(line)) {
                 atStub = false;
             }
         }
@@ -33,9 +32,11 @@ final class SolutionFileFilterProcessor extends Filer {
     private List<String> cleanSolutionMarkers(List<String> input, MetaSyntax meta) {
         List<String> output = new ArrayList<>(input.size());
         for (String line : input) {
-            if (meta.matchSolutionFile(line)) continue;
-            if (meta.matchBeginSolution(line)) continue;
-            if (meta.matchEndSolution(line)) continue;
+            if (meta.matchSolutionFile(line)
+                    || meta.matchBeginSolution(line)
+                    || meta.matchEndSolution(line)) {
+                continue;
+            }
             output.add(line);
         }
         return output;

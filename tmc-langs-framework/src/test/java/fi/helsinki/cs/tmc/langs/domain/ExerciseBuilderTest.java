@@ -1,5 +1,9 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 import com.google.common.collect.ImmutableMap;
 
 import org.apache.commons.io.FileUtils;
@@ -21,10 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 public class ExerciseBuilderTest {
     

@@ -44,7 +44,7 @@ public class Filer {
         try {
             visitFile(source, relativePath);
         } catch (IOException ex) {
-            throw new RuntimeException();
+            throw new RuntimeException(ex);
         }
     }
     
@@ -61,17 +61,17 @@ public class Filer {
     }
     
     private boolean skipFilename(Path source) {
-        logger.info("Looking into file: {} ", source);
         String skipRegex = "\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)";
         if (source.getFileName().toString().matches(skipRegex)) {
             logger.info("Skipping file: {} ", source);
             return true;
         }
+        logger.info("Not skipping file: {} ", source);
         return false;
     }
     
     private boolean looksLikeBinary(Path source) {
-        String nonTextTypes = "class|jar|exe|jpg|jpeg|gif";
+        String nonTextTypes = "class|jar|exe|jpg|jpeg|gif|png";
         return getFileExtension(source).matches(nonTextTypes);
     }
     

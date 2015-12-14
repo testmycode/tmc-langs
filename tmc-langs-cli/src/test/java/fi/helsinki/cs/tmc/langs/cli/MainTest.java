@@ -213,6 +213,7 @@ public class MainTest {
                 new Assertion() {
                     @Override
                     public void checkAssertion() throws Exception {
+// Why is this commented out?
 //                        Mockito.verify(executor).prepareSolution(solutionPath);
                     }
                 });

@@ -26,7 +26,7 @@ public class MetaSyntax {
         
         // Initial spaces left outside stubMarker to maintain indentation
         this.stubMarker = commentStartSyntax + SPACES + STUB + SPACES;
-        this.stubBeginsRegex = commentStartRegex + STUB;
+        this.stubBeginsRegex = commentStartRegex + STUB + "(.*)";
     }
 
     /** True if line looks like {@code " <!-- BEGIN SOLUTION --> " }. */
@@ -46,7 +46,7 @@ public class MetaSyntax {
     
     /** True if line STARTS WITH {@code "*whitespace* <!-- STUB:" }. */
     public boolean matchStubBegins(String line) {
-        return line.matches(stubBeginsRegex + "(.*)");
+        return line.matches(stubBeginsRegex);
     }
     
     /** True if line ends with comment end syntax. **/

@@ -51,7 +51,7 @@ final class StubFileFilterProcessor extends Filer {
                 line = meta.removeEndCommentSyntax(line);
             }
             if (!line.trim().isEmpty()) {
-                // If stub marker was the only line content, don't add empty line
+                // If line only contained metadata, don't add empty line
                 output.add(line);
             }
         }

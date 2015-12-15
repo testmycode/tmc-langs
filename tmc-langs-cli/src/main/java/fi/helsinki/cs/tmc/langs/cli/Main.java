@@ -215,10 +215,6 @@ public final class Main {
                         return FileVisitResult.CONTINUE;
                     }
 
-                    @Override
-                    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path fromPath) {
-                        // Just skip
-                    }
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())
@@ -291,10 +287,6 @@ public final class Main {
                         return FileVisitResult.CONTINUE;
                     }
 
-                    @Override
-                    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path fromPath) {
-                        // Just skip
-                    }
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())

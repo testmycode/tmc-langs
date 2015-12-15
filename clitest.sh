@@ -6,3 +6,5 @@ java -jar tmc-langs-cli/target/tmc-langs-cli-1.0-SNAPSHOT.jar scan-exercise  --e
 cat a
 
 java -jar tmc-langs-cli/target/tmc-langs-cli-1.0-SNAPSHOT.jar prepare-stubs --exercisePath tmc-langs-java/src/test/resources/ant_arith_funcs/ --outputPath arithfuncs-proj
+java -jar tmc-langs-cli/target/tmc-langs-cli-1.0-SNAPSHOT.jar checkstyle --exercisePath tmc-langs-cli/src/test/resources/arith_funcs --outputPath tmp
+cat tmp

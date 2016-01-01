@@ -24,7 +24,6 @@ public class Filer {
     private static final Logger logger = LoggerFactory.getLogger(Filer.class);
 
     private Path toPath;
-
     private LanguagePlugin languagePlugin;
 
     public Filer setToPath(Path toPath) {
@@ -41,99 +40,78 @@ public class Filer {
         return FileVisitResult.CONTINUE;
     }
 
-    public List<String> prepareFile(List<String> file) {
-        return file;
+    public void visitFileExceptionWrapper(Path source, Path relativePath) {
+        try {
+            visitFile(source, relativePath);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    private void visitFile(Path source, Path relativePath) throws IOException {
+        Path destination = toPath.resolve(relativePath);
+        if (skipFilename(source)) {
+            return;
+        }
+        if (looksLikeBinary(source)) {
+            justCopy(source, destination);
+        } else {
+            copyWithFilters(source, destination);
+        }
     }
 
-    List<CommentStyleFileFilter> getCommentStyleFileFilters() {
-        return new ImmutableList.Builder<CommentStyleFileFilter>()
-                .add(
-                        // Basic java
-                        new CommentStyleFileFilter(
-                                // JavaishCommentSyntax
-                                CommentSyntax.newBuilder()
-                                        .addSingleLineComment("\\/\\/")
-                                        .addMultiLineComment("\\/\\*+", "\\*+\\/")
-                                        .build()))
-                .add(
-                        new CommentStyleFileFilter(
-                                // XML comment syntax
-                                CommentSyntax.newBuilder()
-                                        .addMultiLineComment("/\\*", "\\*/")
-                                        .build()))
-                //TODO: add rest of the comment syntaxes
-                .build();
-    }
-
-    protected boolean skipFile(Path file) {
-        List<String> nameSkipList =
-                Arrays.asList(new String[] {".tmcrc", "metadata.yml"});
-        for (String item : nameSkipList) {
-            if (file.getFileName().toString().equals(item)) {
-                return true;
-            }
+    private boolean skipFilename(Path source) {
+        String skipRegex = "\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)";
+        if (source.getFileName().toString().matches(skipRegex)) {
+            logger.info("Skipping file: {} ", source);
+            return true;
         }
-
-        nameSkipList =
-                Arrays.asList(new String[] {"Hidden"});
-        for (String item : nameSkipList) {
-            if (file.getFileName().toString().contains(item)) {
-                return true;
-            }
-        }
+        logger.info("Not skipping file: {} ", source);
         return false;
     }
 
-    /**
-     * Copies and filters the file based on given configuration.
-     *
-     * <p>TODO: refactor, I don't like this.
-     */
-    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path exercisePath) {
-//        System.out.println("file:         " + file);
-//        System.out.println("repoPath:     " + repoPath);
-//        System.out.println("exPath:       " + exercisePath);
-        Path relativePath = file.subpath(repoPath.getNameCount(), file.getNameCount());
-//        System.out.println("relativePath: " + relativePath);
-//        System.out.println("");
-        logger.info("Looking into file: {} ", file);
-        try {
-            if (skipFile(file)) {
-                logger.info("Skipping file: {} ", file);
-                return;
-            }
-            Path toFile = toPath.resolve(relativePath);
-            if (justCopy(file)) {
-                Files.createDirectories(toFile.getParent());
-                Files.copy(file, toFile, StandardCopyOption.REPLACE_EXISTING);
-                logger.info("Just copying file from: {} to:{}", file, toFile);
-            } else {
-                List<String> data = readFile(file);
-                List<String> output = prepareFile(data);
-                if (!output.isEmpty()) {
-                    Files.createDirectories(toFile.getParent());
-                    Files.write(toFile, output, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-                    logger.info("Filtered file while copying from: {} to:{}", file, toFile);
-                } else {
-                    logger.info("skipped file as empty while copying from: {} to:{}", file, toFile);
-                }
-            }
-        } catch (IOException ex) {
-            throw new IllegalStateException(ex);
+    private boolean looksLikeBinary(Path source) {
+        String nonTextTypes = "class|jar|exe|jpg|jpeg|gif|png";
+        return getFileExtension(source).matches(nonTextTypes);
+    }
+
+    private void justCopy(Path source, Path destination) throws IOException {
+        logger.info("Just copying file from: {} to:{}", source, destination);
+        Files.createDirectories(destination.getParent());
+        Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private void copyWithFilters(Path source, Path destination) throws IOException {
+        List<String> data = prepareFile(readFile(source), getFileExtension(source));
+        logger.info("Filtered file while copying from: {} to:{}", source, destination);
+        if (data.isEmpty()) {
+            logger.info("skipped file as empty while copying from: {} to:{}", source, destination);
+        } else {
+            Files.createDirectories(destination.getParent());
+            Files.write(destination, data, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         }
+    }
+
+    public List<String> prepareFile(List<String> data, String fileType) {
+        List<MetaSyntax> syntaxes = MetaSyntaxGenerator.listSyntaxes(fileType);
+        for (MetaSyntax metaSyntax : syntaxes) {
+            data = filterData(data, metaSyntax);
+        }
+        return data;
+    }
+
+    List<String> filterData(List<String> data, MetaSyntax metaSyntax) {
+        return data; // usually overridden, not always
     }
 
     /*
      * Note: we need to use the inputStream for reading more interesting filetypes.
      */
-    private List<String> readFile(Path file) {
+    protected List<String> readFile(Path file) throws IOException {
         List<String> data = new ArrayList<>();
-        try (Scanner scanner = new Scanner(Files.newInputStream(file))) {
-            while (scanner.hasNextLine()) {
-                data.add(scanner.nextLine());
-            }
-        } catch (IOException ex) {
-            throw new IllegalStateException(ex);
+        Scanner scanner = new Scanner(Files.newInputStream(file));
+        while (scanner.hasNextLine()) {
+            data.add(scanner.nextLine());
         }
         return data;
     }
@@ -145,11 +123,5 @@ public class Filer {
         } catch (Exception e) {
             return "";
         }
-    }
-
-    // TODO: make it more accurate by seeing if the file is kinda like text...
-    protected final boolean justCopy(Path file) {
-        List<String> skipList = Arrays.asList(new String[] {"class", "jar"});
-        return file.toFile().isFile() && skipList.contains(getFileExtension(file));
     }
 }

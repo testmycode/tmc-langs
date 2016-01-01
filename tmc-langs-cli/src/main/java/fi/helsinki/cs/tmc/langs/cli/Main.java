@@ -216,13 +216,13 @@ public final class Main {
                     }
 
                     @Override
-                    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path fromPath) {
-                        // Just skip
+                    public void visitFileExceptionWrapper(Path source, Path relativePath) {
                     }
+
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())
-                .setClonePath(getExercisePathFromArgs())
+                .setClonePath(clonePath)
                 .setFiler(exerciseMatchingFiler)
                 .traverse();
 
@@ -290,11 +290,10 @@ public final class Main {
                         }
                         return FileVisitResult.CONTINUE;
                     }
-
                     @Override
-                    public void maybeCopyAndFilterFile(Path file, Path repoPath, Path fromPath) {
-                        // Just skip
+                    public void visitFileExceptionWrapper(Path source, Path relativePath) {
                     }
+
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())

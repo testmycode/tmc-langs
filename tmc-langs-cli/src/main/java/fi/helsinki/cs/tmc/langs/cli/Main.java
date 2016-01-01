@@ -67,7 +67,7 @@ public final class Main {
                     + "      Run the tests for the exercise.\n"
                     + " scan-exercise --exercisePath --outputPath"
                     + "  Produce an exercise description of an exercise directory.\n"
-                    + " find-exercises <scan path> <output path>"
+                    + " find-exercises --exercisePath <scan path> --outputPath <output path>"
                     + "  Produce list of found exercises.";
 
     /**

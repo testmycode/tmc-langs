@@ -39,7 +39,7 @@ public class Filer {
     public FileVisitResult decideOnDirectory(Path directory) {
         return FileVisitResult.CONTINUE;
     }
-    
+
     public void visitFileExceptionWrapper(Path source, Path relativePath) {
         try {
             visitFile(source, relativePath);
@@ -59,7 +59,7 @@ public class Filer {
             copyWithFilters(source, destination);
         }
     }
-    
+
     private boolean skipFilename(Path source) {
         String skipRegex = "\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)";
         if (source.getFileName().toString().matches(skipRegex)) {
@@ -69,18 +69,18 @@ public class Filer {
         logger.info("Not skipping file: {} ", source);
         return false;
     }
-    
+
     private boolean looksLikeBinary(Path source) {
         String nonTextTypes = "class|jar|exe|jpg|jpeg|gif|png";
         return getFileExtension(source).matches(nonTextTypes);
     }
-    
+
     private void justCopy(Path source, Path destination) throws IOException {
         logger.info("Just copying file from: {} to:{}", source, destination);
         Files.createDirectories(destination.getParent());
         Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
     }
-    
+
     private void copyWithFilters(Path source, Path destination) throws IOException {
         List<String> data = prepareFile(readFile(source), getFileExtension(source));
         logger.info("Filtered file while copying from: {} to:{}", source, destination);
@@ -91,7 +91,7 @@ public class Filer {
             Files.write(destination, data, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         }
     }
-    
+
     public List<String> prepareFile(List<String> data, String fileType) {
         List<MetaSyntax> syntaxes = MetaSyntaxGenerator.listSyntaxes(fileType);
         for (MetaSyntax metaSyntax : syntaxes) {
@@ -99,11 +99,11 @@ public class Filer {
         }
         return data;
     }
-    
+
     List<String> filterData(List<String> data, MetaSyntax metaSyntax) {
         return data; // usually overridden, not always
-    }    
-    
+    }
+
     /*
      * Note: we need to use the inputStream for reading more interesting filetypes.
      */

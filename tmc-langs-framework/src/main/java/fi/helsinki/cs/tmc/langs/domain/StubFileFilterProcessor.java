@@ -6,13 +6,13 @@ import java.util.regex.Matcher;
 
 final class StubFileFilterProcessor extends Filer {
 
-    @Override    
+    @Override
     List<String> filterData(List<String> data, MetaSyntax meta) {
         data = removeSolutions(data, meta);
         data = cleanStubMarkers(data, meta);
         return data;
     }
-    
+
     private List<String> removeSolutions(List<String> input, MetaSyntax meta) {
         boolean atSolution = false;
         List<String> output = new ArrayList<String>();
@@ -30,18 +30,18 @@ final class StubFileFilterProcessor extends Filer {
                 atSolution = false;
             }
         }
-        return output;    
+        return output;
     }
 
     /**
-    * NOTE: traditional comments inside multiline stubs will cause problems.
-    */
+     * NOTE: traditional comments inside multiline stubs will cause problems.
+     */
     private List<String> cleanStubMarkers(List<String> input, MetaSyntax meta) {
         boolean atStub = false;
         List<String> output = new ArrayList<String>();
         for (String line : input) {
             if (line.trim().isEmpty()) {
-                output.add(line); 
+                output.add(line);
                 continue;
             }
             if (meta.matchStubBegins(line)) {
@@ -57,6 +57,6 @@ final class StubFileFilterProcessor extends Filer {
                 output.add(line);
             }
         }
-        return output;  
+        return output;
     }
 }

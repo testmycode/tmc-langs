@@ -155,7 +155,8 @@ public class AntPlugin extends AbstractJavaPlugin {
         classPath.addDirAndContents(path.resolve("lib"));
         classPath.add(path.resolve(Paths.get("build", "test", "classes")));
         classPath.add(path.resolve(Paths.get("build", "classes")));
-        classPath.add(path.resolve(Paths.get(System.getProperty("JAVA_HOME"),"..","lib","tools.jar")));
+        classPath.add(
+                path.resolve(Paths.get(System.getProperty("JAVA_HOME"), "..", "lib", "tools.jar")));
 
         copyTmcJunitRunner(path);
         return classPath;

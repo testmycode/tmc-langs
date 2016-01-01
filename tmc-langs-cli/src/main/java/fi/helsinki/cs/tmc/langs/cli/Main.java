@@ -45,8 +45,7 @@ public final class Main {
     private static final String EXERCISE_PATH = "exercisePath";
     private static final String OUTPUT_PATH = "outputPath";
 
-    @VisibleForTesting
-    static Map<String, Path> argsMap = Maps.newHashMap();
+    @VisibleForTesting static Map<String, Path> argsMap = Maps.newHashMap();
 
     @VisibleForTesting
     static final String HELP_TEXT =
@@ -80,7 +79,7 @@ public final class Main {
 
         String command = args[0];
 
-        if ( "h".equals(command) || "help".equals(command)) {
+        if ("h".equals(command) || "help".equals(command)) {
             printHelpAndExit();
         }
 
@@ -193,7 +192,7 @@ public final class Main {
             JsonWriter.writeObjectIntoJsonFormat(exerciseDesc.get(), getOutputPathFromArgs());
             System.out.println(
                     "Exercises scanned successfully, results can be found in "
-                    + getOutputPathFromArgs());
+                            + getOutputPathFromArgs());
         } catch (IOException e) {
             logger.error("Could not write output to {}", getOutputPathFromArgs(), e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
@@ -216,9 +215,7 @@ public final class Main {
                     }
 
                     @Override
-                    public void visitFileExceptionWrapper(Path source, Path relativePath) {
-                    }
-
+                    public void visitFileExceptionWrapper(Path source, Path relativePath) {}
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())
@@ -290,10 +287,9 @@ public final class Main {
                         }
                         return FileVisitResult.CONTINUE;
                     }
-                    @Override
-                    public void visitFileExceptionWrapper(Path source, Path relativePath) {
-                    }
 
+                    @Override
+                    public void visitFileExceptionWrapper(Path source, Path relativePath) {}
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())

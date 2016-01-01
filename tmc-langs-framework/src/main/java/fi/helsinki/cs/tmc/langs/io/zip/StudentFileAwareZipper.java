@@ -21,7 +21,7 @@ public final class StudentFileAwareZipper implements Zipper {
     private static final Logger log = LoggerFactory.getLogger(StudentFileAwareZipper.class);
     private StudentFilePolicy filePolicy;
 
-    public StudentFileAwareZipper() { }
+    public StudentFileAwareZipper() {}
 
     public StudentFileAwareZipper(StudentFilePolicy filePolicy) {
         this.filePolicy = filePolicy;
@@ -50,10 +50,8 @@ public final class StudentFileAwareZipper implements Zipper {
         return buffer.toByteArray();
     }
 
-
-    private void zipRecursively(Path currentPath,
-                                ZipArchiveOutputStream zipStream,
-                                Path zipParent) throws IOException {
+    private void zipRecursively(Path currentPath, ZipArchiveOutputStream zipStream, Path zipParent)
+            throws IOException {
 
         log.trace("Processing {}", currentPath);
 
@@ -76,9 +74,8 @@ public final class StudentFileAwareZipper implements Zipper {
         }
     }
 
-    private void writeToZip(Path currentPath,
-                            ZipArchiveOutputStream zipStream,
-                            Path zipParent) throws IOException {
+    private void writeToZip(Path currentPath, ZipArchiveOutputStream zipStream, Path zipParent)
+            throws IOException {
 
         log.trace("Writing {} to zip", currentPath);
 

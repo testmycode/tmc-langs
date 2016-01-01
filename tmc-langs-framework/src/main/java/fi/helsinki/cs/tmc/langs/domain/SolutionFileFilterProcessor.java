@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class SolutionFileFilterProcessor extends Filer {
-    
-    @Override    
+
+    @Override
     List<String> filterData(List<String> data, MetaSyntax meta) {
         data = removeStubs(data, meta);
         data = cleanSolutionMarkers(data, meta);
         return data;
     }
-    
+
     private List<String> removeStubs(List<String> input, MetaSyntax meta) {
         boolean atStub = false;
         List<String> output = new ArrayList<String>();
@@ -26,9 +26,9 @@ final class SolutionFileFilterProcessor extends Filer {
                 atStub = false;
             }
         }
-        return output;    
+        return output;
     }
-    
+
     private List<String> cleanSolutionMarkers(List<String> input, MetaSyntax meta) {
         List<String> output = new ArrayList<>(input.size());
         for (String line : input) {
@@ -41,5 +41,4 @@ final class SolutionFileFilterProcessor extends Filer {
         }
         return output;
     }
-   
 }

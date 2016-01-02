@@ -55,9 +55,9 @@ public final class Main {
                     + "     Run checkstyle or similar plugin to project if applicable.\n"
                     + " help"
                     + "                                         Display help information.\n"
-                    + " prepare-solution --exercisePath"
+                    + " prepare-solution --exercisePath --outputPath"
                     + "             Prepare a presentable solution from the original.\n"
-                    + " prepare-stub --exercisePath"
+                    + " prepare-stub --exercisePath -- outputPath"
                     + "                 Prepare a stub exercise from the original.\n"
                     + " prepare-submission  --clonePath --submissionPath --outputPath"
                     + "      Prepares from submission and solution project for which the tests"
@@ -66,7 +66,7 @@ public final class Main {
                     + "      Run the tests for the exercise.\n"
                     + " scan-exercise --exercisePath --outputPath"
                     + "  Produce an exercise description of an exercise directory.\n"
-                    + " find-exercises --exercisePath <scan path> --outputPath <output path>"
+                    + " find-exercises --exercisePath --outputPath"
                     + "  Produce list of found exercises.";
 
     /**

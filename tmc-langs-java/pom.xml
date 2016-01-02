@@ -169,6 +169,7 @@
                         <exclude>**/reflection_utils_maven_test_case/**/*</exclude>
                         <exclude>**/failing_maven_exercise_with_class_points/**/*</exclude>
                         <exclude>**/passing_maven_exercise_with_class_points/**/*</exclude>
+                        <exclude>**/UsingToolsJar/**/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

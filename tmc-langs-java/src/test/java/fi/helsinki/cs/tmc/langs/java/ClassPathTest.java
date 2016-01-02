@@ -23,6 +23,7 @@ public class ClassPathTest {
 
     @Test
     public void testConstructor() {
+        // TODO: don't rely on tostring representation with the tests
         assertTrue(
                 "ClassPath didn't contain path that was passed in constructor",
                 cp.toString().contains("ant_project"));

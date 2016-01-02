@@ -4,11 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
+import fi.helsinki.cs.tmc.langs.java.ClassPath;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
@@ -159,8 +161,8 @@ public class AntPluginTest {
     @Test(expected = TestScannerException.class)
     public void createRunResultFileThrowsTestScannerExceptionOnTestScannerFailure()
             throws TestScannerException, TestRunnerException {
-        AntPlugin plugin
-                = new AntPlugin() {
+        AntPlugin plugin =
+                new AntPlugin() {
                     @Override
                     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
                         return Optional.absent();
@@ -175,5 +177,33 @@ public class AntPluginTest {
         List<String> expectedLines = FileUtils.readLines(expected);
         List<String> actualLines = FileUtils.readLines(actual);
         assertEquals("Build log should match by length", expectedLines.size(), actualLines.size());
+    }
+
+    @Test
+    public void toolsJarIsIncludedToThePath() {
+        Path project = TestUtils.getPath(getClass(), "UsingToolsJar");
+        ClassPath cp = antPlugin.getProjectClassPath(project);
+        assertPathContains(cp, "tools.jar");
+        String name = "ToolsJar";
+        ExerciseDesc description = antPlugin.scanExercise(project, name).get();
+        assertEquals(name, description.name);
+        assertEquals(1, description.tests.size());
+        RunResult runResult = antPlugin.runTests(project);
+        assertEquals(RunResult.Status.PASSED, runResult.status);
+        assertTrue("Logs should be empty", runResult.logs.isEmpty());
+        assertEquals(1, runResult.testResults.size());
+    }
+
+    private void assertPathContains(ClassPath cp, String file) {
+        boolean found = false;
+        for (Path path : cp.getPaths()) {
+            if (path.endsWith(Paths.get(file))) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue(
+                "ClassPath should have contained \"" + file + "\". It contained " + cp.getPaths(),
+                found);
     }
 }

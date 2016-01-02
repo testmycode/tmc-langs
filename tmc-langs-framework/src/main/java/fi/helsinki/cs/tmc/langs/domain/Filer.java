@@ -40,23 +40,19 @@ public class Filer {
         return FileVisitResult.CONTINUE;
     }
 
-    public void visitFileExceptionWrapper(Path source, Path relativePath) {
+    public void visitFile(Path source, Path relativePath) {
         try {
-            visitFile(source, relativePath);
+            Path destination = toPath.resolve(relativePath);
+            if (skipFilename(source)) {
+                return;
+            }
+            if (looksLikeBinary(source)) {
+                justCopy(source, destination);
+            } else {
+                copyWithFilters(source, destination);
+            }
         } catch (IOException ex) {
             throw new RuntimeException(ex);
-        }
-    }
-
-    private void visitFile(Path source, Path relativePath) throws IOException {
-        Path destination = toPath.resolve(relativePath);
-        if (skipFilename(source)) {
-            return;
-        }
-        if (looksLikeBinary(source)) {
-            justCopy(source, destination);
-        } else {
-            copyWithFilters(source, destination);
         }
     }
 

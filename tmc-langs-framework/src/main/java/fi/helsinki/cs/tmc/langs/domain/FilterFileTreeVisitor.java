@@ -70,7 +70,7 @@ public class FilterFileTreeVisitor {
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                             Path relativePath =
                                     file.subpath(repoPath.getNameCount(), file.getNameCount());
-                            filer.visitFileExceptionWrapper(file, relativePath);
+                            filer.visitFile(file, relativePath);
                             return FileVisitResult.CONTINUE;
                         }
 

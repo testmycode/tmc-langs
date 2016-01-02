@@ -215,7 +215,7 @@ public final class Main {
                     }
 
                     @Override
-                    public void visitFileExceptionWrapper(Path source, Path relativePath) {}
+                    public void visitFile(Path source, Path relativePath) {}
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())
@@ -289,7 +289,7 @@ public final class Main {
                     }
 
                     @Override
-                    public void visitFileExceptionWrapper(Path source, Path relativePath) {}
+                    public void visitFile(Path source, Path relativePath) {}
                 };
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())

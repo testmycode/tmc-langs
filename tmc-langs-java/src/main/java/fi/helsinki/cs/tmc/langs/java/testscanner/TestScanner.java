@@ -6,6 +6,9 @@ import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 
 import com.google.common.base.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +18,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 public class TestScanner {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestScanner.class);
 
     private final JavaCompiler compiler;
     private final StandardJavaFileManager fileManager;
@@ -30,6 +35,7 @@ public class TestScanner {
     public Optional<ExerciseDesc> findTests(
             ClassPath classPath, SourceFiles sourceFiles, String exerciseName) {
         if (sourceFiles.isEmpty()) {
+            logger.warn("No testfiles available for exercise: {}.",  exerciseName);
             return Optional.absent();
         }
 

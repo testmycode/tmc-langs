@@ -84,18 +84,17 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         if (!isExerciseTypeCorrect(path)) {
             return Optional.absent();
         }
-
         SourceFiles sourceFiles = new SourceFiles();
         sourceFiles.addSource(path.resolve(testFolderPath).toFile());
 
         ClassPath classPath;
         try {
             classPath = getProjectClassPath(path);
+
         } catch (IOException ex) {
             log.error("Unable to get classpath", ex);
             return Optional.absent();
         }
-
         return testScanner.findTests(classPath, sourceFiles, exerciseName);
     }
 

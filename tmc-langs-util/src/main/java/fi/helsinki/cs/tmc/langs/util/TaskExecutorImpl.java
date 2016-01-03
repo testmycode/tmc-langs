@@ -37,6 +37,7 @@ public class TaskExecutorImpl implements TaskExecutor {
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName)
             throws NoLanguagePluginFoundException {
         Optional<ExerciseDesc> result = getLanguagePlugin(path).scanExercise(path, exerciseName);
+
         if (result.isPresent()) {
             return result;
         }

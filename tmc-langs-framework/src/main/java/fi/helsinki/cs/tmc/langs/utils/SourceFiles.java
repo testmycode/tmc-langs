@@ -50,4 +50,9 @@ public final class SourceFiles {
     public boolean isEmpty() {
         return sourceFiles.isEmpty();
     }
+
+    @Override
+    public String toString() {
+        return "<SourceFile: list=" + sourceFiles + ">";
+    }
 }

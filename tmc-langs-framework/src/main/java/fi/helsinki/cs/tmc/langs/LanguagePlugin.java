@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -117,10 +118,12 @@ public interface LanguagePlugin {
      * Run checkstyle or similar plugin to project if applicable
      *
      * @param path The path to the exercise directory.
+     * @param locale Locale to use for code style messages.
      * @return Validation result of the checkstyle ran, or null if not
      *     applicable
      */
-    ValidationResult checkCodeStyle(Path path) throws UnsupportedOperationException;
+    ValidationResult checkCodeStyle(Path path, Locale messageLocale)
+            throws UnsupportedOperationException;
 
     /**
      * Compress a given project so that it can be sent to the TestMyCode server.

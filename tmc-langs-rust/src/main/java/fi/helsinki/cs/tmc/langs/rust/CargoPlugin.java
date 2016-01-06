@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class CargoPlugin extends AbstractLanguagePlugin {
 
@@ -59,7 +60,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ValidationResult checkCodeStyle(Path path) {
+    public ValidationResult checkCodeStyle(Path path, Locale locale) {
         if (run(new String[] {"cargo", "clean"}, path).isPresent()) {
             String[] command = {"cargo", "rustc", "--", "--forbid", "warnings"};
             log.info("Building for lints with command {0}", Arrays.deepToString(command));

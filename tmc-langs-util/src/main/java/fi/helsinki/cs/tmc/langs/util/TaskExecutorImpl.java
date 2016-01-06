@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Map;
 
 public class TaskExecutorImpl implements TaskExecutor {
@@ -24,8 +25,9 @@ public class TaskExecutorImpl implements TaskExecutor {
     private static final Logger log = LoggerFactory.getLogger(TaskExecutorImpl.class);
 
     @Override
-    public ValidationResult runCheckCodeStyle(Path path) throws NoLanguagePluginFoundException {
-        return getLanguagePlugin(path).checkCodeStyle(path);
+    public ValidationResult runCheckCodeStyle(Path path, Locale locale)
+            throws NoLanguagePluginFoundException {
+        return getLanguagePlugin(path).checkCodeStyle(path, locale);
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.google.common.base.Optional;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -44,7 +45,8 @@ public interface TaskExecutor {
      * {@link fi.helsinki.cs.tmc.langs.LanguagePlugin#checkCodeStyle(java.nio.file.Path)
      * checkCodeStyle(Path path)} task.
      */
-    ValidationResult runCheckCodeStyle(Path path) throws NoLanguagePluginFoundException;
+    ValidationResult runCheckCodeStyle(Path path, Locale locale)
+            throws NoLanguagePluginFoundException;
 
     /**
      * Finds the correct language plug-in for the given exercise path. After which calls the

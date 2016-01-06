@@ -18,7 +18,6 @@ import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
 
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -68,9 +67,9 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             throws TestRunnerException, TestScannerException;
 
     @Override
-    public ValidationResult checkCodeStyle(Path path) {
+    public ValidationResult checkCodeStyle(Path path, Locale msgLocale) {
         try {
-            CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), new Locale("fi"));
+            CheckstyleRunner runner = new CheckstyleRunner(path.toFile(), msgLocale);
 
             return runner.run();
         } catch (TMCCheckstyleException ex) {
@@ -114,6 +113,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         }
 
         RunResult result = resultParser.parseTestResult(resultFile);
+
         resultFile.delete();
 
         return result;

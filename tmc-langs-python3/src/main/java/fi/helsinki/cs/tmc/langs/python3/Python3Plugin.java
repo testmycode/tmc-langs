@@ -1,6 +1,8 @@
 package fi.helsinki.cs.tmc.langs.python3;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
+import fi.helsinki.cs.tmc.langs.abstraction.Strategy;
+import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
@@ -14,6 +16,7 @@ import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -21,10 +24,14 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public final class Python3Plugin extends AbstractLanguagePlugin {
 
@@ -111,8 +118,18 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ValidationResult checkCodeStyle(Path path) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ValidationResult checkCodeStyle(Path path, Locale locale) {
+        return new ValidationResult() {
+            @Override
+            public Strategy getStrategy() {
+                return Strategy.DISABLED;
+            }
+
+            @Override
+            public Map<File, List<ValidationError>> getValidationErrors() {
+                return Maps.newHashMap();
+            }
+        };
     }
 
     private String[] getAvailablePointsCommand() {

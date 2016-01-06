@@ -56,8 +56,6 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      */
     protected abstract StudentFilePolicy getStudentFilePolicy(Path projectPath);
 
-    public abstract ValidationResult checkCodeStyle(Path path);
-
     @Override
     public String getLanguageName() {
         return getPluginName();

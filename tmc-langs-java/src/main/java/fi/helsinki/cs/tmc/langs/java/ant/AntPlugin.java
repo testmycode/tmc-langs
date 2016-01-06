@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.java.ant;
 
+import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;

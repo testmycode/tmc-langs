@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,14 +45,15 @@ public final class Main {
 
     private static final String EXERCISE_PATH = "exercisePath";
     private static final String OUTPUT_PATH = "outputPath";
+    private static final String LOCALE = "locale";
 
-    @VisibleForTesting static Map<String, Path> argsMap = Maps.newHashMap();
+    @VisibleForTesting static Map<String, String> argsMap = Maps.newHashMap();
 
     @VisibleForTesting
     static final String HELP_TEXT =
             " Usage: Main <command> [<command-arguments>] \n\n"
                     + " Commands:\n"
-                    + " checkstyle --exercisePath --outputPath"
+                    + " checkstyle --exercisePath --outputPath --locale"
                     + "     Run checkstyle or similar plugin to project if applicable.\n"
                     + " help"
                     + "                                         Display help information.\n"
@@ -134,28 +136,34 @@ public final class Main {
     }
 
     private static Path getExercisePathFromArgs() {
-        if (argsMap.containsKey("exercisePath")) {
-            return argsMap.get("exercisePath");
+        if (argsMap.containsKey(EXERCISE_PATH)) {
+            return Paths.get(argsMap.get(EXERCISE_PATH));
         }
-        throw new IllegalStateException("No exercisePath provided");
+        throw new IllegalStateException("No " + EXERCISE_PATH + " provided");
+    }
+
+    private static Locale getLocaleFromArgs() {
+        if (argsMap.containsKey(LOCALE)) {
+            return new Locale(argsMap.get(LOCALE));
+        }
+        throw new IllegalStateException("No " + LOCALE + " provided");
     }
 
     private static Path getOutputPathFromArgs() {
-        if (argsMap.containsKey("outputPath")) {
-            return argsMap.get("outputPath");
+        if (argsMap.containsKey(OUTPUT_PATH)) {
+            return Paths.get(argsMap.get(OUTPUT_PATH));
         }
-        throw new IllegalStateException("No outputPath provided");
+        throw new IllegalStateException("No " + OUTPUT_PATH + " provided");
     }
 
     private static void runCheckCodeStyle() {
         ValidationResult validationResult = null;
         try {
-            validationResult = executor.runCheckCodeStyle(getExercisePathFromArgs());
+            validationResult =
+                    executor.runCheckCodeStyle(getExercisePathFromArgs(), getLocaleFromArgs());
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
-                    "Could not find a language plugin for the project at {}",
-                    getExercisePathFromArgs(),
-                    e);
+                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
             printErrAndExit(
                     "ERROR: Could not find suitable language plugin for the given exercise "
                             + "path.");
@@ -342,7 +350,7 @@ public final class Main {
                 commandName = commandName.substring(1);
             }
 
-            argsMap.put(commandName, Paths.get(commandValue));
+            argsMap.put(commandName, commandValue);
         }
     }
 

@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 public class Python3PluginTest {
 
@@ -79,7 +80,7 @@ public class Python3PluginTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void checkCodeStyleThrowsUnsupportedOperationException() {
-        python3Plugin.checkCodeStyle(Paths.get(""));
+        python3Plugin.checkCodeStyle(Paths.get(""), new Locale("en"));
     }
 
     @Test

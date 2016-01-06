@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -115,7 +116,7 @@ public class CargoPluginTest {
     @Test
     public void lintingWorksWithOneError() {
         Path path = TestUtils.getPath(getClass(), "warning");
-        ValidationResult result = cargoPlugin.checkCodeStyle(path);
+        ValidationResult result = cargoPlugin.checkCodeStyle(path, new Locale("en"));
         Map<File, List<ValidationError>> errors = result.getValidationErrors();
         assertEquals(1, errors.size());
         assertEquals(Paths.get("src", "lib.rs"), errors.keySet().iterator().next().toPath());
@@ -125,7 +126,7 @@ public class CargoPluginTest {
     @Test
     public void lintingHasRightErrorWithOneError() {
         Path path = TestUtils.getPath(getClass(), "warning");
-        ValidationResult result = cargoPlugin.checkCodeStyle(path);
+        ValidationResult result = cargoPlugin.checkCodeStyle(path, new Locale("en"));
         ValidationError validation = result
                 .getValidationErrors().values()
                 .iterator().next().get(0);
@@ -138,7 +139,7 @@ public class CargoPluginTest {
     @Test
     public void lintingWorksWithTwoErrors() {
         Path path = TestUtils.getPath(getClass(), "warnings");
-        ValidationResult result = cargoPlugin.checkCodeStyle(path);
+        ValidationResult result = cargoPlugin.checkCodeStyle(path, new Locale("en"));
         Map<File, List<ValidationError>> errors = result.getValidationErrors();
         assertEquals(1, errors.size());
         assertEquals(Paths.get("src", "lib.rs"), errors.keySet().iterator().next().toPath());
@@ -148,7 +149,7 @@ public class CargoPluginTest {
     @Test
     public void lintingHasRightErrorsWithTwoErrors() {
         Path path = TestUtils.getPath(getClass(), "warnings");
-        ValidationResult result = cargoPlugin.checkCodeStyle(path);
+        ValidationResult result = cargoPlugin.checkCodeStyle(path, new Locale("en"));
         List<ValidationError> errors = result.getValidationErrors().values()
                 .iterator().next();
         ValidationError validation1 = errors.get(0);
@@ -172,7 +173,7 @@ public class CargoPluginTest {
     @Test
     public void lintingWorksWithTwoFiles() {
         Path path = TestUtils.getPath(getClass(), "warningFiles");
-        ValidationResult result = cargoPlugin.checkCodeStyle(path);
+        ValidationResult result = cargoPlugin.checkCodeStyle(path, new Locale("en"));
         Map<File, List<ValidationError>> errors = result.getValidationErrors();
         assertEquals(2, errors.size());
         Iterator<Entry<File, List<ValidationError>>> errorIt = errors.entrySet().iterator();
@@ -192,7 +193,7 @@ public class CargoPluginTest {
     @Test
     public void lintingHasRightErrorsWithTwoFiles() {
         Path path = TestUtils.getPath(getClass(), "warningFiles");
-        ValidationResult result = cargoPlugin.checkCodeStyle(path);
+        ValidationResult result = cargoPlugin.checkCodeStyle(path, new Locale("en"));
         Map<File, List<ValidationError>> errors = result.getValidationErrors();
         Iterator<Entry<File, List<ValidationError>>> errorIt = errors.entrySet().iterator();
         Entry<File, List<ValidationError>> error1 = errorIt.next();

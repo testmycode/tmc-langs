@@ -24,6 +24,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainTest {
 
@@ -54,8 +55,9 @@ public class MainTest {
                     @Override
                     public void checkAssertion() throws Exception {
                         Mockito.verifyZeroInteractions(executor);
-                        assertTrue("Error output should be clean, but it was "
-                                + mio.getSysErr(), mio.getSysErr().isEmpty());
+                        assertTrue(
+                                "Error output should be clean, but it was " + mio.getSysErr(),
+                                mio.getSysErr().isEmpty());
                         assertContains(helpText, mio.getSysOut());
                     }
                 });
@@ -71,8 +73,9 @@ public class MainTest {
                     @Override
                     public void checkAssertion() throws Exception {
                         Mockito.verifyZeroInteractions(executor);
-                        assertTrue("Error output should be clean, but it was "
-                                + mio.getSysErr(), mio.getSysErr().isEmpty());
+                        assertTrue(
+                                "Error output should be clean, but it was " + mio.getSysErr(),
+                                mio.getSysErr().isEmpty());
                         assertContains(helpText, mio.getSysOut());
                     }
                 });
@@ -88,8 +91,9 @@ public class MainTest {
                     @Override
                     public void checkAssertion() throws Exception {
                         Mockito.verifyZeroInteractions(executor);
-                        assertTrue("Error output should be clean, but it was "
-                                + mio.getSysErr(), mio.getSysErr().isEmpty());
+                        assertTrue(
+                                "Error output should be clean, but it was " + mio.getSysErr(),
+                                mio.getSysErr().isEmpty());
                         assertContains(helpText, mio.getSysOut());
                     }
                 });
@@ -105,8 +109,9 @@ public class MainTest {
                     @Override
                     public void checkAssertion() throws Exception {
                         Mockito.verifyZeroInteractions(executor);
-                        assertTrue("Error output should be clean, but it was "
-                                + mio.getSysErr(), mio.getSysErr().isEmpty());
+                        assertTrue(
+                                "Error output should be clean, but it was " + mio.getSysErr(),
+                                mio.getSysErr().isEmpty());
                         assertContains(helpText, mio.getSysOut());
                     }
                 });
@@ -135,8 +140,9 @@ public class MainTest {
                                         + outputPath
                                         + "\n",
                                 mio.getSysOut());
-                        assertTrue("Error output should be clean, but it was "
-                                + mio.getSysErr(), mio.getSysErr().isEmpty());
+                        assertTrue(
+                                "Error output should be clean, but it was " + mio.getSysErr(),
+                                mio.getSysErr().isEmpty());
                     }
                 });
         String[] args = {"scan-exercise", EXERCISE_PATH, exercisePath, OUTPUT_PATH, outputPath};
@@ -158,8 +164,9 @@ public class MainTest {
                         assertContains(
                                 "Test results can be found in " + outputPath + "\n",
                                 mio.getSysOut());
-                        assertTrue("Error output should be clean, but it was "
-                                + mio.getSysErr(), mio.getSysErr().isEmpty());
+                        assertTrue(
+                                "Error output should be clean, but it was " + mio.getSysErr(),
+                                mio.getSysErr().isEmpty());
                     }
                 });
         Main.main(args);
@@ -176,12 +183,14 @@ public class MainTest {
                 new Assertion() {
                     @Override
                     public void checkAssertion() throws Exception {
-                        Mockito.verify(executor).runCheckCodeStyle(Paths.get(exercisePath));
+                        Mockito.verify(executor)
+                                .runCheckCodeStyle(Paths.get(exercisePath), new Locale("en"));
                         assertContains(
                                 "Codestyle report can be found at " + outputPath + "\n",
                                 mio.getSysOut());
-                        assertTrue("Error output should be clean, but it was "
-                                + mio.getSysErr(), mio.getSysErr().isEmpty());
+                        assertTrue(
+                                "Error output should be clean, but it was " + mio.getSysErr(),
+                                mio.getSysErr().isEmpty());
                     }
                 });
         Main.main(args);
@@ -197,7 +206,7 @@ public class MainTest {
                 new Assertion() {
                     @Override
                     public void checkAssertion() throws Exception {
-//                        Mockito.verify(executor).prepareStub(stubPath);
+                        //                        Mockito.verify(executor).prepareStub(stubPath);
                     }
                 });
         Main.main(args);
@@ -213,8 +222,8 @@ public class MainTest {
                 new Assertion() {
                     @Override
                     public void checkAssertion() throws Exception {
-// Why is this commented out?
-//                        Mockito.verify(executor).prepareSolution(solutionPath);
+                        // Why is this commented out?
+                        //                        Mockito.verify(executor).prepareSolution(solutionPath);
                     }
                 });
         Main.main(args);
@@ -228,11 +237,11 @@ public class MainTest {
      */
     private String getTargetPath(String location) {
         String targetPath = TestUtils.getPath(getClass(), location).toString();
-        
+
         if (targetPath.startsWith("file:/")) {
             return targetPath.substring(5);
         }
-        
+
         return targetPath;
     }
 

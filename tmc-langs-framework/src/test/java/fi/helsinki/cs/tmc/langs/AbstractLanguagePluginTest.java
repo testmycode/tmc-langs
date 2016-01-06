@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 public class AbstractLanguagePluginTest {
 
@@ -61,7 +62,7 @@ public class AbstractLanguagePluginTest {
         }
 
         @Override
-        public ValidationResult checkCodeStyle(Path path) {
+        public ValidationResult checkCodeStyle(Path path, Locale locale) {
             return null;
         }
 

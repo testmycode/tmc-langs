@@ -1,8 +1,8 @@
 package fi.helsinki.cs.tmc.langs;
 
-import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Stack;
 
@@ -148,7 +149,14 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     @Override
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration() {
+        return new ExercisePackagingConfiguration(
+                ImmutableList.of("src"), ImmutableList.of("test"));
+    }
+
+
+    @Override
     public void maybeCopySharedStuff(Path destPath) {
-        // Ignore
+        // Ignore by default.
     }
 }

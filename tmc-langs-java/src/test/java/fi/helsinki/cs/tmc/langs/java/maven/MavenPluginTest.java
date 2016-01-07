@@ -48,7 +48,8 @@ public class MavenPluginTest {
     @Test
     public void testCheckCodeStyleWithUntestableProject() {
         File projectToTest = new File("src/test/resources/dummy_project/");
-        ValidationResult result = mavenPlugin.checkCodeStyle(projectToTest.toPath(), new Locale("en"));
+        ValidationResult result =
+                mavenPlugin.checkCodeStyle(projectToTest.toPath(), new Locale("en"));
         assertNull(result);
     }
 

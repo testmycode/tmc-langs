@@ -3,9 +3,11 @@ package fi.helsinki.cs.tmc.langs.util;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.util.Map;
  *
  * @see fi.helsinki.cs.tmc.langs.LanguagePlugin
  */
+@Beta
 public interface TaskExecutor {
 
     /**
@@ -97,4 +100,7 @@ public interface TaskExecutor {
      * Compresses a project, creating a zip that can be sent to the TMC server as a submission.
      */
     byte[] compressProject(Path path) throws IOException, NoLanguagePluginFoundException;
+
+    ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path)
+            throws NoLanguagePluginFoundException;
 }

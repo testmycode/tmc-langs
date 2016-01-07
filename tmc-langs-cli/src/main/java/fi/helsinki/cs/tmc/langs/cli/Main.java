@@ -3,6 +3,7 @@ package fi.helsinki.cs.tmc.langs.cli;
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.Filer;
 import fi.helsinki.cs.tmc.langs.domain.FilterFileTreeVisitor;
 import fi.helsinki.cs.tmc.langs.domain.GeneralDirectorySkipper;
@@ -14,8 +15,6 @@ import fi.helsinki.cs.tmc.langs.util.TaskExecutorImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import org.slf4j.Logger;
@@ -69,7 +68,11 @@ public final class Main {
                     + " scan-exercise --exercisePath --outputPath"
                     + "  Produce an exercise description of an exercise directory.\n"
                     + " find-exercises --exercisePath --outputPath"
-                    + "  Produce list of found exercises.";
+                    + "  Produce list of found exercises.\n"
+                    + " get-exercise-packaging-configuration --exercisePath --outputPath"
+                    + "  Returns configuration of under which folders student and nonstudent files"
+                    + " are located.";
+
 
     /**
      * Main entry point for the CLI.
@@ -128,6 +131,9 @@ public final class Main {
                 break;
             case "prepare-solutions":
                 runPrepareSolutions();
+                break;
+            case "get-exercise-packaging-configuration":
+                runGetExercisePackagingConfiguration();
                 break;
             default:
                 printHelpAndExit();
@@ -320,6 +326,28 @@ public final class Main {
                     "ERROR: Could not find suitable language plugin for the given "
                             + "exercise path.");
         }
+    }
+
+    private static void runGetExercisePackagingConfiguration() {
+        ExercisePackagingConfiguration configuration = null;
+        try {
+            configuration = executor.getExercisePackagingConfiguration(getExercisePathFromArgs());
+        } catch (NoLanguagePluginFoundException e) {
+            logger.error(
+                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit(
+                    "ERROR: Could not find suitable language plugin for the given "
+                            + "exercise path.");
+        }
+
+        try {
+            JsonWriter.writeObjectIntoJsonFormat(configuration, getOutputPathFromArgs());
+            System.out.println("Results can be found in " + getOutputPathFromArgs());
+        } catch (IOException e) {
+            logger.error("Could not write output to {}", getOutputPathFromArgs(), e);
+            printErrAndExit("ERROR: Could not write the results to the given file.");
+        }
+
     }
 
     private static void checkTestPath(Path exercisePath) {

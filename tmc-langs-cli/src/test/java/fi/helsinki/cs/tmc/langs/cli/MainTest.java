@@ -177,7 +177,9 @@ public class MainTest {
     public void testRunCheckCodeStyle() {
         final String exercisePath = getTargetPath("arith_funcs");
         final String outputPath = exercisePath + "/exercises.txt";
-        String[] args = {"checkstyle", EXERCISE_PATH, exercisePath, OUTPUT_PATH, outputPath, LOCALE, "en"};
+        String[] args = {
+            "checkstyle", EXERCISE_PATH, exercisePath, OUTPUT_PATH, outputPath, LOCALE, "en"
+        };
 
         exit.expectSystemExitWithStatus(0);
         exit.checkAssertionAfterwards(
@@ -224,7 +226,7 @@ public class MainTest {
                     @Override
                     public void checkAssertion() throws Exception {
                         // Why is this commented out?
-                        //                        Mockito.verify(executor).prepareSolution(solutionPath);
+                        // Mockito.verify(executor).prepareSolution(solutionPath);
                     }
                 });
         Main.main(args);

@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
@@ -10,6 +11,7 @@ import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenTaskRunner.MavenExecutionResult;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 
+import com.google.common.collect.ImmutableList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
@@ -99,5 +102,11 @@ public final class MavenPlugin extends AbstractJavaPlugin {
 
         log.info("Successfully ran tests for maven project at {}", path);
         return path.toAbsolutePath().resolve(RESULT_FILE).toFile();
+    }
+
+    @Override
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration() {
+        return new ExercisePackagingConfiguration(
+                ImmutableList.of("src/main"), ImmutableList.of("src/test"));
     }
 }

@@ -2,8 +2,10 @@ package fi.helsinki.cs.tmc.langs;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
@@ -157,4 +159,10 @@ public interface LanguagePlugin {
      * @param destPath path of the project.
      */
     public void maybeCopySharedStuff(Path destPath);
+
+    /**
+     * Returns configuration which is used to package submission on tmc-server.
+     */
+    @Beta
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration();
 }

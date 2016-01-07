@@ -39,6 +39,7 @@ public class MainTest {
 
     private static final String EXERCISE_PATH = "--exercisePath";
     private static final String OUTPUT_PATH = "--outputPath";
+    private static final String LOCALE = "--locale";
 
     @Before
     public void setUp() {
@@ -176,7 +177,7 @@ public class MainTest {
     public void testRunCheckCodeStyle() {
         final String exercisePath = getTargetPath("arith_funcs");
         final String outputPath = exercisePath + "/exercises.txt";
-        String[] args = {"checkstyle", EXERCISE_PATH, exercisePath, OUTPUT_PATH, outputPath};
+        String[] args = {"checkstyle", EXERCISE_PATH, exercisePath, OUTPUT_PATH, outputPath, LOCALE, "en"};
 
         exit.expectSystemExitWithStatus(0);
         exit.checkAssertionAfterwards(

@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MavenPluginTest {
@@ -35,7 +36,7 @@ public class MavenPluginTest {
     @Test
     public void testCheckCodeStyle() {
         Path project = TestUtils.getPath(getClass(), "most_errors");
-        ValidationResult result = mavenPlugin.checkCodeStyle(project);
+        ValidationResult result = mavenPlugin.checkCodeStyle(project, new Locale("en"));
         Map<File, List<ValidationError>> res = result.getValidationErrors();
         assertEquals("Should be one erroneous file", 1, res.size());
         for (File file : res.keySet()) {
@@ -47,7 +48,7 @@ public class MavenPluginTest {
     @Test
     public void testCheckCodeStyleWithUntestableProject() {
         File projectToTest = new File("src/test/resources/dummy_project/");
-        ValidationResult result = mavenPlugin.checkCodeStyle(projectToTest.toPath());
+        ValidationResult result = mavenPlugin.checkCodeStyle(projectToTest.toPath(), new Locale("en"));
         assertNull(result);
     }
 

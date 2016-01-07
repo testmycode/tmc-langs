@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class AbstractJavaPluginTest {
@@ -97,7 +98,7 @@ public class AbstractJavaPluginTest {
     @Test
     public void testCheckCodeStyle() {
         Path project = TestUtils.getPath(getClass(), "most_errors");
-        ValidationResult result = pluginImpl.checkCodeStyle(project);
+        ValidationResult result = pluginImpl.checkCodeStyle(project, new Locale("en"));
         Map<File, List<ValidationError>> res = result.getValidationErrors();
         assertEquals("Should be one erroneous file", 1, res.size());
         for (File file : res.keySet()) {
@@ -109,7 +110,7 @@ public class AbstractJavaPluginTest {
     @Test
     public void testCheckCodeStyleWithUntestableProject() {
         Path project = TestUtils.getPath(getClass(), "dummy_project");
-        ValidationResult result = pluginImpl.checkCodeStyle(project);
+        ValidationResult result = pluginImpl.checkCodeStyle(project, new Locale("en"));
         assertNull(result);
     }
 

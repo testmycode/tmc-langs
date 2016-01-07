@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import fi.helsinki.cs.tmc.langs.abstraction.Strategy;
+import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
@@ -78,9 +80,11 @@ public class Python3PluginTest {
         assertTrue(policy instanceof Python3StudentFilePolicy);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void checkCodeStyleThrowsUnsupportedOperationException() {
-        python3Plugin.checkCodeStyle(Paths.get(""), new Locale("en"));
+    @Test()
+    public void checkCodeStyleReturnsEmptyResult() {
+        Path path = TestUtils.getPath(getClass(), "passing");
+        ValidationResult result = python3Plugin.checkCodeStyle(path, new Locale("en"));
+        assertTrue(result.getStrategy() == Strategy.DISABLED);
     }
 
     @Test

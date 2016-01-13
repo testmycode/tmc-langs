@@ -83,6 +83,12 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         if (!isExerciseTypeCorrect(path)) {
             return Optional.absent();
         }
+
+        CompileResult compileResult = build(path);
+        if (compileResult.getStatusCode() != 0) {
+            return Optional.absent();
+        }
+
         SourceFiles sourceFiles = new SourceFiles();
         sourceFiles.addSource(path.resolve(testFolderPath).toFile());
 

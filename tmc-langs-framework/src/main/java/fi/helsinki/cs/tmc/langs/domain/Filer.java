@@ -109,6 +109,7 @@ public class Filer {
         while (scanner.hasNextLine()) {
             data.add(scanner.nextLine());
         }
+        scanner.close();
         return data;
     }
 

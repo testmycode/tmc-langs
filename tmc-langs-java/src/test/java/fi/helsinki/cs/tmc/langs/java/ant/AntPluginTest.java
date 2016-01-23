@@ -140,18 +140,6 @@ public class AntPluginTest {
     }
 
     @Test
-    public void testAntCompileGivesOutputLogging() throws IOException {
-        TestUtils.removeDirRecursively(getClass(), "ant_arith_funcs/build");
-        Path resourcesDir = TestUtils.getPath(getClass(), "");
-        File expected = resourcesDir.resolve("arith_funcs_build.log").toFile();
-
-        antPlugin.runTests(resourcesDir.resolve("ant_arith_funcs"));
-
-        File actual = resourcesDir.resolve(Paths.get("ant_arith_funcs", "build_log.txt")).toFile();
-        assertFileLines(expected, actual);
-    }
-
-    @Test
     public void pluginHandlesProjectThatUsesReflectionUtils() {
         Path project = TestUtils.getPath(getClass(), "reflection_utils_ant_test_case");
         RunResult result = antPlugin.runTests(project);
@@ -172,7 +160,7 @@ public class AntPluginTest {
         plugin.createRunResultFile(Paths.get(""));
     }
 
-    private void assertFileLines(File expected, File actual) throws IOException {
+    private void assertFileLinesCount(File expected, File actual) throws IOException {
 
         List<String> expectedLines = FileUtils.readLines(expected);
         List<String> actualLines = FileUtils.readLines(actual);

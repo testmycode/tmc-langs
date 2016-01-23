@@ -270,5 +270,7 @@ public class AntPlugin extends AbstractJavaPlugin {
         } catch (BuildException | IOException e) {
             throw new RuntimeException(e);
         }
+        buildLog.delete();
+        errorLog.delete();
     }
 }

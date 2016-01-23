@@ -165,4 +165,9 @@ public interface LanguagePlugin {
      */
     @Beta
     public ExercisePackagingConfiguration getExercisePackagingConfiguration();
+
+    /**
+     * Runs clean command e.g {@code make clean} for make or {@code mvn clean} for maven.
+     */
+    void clean(Path path);
 }

@@ -54,6 +54,7 @@ public class AntPlugin extends AbstractJavaPlugin {
     private static final String ANT_JAVAC_FORK_VALUE = "true";
     private static final String ANT_PROJECT_HELPER_PROPERTY = "ant.projectHelper";
     private static final String ANT_COMPILE_TEST_TARGET = "compile-test";
+    private static final String ANT_CLEAN_TARGET = "clean";
 
     private static final int STATUS_CODE_SUCCESS = 0;
     private static final int STATUS_CODE_ERROR = 1;
@@ -230,5 +231,44 @@ public class AntPlugin extends AbstractJavaPlugin {
         log.info("Successfully ran tests for project at {}", projectBasePath);
 
         return resultFile.toFile();
+    }
+
+    @Override
+    public void clean(Path path) {
+        log.info("Cleaning project at {}", path);
+
+        File buildFile = path.resolve(BUILD_FILE).toFile();
+        Project buildProject = new Project();
+
+        buildProject.setUserProperty(ANT_BUILD_FILE_PROPERTY, buildFile.getAbsolutePath());
+        buildProject.setProperty(ANT_JAVAC_FORK_PROPERTY, ANT_JAVAC_FORK_VALUE);
+        buildProject.init();
+        buildProject.setBaseDir(path.toAbsolutePath().toFile());
+
+        File buildLog = path.resolve(BUILD_LOG_FILE).toFile();
+        File errorLog = path.resolve(BUILD_ERROR_LOG_FILE).toFile();
+
+        DefaultLogger logger = new DefaultLogger();
+        try {
+
+            PrintStream stdOut = new PrintStream(buildLog);
+            PrintStream stdErr = new PrintStream(errorLog);
+
+            logger.setErrorPrintStream(stdErr);
+            logger.setOutputPrintStream(stdOut);
+            logger.setMessageOutputLevel(Project.MSG_INFO);
+
+            buildProject.addBuildListener(logger);
+            buildProject.fireBuildStarted();
+            ProjectHelper helper = ProjectHelper.getProjectHelper();
+            buildProject.addReference(ANT_PROJECT_HELPER_PROPERTY, helper);
+            helper.parse(buildProject, buildFile);
+            buildProject.executeTarget(ANT_CLEAN_TARGET);
+            buildProject.fireBuildFinished(null);
+
+            log.info("Successfully cleaned project at {}", path);
+        } catch (BuildException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -145,4 +145,9 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     private ValidationResult parseLints(ProcessResult processResult) {
         return new LinterResultParser().parse(processResult);
     }
+
+    @Override
+    public void clean(Path path) {
+        // no op?
+    }
 }

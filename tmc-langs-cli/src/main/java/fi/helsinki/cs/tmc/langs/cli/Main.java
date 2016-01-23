@@ -71,8 +71,9 @@ public final class Main {
                     + "  Produce list of found exercises.\n"
                     + " get-exercise-packaging-configuration --exercisePath --outputPath"
                     + "  Returns configuration of under which folders student and nonstudent files"
-                    + " are located.";
-
+                    + " are located."
+                    + " clean --exercisePath"
+                    + "  Produce list of found exercises.";
 
     /**
      * Main entry point for the CLI.
@@ -134,6 +135,9 @@ public final class Main {
                 break;
             case "get-exercise-packaging-configuration":
                 runGetExercisePackagingConfiguration();
+                break;
+            case "clean":
+                runClean();
                 break;
             default:
                 printHelpAndExit();
@@ -282,6 +286,18 @@ public final class Main {
         }
     }
 
+    private static void runClean() {
+        try {
+            executor.clean(getExercisePathFromArgs());
+        } catch (NoLanguagePluginFoundException e) {
+            logger.error(
+                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit(
+                    "ERROR: Could not find suitable language plugin for the given "
+                            + "exercise path.");
+        }
+    }
+
     private static Map<Path, LanguagePlugin> findExerciseDirectoriesAndGetLanguagePlugins() {
         final Map<Path, LanguagePlugin> map = new HashMap<>();
         Filer exerciseMatchingFiler =
@@ -347,7 +363,6 @@ public final class Main {
             logger.error("Could not write output to {}", getOutputPathFromArgs(), e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
-
     }
 
     private static void checkTestPath(Path exercisePath) {

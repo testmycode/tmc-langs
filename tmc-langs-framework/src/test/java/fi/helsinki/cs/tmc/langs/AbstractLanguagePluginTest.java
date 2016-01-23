@@ -75,6 +75,9 @@ public class AbstractLanguagePluginTest {
         public void maybeCopySharedStuff(Path destPath) {
             // Nothing to do!
         }
+
+        @Override
+        public void clean(Path path) {}
     }
 
     private LanguagePlugin plugin;

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 /**
  * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
@@ -108,5 +107,19 @@ public final class MavenPlugin extends AbstractJavaPlugin {
     public ExercisePackagingConfiguration getExercisePackagingConfiguration() {
         return new ExercisePackagingConfiguration(
                 ImmutableList.of("src/main"), ImmutableList.of("src/test"));
+    }
+
+    @Override
+    public void clean(Path path) {
+        log.info("Cleaning maven project at {}", path);
+
+        MavenExecutionResult compilationResult =
+                MavenExecutors.tryAndExec(path, new String[] {"clean"});
+
+        if (compilationResult.getExitCode() == 0) {
+            log.info("Cleaned maven project at {}", path);
+        } else {
+            log.info("Failed to cleaning maven project at {}", path);
+        }
     }
 }

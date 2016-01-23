@@ -141,4 +141,9 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
                 SystemUtils.IS_OS_WINDOWS ? new String[] {"py", "-3"} : new String[] {"python3"};
         return ArrayUtils.addAll(command, "-m", "tmc");
     }
+
+    @Override
+    public void clean(Path path) {
+        // no op
+    }
 }

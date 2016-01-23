@@ -230,4 +230,22 @@ public final class MakePlugin extends AbstractLanguagePlugin {
 
         return true;
     }
+
+    @Override
+    public void clean(Path path) {
+        String[] command = {"make", "test"};
+        ProcessRunner runner = new ProcessRunner(command, path);
+
+        try {
+            ProcessResult result = runner.call();
+            if (result.statusCode == 0) {
+                log.info("Cleaned make project");
+            } else {
+                log.warn("Cleaning make project was not successful");
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

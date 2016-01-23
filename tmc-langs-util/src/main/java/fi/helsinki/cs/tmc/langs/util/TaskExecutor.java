@@ -103,4 +103,9 @@ public interface TaskExecutor {
 
     ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path)
             throws NoLanguagePluginFoundException;
+
+    /**
+     * Run clean for given path using proper language plugin.
+     */
+    void clean(Path path) throws NoLanguagePluginFoundException;
 }

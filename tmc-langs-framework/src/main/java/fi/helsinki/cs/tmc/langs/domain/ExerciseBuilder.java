@@ -17,6 +17,7 @@ public class ExerciseBuilder {
 
     private static final String SOURCE_FOLDER_NAME = "src";
     private static final Charset CHARSET = StandardCharsets.UTF_8;
+    private static final DirectorySkipper GENERAL_DIRECTORY_SKIPPER = new GeneralDirectorySkipper();
 
     private static final Logger logger = LoggerFactory.getLogger(ExerciseBuilder.class);
 
@@ -31,7 +32,7 @@ public class ExerciseBuilder {
             new FilterFileTreeVisitor()
                     .setClonePath(repoPath)
                     .setExercisePath(project.getKey())
-                    .addSkipper(new GeneralDirectorySkipper())
+                    .addSkipper(GENERAL_DIRECTORY_SKIPPER)
                     .setFiler(
                             new StubFileFilterProcessor()
                                     .setToPath(destPath)
@@ -54,7 +55,7 @@ public class ExerciseBuilder {
             new FilterFileTreeVisitor()
                     .setClonePath(repoPath)
                     .setExercisePath(project.getKey())
-                    .addSkipper(new GeneralDirectorySkipper())
+                    .addSkipper(GENERAL_DIRECTORY_SKIPPER)
                     .setFiler(
                             new SolutionFileFilterProcessor()
                                     .setToPath(destPath)

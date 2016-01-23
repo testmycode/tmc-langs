@@ -2,8 +2,6 @@ package fi.helsinki.cs.tmc.langs.domain;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 
-import com.google.common.collect.ImmutableList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -105,11 +102,11 @@ public class Filer {
      */
     protected List<String> readFile(Path file) throws IOException {
         List<String> data = new ArrayList<>();
-        Scanner scanner = new Scanner(Files.newInputStream(file));
-        while (scanner.hasNextLine()) {
-            data.add(scanner.nextLine());
+        try (Scanner scanner = new Scanner(Files.newInputStream(file))) {
+            while (scanner.hasNextLine()) {
+                data.add(scanner.nextLine());
+            }
         }
-        scanner.close();
         return data;
     }
 

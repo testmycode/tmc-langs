@@ -39,9 +39,7 @@ public class ExerciseBuilder {
                     .traverse();
             Path relativePath =
                     project.getKey()
-                            .subpath(
-                                    project.getKey().getNameCount() - 1,
-                                    project.getKey().getNameCount());
+                            .subpath(repoPath.getNameCount(), project.getKey().getNameCount());
             project.getValue().maybeCopySharedStuff(destPath.resolve(relativePath));
         }
     }

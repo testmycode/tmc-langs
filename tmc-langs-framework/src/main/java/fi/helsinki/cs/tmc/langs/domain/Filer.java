@@ -49,6 +49,7 @@ public class Filer {
                 copyWithFilters(source, destination);
             }
         } catch (IOException ex) {
+            logger.warn("IOException for path: {}, relativePath: {}", source, relativePath);
             throw new RuntimeException(ex);
         }
     }

@@ -15,6 +15,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Filer {
 
@@ -22,6 +23,9 @@ public class Filer {
 
     private Path toPath;
     private LanguagePlugin languagePlugin;
+
+    private static final Pattern NON_TEXT_TYPES =
+            Pattern.compile("class|jar|exe|jpg|jpeg|gif|png|zip|tar|gz");
 
     public Filer setToPath(Path toPath) {
         this.toPath = toPath;
@@ -65,8 +69,7 @@ public class Filer {
     }
 
     private boolean looksLikeBinary(Path source) {
-        String nonTextTypes = "class|jar|exe|jpg|jpeg|gif|png";
-        return getFileExtension(source).matches(nonTextTypes);
+        return NON_TEXT_TYPES.matcher(getFileExtension(source)).matches();
     }
 
     private void justCopy(Path source, Path destination) throws IOException {

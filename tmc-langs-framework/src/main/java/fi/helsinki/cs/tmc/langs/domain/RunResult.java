@@ -26,6 +26,10 @@ public final class RunResult {
          */
         COMPILE_FAILED,
         /**
+         * The submission compiled but testrun was interrupted.
+         */
+        TESTRUN_INTERRUPTED,
+        /**
          * For when no other status seems suitable, or the language plugin has
          * suffered an internal error.
          *

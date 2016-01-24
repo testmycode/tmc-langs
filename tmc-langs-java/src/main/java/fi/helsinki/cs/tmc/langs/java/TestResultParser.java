@@ -38,7 +38,11 @@ public final class TestResultParser {
             return parseTestResult(FileUtils.readFileToString(resultsFile, "UTF-8"));
         } catch (IOException e) {
             log.error("Unable to parse test results from {}", resultsFile, e);
-            throw Throwables.propagate(e);
+            // The testrun VM crashed, most likely due to System.exit command in tested code.
+            return new RunResult(
+                    RunResult.Status.TESTRUN_INTERRUPTED,
+                    ImmutableList.<TestResult>of(),
+                    ImmutableMap.<String, byte[]>of());
         }
     }
 

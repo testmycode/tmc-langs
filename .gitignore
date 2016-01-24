@@ -48,3 +48,4 @@ __pycache__/
 .classpath
 
 /tmc-langs-java/src/main/resources/tmc-junit-runner.jar
+/tmc-langs-java/src/test/resources/exit_zero/build/

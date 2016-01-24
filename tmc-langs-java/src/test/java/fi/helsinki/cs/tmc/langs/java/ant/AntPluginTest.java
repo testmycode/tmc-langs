@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
@@ -180,6 +179,18 @@ public class AntPluginTest {
         assertEquals(RunResult.Status.PASSED, runResult.status);
         assertTrue("Logs should be empty", runResult.logs.isEmpty());
         assertEquals(1, runResult.testResults.size());
+    }
+
+    @Test
+    public void testShouldNotDieWhenStudentCodeUsesSystemExitZero() {
+        String name = "SystemExit0";
+        Path project = TestUtils.getPath(getClass(), "exit_zero");
+        ExerciseDesc description = antPlugin.scanExercise(project, name).get();
+        assertEquals(name, description.name);
+        assertEquals(1, description.tests.size());
+
+        RunResult result = antPlugin.runTests(project);
+        assertEquals(RunResult.Status.TESTRUN_INTERRUPTED, result.status);
     }
 
     private void assertPathContains(ClassPath cp, String file) {

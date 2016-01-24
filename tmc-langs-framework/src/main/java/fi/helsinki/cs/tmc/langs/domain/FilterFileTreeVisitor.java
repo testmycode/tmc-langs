@@ -48,7 +48,6 @@ public class FilterFileTreeVisitor {
     }
 
     public void traverse() {
-        System.out.println(repoPath);
         try {
             Files.walkFileTree(
                     repoPath,

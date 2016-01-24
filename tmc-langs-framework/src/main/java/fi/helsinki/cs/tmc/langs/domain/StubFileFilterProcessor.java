@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 final class StubFileFilterProcessor extends Filer {
 

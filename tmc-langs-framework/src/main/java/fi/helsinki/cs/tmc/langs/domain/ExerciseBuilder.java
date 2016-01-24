@@ -26,9 +26,11 @@ public class ExerciseBuilder {
      */
     public void prepareStubs(
             Map<Path, LanguagePlugin> exerciseMap, final Path repoPath, final Path destPath) {
-        System.out.println(exerciseMap);
         for (Map.Entry<Path, LanguagePlugin> project : exerciseMap.entrySet()) {
+
             // Copy exercises over file by file
+            logger.info("Project: {}", project.getKey());
+
             new FilterFileTreeVisitor()
                     .setClonePath(repoPath)
                     .setExercisePath(project.getKey())

@@ -56,10 +56,10 @@ public class Filer {
     private boolean skipFilename(Path source) {
         String skipRegex = "\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)";
         if (source.getFileName().toString().matches(skipRegex)) {
-            logger.info("Skipping file: {} ", source);
+            logger.debug("Skipping file: {} ", source);
             return true;
         }
-        logger.info("Not skipping file: {} ", source);
+        logger.debug("Not skipping file: {} ", source);
         return false;
     }
 
@@ -69,16 +69,16 @@ public class Filer {
     }
 
     private void justCopy(Path source, Path destination) throws IOException {
-        logger.info("Just copying file from: {} to:{}", source, destination);
+        logger.debug("Just copying file from: {} to:{}", source, destination);
         Files.createDirectories(destination.getParent());
         Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
     }
 
     private void copyWithFilters(Path source, Path destination) throws IOException {
         List<String> data = prepareFile(readFile(source), getFileExtension(source));
-        logger.info("Filtered file while copying from: {} to:{}", source, destination);
+        logger.debug("Filtered file while copying from: {} to:{}", source, destination);
         if (data.isEmpty()) {
-            logger.info("skipped file as empty while copying from: {} to:{}", source, destination);
+            logger.debug("skipped file as empty while copying from: {} to:{}", source, destination);
         } else {
             Files.createDirectories(destination.getParent());
             Files.write(destination, data, StandardCharsets.UTF_8, StandardOpenOption.CREATE);

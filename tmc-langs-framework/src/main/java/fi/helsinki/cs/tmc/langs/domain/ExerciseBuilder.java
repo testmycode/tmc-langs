@@ -5,8 +5,6 @@ import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -15,8 +13,6 @@ import java.util.Map;
  */
 public class ExerciseBuilder {
 
-    private static final String SOURCE_FOLDER_NAME = "src";
-    private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final DirectorySkipper GENERAL_DIRECTORY_SKIPPER = new GeneralDirectorySkipper();
 
     private static final Logger logger = LoggerFactory.getLogger(ExerciseBuilder.class);
@@ -26,23 +22,21 @@ public class ExerciseBuilder {
      */
     public void prepareStubs(
             Map<Path, LanguagePlugin> exerciseMap, final Path repoPath, final Path destPath) {
+
+        // Copy exercises over file by file per project
         for (Map.Entry<Path, LanguagePlugin> project : exerciseMap.entrySet()) {
 
-            // Copy exercises over file by file
             logger.info("Project: {}", project.getKey());
 
-            new FilterFileTreeVisitor()
-                    .setClonePath(repoPath)
-                    .setExercisePath(project.getKey())
-                    .addSkipper(GENERAL_DIRECTORY_SKIPPER)
-                    .setFiler(
-                            new StubFileFilterProcessor()
-                                    .setToPath(destPath)
-                                    .setLanguagePlugin(project.getValue()))
-                    .traverse();
             Path relativePath =
                     project.getKey()
                             .subpath(repoPath.getNameCount(), project.getKey().getNameCount());
+            new FilterFileTreeVisitor()
+                    .setClonePath(repoPath)
+                    .setStartPath(project.getKey())
+                    .addSkipper(GENERAL_DIRECTORY_SKIPPER)
+                    .setFiler(new StubFileFilterProcessor().setToPath(destPath))
+                    .traverse();
             project.getValue().maybeCopySharedStuff(destPath.resolve(relativePath));
         }
     }
@@ -56,12 +50,9 @@ public class ExerciseBuilder {
         for (Map.Entry<Path, LanguagePlugin> project : exerciseMap.entrySet()) {
             new FilterFileTreeVisitor()
                     .setClonePath(repoPath)
-                    .setExercisePath(project.getKey())
+                    .setStartPath(project.getKey())
                     .addSkipper(GENERAL_DIRECTORY_SKIPPER)
-                    .setFiler(
-                            new SolutionFileFilterProcessor()
-                                    .setToPath(destPath)
-                                    .setLanguagePlugin(project.getValue()))
+                    .setFiler(new SolutionFileFilterProcessor().setToPath(destPath))
                     .traverse();
         }
     }

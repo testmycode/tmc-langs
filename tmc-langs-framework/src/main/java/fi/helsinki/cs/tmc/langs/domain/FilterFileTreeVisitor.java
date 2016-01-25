@@ -12,7 +12,7 @@ import java.util.List;
 public class FilterFileTreeVisitor {
 
     private Path repoPath;
-    private Path exercisePath;
+    private Path startPath;
 
     private List<DirectorySkipper> skippers = new ArrayList<>();
 
@@ -23,13 +23,13 @@ public class FilterFileTreeVisitor {
         return this;
     }
 
-    public FilterFileTreeVisitor setClonePath(Path repoPath) {
-        this.repoPath = repoPath;
+    public FilterFileTreeVisitor setStartPath(Path startPath) {
+        this.startPath = startPath;
         return this;
     }
 
-    public FilterFileTreeVisitor setExercisePath(Path exercisePath) {
-        this.exercisePath = exercisePath;
+    public FilterFileTreeVisitor setClonePath(Path repoPath) {
+        this.repoPath = repoPath;
         return this;
     }
 
@@ -50,7 +50,7 @@ public class FilterFileTreeVisitor {
     public void traverse() {
         try {
             Files.walkFileTree(
-                    repoPath,
+                    startPath,
                     new FileVisitor<Path>() {
 
                         @Override
@@ -63,8 +63,6 @@ public class FilterFileTreeVisitor {
                             return filer.decideOnDirectory(dir);
                         }
 
-                        //TODO: Whatever calls FilterFileTreeVisitor.visitFile
-                        //      could just call filer.visitFile?
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                             Path relativePath =
@@ -86,7 +84,7 @@ public class FilterFileTreeVisitor {
                         }
                     });
         } catch (IOException ex) {
-            throw new IllegalStateException(ex);
+            throw new RuntimeException(ex);
         }
     }
 }

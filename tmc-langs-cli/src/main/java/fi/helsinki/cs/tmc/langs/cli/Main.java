@@ -238,6 +238,7 @@ public final class Main {
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())
                 .setClonePath(clonePath)
+                .setStartPath(clonePath)
                 .setFiler(exerciseMatchingFiler)
                 .traverse();
 
@@ -324,6 +325,7 @@ public final class Main {
         new FilterFileTreeVisitor()
                 .addSkipper(new GeneralDirectorySkipper())
                 .setClonePath(getExercisePathFromArgs())
+                .setStartPath(getExercisePathFromArgs())
                 .setFiler(exerciseMatchingFiler)
                 .traverse();
         return map;

@@ -25,8 +25,7 @@ public class FilerTest {
         Path temp = createTemporaryCopyOf(path);
         temp.toFile().deleteOnExit();
         Path toPath = Files.createTempDir().toPath();
-        LanguagePlugin mockLanguagePlugin = mock(LanguagePlugin.class);
-        Filer filer = new Filer().setLanguagePlugin(mockLanguagePlugin).setToPath(toPath);
+        Filer filer = new Filer().setToPath(toPath);
         assertEquals(FileVisitResult.CONTINUE, filer.decideOnDirectory(temp));
     }
 

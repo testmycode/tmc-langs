@@ -1,6 +1,6 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-import fi.helsinki.cs.tmc.langs.LanguagePlugin;
+import org.apache.commons.io.FileUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,11 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class Filer {
@@ -22,18 +19,12 @@ public class Filer {
     private static final Logger logger = LoggerFactory.getLogger(Filer.class);
 
     private Path toPath;
-    private LanguagePlugin languagePlugin;
 
     private static final Pattern NON_TEXT_TYPES =
             Pattern.compile("class|jar|exe|jpg|jpeg|gif|png|zip|tar|gz");
 
     public Filer setToPath(Path toPath) {
         this.toPath = toPath;
-        return this;
-    }
-
-    public Filer setLanguagePlugin(LanguagePlugin languagePlugin) {
-        this.languagePlugin = languagePlugin;
         return this;
     }
 
@@ -74,12 +65,12 @@ public class Filer {
 
     private void justCopy(Path source, Path destination) throws IOException {
         logger.debug("Just copying file from: {} to:{}", source, destination);
-        Files.createDirectories(destination.getParent());
-        Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+        FileUtils.copyFile(source.toFile(), destination.toFile());
     }
 
     private void copyWithFilters(Path source, Path destination) throws IOException {
-        List<String> data = prepareFile(readFile(source), getFileExtension(source));
+        List<String> data =
+                prepareFile(FileUtils.readLines(source.toFile()), getFileExtension(source));
         logger.debug("Filtered file while copying from: {} to:{}", source, destination);
         if (data.isEmpty()) {
             logger.debug("skipped file as empty while copying from: {} to:{}", source, destination);
@@ -98,19 +89,6 @@ public class Filer {
     }
 
     List<String> filterData(List<String> data, MetaSyntax metaSyntax) {
-        return data; // usually overridden, not always
-    }
-
-    /*
-     * Note: we need to use the inputStream for reading more interesting filetypes.
-     */
-    protected List<String> readFile(Path file) throws IOException {
-        List<String> data = new ArrayList<>();
-        try (Scanner scanner = new Scanner(Files.newInputStream(file))) {
-            while (scanner.hasNextLine()) {
-                data.add(scanner.nextLine());
-            }
-        }
         return data;
     }
 
@@ -118,7 +96,8 @@ public class Filer {
         String name = file.getFileName().toString();
         try {
             return name.substring(name.lastIndexOf(".") + 1);
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
+            logger.info("Unable to determine file extension for: {}\n{}", file.toAbsolutePath(), e);
             return "";
         }
     }

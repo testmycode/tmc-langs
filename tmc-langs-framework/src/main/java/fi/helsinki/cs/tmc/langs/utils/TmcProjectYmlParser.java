@@ -60,15 +60,31 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
         Map<?, ?> specsAsMap = (Map<?, ?>) yamlSpecifications;
         Map<String, ValueObject> options = new HashMap<>();
 
-        for (Object key : specsAsMap.keySet()) {
-            Object value = specsAsMap.get(key);
-            if (!(key instanceof String)) {
-                continue;
-            }
-            options.put((String) key, new ValueObject(value));
-        }
+        parseRecursiveDefinitions(options, specsAsMap, "");
 
         return options;
+    }
+
+    private void parseRecursiveDefinitions(
+            Map<String, ValueObject> options, Map<?, ?> specsAsMap, String preKey) {
+        for (Object keyObject : specsAsMap.keySet()) {
+            Object value = specsAsMap.get(keyObject);
+            if (!(keyObject instanceof String)) {
+                continue;
+            }
+
+            String key;
+            if (preKey.isEmpty()) {
+                key = (String) keyObject;
+            } else {
+                key = preKey + "." + (String) keyObject;
+            }
+
+            if (value instanceof Map) {
+                parseRecursiveDefinitions(options, (Map<?, ?>) value, key);
+            }
+            options.put(key, new ValueObject(value));
+        }
     }
 
     private Object getYamlSpecs(Path path) {

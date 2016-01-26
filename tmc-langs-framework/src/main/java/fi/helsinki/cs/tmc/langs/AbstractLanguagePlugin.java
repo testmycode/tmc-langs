@@ -112,8 +112,7 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
      * @return The configuration as an object.
      */
     protected Configuration getConfiguration(Path projectRoot) {
-        Path configPath = projectRoot.resolve(".tmcproject.yml");
-        return new Configuration(configPath);
+        return new Configuration(projectRoot);
     }
 
     /**

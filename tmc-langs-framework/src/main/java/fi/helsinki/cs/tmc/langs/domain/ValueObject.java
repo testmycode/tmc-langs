@@ -3,6 +3,8 @@ package fi.helsinki.cs.tmc.langs.domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public final class ValueObject {
 
     private static final Logger log = LoggerFactory.getLogger(ValueObject.class);
@@ -41,5 +43,18 @@ public final class ValueObject {
             return null;
         }
         return (Boolean) this.value;
+    }
+
+    public List<String> asList() {
+        if (!(value instanceof List)) {
+            log.error("Couldn't convert configuration {} to List.", value.toString());
+            return null;
+        }
+        return (List<String>) this.value;
+    }
+
+    @Override
+    public String toString() {
+        return "<ValueObject: value=" + value + ">";
     }
 }

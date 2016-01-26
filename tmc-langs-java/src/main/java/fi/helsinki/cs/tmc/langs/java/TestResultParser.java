@@ -33,9 +33,12 @@ public final class TestResultParser {
      * @param resultsFile to be parsed.
      * @return RunResult object containing information about the tests.
      */
-    public RunResult parseTestResult(File resultsFile) {
+    public RunResult parseTestResult(TestRunFileAndLogs resultsFile) {
         try {
-            return parseTestResult(FileUtils.readFileToString(resultsFile, "UTF-8"));
+            return parseTestResult(
+                    FileUtils.readFileToString(resultsFile.getTestResultsFile(), "UTF-8"),
+                    resultsFile.getStdout(),
+                    resultsFile.getStderr());
         } catch (IOException e) {
             log.error("Unable to parse test results from {}", resultsFile, e);
             // The testrun VM crashed, most likely due to System.exit command in tested code.
@@ -52,9 +55,8 @@ public final class TestResultParser {
      * @param resultsJson   A JSON representation of the test results.
      * @return              Parsed RunResult
      */
-    public RunResult parseTestResult(String resultsJson) {
+    public RunResult parseTestResult(String resultsJson, byte[] stdout, byte[] stderr) {
         List<TestResult> testResults = new ArrayList<>();
-        Map<String, byte[]> logs = new HashMap<>();
 
         TestCaseList testCaseRecords = new Gson().fromJson(resultsJson, TestCaseList.class);
         boolean passed = true;
@@ -69,7 +71,10 @@ public final class TestResultParser {
 
         RunResult.Status status = passed ? RunResult.Status.PASSED : RunResult.Status.TESTS_FAILED;
 
-        return new RunResult(status, ImmutableList.copyOf(testResults), ImmutableMap.copyOf(logs));
+        return new RunResult(
+                status,
+                ImmutableList.copyOf(testResults),
+                ImmutableMap.of("stdout", stdout, "stderr", stderr));
     }
 
     private TestResult convertTestCaseResult(TestCase testCase) {

@@ -12,6 +12,7 @@ import fi.helsinki.cs.tmc.langs.java.maven.MavenTaskRunner.MavenExecutionResult;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 
 import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +88,8 @@ public final class MavenPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    protected File createRunResultFile(Path path) throws TestRunnerException, TestScannerException {
+    protected TestRunFileAndLogs createRunResultFile(Path path)
+            throws TestRunnerException, TestScannerException {
 
         log.info("Running tests for maven project at {}", path);
 
@@ -100,7 +102,10 @@ public final class MavenPlugin extends AbstractJavaPlugin {
         }
 
         log.info("Successfully ran tests for maven project at {}", path);
-        return path.toAbsolutePath().resolve(RESULT_FILE).toFile();
+        return new TestRunFileAndLogs(
+                path.toAbsolutePath().resolve(RESULT_FILE).toFile(),
+                result.getStdOut(),
+                result.getStdOut());
     }
 
     @Override

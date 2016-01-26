@@ -63,7 +63,7 @@ public class AbstractJavaPluginTest {
         }
 
         @Override
-        protected File createRunResultFile(Path path)
+        protected TestRunFileAndLogs createRunResultFile(Path path)
                 throws TestRunnerException, TestScannerException {
             return null;
         }
@@ -143,7 +143,7 @@ public class AbstractJavaPluginTest {
         AbstractJavaPlugin plugin =
                 new StubLanguagePlugin(Paths.get("")) {
                     @Override
-                    protected File createRunResultFile(Path path)
+                    protected TestRunFileAndLogs createRunResultFile(Path path)
                             throws TestRunnerException, TestScannerException {
                         throw new TestRunnerException();
                     }
@@ -157,7 +157,7 @@ public class AbstractJavaPluginTest {
         AbstractJavaPlugin plugin =
                 new StubLanguagePlugin(Paths.get("")) {
                     @Override
-                    protected File createRunResultFile(Path path)
+                    protected TestRunFileAndLogs createRunResultFile(Path path)
                             throws TestRunnerException, TestScannerException {
                         throw new TestScannerException();
                     }

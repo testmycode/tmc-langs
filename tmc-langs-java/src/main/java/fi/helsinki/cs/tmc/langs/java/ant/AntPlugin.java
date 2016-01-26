@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.java.ant;
 
-import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
@@ -14,6 +13,7 @@ import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -184,7 +185,7 @@ public class AntPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    protected File createRunResultFile(Path projectBasePath)
+    protected TestRunFileAndLogs createRunResultFile(Path projectBasePath)
             throws TestRunnerException, TestScannerException {
 
         log.info("Running tests for project at {}", projectBasePath);
@@ -204,6 +205,9 @@ public class AntPlugin extends AbstractJavaPlugin {
                         projectBasePath, testDir, resultFile, classPath, exercise.get());
         List<String> testRunnerArguments = argumentBuilder.getArguments();
 
+        StringBuilder stdout = new StringBuilder();
+        StringBuilder stderr = new StringBuilder();
+
         try {
             Process process = new ProcessBuilder(testRunnerArguments).start();
             process.waitFor();
@@ -212,17 +216,13 @@ public class AntPlugin extends AbstractJavaPlugin {
             final BufferedReader error =
                     new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-            StringBuilder stb = new StringBuilder();
             String line;
-            stb.append("Stdout from running tests:");
             while ((line = output.readLine()) != null) {
-                stb.append(line);
+                stdout.append(line);
             }
-            stb.append("Stderr from running tests:");
             while ((line = error.readLine()) != null) {
-                stb.append(line);
+                stderr.append(line);
             }
-            log.info(stb.toString());
         } catch (InterruptedException | IOException e) {
             log.error("Failed to run tests", e);
             throw new TestRunnerException(e);
@@ -230,7 +230,10 @@ public class AntPlugin extends AbstractJavaPlugin {
 
         log.info("Successfully ran tests for project at {}", projectBasePath);
 
-        return resultFile.toFile();
+        return new TestRunFileAndLogs(
+                resultFile.toFile(),
+                stdout.toString().getBytes(Charset.forName("UTF-8")),
+                stderr.toString().getBytes(Charset.forName("UTF-8")));
     }
 
     @Override

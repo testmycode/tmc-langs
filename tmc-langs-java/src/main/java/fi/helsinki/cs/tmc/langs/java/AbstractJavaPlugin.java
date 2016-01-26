@@ -63,7 +63,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
     protected abstract CompileResult build(Path projectRootPath);
 
-    protected abstract File createRunResultFile(Path path)
+    protected abstract TestRunFileAndLogs createRunResultFile(Path path)
             throws TestRunnerException, TestScannerException;
 
     @Override
@@ -110,19 +110,16 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             return runResultFromFailedCompilation(compileResult);
         }
 
-        File resultFile = null;
+        TestRunFileAndLogs results = null;
         try {
-            resultFile = createRunResultFile(projectRootPath);
+            results = createRunResultFile(projectRootPath);
+            RunResult result = resultParser.parseTestResult(results);
+            results.getTestResultsFile().delete();
+            return result;
         } catch (TestRunnerException | TestScannerException ex) {
             log.error("Unable to create run result file", ex);
             return null;
         }
-
-        RunResult result = resultParser.parseTestResult(resultFile);
-
-        resultFile.delete();
-
-        return result;
     }
 
     protected RunResult runResultFromFailedCompilation(CompileResult compileResult) {

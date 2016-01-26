@@ -186,6 +186,7 @@
         <module>tmc-langs-java</module>
         <module>tmc-langs-make</module>
         <module>tmc-langs-python3</module>
+        <module>tmc-langs-notests</module>
          <!-- TODO: add plugins and support libraries here -->
        
         <module>tmc-langs-cli</module>

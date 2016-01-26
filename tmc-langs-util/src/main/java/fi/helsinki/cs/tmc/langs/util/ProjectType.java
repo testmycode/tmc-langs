@@ -5,6 +5,7 @@ import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenPlugin;
 import fi.helsinki.cs.tmc.langs.make.MakePlugin;
+import fi.helsinki.cs.tmc.langs.NoTestsPlugin;
 import fi.helsinki.cs.tmc.langs.python3.Python3Plugin;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ public enum ProjectType {
     JAVA_MAVEN(new MavenPlugin()),
     MAKEFILE(new MakePlugin()),
     PYTHON3(new Python3Plugin()),
+    NO_TESTS(new NoTestsPlugin()),
     // for legacy and matching reasons keep the java ant as the last choise.
     JAVA_ANT(new AntPlugin());
 

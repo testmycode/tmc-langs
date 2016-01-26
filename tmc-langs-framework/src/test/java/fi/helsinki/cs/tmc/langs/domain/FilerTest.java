@@ -1,9 +1,6 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 
 import com.google.common.io.Files;
 

@@ -1,0 +1,5 @@
+no-tests:
+  exercise_name: "No Tests Exercise"
+  points:
+    - 1
+    - notests

@@ -6,6 +6,7 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
+import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
@@ -13,7 +14,6 @@ import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;

@@ -3,7 +3,7 @@ package fi.helsinki.cs.tmc.langs.java;
 import java.io.File;
 
 /**
- * Contains results file and {@code stderr} and {@code stdout}
+ * Contains results file and {@code stderr} and {@code stdout}.
  */
 public class TestRunFileAndLogs {
 

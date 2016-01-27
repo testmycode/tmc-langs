@@ -6,13 +6,13 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
+import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenTaskRunner.MavenExecutionResult;
 import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 
 import com.google.common.collect.ImmutableList;
-import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

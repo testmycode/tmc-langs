@@ -19,7 +19,9 @@ public class TestResultParserTest {
     @Test
     public void testParseTestFile() {
         File resultsFile = TestUtils.getPath(this.getClass(), "results.txt").toFile();
-        RunResult result = parser.parseTestResult(new TestRunFileAndLogs(resultsFile, new byte[0], new byte[0]));
+        RunResult result =
+                parser.parseTestResult(
+                        new TestRunFileAndLogs(resultsFile, new byte[0], new byte[0]));
         assertNotNull(result);
 
         for (TestResult testResult : result.testResults) {

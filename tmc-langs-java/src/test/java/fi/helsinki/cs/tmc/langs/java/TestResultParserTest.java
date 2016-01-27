@@ -19,7 +19,7 @@ public class TestResultParserTest {
     @Test
     public void testParseTestFile() {
         File resultsFile = TestUtils.getPath(this.getClass(), "results.txt").toFile();
-        RunResult result = parser.parseTestResult(new TestRunFileAndLogs(resultsFile, null, null));
+        RunResult result = parser.parseTestResult(new TestRunFileAndLogs(resultsFile, new byte[0], new byte[0]));
         assertNotNull(result);
 
         for (TestResult testResult : result.testResults) {
@@ -409,7 +409,7 @@ public class TestResultParserTest {
                         + "       \"lineNumber\"=>745}]},"
                         + "  \"status\"=>\"FAILED\"}]";
         ;
-        RunResult result = parser.parseTestResult(json, null, null);
+        RunResult result = parser.parseTestResult(json, new byte[0], new byte[0]);
         assertNotNull(result);
 
         for (TestResult testResult : result.testResults) {

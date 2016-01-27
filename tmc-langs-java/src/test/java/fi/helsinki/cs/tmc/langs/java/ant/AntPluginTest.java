@@ -82,7 +82,8 @@ public class AntPluginTest {
     public void testRunTestsReturnsRunResultCorrectly() throws IOException {
         RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
         assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
-        assertTrue("Logs should be empty", runResult.logs.isEmpty());
+        assertTrue("Stdout should be empty", runResult.logs.get("stdout").length == 0);
+        assertTrue("Stderr should be empty", runResult.logs.get("stderr").length == 0);
         assertEquals(4, runResult.testResults.size());
     }
 
@@ -177,7 +178,6 @@ public class AntPluginTest {
         assertEquals(1, description.tests.size());
         RunResult runResult = antPlugin.runTests(project);
         assertEquals(RunResult.Status.PASSED, runResult.status);
-        assertTrue("Logs should be empty", runResult.logs.isEmpty());
         assertEquals(1, runResult.testResults.size());
     }
 

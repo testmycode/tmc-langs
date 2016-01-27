@@ -25,7 +25,6 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -110,9 +109,8 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             return runResultFromFailedCompilation(compileResult);
         }
 
-        TestRunFileAndLogs results = null;
         try {
-            results = createRunResultFile(projectRootPath);
+            TestRunFileAndLogs results = createRunResultFile(projectRootPath);
             RunResult result = resultParser.parseTestResult(results);
             results.getTestResultsFile().delete();
             return result;

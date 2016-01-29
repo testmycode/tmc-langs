@@ -80,6 +80,9 @@ public class NoTestsPlugin extends AbstractLanguagePlugin {
     }
 
     private ImmutableList<String> getPoints(Path path) {
+        if (!getConfiguration(path).isSet("no-tests.points")) {
+            return ImmutableList.<String>of();
+        }
         return ImmutableList.copyOf(getConfiguration(path).get("no-tests.points").asList());
     }
 
@@ -114,6 +117,9 @@ public class NoTestsPlugin extends AbstractLanguagePlugin {
     public void clean(Path path) {}
 
     private String getExerciseName(Path path) {
+        if (!getConfiguration(path).isSet("no-tests.exercise_name")) {
+            return "DefaultName";
+        }
         return getConfiguration(path).get("no-tests.exercise_name").asString();
     }
 }

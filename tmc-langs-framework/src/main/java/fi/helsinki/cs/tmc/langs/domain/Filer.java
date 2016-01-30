@@ -22,6 +22,8 @@ public class Filer {
 
     private static final Pattern NON_TEXT_TYPES =
             Pattern.compile("class|jar|exe|jpg|jpeg|gif|png|zip|tar|gz");
+    private static final Pattern FILES_TO_SKIP_ALLWAYS =
+            Pattern.compile("\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)");
 
     public Filer setToPath(Path toPath) {
         this.toPath = toPath;
@@ -50,8 +52,8 @@ public class Filer {
     }
 
     private boolean skipFilename(Path source) {
-        String skipRegex = "\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)";
-        if (source.getFileName().toString().matches(skipRegex)) {
+        // skipping hidden files is ok, as this is only for stubs and solutions. Not for sandbox.
+        if (FILES_TO_SKIP_ALLWAYS.matcher(source.getFileName().toString()).matches()) {
             logger.debug("Skipping file: {} ", source);
             return true;
         }
@@ -69,14 +71,15 @@ public class Filer {
     }
 
     private void copyWithFilters(Path source, Path destination) throws IOException {
-        List<String> data =
-                prepareFile(FileUtils.readLines(source.toFile()), getFileExtension(source));
+        List<String> originalFile = FileUtils.readLines(source.toFile());
+        List<String> preparedFile = prepareFile(originalFile, getFileExtension(source));
         logger.debug("Filtered file while copying from: {} to:{}", source, destination);
-        if (data.isEmpty()) {
+        if (!originalFile.isEmpty() && preparedFile.isEmpty()) {
             logger.debug("skipped file as empty while copying from: {} to:{}", source, destination);
         } else {
             Files.createDirectories(destination.getParent());
-            Files.write(destination, data, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+            Files.write(
+                    destination, preparedFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         }
     }
 

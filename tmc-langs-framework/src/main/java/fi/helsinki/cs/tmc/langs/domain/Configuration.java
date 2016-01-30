@@ -1,8 +1,10 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-import fi.helsinki.cs.tmc.langs.utils.ConfigurationParser;
 import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
+import com.google.common.collect.Maps;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -48,8 +50,10 @@ public final class Configuration {
     }
 
     private Map<String, ValueObject> parseTmcProjectYmlOptions(Path path) {
-        ConfigurationParser parser = new TmcProjectYmlParser();
         Path configFile = path.resolve(TMC_PROJECT_YML);
-        return parser.parseOptions(configFile);
+        if (Files.exists(path)) {
+            return new TmcProjectYmlParser().parseOptions(configFile);
+        }
+        return Maps.newHashMap();
     }
 }

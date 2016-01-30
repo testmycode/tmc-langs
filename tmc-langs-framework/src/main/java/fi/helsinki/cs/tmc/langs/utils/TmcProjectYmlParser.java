@@ -118,10 +118,12 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
     private String initFileContents(File file) {
         try {
             log.trace("Reading config file");
-            return FileUtils.readFileToString(file);
+            if (file.exists()) {
+                return FileUtils.readFileToString(file);
+            }
         } catch (IOException e) {
             log.warn("Unable to read config file at {}", file, e);
-            return "";
         }
+        return "";
     }
 }

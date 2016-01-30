@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -28,9 +29,18 @@ public class ExerciseBuilder {
 
             logger.info("Project: {}", project.getKey());
 
-            Path relativePath =
-                    project.getKey()
-                            .subpath(repoPath.getNameCount(), project.getKey().getNameCount());
+            Path relativePath;
+            if (repoPath.getNameCount() < project.getKey().getNameCount()) {
+                System.out.format(
+                        "repo: %d proj: %d\n",
+                        repoPath.getNameCount(),
+                        project.getKey().getNameCount());
+                relativePath =
+                        project.getKey()
+                                .subpath(repoPath.getNameCount(), project.getKey().getNameCount());
+            } else {
+                relativePath = Paths.get("");
+            }
             new FilterFileTreeVisitor()
                     .setClonePath(repoPath)
                     .setStartPath(project.getKey())

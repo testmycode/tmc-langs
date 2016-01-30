@@ -8,12 +8,13 @@ import java.util.List;
 
 public final class GeneralDirectorySkipper implements DirectorySkipper {
 
-    private static final List<String> skipList = Arrays.asList(new String[] {".git", "private"});
+    private static final List<String> directoryNameSkiplist =
+            Arrays.asList(new String[] {".git", "private"});
 
     @Override
     public boolean skipDirectory(Path directory) {
         return directory.toFile().isDirectory()
-                && (skipList.contains(directory.getFileName().toString())
+                && (directoryNameSkiplist.contains(directory.getFileName().toString())
                         || Files.exists(
                                 Paths.get(directory.toAbsolutePath().toString(), ".tmcignore"))
                         || directory.getFileName().startsWith("."));

@@ -1,7 +1,7 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
+import com.google.common.collect.Lists;
+
 import java.util.List;
 
 final class SolutionFileFilterProcessor extends Filer {
@@ -15,7 +15,7 @@ final class SolutionFileFilterProcessor extends Filer {
 
     private List<String> removeStubs(List<String> input, MetaSyntax meta) {
         boolean atStub = false;
-        List<String> output = new ArrayList<String>();
+        List<String> output = Lists.newArrayList();
         for (String line : input) {
             if (meta.matchStubBegins(line)) {
                 atStub = true;
@@ -30,7 +30,8 @@ final class SolutionFileFilterProcessor extends Filer {
     }
 
     private List<String> cleanSolutionMarkers(List<String> input, MetaSyntax meta) {
-        List<String> output = new ArrayList<>(input.size());
+
+        List<String> output = Lists.newArrayListWithExpectedSize(input.size());
         for (String line : input) {
             if (meta.matchSolutionFile(line)
                     || meta.matchBeginSolution(line)

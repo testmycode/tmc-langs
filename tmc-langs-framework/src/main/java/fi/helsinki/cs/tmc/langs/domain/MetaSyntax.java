@@ -15,7 +15,6 @@ public class MetaSyntax {
     private final Pattern beginSolutionRegex;
     private final Pattern endSolutionRegex;
     private final Pattern solutionFileRegex;
-    private final Pattern stubMarkerPattern;
     private final Pattern stubBeginsRegexPattern;
 
     private final String commentEndRegex;
@@ -34,7 +33,6 @@ public class MetaSyntax {
 
         // Initial spaces left outside stubMarker to maintain indentation
         this.stubMarker = commentStartSyntax + SPACES + STUB + SPACES;
-        this.stubMarkerPattern = Pattern.compile(this.stubMarker);
 
         this.stubBeginsRegex = commentStartRegex + STUB + "(.*)";
         this.stubBeginsRegexPattern = Pattern.compile(this.stubBeginsRegex);

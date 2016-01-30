@@ -1,12 +1,13 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import com.google.common.collect.Lists;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FilterFileTreeVisitor {
@@ -14,7 +15,7 @@ public class FilterFileTreeVisitor {
     private Path repoPath;
     private Path startPath;
 
-    private List<DirectorySkipper> skippers = new ArrayList<>();
+    private List<DirectorySkipper> skippers = Lists.newArrayList();
 
     private Filer filer;
 
@@ -38,7 +39,7 @@ public class FilterFileTreeVisitor {
         return this;
     }
 
-    private boolean skipDirectory(Path dirPath) {
+    private boolean shouldSkipDirectory(Path dirPath) {
         for (DirectorySkipper skipper : skippers) {
             if (skipper.skipDirectory(dirPath)) {
                 return true;
@@ -56,7 +57,7 @@ public class FilterFileTreeVisitor {
                         @Override
                         public FileVisitResult preVisitDirectory(
                                 Path dir, BasicFileAttributes attrs) throws IOException {
-                            if (skipDirectory(dir)) {
+                            if (shouldSkipDirectory(dir)) {
                                 return FileVisitResult.SKIP_SUBTREE;
                             }
 
@@ -74,12 +75,18 @@ public class FilterFileTreeVisitor {
                         @Override
                         public FileVisitResult visitFileFailed(Path file, IOException exc)
                                 throws IOException {
+                            if (exc != null) {
+                                throw exc;
+                            }
                             return FileVisitResult.CONTINUE;
                         }
 
                         @Override
                         public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                                 throws IOException {
+                            if (exc != null) {
+                                throw exc;
+                            }
                             return FileVisitResult.CONTINUE;
                         }
                     });

@@ -19,9 +19,9 @@ import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
-import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+import fi.helsinki.cs.tmc.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 
@@ -54,7 +54,7 @@ public class AbstractJavaPluginTest {
 
         @Override
         protected ClassPath getProjectClassPath(Path path) throws IOException {
-            return null;
+            return new ClassPath(Paths.get(""));
         }
 
         @Override
@@ -171,31 +171,5 @@ public class AbstractJavaPluginTest {
         AbstractJavaPlugin plugin = new StubLanguagePlugin(Paths.get(""));
         Optional<ExerciseDesc> result = plugin.scanExercise(null, "");
         assertFalse(result.isPresent());
-    }
-
-    @Test
-    public void scanExerciseAddsSourceFilesFromProject() {
-        Path path = TestUtils.getPath(getClass(), "trivial");
-        TestScanner scanner = mock(TestScanner.class);
-        AbstractJavaPlugin plugin =
-                new StubLanguagePlugin(
-                        Paths.get(""), new StudentFileAwareSubmissionProcessor(), scanner) {
-                    @Override
-                    public boolean isExerciseTypeCorrect(Path path) {
-                        return true;
-                    }
-                };
-
-        ArgumentCaptor<SourceFiles> sourceFilesCaptor = ArgumentCaptor.forClass(SourceFiles.class);
-
-        plugin.scanExercise(path, "trivial");
-
-        verify(scanner).findTests(any(ClassPath.class), sourceFilesCaptor.capture(), anyString());
-
-        SourceFiles sourceFiles = sourceFilesCaptor.getValue();
-        File expected = TestUtils.getPath(getClass(), "trivial/test/TrivialTest.java").toFile();
-
-        assertFalse(sourceFiles.getSources().isEmpty());
-        assertTrue(sourceFiles.getSources().contains(expected));
     }
 }

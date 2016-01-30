@@ -162,6 +162,7 @@
                         <exclude>**/failing_trivial/**/*</exclude>
                         <exclude>**/maven_exercise/**/*</exclude>
                         <exclude>**/most_errors/**/*</exclude>
+                        <exclude>**/exit_zero/**/*</exclude>
                         <exclude>**/non_ant_project/**/*</exclude>
                         <exclude>**/passing_maven_exercise/**/*</exclude>
                         <exclude>**/trivial/**/*</exclude>

@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import fi.helsinki.cs.tmc.testscanner.TestMethod;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
@@ -34,6 +36,11 @@ public final class TestDesc {
         Preconditions.checkNotNull(points);
         this.name = name;
         this.points = points;
+    }
+
+    public static TestDesc from(TestMethod method) {
+        return new TestDesc(
+                method.className + " " + method.methodName, ImmutableList.copyOf(method.points));
     }
 
     @Override

@@ -1,7 +1,12 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
+import fi.helsinki.cs.tmc.testscanner.TestMethod;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 
 /**
  * A description of an exercise.
@@ -28,6 +33,16 @@ public final class ExerciseDesc {
         Preconditions.checkNotNull(tests);
         this.name = name;
         this.tests = tests;
+    }
+
+    public static ExerciseDesc from(String name, List<TestMethod> testCases) {
+        List<TestDesc> testsList = Lists.newArrayList();
+        for (TestMethod testCase : testCases) {
+            testsList.add(TestDesc.from(testCase));
+        }
+        ImmutableList<TestDesc> tests = ImmutableList.copyOf(testsList);
+
+        return new ExerciseDesc(name, tests);
     }
 
     @Override

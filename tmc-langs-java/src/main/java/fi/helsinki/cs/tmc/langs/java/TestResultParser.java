@@ -3,9 +3,8 @@ package fi.helsinki.cs.tmc.langs.java;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
-import fi.helsinki.cs.tmc.langs.java.testrunner.TestCaseList;
+import fi.helsinki.cs.tmc.testrunner.TestCaseList;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -15,13 +14,10 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class TestResultParser {
 
@@ -61,10 +57,10 @@ public final class TestResultParser {
         TestCaseList testCaseRecords = new Gson().fromJson(resultsJson, TestCaseList.class);
         boolean passed = true;
 
-        for (TestCase tc : testCaseRecords) {
+        for (fi.helsinki.cs.tmc.testrunner.TestCase tc : testCaseRecords) {
             testResults.add(convertTestCaseResult(tc));
 
-            if (tc.status == TestCase.Status.FAILED) {
+            if (tc.status == fi.helsinki.cs.tmc.testrunner.TestCase.Status.FAILED) {
                 passed = false;
             }
         }
@@ -77,7 +73,7 @@ public final class TestResultParser {
                 ImmutableMap.of("stdout", stdout, "stderr", stderr));
     }
 
-    private TestResult convertTestCaseResult(TestCase testCase) {
+    private TestResult convertTestCaseResult(fi.helsinki.cs.tmc.testrunner.TestCase testCase) {
         List<String> exception = new ArrayList<>();
         List<String> points = new ArrayList<>();
 
@@ -90,7 +86,7 @@ public final class TestResultParser {
         Collections.addAll(points, testCase.pointNames);
 
         String name = testCase.className + " " + testCase.methodName;
-        boolean passed = testCase.status == TestCase.Status.PASSED;
+        boolean passed = testCase.status == fi.helsinki.cs.tmc.testrunner.TestCase.Status.PASSED;
         String message = testCase.message == null ? "" : testCase.message;
 
         return new TestResult(

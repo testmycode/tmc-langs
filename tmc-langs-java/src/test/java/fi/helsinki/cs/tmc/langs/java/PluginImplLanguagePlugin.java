@@ -3,8 +3,8 @@ package fi.helsinki.cs.tmc.langs.java;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
-import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
+import fi.helsinki.cs.tmc.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 
@@ -35,7 +35,11 @@ public class PluginImplLanguagePlugin extends AntPlugin {
         SourceFiles sourceFiles = new SourceFiles();
         Path testDir = createPath(path.toAbsolutePath(), File.separatorChar + "test");
         sourceFiles.addSource(testDir.toFile());
-        return scanner.findTests(generateClassPath(path), sourceFiles, exerciseName);
+        scanner.setClassPath(generateClassPath(path).toString());
+        for (File sourceFile : sourceFiles.getSources()) {
+            scanner.addSource(sourceFile);
+        }
+        return Optional.of(ExerciseDesc.from(exerciseName, scanner.findTests()));
     }
 
     @Override

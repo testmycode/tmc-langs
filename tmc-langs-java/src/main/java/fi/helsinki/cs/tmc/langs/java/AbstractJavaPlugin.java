@@ -13,10 +13,12 @@ import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
-import fi.helsinki.cs.tmc.langs.java.testscanner.TestScanner;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
+
 import fi.helsinki.cs.tmc.stylerunner.CheckstyleRunner;
 import fi.helsinki.cs.tmc.stylerunner.exception.TMCCheckstyleException;
+import fi.helsinki.cs.tmc.testscanner.TestMethod;
+import fi.helsinki.cs.tmc.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -25,10 +27,12 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -99,7 +103,16 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             log.error("Unable to get classpath", ex);
             return Optional.absent();
         }
-        return testScanner.findTests(classPath, sourceFiles, exerciseName);
+        StringBuilder stb = new StringBuilder();
+        for (Path cp : classPath.getPaths()) {
+            stb.append(cp.toString());
+            stb.append(":");
+        }
+        testScanner.setClassPath(stb.toString());
+        for (File sourceFile : sourceFiles.getSources()) {
+            testScanner.addSource(sourceFile);
+        }
+        return Optional.of(ExerciseDesc.from(exerciseName, testScanner.findTests()));
     }
 
     @Override

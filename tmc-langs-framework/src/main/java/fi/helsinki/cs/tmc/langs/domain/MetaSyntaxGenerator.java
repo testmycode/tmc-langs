@@ -18,11 +18,9 @@ public class MetaSyntaxGenerator {
         if (fileType.matches("java|c|cpp|h|hpp|js|css")) {
             list.add(new MetaSyntax("\\/\\/", "")); //
             list.add(new MetaSyntax("\\/\\*+", "\\*+\\/")); /* */
-        }
-        if (fileType.matches("xml|http|html")) {
+        } else if (fileType.matches("xml|http|html")) {
             list.add(new MetaSyntax("<!--", "-->"));
-        }
-        if (fileType.matches("properties")) {
+        } else if (fileType.matches("properties|py")) {
             list.add(new MetaSyntax("#", ""));
         }
         cache.put(fileType, list);

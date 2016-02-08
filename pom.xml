@@ -189,7 +189,7 @@
         <module>tmc-langs-notests</module>
          <!-- TODO: add plugins and support libraries here -->
        
-        <module>tmc-langs-cli</module>
         <module>tmc-langs-util</module>
+        <module>tmc-langs-cli</module>
     </modules>
 </project>

@@ -112,7 +112,11 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         for (File sourceFile : sourceFiles.getSources()) {
             testScanner.addSource(sourceFile);
         }
-        return Optional.of(ExerciseDesc.from(exerciseName, testScanner.findTests()));
+
+        List<TestMethod> tests = testScanner.findTests();
+        testScanner.clearSources();
+
+        return Optional.of(ExerciseDesc.from(exerciseName, tests));
     }
 
     @Override

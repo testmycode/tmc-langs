@@ -168,7 +168,19 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {
-        // no op?
+        String[] command = {"cargo", "clean", "&&", "rm", "tmc-points.txt"};
+        ProcessRunner runner = new ProcessRunner(command, path);
+
+        try {
+            ProcessResult result = runner.call();
+            if (result.statusCode == 0) {
+                log.info("Cleaned cargo project");
+            } else {
+                log.warn("Cleaning cargo project was not successful");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private ExerciseDesc parseExercisePoints(List<String> lines, String exerciseName) {

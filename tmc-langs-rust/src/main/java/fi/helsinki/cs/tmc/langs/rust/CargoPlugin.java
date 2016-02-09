@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.rust;
 
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
@@ -14,7 +15,6 @@ import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
 import fi.helsinki.cs.tmc.langs.rust.util.Constants;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
-import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -28,8 +28,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 
 public class CargoPlugin extends AbstractLanguagePlugin {
 

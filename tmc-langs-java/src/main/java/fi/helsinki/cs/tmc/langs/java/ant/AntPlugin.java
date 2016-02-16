@@ -56,6 +56,7 @@ public class AntPlugin extends AbstractJavaPlugin {
     private static final String ANT_PROJECT_HELPER_PROPERTY = "ant.projectHelper";
     private static final String ANT_COMPILE_TEST_TARGET = "compile-test";
     private static final String ANT_CLEAN_TARGET = "clean";
+    private static final String RUNTIME_PARAMS = "runtime_params";
 
     private static final int STATUS_CODE_SUCCESS = 0;
     private static final int STATUS_CODE_ERROR = 1;
@@ -200,7 +201,7 @@ public class AntPlugin extends AbstractJavaPlugin {
         Path resultFile = projectBasePath.resolve(RESULT_FILE);
         ClassPath classPath = getProjectClassPath(projectBasePath);
         TestRunnerArgumentBuilder argumentBuilder =
-                new TestRunnerArgumentBuilder(
+                new TestRunnerArgumentBuilder(getConfiguration(projectBasePath).get(RUNTIME_PARAMS),
                         projectBasePath, testDir, resultFile, classPath, exercise.get());
         List<String> testRunnerArguments = argumentBuilder.getArguments();
 

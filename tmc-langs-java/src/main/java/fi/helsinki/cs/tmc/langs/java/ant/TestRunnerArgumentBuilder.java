@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs.java.ant;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
-import fi.helsinki.cs.tmc.langs.domain.ValueObject;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
 
 import java.io.File;
@@ -29,7 +28,7 @@ public final class TestRunnerArgumentBuilder {
      * Create TestRunnerArguments with all the necessary information for creating an argument list.
      */
     public TestRunnerArgumentBuilder(
-            ValueObject runtimeArguments,
+            String runtimeArguments,
             Path projectBasePath,
             Path testDirectory,
             Path resultFile,
@@ -38,7 +37,7 @@ public final class TestRunnerArgumentBuilder {
         arguments = new ArrayList<>();
         arguments.add(JAVA_RUNTIME);
         if (runtimeArguments != null) {
-            arguments.add(runtimeArguments.asString());
+            arguments.add(runtimeArguments);
         }
         arguments.add(TEST_DIRECTORY_PARAM_PREFIX + testDirectory.toString());
         arguments.add(RESULT_FILE_PARAM_PREFIX + resultFile.toString());

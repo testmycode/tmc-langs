@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.java.ant;
 
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ValueObject;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
@@ -13,6 +14,7 @@ import fi.helsinki.cs.tmc.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import org.apache.tools.ant.BuildException;
@@ -201,7 +203,7 @@ public class AntPlugin extends AbstractJavaPlugin {
         Path resultFile = projectBasePath.resolve(RESULT_FILE);
         ClassPath classPath = getProjectClassPath(projectBasePath);
         TestRunnerArgumentBuilder argumentBuilder =
-                new TestRunnerArgumentBuilder(getConfiguration(projectBasePath).get(RUNTIME_PARAMS),
+                new TestRunnerArgumentBuilder(getJvmOptions(projectBasePath),
                         projectBasePath, testDir, resultFile, classPath, exercise.get());
         List<String> testRunnerArguments = argumentBuilder.getArguments();
 
@@ -234,6 +236,18 @@ public class AntPlugin extends AbstractJavaPlugin {
                 resultFile.toFile(),
                 stdout.toString().getBytes(Charset.forName("UTF-8")),
                 stderr.toString().getBytes(Charset.forName("UTF-8")));
+    }
+
+    private String getJvmOptions(Path projectBasePath) {
+        String jvmEnv = System.getenv("JVM_OPTIONS");
+        if (!Strings.isNullOrEmpty(jvmEnv)) {
+            return jvmEnv;
+        }
+        ValueObject runtimeParamsValue = getConfiguration(projectBasePath).get(RUNTIME_PARAMS);
+        if (runtimeParamsValue != null) {
+            return runtimeParamsValue.asString();
+        }
+        return null;
     }
 
     @Override

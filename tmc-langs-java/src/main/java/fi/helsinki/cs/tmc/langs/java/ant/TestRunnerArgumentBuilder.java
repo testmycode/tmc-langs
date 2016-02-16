@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public final class TestRunnerArgumentBuilder {
         arguments = new ArrayList<>();
         arguments.add(JAVA_RUNTIME);
         if (runtimeArguments != null) {
-            arguments.add(runtimeArguments);
+            arguments.addAll(Arrays.asList(runtimeArguments.split(" +")));
         }
         arguments.add(TEST_DIRECTORY_PARAM_PREFIX + testDirectory.toString());
         arguments.add(RESULT_FILE_PARAM_PREFIX + resultFile.toString());

@@ -38,6 +38,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
@@ -203,8 +204,13 @@ public class AntPlugin extends AbstractJavaPlugin {
         Path resultFile = projectBasePath.resolve(RESULT_FILE);
         ClassPath classPath = getProjectClassPath(projectBasePath);
         TestRunnerArgumentBuilder argumentBuilder =
-                new TestRunnerArgumentBuilder(getJvmOptions(projectBasePath),
-                        projectBasePath, testDir, resultFile, classPath, exercise.get());
+                new TestRunnerArgumentBuilder(
+                        getJvmOptions(projectBasePath),
+                        projectBasePath,
+                        testDir,
+                        resultFile,
+                        classPath,
+                        exercise.get());
         List<String> testRunnerArguments = argumentBuilder.getArguments();
 
         StringBuilder stdout = new StringBuilder();

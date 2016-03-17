@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.io.zip;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -117,8 +118,30 @@ public class StudentFileAwareZipperTest {
         actual.close();
     }
 
-    private void assertZipsEqualDecompressed(ZipFile expected, ZipFile actual) throws IOException {
+    @Test
+    public void zipperDetectectsAndObeysTmcnosubmitFiles() throws IOException {
+        Path uncompressed = TestUtils.getPath(StudentFileAwareUnzipperTest.class,
+                "tmcnosubmit_test_case");
+        byte[] zip = zipper.zip(uncompressed);
 
+        Path compressed = Files.createTempFile("testZip", ".zip");
+        Files.write(compressed, zip);
+
+        Path reference = TEST_ASSETS_DIR.resolve("tmcnosubmit_test_case.zip");
+
+        ZipFile expected = new ZipFile(reference.toFile());
+        ZipFile actual = new ZipFile(compressed.toFile());
+
+        assertZipsEqualDecompressed(expected, actual);
+
+        expected.close();
+        actual.close();
+        Files.deleteIfExists(compressed);
+
+    }
+
+    private void assertZipsEqualDecompressed(ZipFile expected, ZipFile actual)
+            throws IOException {
         Map<String, ZipArchiveEntry> expectedEntries = new HashMap<>();
         Enumeration<ZipArchiveEntry> entries = expected.getEntries();
         while (entries.hasMoreElements()) {

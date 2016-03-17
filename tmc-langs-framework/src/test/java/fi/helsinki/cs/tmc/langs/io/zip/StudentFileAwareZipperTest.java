@@ -146,19 +146,24 @@ public class StudentFileAwareZipperTest {
         Enumeration<ZipArchiveEntry> entries = expected.getEntries();
         while (entries.hasMoreElements()) {
             ZipArchiveEntry entry = entries.nextElement();
-            System.out.println(entry.getName());
             expectedEntries.put(entry.getName(), entry);
         }
 
         Map<String, ZipArchiveEntry> actualEntries = new HashMap<>();
-        entries = expected.getEntries();
+        entries = actual.getEntries();
         while (entries.hasMoreElements()) {
             ZipArchiveEntry entry = entries.nextElement();
             actualEntries.put(entry.getName(), entry);
         }
 
-        for (ZipArchiveEntry excepted : expectedEntries.values()) {
-            assertTrue(actualEntries.containsValue(excepted));
+        assertEquals("Expected actual and expected zips to have same number of entries",
+                expectedEntries.size(),
+                actualEntries.size());
+
+        for (Map.Entry<String, ZipArchiveEntry> mapEntry : expectedEntries.entrySet()) {
+            String expectedName = mapEntry.getKey();
+            assertTrue("Expected actual zip to contain entry " + expectedName,
+                    actualEntries.containsKey(expectedName));
         }
     }
 }

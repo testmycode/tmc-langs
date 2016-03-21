@@ -58,6 +58,11 @@ public final class StudentFileAwareZipper implements Zipper {
         if (filePolicy.isStudentFile(currentPath, zipParent)) {
             log.trace("{} is student file", currentPath);
 
+            if (isExplicitlyIgnoredDirectory(currentPath)) {
+                log.trace("{} contains a .tmcnosubmit file, ignoring this folder", currentPath);
+                return;
+            }
+
             writeToZip(currentPath, zipStream, zipParent);
 
             if (Files.isDirectory(currentPath)) {
@@ -72,6 +77,29 @@ public final class StudentFileAwareZipper implements Zipper {
                 }
             }
         }
+    }
+
+    private boolean isExplicitlyIgnoredDirectory(Path currentPath) throws IOException {
+        if (!Files.isDirectory(currentPath)) {
+            return false;
+        }
+
+        log.trace("Found directory {} while zipping, checking children for .tmcnosubmit",
+                currentPath);
+
+        try (DirectoryStream<Path> directory = Files.newDirectoryStream(currentPath)) {
+            for (Path child : directory) {
+                if (child.getFileName().toString().equals(".tmcnosubmit")) {
+                    log.trace("Detected {} as .tmcnosubmit", child);
+                    return true;
+                }
+            }
+        } catch (IOException ex) {
+            log.error("Exception while checking for .tmcnosubmit", ex);
+            throw new IOException("Exception while checking for .tmcnosubmit", ex);
+        }
+        log.trace("Found no .tmcnosubmit in {}", currentPath);
+        return false;
     }
 
     private void writeToZip(Path currentPath, ZipArchiveOutputStream zipStream, Path zipParent)

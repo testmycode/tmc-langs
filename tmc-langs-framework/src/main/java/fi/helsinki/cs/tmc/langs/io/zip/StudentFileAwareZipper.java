@@ -43,11 +43,7 @@ public final class StudentFileAwareZipper implements Zipper {
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try (ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(buffer)) {
-//            for(File file : rootDirectory.toFile().listFiles()) {
-//                if (file.isDirectory()) {
             zipRecursively(rootDirectory, zipStream, rootDirectory);
-//                }
-//            }
             zipStream.finish();
         }
 

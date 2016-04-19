@@ -55,17 +55,14 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
             return false;
         }
 
-//        if (Files.isDirectory(path)) {
-//            return false;
-//        }
-
         if (path.getFileName().equals(configFile.getFileName())) {
             return false;
         }
 
         this.rootPath = projectRootPath;
 
-        return isExtraStudentFile(path) || projectRootPath.equals(path) || isStudentSourceFile(path.subpath(projectRootPath.getNameCount(), path.getNameCount()), projectRootPath);
+        return isExtraStudentFile(path) || projectRootPath.equals(path) ||
+                isStudentSourceFile(path.subpath(projectRootPath.getNameCount(), path.getNameCount()), projectRootPath);
     }
 
     /**

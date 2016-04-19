@@ -92,7 +92,7 @@ public class TestUtilsTest {
         ConfigurableStudentFilePolicy fileMovingPolicy =
                 new ConfigurableStudentFilePolicy(Paths.get("")) {
             @Override
-            public boolean isStudentSourceFile(Path path) {
+            public boolean isStudentSourceFile(Path path, Path projectRootPath) {
                 return true;
             }
         };
@@ -111,7 +111,7 @@ public class TestUtilsTest {
         ConfigurableStudentFilePolicy fileMovingPolicy =
                 new ConfigurableStudentFilePolicy(Paths.get("")) {
             @Override
-            public boolean isStudentSourceFile(Path path) {
+            public boolean isStudentSourceFile(Path path, Path projectRootPath) {
                 return false;
             }
         };

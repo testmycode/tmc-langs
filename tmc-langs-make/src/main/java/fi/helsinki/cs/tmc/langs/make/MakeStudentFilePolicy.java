@@ -23,7 +23,7 @@ public final class MakeStudentFilePolicy extends ConfigurableStudentFilePolicy {
      * decision to move them is made by {@link ConfigurableStudentFilePolicy}.
      */
     @Override
-    public boolean isStudentSourceFile(Path path) {
+    public boolean isStudentSourceFile(Path path, Path projectRootPath) {
         return !path.endsWith(MAKEFILE_PATH) && path.startsWith(SOURCE_FOLDER_PATH);
     }
 }

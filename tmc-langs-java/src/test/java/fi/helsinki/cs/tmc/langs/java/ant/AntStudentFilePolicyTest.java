@@ -31,7 +31,7 @@ public class AntStudentFilePolicyTest {
     @Test
     public void testItDoesNotMoveBuildXml() throws IOException {
         Path build = Paths.get("build.xml");
-        assertFalse(antFileMovingPolicy.isStudentSourceFile(build));
+        assertFalse(antFileMovingPolicy.isStudentSourceFile(build, projectRootPath));
     }
 
     @Test

@@ -20,7 +20,12 @@ public final class MavenStudentFilePolicy extends ConfigurableStudentFilePolicy 
      * decision to include them is made by {@link ConfigurableStudentFilePolicy}.
      */
     @Override
-    public boolean isStudentSourceFile(Path path) {
+    public boolean isStudentSourceFile(Path path, Path projectRootPath) {
+        if (path.getNameCount() < 2) {
+
+            // If we can't be sure, let's continue.
+            return projectRootPath.resolve(path).toFile().isDirectory();
+        }
         return path.startsWith(Paths.get("src", "main"));
     }
 }

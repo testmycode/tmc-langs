@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.io;
 
 import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +62,11 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
 
         this.rootPath = projectRootPath;
 
-        return isExtraStudentFile(path) || projectRootPath.equals(path) ||
-                isStudentSourceFile(path.subpath(projectRootPath.getNameCount(), path.getNameCount()), projectRootPath);
+        return isExtraStudentFile(path)
+                || projectRootPath.equals(path)
+                || isStudentSourceFile(
+                        path.subpath(projectRootPath.getNameCount(), path.getNameCount()),
+                        projectRootPath);
     }
 
     /**

@@ -50,7 +50,8 @@ public final class StudentFileAwareZipper implements Zipper {
         return buffer.toByteArray();
     }
 
-    private void zipRecursively(Path currentPath, ZipArchiveOutputStream zipStream, Path projectRoot)
+    private void zipRecursively(
+            Path currentPath, ZipArchiveOutputStream zipStream, Path projectRoot)
             throws IOException {
 
         log.trace("Processing {}", currentPath);
@@ -84,7 +85,8 @@ public final class StudentFileAwareZipper implements Zipper {
             return false;
         }
 
-        log.trace("Found directory {} while zipping, checking children for .tmcnosubmit",
+        log.trace(
+                "Found directory {} while zipping, checking children for .tmcnosubmit",
                 currentPath);
 
         try (DirectoryStream<Path> directory = Files.newDirectoryStream(currentPath)) {
@@ -106,7 +108,6 @@ public final class StudentFileAwareZipper implements Zipper {
             throws IOException {
 
         log.trace("Writing {} to zip", currentPath);
-
 
         String name = projectPath.getParent().relativize(currentPath).toString();
 

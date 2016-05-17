@@ -4,7 +4,7 @@
     <parent>
         <groupId>fi.helsinki.cs.tmc</groupId>
         <artifactId>tmc-langs</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>0.1.3-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-framework</artifactId>
-            <version>0.1.2-SNAPSHOT</version>
+            <version>0.1.3-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
 

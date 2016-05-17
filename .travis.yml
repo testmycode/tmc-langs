@@ -29,12 +29,11 @@ script:
   - mvn checkstyle:check
   - . ./clitest.sh
 after_success:
-  - ./deploy.sh
   - mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
 deploy:
   provider: script
   skip_cleanup: true
-  script: deploy.sh
+  script: ./deploy.sh
   on:
     branch: master
 os:

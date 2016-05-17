@@ -43,19 +43,20 @@ public final class StudentFileAwareZipper implements Zipper {
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try (ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(buffer)) {
-            zipRecursively(rootDirectory, zipStream, rootDirectory.getParent());
+            zipRecursively(rootDirectory, zipStream, rootDirectory);
             zipStream.finish();
         }
 
         return buffer.toByteArray();
     }
 
-    private void zipRecursively(Path currentPath, ZipArchiveOutputStream zipStream, Path zipParent)
+    private void zipRecursively(
+            Path currentPath, ZipArchiveOutputStream zipStream, Path projectRoot)
             throws IOException {
 
         log.trace("Processing {}", currentPath);
 
-        if (filePolicy.isStudentFile(currentPath, zipParent)) {
+        if (filePolicy.isStudentFile(currentPath, projectRoot)) {
             log.trace("{} is student file", currentPath);
 
             if (isExplicitlyIgnoredDirectory(currentPath)) {
@@ -63,13 +64,13 @@ public final class StudentFileAwareZipper implements Zipper {
                 return;
             }
 
-            writeToZip(currentPath, zipStream, zipParent);
+            writeToZip(currentPath, zipStream, projectRoot);
 
             if (Files.isDirectory(currentPath)) {
                 log.trace("Recursing to zip contents of {}", currentPath);
                 try (DirectoryStream<Path> directory = Files.newDirectoryStream(currentPath)) {
                     for (Path child : directory) {
-                        zipRecursively(child, zipStream, zipParent);
+                        zipRecursively(child, zipStream, projectRoot);
                     }
                 } catch (IOException exception) {
                     log.error("Exception while attempting to zip contents of {}", currentPath);
@@ -84,7 +85,8 @@ public final class StudentFileAwareZipper implements Zipper {
             return false;
         }
 
-        log.trace("Found directory {} while zipping, checking children for .tmcnosubmit",
+        log.trace(
+                "Found directory {} while zipping, checking children for .tmcnosubmit",
                 currentPath);
 
         try (DirectoryStream<Path> directory = Files.newDirectoryStream(currentPath)) {
@@ -102,12 +104,12 @@ public final class StudentFileAwareZipper implements Zipper {
         return false;
     }
 
-    private void writeToZip(Path currentPath, ZipArchiveOutputStream zipStream, Path zipParent)
+    private void writeToZip(Path currentPath, ZipArchiveOutputStream zipStream, Path projectPath)
             throws IOException {
 
         log.trace("Writing {} to zip", currentPath);
 
-        String name = zipParent.relativize(currentPath).toString();
+        String name = projectPath.getParent().relativize(currentPath).toString();
 
         if (Files.isDirectory(currentPath)) {
             log.trace("{} is a directory", currentPath);

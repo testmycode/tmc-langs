@@ -20,7 +20,7 @@ public final class Python3StudentFilePolicy extends ConfigurableStudentFilePolic
      * decision to include them is made by {@link ConfigurableStudentFilePolicy}.
      */
     @Override
-    public boolean isStudentSourceFile(Path path) {
+    public boolean isStudentSourceFile(Path path, Path projectRootPath) {
         return path.startsWith(Paths.get("src"));
     }
 }

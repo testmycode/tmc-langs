@@ -104,7 +104,7 @@ public final class TestUtils {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                             throws IOException {
-                        if (fileMovingPolicy.isStudentSourceFile(path.relativize(file))) {
+                        if (fileMovingPolicy.isStudentSourceFile(path.relativize(file), path)) {
                             toBeMoved.add(path.relativize(file).toString());
                         }
 

@@ -34,7 +34,7 @@ public class ConfigurableStudentFilePolicyTest {
 
         studentFilePolicy = new ConfigurableStudentFilePolicy(targetDir) {
             @Override
-            public boolean isStudentSourceFile(Path path) {
+            public boolean isStudentSourceFile(Path path, Path projectRootPath) {
                 return false;
             }
         };

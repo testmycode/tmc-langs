@@ -2,6 +2,9 @@ package fi.helsinki.cs.tmc.langs.io;
 
 import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,9 +18,11 @@ import java.util.List;
  *
  * <p>For any {@link StudentFilePolicy} that extends this class, a file is a student file if either
  * {@link ConfigurableStudentFilePolicy#isExtraStudentFile(Path)} or
- * {@link ConfigurableStudentFilePolicy#isStudentSourceFile(Path)} returns {@code True}.
+ * {@link ConfigurableStudentFilePolicy#isStudentSourceFile(Path, Path)} returns {@code True}.
  */
 public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy {
+
+    private static final Logger log = LoggerFactory.getLogger(ConfigurableStudentFilePolicy.class);
 
     private static final Path CONFIG_PATH = Paths.get(".tmcproject.yml");
 
@@ -40,15 +45,14 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
      * <p>For example in a Java project that uses Apache Ant, {@code isStudentSourceFile} should
      * return {@code True} for any files in the <tt>src</tt> directory.
      */
-    public abstract boolean isStudentSourceFile(Path path);
+    // Basically tells whether we should continue recursion deeper into the directory.
+    public abstract boolean isStudentSourceFile(Path path, Path projectRootPath);
 
     @Override
     public boolean isStudentFile(Path path, Path projectRootPath) {
-        if (!Files.exists(path)) {
-            return false;
-        }
+        log.trace("Looking into path: {} root: {}", path, projectRootPath);
 
-        if (Files.isDirectory(path)) {
+        if (!Files.exists(path)) {
             return false;
         }
 
@@ -58,7 +62,11 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
 
         this.rootPath = projectRootPath;
 
-        return isExtraStudentFile(path) || isStudentSourceFile(path);
+        return isExtraStudentFile(path)
+                || projectRootPath.equals(path)
+                || isStudentSourceFile(
+                        path.subpath(projectRootPath.getNameCount(), path.getNameCount()),
+                        projectRootPath);
     }
 
     /**

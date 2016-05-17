@@ -9,7 +9,7 @@
     <name>tmc-langs</name>
     <url>http://testmycode.net</url>
     <scm>
-        <connection>scm:git:git://github.com/testmycode/tmc-langs.git</connection>
+        <connection>scm:git:https://github.com/testmycode/tmc-langs.git</connection>
     </scm>
 
     <properties>

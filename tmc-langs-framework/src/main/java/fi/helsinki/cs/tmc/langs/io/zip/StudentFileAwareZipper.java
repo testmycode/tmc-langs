@@ -63,9 +63,7 @@ public final class StudentFileAwareZipper implements Zipper {
                 return;
             }
 
-            if (!currentPath.equals(projectRoot)) {
-                writeToZip(currentPath, zipStream, projectRoot);
-            }
+            writeToZip(currentPath, zipStream, projectRoot);
 
             if (Files.isDirectory(currentPath)) {
                 log.trace("Recursing to zip contents of {}", currentPath);
@@ -104,12 +102,13 @@ public final class StudentFileAwareZipper implements Zipper {
         return false;
     }
 
-    private void writeToZip(Path currentPath, ZipArchiveOutputStream zipStream, Path zipParent)
+    private void writeToZip(Path currentPath, ZipArchiveOutputStream zipStream, Path projectPath)
             throws IOException {
 
         log.trace("Writing {} to zip", currentPath);
 
-        String name = zipParent.relativize(currentPath).toString();
+
+        String name = projectPath.getParent().relativize(currentPath).toString();
 
         if (Files.isDirectory(currentPath)) {
             log.trace("{} is a directory", currentPath);

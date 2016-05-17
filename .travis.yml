@@ -13,6 +13,9 @@ addons:
       - python3.4
 env:
   - M3_HOME=/usr/local/maven
+  global:
+  - secure: yiW+hXiZEycKFzF19rLlejJX8BTGbncSisBHyE8uulZee5n7UVGXnG1yvt9+6hz0nvMbxL7r1Daql0xxRHXUFB9VYVUKhF0ycHyJO5ze87U51mlIKAL8UnCkmxpkHNdxY45olEdK+mEbZBtot67nenlwGDfxLI7laITkR8IBAvY=
+  - secure: WVOHmRlzHZhuYqpTVFR2ZjdVDugr/EGEZGhnkWFFh6DE2zfa+na8WSLQdynHjTH1sL2DMg+p4l8siLoKk6Kn9wh+Wah2GP54oKQNIvt+Zl0olTR8TZq/uEo1iU4dqsDbMscId2xK7imdQ9wMKXV0t/bqhjiFR/wxheR96WxvIVs=
 before_install:
   - env
   - curl -L https://static.rust-lang.org/rustup.sh | sh -s -- --channel=stable --yes --prefix=$PWD --disable-sudo
@@ -25,7 +28,12 @@ script:
   - mvn checkstyle:check
   - . ./clitest.sh
 after_success:
-  - mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
+- mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report
+"+deploy":
+  provider: script
+  script: deploy.sh
+  on:
+    branch: master
 os:
   - linux
   - osx

@@ -30,7 +30,7 @@ public class MakeStudentFilePolicyTest {
     @Test
     public void testItDoesNotMoveMakefiles() {
         Path makefile = Paths.get("Makefile");
-        assertFalse(makeStudentFilePolicy.isStudentSourceFile(makefile, projectRootPath));
+        assertFalse(makeStudentFilePolicy.isStudentSourceFile(makefile, path));
     }
 
     @Test

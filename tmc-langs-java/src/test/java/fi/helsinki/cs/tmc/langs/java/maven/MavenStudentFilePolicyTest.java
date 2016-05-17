@@ -30,7 +30,7 @@ public class MavenStudentFilePolicyTest {
     @Test
     public void testItDoesNotMovePomXml() throws IOException {
         Path pom = Paths.get("pom.xml");
-        assertFalse(mavenStudentFilePolicy.isStudentSourceFile(pom, projectRootPath));
+        assertFalse(mavenStudentFilePolicy.isStudentSourceFile(pom, projectPath));
     }
 
     @Test

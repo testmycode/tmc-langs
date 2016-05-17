@@ -3,7 +3,20 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fi.helsinki.cs.tmc</groupId>
     <artifactId>build-tools</artifactId>
-    <version>1.0</version>
+    <version>0.1.0</version>
     <name>build-tools</name>
 
+    <!-- Deploy to maven.testmycode.net/nexus -->
+    <distributionManagement>
+        <repository>
+            <id>tmc</id>
+            <name>TMC releases</name>
+            <url>http://maven.testmycode.net/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>tmc-snapshots</id>
+            <name>TMC snapshots</name>
+            <url>http://maven.testmycode.net/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

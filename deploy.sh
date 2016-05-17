@@ -1,2 +1,2 @@
 #!/bin/bash
-mvn deploy deploy.xml
+mvn deploy --settings deploy.xml

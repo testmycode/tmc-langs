@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>tmc-langs</artifactId>
         <groupId>fi.helsinki.cs.tmc</groupId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -36,7 +34,7 @@
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-framework</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -53,19 +51,19 @@
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-java</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-make</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-python3</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
 
@@ -80,7 +78,7 @@
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-util</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
 

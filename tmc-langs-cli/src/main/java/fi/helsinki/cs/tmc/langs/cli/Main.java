@@ -58,7 +58,7 @@ public final class Main {
                     + "                                         Display help information.\n"
                     + " prepare-solution --exercisePath --outputPath"
                     + "             Prepare a presentable solution from the original.\n"
-                    + " prepare-stub --exercisePath -- outputPath"
+                    + " prepare-stubs --exercisePath -- outputPath"
                     + "                 Prepare a stub exercise from the original.\n"
                     + " prepare-submission  --clonePath --submissionPath --outputPath"
                     + "      Prepares from submission and solution project for which the tests"

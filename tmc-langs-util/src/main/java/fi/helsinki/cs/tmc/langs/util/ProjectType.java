@@ -7,6 +7,7 @@ import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenPlugin;
 import fi.helsinki.cs.tmc.langs.make.MakePlugin;
 import fi.helsinki.cs.tmc.langs.python3.Python3Plugin;
+import fi.helsinki.cs.tmc.langs.rust.CargoPlugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public enum ProjectType {
     JAVA_MAVEN(new MavenPlugin()),
     MAKEFILE(new MakePlugin()),
     PYTHON3(new Python3Plugin()),
+    RUST(new CargoPlugin()),
     // for legacy and matching reasons keep the java ant as the last choise.
     JAVA_ANT(new AntPlugin());
 

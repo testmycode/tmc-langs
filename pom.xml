@@ -203,8 +203,8 @@
         <module>tmc-langs-make</module>
         <module>tmc-langs-python3</module>
         <module>tmc-langs-notests</module>
-	<module>tmc-langs-rust</module>
-         <!-- TODO: add plugins and support libraries here -->
+	    <!--module>tmc-langs-rust</module-->
+        <!-- TODO: add plugins and support libraries here -->
 
         <module>tmc-langs-util</module>
         <module>tmc-langs-cli</module>

@@ -66,12 +66,12 @@
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
-        <dependency>
+        <!--<dependency>>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-rust</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1.3-SNAPSHOT</version>
             <type>jar</type>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-notests</artifactId>

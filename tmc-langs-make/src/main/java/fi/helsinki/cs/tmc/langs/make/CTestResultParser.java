@@ -219,7 +219,7 @@ public final class CTestResultParser {
         }
 
         for (TestResult result : getTestResults()) {
-            if (!result.passed) {
+            if (!result.isSuccessful()) {
                 return Status.TESTS_FAILED;
             }
         }

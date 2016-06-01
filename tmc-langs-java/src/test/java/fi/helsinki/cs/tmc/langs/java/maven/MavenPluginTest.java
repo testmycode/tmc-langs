@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.java.maven;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -96,7 +97,7 @@ public class MavenPluginTest {
     //        RunResult result = mavenPlugin.runTests(path);
     //
     //        assertEquals("ComparisonFailure: expected:\u003c[Hello Maven!\n]\u003e but "
-    //                + "was:\u003c[]\u003e", result.testResults.get(0).errorMessage);
+    //                + "was:\u003c[]\u003e", result.testResults.get(0).message);
     //    }
 
     //    @Test
@@ -121,7 +122,7 @@ public class MavenPluginTest {
         RunResult result = mavenPlugin.runTests(path);
 
         assertEquals(1, result.testResults.size());
-        assertEquals(true, result.testResults.get(0).passed);
+        assertEquals(true, result.testResults.get(0).isSuccessful());
     }
 
     @Test
@@ -129,7 +130,7 @@ public class MavenPluginTest {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
 
-        assertEquals("", result.testResults.get(0).errorMessage);
+        assertEquals("", result.testResults.get(0).getMessage());
     }
 
     @Test
@@ -147,14 +148,14 @@ public class MavenPluginTest {
         assertEquals(RunResult.Status.PASSED, result.status);
         assertEquals(2, result.testResults.size());
 
-        assertTrue(result.testResults.get(0).passed);
-        assertTrue(result.testResults.get(1).passed);
+        assertTrue(result.testResults.get(0).isSuccessful());
+        assertTrue(result.testResults.get(1).isSuccessful());
 
-        assertEquals("", result.testResults.get(0).errorMessage);
-        assertEquals("", result.testResults.get(1).errorMessage);
+        assertEquals("", result.testResults.get(0).getMessage());
+        assertEquals("", result.testResults.get(1).getMessage());
 
-        assertTrue(result.testResults.get(0).backtrace.isEmpty());
-        assertTrue(result.testResults.get(1).backtrace.isEmpty());
+        assertTrue(result.testResults.get(0).getDetailedMessage().isEmpty());
+        assertTrue(result.testResults.get(1).getDetailedMessage().isEmpty());
     }
 
     @Test
@@ -180,14 +181,16 @@ public class MavenPluginTest {
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
         assertEquals(2, result.testResults.size());
 
-        assertTrue(result.testResults.get(0).passed);
-        assertFalse(result.testResults.get(1).passed);
+        assertTrue(result.testResults.get(0).isSuccessful());
+        assertFalse(result.testResults.get(1).isSuccessful());
 
-        assertEquals("", result.testResults.get(0).errorMessage);
-        assertEquals("AssertionError", result.testResults.get(1).errorMessage);
+        assertEquals("", result.testResults.get(0).getMessage());
+        assertEquals("AssertionError", result.testResults.get(1).getMessage());
 
-        assertTrue(result.testResults.get(0).backtrace.isEmpty());
-        assertFalse(result.testResults.get(1).backtrace.isEmpty());
+        assertTrue(result.testResults.get(0).getException().isEmpty());
+        assertFalse(
+                "Lol:" + result.testResults.get(1).getException(),
+                result.testResults.get(1).getException().isEmpty());
     }
 
     @Test

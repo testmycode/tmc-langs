@@ -29,7 +29,8 @@ public class TestResultParserTest {
         }
 
         assertEquals("Result status should be PASSED", RunResult.Status.PASSED, result.status);
-        assertEquals("Test name was wrong", "ArithTest testAdd", result.testResults.get(0).name);
+        assertEquals(
+                "Test name was wrong", "ArithTest testAdd", result.testResults.get(0).getName());
     }
 
     @Test
@@ -421,15 +422,15 @@ public class TestResultParserTest {
         assertEquals("There should be 4 test results in the result", 4, result.testResults.size());
 
         TestResult testResult = result.testResults.get(0);
-        assertEquals("ArithTest testAdd", testResult.name);
-        assertTrue("ArithTest testAdd passed should be true", testResult.passed);
+        assertEquals("ArithTest testAdd", testResult.getName());
+        assertTrue("ArithTest testAdd passed should be true", testResult.isSuccessful());
     }
 
     private void assertFieldsNotNull(TestResult testResult) {
-        assertNotNull(testResult.errorMessage);
-        assertNotNull(testResult.backtrace);
-        assertNotNull(testResult.name);
-        assertNotNull(testResult.passed);
-        assertNotNull(testResult.points);
+        assertNotNull(testResult.getMessage());
+        assertNotNull(testResult.getDetailedMessage());
+        assertNotNull(testResult.getException());
+        assertNotNull(testResult.getName());
+        assertNotNull(testResult.getValgrindFailed());
     }
 }

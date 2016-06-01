@@ -1,7 +1,6 @@
 package fi.helsinki.cs.tmc.langs.java;
 
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
-import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.testrunner.TestCaseList;
 

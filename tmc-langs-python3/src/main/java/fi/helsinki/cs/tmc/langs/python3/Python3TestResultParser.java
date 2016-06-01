@@ -38,7 +38,7 @@ public final class Python3TestResultParser {
 
         RunResult.Status status = RunResult.Status.PASSED;
         for (TestResult result : testResults) {
-            if (!result.passed) {
+            if (!result.isSuccessful()) {
                 status = RunResult.Status.TESTS_FAILED;
             }
         }

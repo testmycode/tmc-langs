@@ -1,70 +1,103 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
-import com.google.common.base.Preconditions;
+import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * The result of a single test case.
+ * The result of a single test case. NetBeanses TestCaseResult
  */
 public class TestResult {
 
-    /**
-     * The full name of the test.
-     *
-     * <p>If the language organises tests into suites or classes, it is customary
-     * to name the test as "class_name.method_name".
-     */
-    public final String name;
+    private String name;
+    private boolean successful;
+    private String message;
 
-    /**
-     * Whether the test passed.
-     */
-    public final boolean passed;
+    @SerializedName("detailed_message")
+    private String detailedMessage;
 
-    /**
-     * The points that may be awarded for this test case, if other requirements
-     * for those points are satisfied.
-     *
-     * <p>May be empty but not null.
-     */
+    // TODO: is this used?
+    private boolean valgrindFailed;
+
     public final ImmutableList<String> points;
+    private ImmutableList<String> exception;
 
-    /**
-     * The test failure message.
-     *
-     * <p>Should be empty if the test passed. May not be null.
-     */
-    public final String errorMessage;
+    public TestResult() {
+        this.points = ImmutableList.of();
+    }
 
-    /**
-     * The backtrace for the test failure.
-     *
-     * <p>The backtrace may be in whatever format is natural for the language being
-     * tested. Only stack frames (or similar) should be part of the backtrace
-     * list. All other diagnostic messages and advice to the student should be
-     * part of errorMessage.
-     *
-     * <p>Should be empty if the test passed. May not be null.
-     */
-    public final ImmutableList<String> backtrace;
-
-    /**
-     * Creates a new TestResult from the provided parameters.
-     */
-    public TestResult(
-            String name,
-            boolean passed,
-            ImmutableList<String> points,
-            String errorMessage,
-            ImmutableList<String> backtrace) {
-        Preconditions.checkNotNull(name);
-        Preconditions.checkNotNull(points);
-        Preconditions.checkNotNull(errorMessage);
-        Preconditions.checkNotNull(backtrace);
+    public TestResult(String name, boolean successful, String message) {
         this.name = name;
-        this.passed = passed;
+        this.successful = successful;
+        this.message = message;
+        this.points = ImmutableList.of();
+    }
+
+    public TestResult(String name,
+                      boolean successful,
+                      String message,
+                      String detailedMessage,
+                      boolean valgrindFailed) {
+        this.name = name;
+        this.successful = successful;
+        this.message = message;
+        this.detailedMessage = detailedMessage;
+        this.valgrindFailed = valgrindFailed;
+        this.points = ImmutableList.of();
+    }
+
+    public TestResult(String name,
+                      boolean passed,
+                      ImmutableList<String> points,
+                      String message,
+                      ImmutableList<String> exception) {
+        this.name = name;
+        this.successful = passed;
+        this.message = message;
         this.points = points;
-        this.errorMessage = errorMessage;
-        this.backtrace = backtrace;
+        this.exception = exception;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isSuccessful() {
+        return successful;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public ImmutableList<String> getException() {
+        return exception;
+    }
+
+    public ImmutableList<String> getDetailedMessage() {
+        if (Strings.isNullOrEmpty(detailedMessage)) {
+            return ImmutableList.of();
+        }
+        return ImmutableList.copyOf(detailedMessage.split("\n"));
+    }
+
+    @Beta
+    // TODO: is this used?
+    public boolean getValgrindFailed() {
+        return this.valgrindFailed;
+    }
+
+    @Override
+    public String toString() {
+        return "TestResult{"
+                + "name='" + name + '\''
+                + ", successful=" + successful
+                + ", message='" + message + '\''
+                + ", detailedMessage='" + getDetailedMessage() + '\''
+                + ", valgrindFailed=" + valgrindFailed
+                + ", points=" + points
+                + ", exception=" + exception
+                + '}';
     }
 }

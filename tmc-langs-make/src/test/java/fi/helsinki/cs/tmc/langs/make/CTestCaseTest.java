@@ -79,42 +79,42 @@ public class CTestCaseTest {
     public void testResultIsCorrectWithPassingTest() {
         TestResult testResult = this.passing.getTestResult();
 
-        assertEquals("test_passing", testResult.name);
-        assertTrue(testResult.passed);
+        assertEquals("test_passing", testResult.getName());
+        assertTrue(testResult.isSuccessful());
         assertEquals(1, testResult.points.size());
         assertEquals("1.1", testResult.points.get(0));
-        assertEquals("", testResult.errorMessage);
-        assertEquals(0, testResult.backtrace.size());
+        assertEquals("", testResult.getMessage());
+        assertEquals(0, testResult.getException().size());
     }
 
     @Test
     public void testResultIsCorrectWithFailingTest() {
         TestResult testResult = this.failing.getTestResult();
 
-        assertEquals("test_failing", testResult.name);
-        assertFalse(testResult.passed);
+        assertEquals("test_failing", testResult.getName());
+        assertFalse(testResult.isSuccessful());
         assertEquals(0, testResult.points.size());
-        assertEquals("Some tests failed", testResult.errorMessage);
-        assertEquals(0, testResult.backtrace.size());
+        assertEquals("Some tests failed", testResult.getMessage());
+        assertEquals(0, testResult.getException().size());
     }
 
     @Test
     public void testResultIsCorrectWhenValgrindFailsButTestPasses() {
         TestResult testResult = this.valgrindFail.getTestResult();
 
-        assertEquals("test_valgrindFail", testResult.name);
-        assertFalse(testResult.passed);
+        assertEquals("test_valgrindFail", testResult.getName());
+        assertFalse(testResult.isSuccessful());
         assertEquals(1, testResult.points.size());
         assertEquals("1.1", testResult.points.get(0));
         String valgrindErrorMessage =
                 " - Failed due to errors in valgrind log; see log below. "
                         + "Try submitting to server, some leaks might be platform dependent";
-        assertEquals(valgrindErrorMessage, testResult.errorMessage);
-        assertEquals(25, testResult.backtrace.size());
+        assertEquals(valgrindErrorMessage, testResult.getMessage());
+        assertEquals(25, testResult.getException().size());
         assertTrue(
                 testResult
-                        .backtrace
-                        .get(testResult.backtrace.size() - 1)
+                        .getException()
+                        .get(testResult.getException().size() - 1)
                         .contains("ERROR SUMMARY: 1 errors from 1 contexts"));
     }
 
@@ -122,16 +122,16 @@ public class CTestCaseTest {
     public void testResultIsCorrectWhenValgrindFailsAndTestFails() {
         TestResult testResult = this.bothFail.getTestResult();
 
-        assertEquals("test_bothFail", testResult.name);
-        assertFalse(testResult.passed);
+        assertEquals("test_bothFail", testResult.getName());
+        assertFalse(testResult.isSuccessful());
         assertEquals(1, testResult.points.size());
         assertEquals("1.1", testResult.points.get(0));
-        assertEquals("Some tests failed", testResult.errorMessage);
-        assertEquals(25, testResult.backtrace.size());
+        assertEquals("Some tests failed", testResult.getMessage());
+        assertEquals(25, testResult.getException().size());
         assertTrue(
                 testResult
-                        .backtrace
-                        .get(testResult.backtrace.size() - 1)
+                        .getException()
+                        .get(testResult.getException().size() - 1)
                         .contains("ERROR SUMMARY: 1 errors from 1 contexts"));
     }
 
@@ -139,11 +139,11 @@ public class CTestCaseTest {
     public void testResultIsCorrectWhenValgrindIsAllowedToFail() {
         TestResult testResult = this.valgrindFailAllowed.getTestResult();
 
-        assertEquals("test_valgrindFailAllowed", testResult.name);
-        assertTrue(testResult.passed);
+        assertEquals("test_valgrindFailAllowed", testResult.getName());
+        assertTrue(testResult.isSuccessful());
         assertEquals(1, testResult.points.size());
         assertEquals("1.1", testResult.points.get(0));
-        assertEquals("", testResult.errorMessage);
-        assertTrue(testResult.backtrace.isEmpty());
+        assertEquals("", testResult.getMessage());
+        assertTrue(testResult.getException().isEmpty());
     }
 }

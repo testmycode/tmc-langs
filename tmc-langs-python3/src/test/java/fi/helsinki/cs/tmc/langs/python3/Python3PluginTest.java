@@ -93,12 +93,12 @@ public class Python3PluginTest {
         RunResult runResult = python3Plugin.runTests(path);
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
-        assertTrue(testResult.passed);
-        assertEquals("test.test_new.TestCase.test_new", testResult.name);
+        assertTrue(testResult.isSuccessful());
+        assertEquals("test.test_new.TestCase.test_new", testResult.getName());
         assertEquals(2, testResult.points.size());
         assertTrue(testResult.points.contains("1.2"));
-        assertEquals("", testResult.errorMessage);
-        assertEquals(0, testResult.backtrace.size());
+        assertEquals("", testResult.getMessage());
+        assertEquals(0, testResult.getException().size());
     }
 
     @Test
@@ -108,9 +108,9 @@ public class Python3PluginTest {
 
         assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
-        assertFalse(testResult.passed);
-        assertFalse(testResult.errorMessage.isEmpty());
-        assertEquals(6, testResult.backtrace.size());
+        assertFalse(testResult.isSuccessful());
+        assertFalse(testResult.getMessage().isEmpty());
+        assertEquals(6, testResult.getException().size());
     }
 
     @Test

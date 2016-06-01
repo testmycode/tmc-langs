@@ -63,8 +63,8 @@ public class CTestResultParserTest {
         List<TestResult> results = cpar.getTestResults();
         assertEquals("There should only be one test result", 1, results.size());
         TestResult result = results.get(0);
-        assertTrue("The test should be successful", result.passed);
-        assertEquals("The name of the test should be \"passing\"", "passing", result.name);
+        assertTrue("The test should be successful", result.isSuccessful());
+        assertEquals("The name of the test should be \"passing\"", "passing", result.getName());
     }
 
     @Test
@@ -83,12 +83,12 @@ public class CTestResultParserTest {
         List<TestResult> results = cpar.getTestResults();
         assertEquals("There should only be one test result", 1, results.size());
         TestResult result = results.get(0);
-        assertFalse("The test should not be successful", result.passed);
+        assertFalse("The test should not be successful", result.isSuccessful());
         assertEquals(
                 "The test should contain the message: This test should've failed",
                 "This test should've failed",
-                result.errorMessage);
-        assertEquals("The name of the test should be \"failing\"", "failing", result.name);
+                result.getMessage());
+        assertEquals("The name of the test should be \"failing\"", "failing", result.getName());
     }
 
     @Test
@@ -106,8 +106,8 @@ public class CTestResultParserTest {
         }
         List<TestResult> results = cpar.getTestResults();
         assertEquals("There should be two test results", 2, results.size());
-        assertTrue("The first should be passing", results.get(0).passed);
-        assertFalse("The second should be failing", results.get(1).passed);
+        assertTrue("The first should be passing", results.get(0).isSuccessful());
+        assertFalse("The second should be failing", results.get(1).isSuccessful());
     }
 
     @Test
@@ -128,12 +128,12 @@ public class CTestResultParserTest {
         List<TestResult> results = cpar.getTestResults();
         assertEquals("There should only be one test result", 1, results.size());
         TestResult result = results.get(0);
-        assertFalse("The test should not be successful", result.passed);
+        assertFalse("The test should not be successful", result.isSuccessful());
         assertEquals(
                 "The test should contain the message: This test should've failed",
                 "This test should've failed",
-                result.errorMessage);
-        assertEquals("The name of the test should be \"failing\"", "failing", result.name);
+                result.getMessage());
+        assertEquals("The name of the test should be \"failing\"", "failing", result.getName());
     }
 
     @Test
@@ -151,14 +151,14 @@ public class CTestResultParserTest {
         }
         List<TestResult> results = cpar.getTestResults();
         assertEquals("There should be two test results", 2, results.size());
-        assertNotNull("Valgrind errors should go in backtrace", results.get(0).backtrace);
+        assertNotNull("Valgrind errors should go in backtrace", results.get(0).getException());
         assertTrue(
                 "Valgrind errors should go in backtrace",
-                results.get(0).backtrace.contains("==1== 1"));
+                results.get(0).getException().contains("==1== 1"));
         assertEquals(
                 "Valgrind output should go into backtrace if there were not errors",
                 0,
-                results.get(1).backtrace.size());
+                results.get(1).getException().size());
     }
 
     @Test
@@ -180,7 +180,7 @@ public class CTestResultParserTest {
             assertEquals(
                     "Valgrind output should be empty when there was no error",
                     0,
-                    r.backtrace.size());
+                    r.getException().size());
         }
     }
 
@@ -199,8 +199,8 @@ public class CTestResultParserTest {
         }
         List<TestResult> results = cpar.getTestResults();
 
-        assertFalse(results.get(0).passed);
-        assertFalse(results.get(1).passed);
+        assertFalse(results.get(0).isSuccessful());
+        assertFalse(results.get(1).isSuccessful());
     }
 
     @Test
@@ -225,9 +225,9 @@ public class CTestResultParserTest {
         List<TestResult> results = cpar.getTestResults();
 
         // The one with only Valgrind errors passes
-        assertTrue(results.get(0).passed);
+        assertTrue(results.get(0).isSuccessful());
         // The one with failing tests still fails
-        assertFalse(results.get(1).passed);
+        assertFalse(results.get(1).isSuccessful());
     }
 
     private Path constructTestOutput(ArrayList<CTestCase> testCases) throws IOException {

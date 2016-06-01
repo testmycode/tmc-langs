@@ -51,7 +51,7 @@ public class MakePluginTest {
         RunResult result = makePlugin.runTests(path);
 
         assertEquals(1, result.testResults.size());
-        assertEquals(false, result.testResults.get(0).passed);
+        assertEquals(false, result.testResults.get(0).isSuccessful());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class MakePluginTest {
 
         assertEquals(
                 "[Task 1.1] one returned 2. Should have returned: 1",
-                result.testResults.get(0).errorMessage);
+                result.testResults.get(0).getMessage());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class MakePluginTest {
         Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);
         assertEquals(1, result.testResults.size());
-        assertEquals(true, result.testResults.get(0).passed);
+        assertEquals(true, result.testResults.get(0).isSuccessful());
     }
 
     @Test
@@ -85,7 +85,7 @@ public class MakePluginTest {
         Path path = TestUtils.getPath(getClass(), "passing");
         RunResult result = makePlugin.runTests(path);
 
-        assertEquals("", result.testResults.get(0).errorMessage);
+        assertEquals("", result.testResults.get(0).getMessage());
     }
 
     @Test
@@ -111,10 +111,10 @@ public class MakePluginTest {
         Path path = TestUtils.getPath(getClass(), "valgrind-failing");
         RunResult result = makePlugin.runTests(path);
 
-        assertTrue(result.testResults.get(0).passed);
-        assertFalse(result.testResults.get(1).passed);
-        assertTrue(result.testResults.get(0).backtrace.size() == 0);
-        assertTrue(result.testResults.get(1).backtrace.size() > 0);
+        assertTrue(result.testResults.get(0).isSuccessful());
+        assertFalse(result.testResults.get(1).isSuccessful());
+        assertTrue(result.testResults.get(0).getException().size() == 0);
+        assertTrue(result.testResults.get(1).getException().size() > 0);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class MakePluginTest {
         assertEquals(RunResult.Status.PASSED, result.status);
         assertEquals(3, result.testResults.size());
         assertEquals("1.3", result.testResults.get(2).points.get(0));
-        assertEquals("suite.Test-Passing-Suite", result.testResults.get(2).name);
+        assertEquals("suite.Test-Passing-Suite", result.testResults.get(2).getName());
     }
 
     @Test
@@ -158,8 +158,8 @@ public class MakePluginTest {
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
         assertEquals(3, result.testResults.size());
         assertEquals("1.3", result.testResults.get(2).points.get(0));
-        assertEquals("suite.Test-Failing-Suite", result.testResults.get(2).name);
-        assertEquals(false, result.testResults.get(2).passed);
+        assertEquals("suite.Test-Failing-Suite", result.testResults.get(2).getName());
+        assertEquals(false, result.testResults.get(2).isSuccessful());
     }
 
     @Test
@@ -224,7 +224,7 @@ public class MakePluginTest {
         Path path = TestUtils.getPath(getClass(), "passing-old");
         RunResult result = makePlugin.runTests(path);
         assertEquals(1, result.testResults.size());
-        assertEquals(true, result.testResults.get(0).passed);
+        assertEquals(true, result.testResults.get(0).isSuccessful());
     }
 
     @Test
@@ -232,7 +232,7 @@ public class MakePluginTest {
         Path path = TestUtils.getPath(getClass(), "failing-old");
         RunResult result = makePlugin.runTests(path);
         assertEquals(1, result.testResults.size());
-        assertEquals(false, result.testResults.get(0).passed);
+        assertEquals(false, result.testResults.get(0).isSuccessful());
     }
 
     @Test

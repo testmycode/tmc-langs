@@ -92,8 +92,8 @@ public class AntPluginTest {
         Path project = TestUtils.getPath(getClass(), "ant_arith_funcs");
         ImmutableList<TestResult> testResults = antPlugin.runTests(project).testResults;
         assertEquals(4, testResults.size());
-        assertTrue(testResults.get(0).passed);
-        assertFalse(testResults.get(3).passed);
+        assertTrue(testResults.get(0).isSuccessful());
+        assertFalse(testResults.get(3).isSuccessful());
     }
 
     @Test
@@ -112,7 +112,9 @@ public class AntPluginTest {
         assertTestResult(testResult, "", "TrivialTest testF", true);
         assertEquals("trivial", testResult.points.get(0));
         assertEquals(
-                "When all tests pass backtrace should be empty.", 0, testResult.backtrace.size());
+                "When all tests pass backtrace should be empty.",
+                0,
+                testResult.getDetailedMessage().size());
     }
 
     @Test
@@ -134,9 +136,9 @@ public class AntPluginTest {
             String expectedErrorMessage,
             String expectedName,
             boolean expectedPassed) {
-        assertEquals(expectedErrorMessage, testResult.errorMessage);
-        assertEquals(expectedName, testResult.name);
-        assertEquals(expectedPassed, testResult.passed);
+        assertEquals(expectedErrorMessage, testResult.getMessage());
+        assertEquals(expectedName, testResult.getName());
+        assertEquals(expectedPassed, testResult.isSuccessful());
     }
 
     @Test

@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import org.junit.Test;
@@ -70,22 +70,22 @@ public class MavenPluginTest {
     @Test
     public void testRunTestsWhenBuildFailing() {
         Path project = TestUtils.getPath(getClass(), "failing_maven_exercise");
-        RunResult runResult = mavenPlugin.runTests(project);
-        assertEquals(RunResult.Status.COMPILE_FAILED, runResult.status);
+        TestCase testCase = mavenPlugin.runTests(project);
+        assertEquals(TestCase.Status.COMPILE_FAILED, testCase.status);
     }
 
     @Test
     public void testMavenProjectWithFailingTestsCompilesAndFailsTests() {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
-        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(TestCase.Status.TESTS_FAILED, result.status);
     }
 
     @Test
     public void testFailingMavenProjectHasOneFailedTest() {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
         assertEquals(1, result.testResults.size());
     }
@@ -93,7 +93,7 @@ public class MavenPluginTest {
     //    @Test
     //    public void testFailingMavenProjectHasCorrectError() {
     //        Path path = TestUtils.getPath(getClass(), "maven_exercise");
-    //        RunResult result = mavenPlugin.runTests(path);
+    //        TestCase result = mavenPlugin.runTests(path);
     //
     //        assertEquals("ComparisonFailure: expected:\u003c[Hello Maven!\n]\u003e but "
     //                + "was:\u003c[]\u003e", result.testResults.get(0).errorMessage);
@@ -102,7 +102,7 @@ public class MavenPluginTest {
     //    @Test
     //    public void testFailingMavenProjectHasStackTrace() {
     //        Path path = TestUtils.getPath(getClass(), "maven_exercise");
-    //        RunResult result = mavenPlugin.runTests(path);
+    //        TestCase result = mavenPlugin.runTests(path);
     //
     //        assertTrue(result.testResults.get(0).backtrace.size() > 0);
     //    }
@@ -110,15 +110,15 @@ public class MavenPluginTest {
     @Test
     public void testMavenProjectWithPassingTestsCompilesAndPassesTests() {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
-        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(TestCase.Status.PASSED, result.status);
     }
 
     @Test
     public void testPassingMavenProjectHasOnePassingTest() {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
         assertEquals(1, result.testResults.size());
         assertEquals(true, result.testResults.get(0).passed);
@@ -127,7 +127,7 @@ public class MavenPluginTest {
     @Test
     public void testPassingMavenProjectHasNoError() {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
         assertEquals("", result.testResults.get(0).errorMessage);
     }
@@ -135,16 +135,16 @@ public class MavenPluginTest {
     @Test
     public void pluginHandlesProjectThatUsesReflectionUtils() {
         Path project = TestUtils.getPath(getClass(), "reflection_utils_maven_test_case");
-        RunResult result = mavenPlugin.runTests(project);
-        assertEquals(RunResult.Status.PASSED, result.status);
+        TestCase result = mavenPlugin.runTests(project);
+        assertEquals(TestCase.Status.PASSED, result.status);
     }
 
     @Test
     public void testMultipleTestMethodsGetAddedToRunResultWhenAllPass() {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise_with_class_points");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
-        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(TestCase.Status.PASSED, result.status);
         assertEquals(2, result.testResults.size());
 
         assertTrue(result.testResults.get(0).passed);
@@ -160,7 +160,7 @@ public class MavenPluginTest {
     @Test
     public void testPointsWhenAllTestsPass() {
         Path path = TestUtils.getPath(getClass(), "passing_maven_exercise_with_class_points");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
         assertEquals(2, result.testResults.get(0).points.size());
         assertEquals(2, result.testResults.get(1).points.size());
@@ -175,9 +175,9 @@ public class MavenPluginTest {
     @Test
     public void testMultipleTestMethodsGetAddedToRunResultWhenSomeFail() {
         Path path = TestUtils.getPath(getClass(), "failing_maven_exercise_with_class_points");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
-        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(TestCase.Status.TESTS_FAILED, result.status);
         assertEquals(2, result.testResults.size());
 
         assertTrue(result.testResults.get(0).passed);
@@ -193,7 +193,7 @@ public class MavenPluginTest {
     @Test
     public void testPointsWhenSomeTestsFail() {
         Path path = TestUtils.getPath(getClass(), "failing_maven_exercise_with_class_points");
-        RunResult result = mavenPlugin.runTests(path);
+        TestCase result = mavenPlugin.runTests(path);
 
         assertEquals(2, result.testResults.get(0).points.size());
         assertEquals(2, result.testResults.get(1).points.size());

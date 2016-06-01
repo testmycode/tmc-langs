@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.java;
 
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.testrunner.TestCaseList;
@@ -24,12 +23,12 @@ public final class TestResultParser {
     private static final Logger log = LoggerFactory.getLogger(TestResultParser.class);
 
     /**
-     * Parse tmc-testrunner output file for RunResult information.
+     * Parse tmc-testrunner output file for TestCase information.
      *
      * @param resultsFile to be parsed.
-     * @return RunResult object containing information about the tests.
+     * @return TestCase object containing information about the tests.
      */
-    public RunResult parseTestResult(TestRunFileAndLogs resultsFile) {
+    public TestCase parseTestResult(TestRunFileAndLogs resultsFile) {
         try {
             return parseTestResult(
                     FileUtils.readFileToString(resultsFile.getTestResultsFile(), "UTF-8"),
@@ -38,8 +37,8 @@ public final class TestResultParser {
         } catch (IOException e) {
             log.error("Unable to parse test results from {}", resultsFile, e);
             // The testrun VM crashed, most likely due to System.exit command in tested code.
-            return new RunResult(
-                    RunResult.Status.TESTRUN_INTERRUPTED,
+            return new TestCase(
+                    TestCase.Status.TESTRUN_INTERRUPTED,
                     ImmutableList.<TestResult>of(),
                     ImmutableMap.<String, byte[]>of());
         }
@@ -49,9 +48,9 @@ public final class TestResultParser {
      * Parse run results from a JSON string.
      *
      * @param resultsJson   A JSON representation of the test results.
-     * @return              Parsed RunResult
+     * @return              Parsed TestCase
      */
-    public RunResult parseTestResult(String resultsJson, byte[] stdout, byte[] stderr) {
+    public TestCase parseTestResult(String resultsJson, byte[] stdout, byte[] stderr) {
         List<TestResult> testResults = new ArrayList<>();
 
         TestCaseList testCaseRecords = new Gson().fromJson(resultsJson, TestCaseList.class);
@@ -65,9 +64,9 @@ public final class TestResultParser {
             }
         }
 
-        RunResult.Status status = passed ? RunResult.Status.PASSED : RunResult.Status.TESTS_FAILED;
+        TestCase.Status status = passed ? TestCase.Status.PASSED : TestCase.Status.TESTS_FAILED;
 
-        return new RunResult(
+        return new TestCase(
                 status,
                 ImmutableList.copyOf(testResults),
                 ImmutableMap.of("stdout", stdout, "stderr", stderr));

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
@@ -33,22 +33,22 @@ public class MakePluginTest {
 
     @Test
     public void testRunTestsWhenBuildFailing() {
-        RunResult runResult = makePlugin.runTests(TestUtils.getPath(getClass(), "build-failing"));
-        assertEquals(RunResult.Status.COMPILE_FAILED, runResult.status);
+        TestCase testCase = makePlugin.runTests(TestUtils.getPath(getClass(), "build-failing"));
+        assertEquals(TestCase.Status.COMPILE_FAILED, testCase.status);
     }
 
     @Test
     public void testMakeProjectWithFailingTestsCompilesAndFailsTests() {
         Path path = TestUtils.getPath(getClass(), "failing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
-        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(TestCase.Status.TESTS_FAILED, result.status);
     }
 
     @Test
     public void testFailingMakeProjectHasOneFailedTest() {
         Path path = TestUtils.getPath(getClass(), "failing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
         assertEquals(1, result.testResults.size());
         assertEquals(false, result.testResults.get(0).passed);
@@ -57,7 +57,7 @@ public class MakePluginTest {
     @Test
     public void testFailingMakeProjectHasCorrectError() {
         Path path = TestUtils.getPath(getClass(), "failing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
         assertEquals(
                 "[Task 1.1] one returned 2. Should have returned: 1",
@@ -67,15 +67,15 @@ public class MakePluginTest {
     @Test
     public void testMakeProjectWithPassingTestsCompilesAndPassesTests() {
         Path path = TestUtils.getPath(getClass(), "passing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
-        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(TestCase.Status.PASSED, result.status);
     }
 
     @Test
     public void testPassingMakeProjectHasOnePassingTest() {
         Path path = TestUtils.getPath(getClass(), "passing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
         assertEquals(1, result.testResults.size());
         assertEquals(true, result.testResults.get(0).passed);
     }
@@ -83,7 +83,7 @@ public class MakePluginTest {
     @Test
     public void testPassingMakeProjectHasNoError() {
         Path path = TestUtils.getPath(getClass(), "passing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
         assertEquals("", result.testResults.get(0).errorMessage);
     }
@@ -91,7 +91,7 @@ public class MakePluginTest {
     @Test
     public void testPassingMakeProjectHasCorrectPoints() {
         Path path = TestUtils.getPath(getClass(), "passing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
         assertEquals("1.1", result.testResults.get(0).points.get(0));
         assertEquals(1, result.testResults.get(0).points.size());
@@ -100,7 +100,7 @@ public class MakePluginTest {
     @Test
     public void testFailingMakeProjectHasCorrectPoints() {
         Path path = TestUtils.getPath(getClass(), "failing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
         assertEquals("1.1", result.testResults.get(0).points.get(0));
         assertEquals(1, result.testResults.get(0).points.size());
@@ -109,7 +109,7 @@ public class MakePluginTest {
     @Test
     public void testPassingMakeProjectWillFailWithValgrindFailure() {
         Path path = TestUtils.getPath(getClass(), "valgrind-failing");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
         assertTrue(result.testResults.get(0).passed);
         assertFalse(result.testResults.get(1).passed);
@@ -120,9 +120,9 @@ public class MakePluginTest {
     @Test
     public void testSamePointFromMultipleTestsAllSuccessful() {
         Path path = TestUtils.getPath(getClass(), "passing-same-point");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
-        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(TestCase.Status.PASSED, result.status);
         assertEquals(2, result.testResults.size());
         assertEquals("1.3", result.testResults.get(0).points.get(1));
         assertEquals("1.3", result.testResults.get(1).points.get(1));
@@ -131,9 +131,9 @@ public class MakePluginTest {
     @Test
     public void testSamePointFromMultipleTestsSomeFailed() {
         Path path = TestUtils.getPath(getClass(), "failing-same-point");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
-        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(TestCase.Status.TESTS_FAILED, result.status);
         assertEquals(2, result.testResults.size());
         assertEquals("1.3", result.testResults.get(0).points.get(1));
         assertEquals("1.3", result.testResults.get(1).points.get(1));
@@ -142,9 +142,9 @@ public class MakePluginTest {
     @Test
     public void testSuitePointsWithPassingSuite() {
         Path path = TestUtils.getPath(getClass(), "passing-suite");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
-        assertEquals(RunResult.Status.PASSED, result.status);
+        assertEquals(TestCase.Status.PASSED, result.status);
         assertEquals(3, result.testResults.size());
         assertEquals("1.3", result.testResults.get(2).points.get(0));
         assertEquals("suite.Test-Passing-Suite", result.testResults.get(2).name);
@@ -153,9 +153,9 @@ public class MakePluginTest {
     @Test
     public void testSuitePointsWithFailingSuite() {
         Path path = TestUtils.getPath(getClass(), "failing-suite");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
 
-        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
+        assertEquals(TestCase.Status.TESTS_FAILED, result.status);
         assertEquals(3, result.testResults.size());
         assertEquals("1.3", result.testResults.get(2).points.get(0));
         assertEquals("suite.Test-Failing-Suite", result.testResults.get(2).name);
@@ -222,7 +222,7 @@ public class MakePluginTest {
     @Test
     public void testBackwardCompatibilityWithPassingMakeProject() {
         Path path = TestUtils.getPath(getClass(), "passing-old");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
         assertEquals(1, result.testResults.size());
         assertEquals(true, result.testResults.get(0).passed);
     }
@@ -230,7 +230,7 @@ public class MakePluginTest {
     @Test
     public void testBackwardCompatibilityWithFailingMakeProject() {
         Path path = TestUtils.getPath(getClass(), "failing-old");
-        RunResult result = makePlugin.runTests(path);
+        TestCase result = makePlugin.runTests(path);
         assertEquals(1, result.testResults.size());
         assertEquals(false, result.testResults.get(0).passed);
     }

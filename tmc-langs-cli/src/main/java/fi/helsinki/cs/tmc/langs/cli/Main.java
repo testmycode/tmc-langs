@@ -8,7 +8,6 @@ import fi.helsinki.cs.tmc.langs.domain.Filer;
 import fi.helsinki.cs.tmc.langs.domain.FilterFileTreeVisitor;
 import fi.helsinki.cs.tmc.langs.domain.GeneralDirectorySkipper;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.util.ProjectType;
 import fi.helsinki.cs.tmc.langs.util.TaskExecutor;
 import fi.helsinki.cs.tmc.langs.util.TaskExecutorImpl;
@@ -252,24 +251,24 @@ public final class Main {
     }
 
     private static void runTests() {
-        RunResult runResult = null;
-        try {
-            runResult = executor.runTests(getExercisePathFromArgs());
-        } catch (NoLanguagePluginFoundException e) {
-            logger.error(
-                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
-            printErrAndExit(
-                    "ERROR: Could not find suitable language plugin for the given "
-                            + "exercise path.");
-        }
-
-        try {
-            JsonWriter.writeObjectIntoJsonFormat(runResult, getOutputPathFromArgs());
-            System.out.println("Test results can be found in " + getOutputPathFromArgs());
-        } catch (IOException e) {
-            logger.error("Could not write output to {}", getOutputPathFromArgs(), e);
-            printErrAndExit("ERROR: Could not write the results to the given file.");
-        }
+//        TestCase runResult = null;
+//        try {
+//            runResult = executor.runTests(getExercisePathFromArgs());
+//        } catch (NoLanguagePluginFoundException e) {
+//            logger.error(
+//                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+//            printErrAndExit(
+//                    "ERROR: Could not find suitable language plugin for the given "
+//                            + "exercise path.");
+//        }
+//
+//        try {
+//            JsonWriter.writeObjectIntoJsonFormat(runResult, getOutputPathFromArgs());
+//            System.out.println("Test results can be found in " + getOutputPathFromArgs());
+//        } catch (IOException e) {
+//            logger.error("Could not write output to {}", getOutputPathFromArgs(), e);
+//            printErrAndExit("ERROR: Could not write the results to the given file.");
+//        }
     }
 
     private static void runPrepareStubs() {

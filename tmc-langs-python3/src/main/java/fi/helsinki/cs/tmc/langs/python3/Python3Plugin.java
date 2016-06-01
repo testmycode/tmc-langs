@@ -6,7 +6,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
@@ -100,7 +100,7 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public RunResult runTests(Path path) {
+    public TestCase runTests(Path path) {
 
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
         try {

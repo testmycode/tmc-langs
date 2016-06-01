@@ -51,7 +51,7 @@ Create a `TaskExecutorImpl` and call the required task of `TaskExecutor`. `TaskE
 
 ```java
 TaskExecutor taskExecutor = new TaskExecutorImpl();
-RunResult runResult = taskExecutor.runTests(projectInfo.getProjectDirAsPath());
+RunResult testCase = taskExecutor.runTests(projectInfo.getProjectDirAsPath());
 ```
 
 Supported tasks and their return types and parameters can be read from [TaskExecutor](https://github.com/tmc-langs/tmc-langs/blob/master/tmc-langs-util/src/main/java/fi/helsinki/cs/tmc/langs/util/TaskExecutor.java)

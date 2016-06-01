@@ -6,7 +6,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
@@ -87,12 +87,12 @@ public class NoTestsPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public RunResult runTests(Path path) {
+    public TestCase runTests(Path path) {
         TestResult fakeResult =
                 new TestResult(
                         "Default test", true, getPoints(path), "", ImmutableList.<String>of());
-        return new RunResult(
-                RunResult.Status.PASSED,
+        return new TestCase(
+                TestCase.Status.PASSED,
                 ImmutableList.<TestResult>of(fakeResult),
                 ImmutableMap.<String, byte[]>of());
     }

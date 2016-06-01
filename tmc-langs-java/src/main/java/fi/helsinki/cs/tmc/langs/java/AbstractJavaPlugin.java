@@ -5,7 +5,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
@@ -120,7 +120,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public RunResult runTests(Path projectRootPath) {
+    public TestCase runTests(Path projectRootPath) {
         CompileResult compileResult = build(projectRootPath);
         if (compileResult.getStatusCode() != 0) {
             return runResultFromFailedCompilation(compileResult);
@@ -128,7 +128,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
         try {
             TestRunFileAndLogs results = createRunResultFile(projectRootPath);
-            RunResult result = resultParser.parseTestResult(results);
+            TestCase result = resultParser.parseTestResult(results);
             results.getTestResultsFile().delete();
             return result;
         } catch (TestRunnerException | TestScannerException ex) {
@@ -137,13 +137,13 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         }
     }
 
-    protected RunResult runResultFromFailedCompilation(CompileResult compileResult) {
+    protected TestCase runResultFromFailedCompilation(CompileResult compileResult) {
         Map<String, byte[]> logs = new HashMap<>();
         logs.put(SpecialLogs.STDOUT, compileResult.getStdout());
         logs.put(SpecialLogs.STDERR, compileResult.getStderr());
 
-        return new RunResult(
-                RunResult.Status.COMPILE_FAILED,
+        return new TestCase(
+                TestCase.Status.COMPILE_FAILED,
                 ImmutableList.copyOf(new ArrayList<TestResult>()),
                 ImmutableMap.copyOf(logs));
     }

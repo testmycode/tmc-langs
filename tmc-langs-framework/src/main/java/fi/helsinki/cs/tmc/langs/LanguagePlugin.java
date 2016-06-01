@@ -3,7 +3,7 @@ package fi.helsinki.cs.tmc.langs;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
@@ -74,7 +74,7 @@ public interface LanguagePlugin {
      * @param path The path to the exercise directory.
      * @return The results of the run. Never null.
      */
-    RunResult runTests(Path path);
+    TestCase runTests(Path path);
 
     /**
      * Prepares a submission for processing in the sandbox.

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
@@ -19,7 +19,7 @@ public class TestResultParserTest {
     @Test
     public void testParseTestFile() {
         File resultsFile = TestUtils.getPath(this.getClass(), "results.txt").toFile();
-        RunResult result =
+        TestCase result =
                 parser.parseTestResult(
                         new TestRunFileAndLogs(resultsFile, new byte[0], new byte[0]));
         assertNotNull(result);
@@ -28,7 +28,7 @@ public class TestResultParserTest {
             assertFieldsNotNull(testResult);
         }
 
-        assertEquals("Result status should be PASSED", RunResult.Status.PASSED, result.status);
+        assertEquals("Result status should be PASSED", TestCase.Status.PASSED, result.status);
         assertEquals("Test name was wrong", "ArithTest testAdd", result.testResults.get(0).name);
     }
 
@@ -411,7 +411,7 @@ public class TestResultParserTest {
                         + "       \"lineNumber\"=>745}]},"
                         + "  \"status\"=>\"FAILED\"}]";
         ;
-        RunResult result = parser.parseTestResult(json, new byte[0], new byte[0]);
+        TestCase result = parser.parseTestResult(json, new byte[0], new byte[0]);
         assertNotNull(result);
 
         for (TestResult testResult : result.testResults) {

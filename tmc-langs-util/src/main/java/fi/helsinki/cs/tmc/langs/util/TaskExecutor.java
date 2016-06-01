@@ -5,7 +5,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
@@ -56,7 +56,7 @@ public interface TaskExecutor {
      * {@link fi.helsinki.cs.tmc.langs.LanguagePlugin#runTests(java.nio.file.Path)
      * runTests(Path path)} task.
      */
-    RunResult runTests(Path path) throws NoLanguagePluginFoundException;
+    TestCase runTests(Path path) throws NoLanguagePluginFoundException;
 
     /**
      * Finds the correct language plug-in for the given exercise path. After which calls the

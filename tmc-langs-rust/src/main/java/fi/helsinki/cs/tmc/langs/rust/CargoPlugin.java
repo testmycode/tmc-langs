@@ -151,7 +151,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
 
     private RunResult filledFailure(ProcessResult processResult) {
         byte[] errorOutput = processResult.errorOutput.getBytes(StandardCharsets.UTF_8);
-        ImmutableMap<String, byte[]> logs =
+        ImmutableMap logs =
                 new ImmutableMap.Builder()
                         .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
                         .<String, byte[]>build();

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -32,7 +32,7 @@ public class NoTestsPluginTest {
                 ImmutableList.<String>of("1", "notests").toString(),
                 desc.tests.get(0).points.toString());
 
-        RunResult runResult = plugin.runTests(project);
-        assertEquals(RunResult.Status.PASSED, runResult.status);
+        TestCase testCase = plugin.runTests(project);
+        assertEquals(TestCase.Status.PASSED, testCase.status);
     }
 }

@@ -1,6 +1,6 @@
 package fi.helsinki.cs.tmc.langs.python3;
 
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,19 +33,19 @@ public final class Python3TestResultParser {
      *
      * @return Test run results.
      */
-    public RunResult parse() throws IOException {
+    public TestCase parse() throws IOException {
         List<TestResult> testResults = getTestResults();
 
-        RunResult.Status status = RunResult.Status.PASSED;
+        TestCase.Status status = TestCase.Status.PASSED;
         for (TestResult result : testResults) {
             if (!result.passed) {
-                status = RunResult.Status.TESTS_FAILED;
+                status = TestCase.Status.TESTS_FAILED;
             }
         }
 
         ImmutableList<TestResult> immutableResults = ImmutableList.copyOf(testResults);
         ImmutableMap<String, byte[]> logs = ImmutableMap.copyOf(new HashMap<String, byte[]>());
-        return new RunResult(status, immutableResults, logs);
+        return new TestCase(status, immutableResults, logs);
     }
 
     private List<TestResult> getTestResults() throws IOException {

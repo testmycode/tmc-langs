@@ -1,7 +1,7 @@
 package fi.helsinki.cs.tmc.langs.java;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.testscanner.TestScanner;
@@ -43,7 +43,7 @@ public class PluginImplLanguagePlugin extends AntPlugin {
     }
 
     @Override
-    public RunResult runTests(Path path) {
+    public TestCase runTests(Path path) {
         throw new UnsupportedOperationException();
     }
 

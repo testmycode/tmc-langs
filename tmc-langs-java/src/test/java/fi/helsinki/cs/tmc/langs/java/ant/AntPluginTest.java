@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
@@ -80,11 +80,11 @@ public class AntPluginTest {
 
     @Test
     public void testRunTestsReturnsRunResultCorrectly() throws IOException {
-        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
-        assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
-        assertTrue("Stdout should be empty", runResult.logs.get("stdout").length == 0);
-        assertTrue("Stderr should be empty", runResult.logs.get("stderr").length == 0);
-        assertEquals(4, runResult.testResults.size());
+        TestCase testCase = antPlugin.runTests(TestUtils.getPath(getClass(), "ant_arith_funcs"));
+        assertEquals(TestCase.Status.TESTS_FAILED, testCase.status);
+        assertTrue("Stdout should be empty", testCase.logs.get("stdout").length == 0);
+        assertTrue("Stderr should be empty", testCase.logs.get("stderr").length == 0);
+        assertEquals(4, testCase.testResults.size());
     }
 
     @Test
@@ -106,9 +106,9 @@ public class AntPluginTest {
 
     @Test
     public void testRunTestsReturnPassedCorrectly() throws IOException {
-        RunResult runResult = antPlugin.runTests(TestUtils.getPath(getClass(), "trivial"));
-        assertEquals(RunResult.Status.PASSED, runResult.status);
-        TestResult testResult = runResult.testResults.get(0);
+        TestCase testCase = antPlugin.runTests(TestUtils.getPath(getClass(), "trivial"));
+        assertEquals(TestCase.Status.PASSED, testCase.status);
+        TestResult testResult = testCase.testResults.get(0);
         assertTestResult(testResult, "", "TrivialTest testF", true);
         assertEquals("trivial", testResult.points.get(0));
         assertEquals(
@@ -118,15 +118,15 @@ public class AntPluginTest {
     @Test
     public void testRunTestsReturnsCompileFailedCorrectly() throws IOException {
         Path project = TestUtils.getPath(getClass(), "failing_trivial");
-        RunResult runResult = antPlugin.runTests(project);
+        TestCase testCase = antPlugin.runTests(project);
         assertEquals(
                 "When the build fails the returned status should report it.",
-                RunResult.Status.COMPILE_FAILED,
-                runResult.status);
+                TestCase.Status.COMPILE_FAILED,
+                testCase.status);
         assertTrue(
                 "When the build fails no test results should be returned",
-                runResult.testResults.isEmpty());
-        assertFalse(runResult.logs.isEmpty());
+                testCase.testResults.isEmpty());
+        assertFalse(testCase.logs.isEmpty());
     }
 
     private void assertTestResult(
@@ -142,8 +142,8 @@ public class AntPluginTest {
     @Test
     public void pluginHandlesProjectThatUsesReflectionUtils() {
         Path project = TestUtils.getPath(getClass(), "reflection_utils_ant_test_case");
-        RunResult result = antPlugin.runTests(project);
-        assertEquals(RunResult.Status.PASSED, result.status);
+        TestCase result = antPlugin.runTests(project);
+        assertEquals(TestCase.Status.PASSED, result.status);
     }
 
     @Test(expected = TestScannerException.class)
@@ -176,9 +176,9 @@ public class AntPluginTest {
         ExerciseDesc description = antPlugin.scanExercise(project, name).get();
         assertEquals(name, description.name);
         assertEquals(1, description.tests.size());
-        RunResult runResult = antPlugin.runTests(project);
-        assertEquals(RunResult.Status.PASSED, runResult.status);
-        assertEquals(1, runResult.testResults.size());
+        TestCase testCase = antPlugin.runTests(project);
+        assertEquals(TestCase.Status.PASSED, testCase.status);
+        assertEquals(1, testCase.testResults.size());
     }
 
     @Test
@@ -189,8 +189,8 @@ public class AntPluginTest {
         assertEquals(name, description.name);
         assertEquals(1, description.tests.size());
 
-        RunResult result = antPlugin.runTests(project);
-        assertEquals(RunResult.Status.TESTRUN_INTERRUPTED, result.status);
+        TestCase result = antPlugin.runTests(project);
+        assertEquals(TestCase.Status.TESTRUN_INTERRUPTED, result.status);
     }
 
     private void assertPathContains(ClassPath cp, String file) {

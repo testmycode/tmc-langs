@@ -6,7 +6,7 @@ import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.NothingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
@@ -32,7 +32,7 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public RunResult runTests(Path path) throws NoLanguagePluginFoundException {
+    public TestCase runTests(Path path) throws NoLanguagePluginFoundException {
         return getLanguagePlugin(path).runTests(path);
     }
 

@@ -1,7 +1,7 @@
 package fi.helsinki.cs.tmc.langs.domain;
 
 /**
- * Holds constants for special log types for use in RunResult.
+ * Holds constants for special log types for use in TestCase.
  */
 public final class SpecialLogs {
 

@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import fi.helsinki.cs.tmc.langs.abstraction.Strategy;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
@@ -90,9 +90,9 @@ public class Python3PluginTest {
     @Test
     public void testRunTestsRunsTests() {
         Path path = TestUtils.getPath(getClass(), "passing");
-        RunResult runResult = python3Plugin.runTests(path);
-        assertEquals(RunResult.Status.PASSED, runResult.status);
-        TestResult testResult = runResult.testResults.get(0);
+        TestCase testCase = python3Plugin.runTests(path);
+        assertEquals(TestCase.Status.PASSED, testCase.status);
+        TestResult testResult = testCase.testResults.get(0);
         assertTrue(testResult.passed);
         assertEquals("test.test_new.TestCase.test_new", testResult.name);
         assertEquals(2, testResult.points.size());
@@ -104,10 +104,10 @@ public class Python3PluginTest {
     @Test
     public void testFailingProjectIsCorrect() {
         Path path = TestUtils.getPath(getClass(), "failing");
-        RunResult runResult = python3Plugin.runTests(path);
+        TestCase testCase = python3Plugin.runTests(path);
 
-        assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
-        TestResult testResult = runResult.testResults.get(0);
+        assertEquals(TestCase.Status.TESTS_FAILED, testCase.status);
+        TestResult testResult = testCase.testResults.get(0);
         assertFalse(testResult.passed);
         assertFalse(testResult.errorMessage.isEmpty());
         assertEquals(6, testResult.backtrace.size());
@@ -125,9 +125,9 @@ public class Python3PluginTest {
     @Test
     public void testComplexExercise() {
         Path path = TestUtils.getPath(getClass(), "complex");
-        RunResult runResult = python3Plugin.runTests(path);
+        TestCase testCase = python3Plugin.runTests(path);
 
-        assertEquals(RunResult.Status.PASSED, runResult.status);
-        assertEquals(38, runResult.testResults.size());
+        assertEquals(TestCase.Status.PASSED, testCase.status);
+        assertEquals(38, testCase.testResults.size());
     }
 }

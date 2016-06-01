@@ -7,7 +7,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
@@ -135,6 +135,7 @@ public final class MakePlugin extends AbstractLanguagePlugin {
 
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
+        log.warn("Path:  {}, mf: {}, bl: {}", path, path.resolve(MAKEFILE), Files.isRegularFile(path.resolve(MAKEFILE)));
         return Files.isRegularFile(path.resolve(MAKEFILE));
     }
 
@@ -152,13 +153,13 @@ public final class MakePlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public RunResult runTests(Path path) {
+    public TestCase runTests(Path path) {
         boolean withValgrind = true;
 
         if (!builds(path)) {
             log.info(COMPILE_FAILED_MESSAGE);
-            return new RunResult(
-                    RunResult.Status.COMPILE_FAILED,
+            return new TestCase(
+                    TestCase.Status.COMPILE_FAILED,
                     ImmutableList.<TestResult>of(),
                     new ImmutableMap.Builder<String, byte[]>().build());
         }

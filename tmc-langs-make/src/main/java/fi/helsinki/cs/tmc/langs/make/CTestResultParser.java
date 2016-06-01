@@ -1,8 +1,8 @@
 package fi.helsinki.cs.tmc.langs.make;
 
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
-import fi.helsinki.cs.tmc.langs.domain.RunResult;
-import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
+import fi.helsinki.cs.tmc.langs.domain.TestCase;
+import fi.helsinki.cs.tmc.langs.domain.TestCase.Status;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
 import com.google.common.collect.ImmutableList;
@@ -230,8 +230,8 @@ public final class CTestResultParser {
     /**
      * Returns the run result of this file.
      */
-    public RunResult result() {
-        return new RunResult(
+    public TestCase result() {
+        return new TestCase(
                 getResultStatus(),
                 ImmutableList.copyOf(getTestResults()),
                 new ImmutableMap.Builder<String, byte[]>().build());

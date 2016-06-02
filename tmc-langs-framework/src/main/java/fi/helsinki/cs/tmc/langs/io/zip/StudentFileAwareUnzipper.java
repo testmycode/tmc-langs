@@ -8,7 +8,6 @@ import org.apache.commons.io.FileUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.RuntimeUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,8 +24,7 @@ public final class StudentFileAwareUnzipper implements Unzipper {
 
     private StudentFilePolicy filePolicy;
 
-    public StudentFileAwareUnzipper() {
-    }
+    public StudentFileAwareUnzipper() {}
 
     public StudentFileAwareUnzipper(StudentFilePolicy filePolicy) {
         this.filePolicy = filePolicy;
@@ -67,11 +65,14 @@ public final class StudentFileAwareUnzipper implements Unzipper {
                     String restOfPath = entry.getName().substring(projectDirInZip.length());
                     restOfPath = trimSlashes(restOfPath);
 
-                    String destFileRelativePath = trimSlashes(restOfPath.replace("/", File.separator));
+                    String destFileRelativePath =
+                            trimSlashes(restOfPath.replace("/", File.separator));
                     Path entryTargetPath = target.resolve(destFileRelativePath);
 
                     log.debug(
-                            "Processing zipEntry with name {} to {}", entry.getName(), entryTargetPath);
+                            "Processing zipEntry with name {} to {}",
+                            entry.getName(),
+                            entryTargetPath);
                     if (entry.isDirectory()) {
                         Files.createDirectories(entryTargetPath);
                     } else {
@@ -100,7 +101,10 @@ public final class StudentFileAwareUnzipper implements Unzipper {
             String name = element.getName();
 
             // TODO: detect project root with util?
-            if (name.endsWith("/nbproject/") || name.endsWith("/pom.xml") || name.endsWith("Makefike") || name.endsWith("/src/")) {
+            if (name.endsWith("/nbproject/")
+                    || name.endsWith("/pom.xml")
+                    || name.endsWith("Makefike")
+                    || name.endsWith("/src/")) {
                 return dirname(name);
             }
         }
@@ -114,16 +118,15 @@ public final class StudentFileAwareUnzipper implements Unzipper {
         return zipPath.replaceAll("/[^/]+$", "");
     }
 
-    private String trimSlashes(String s) {
-        while (s.startsWith("/") || s.startsWith(File.separator)) {
-            s = s.substring(1);
+    private String trimSlashes(String str) {
+        while (str.startsWith("/") || str.startsWith(File.separator)) {
+            str = str.substring(1);
         }
-        while (s.endsWith("/") || s.startsWith(File.separator)) {
-            s = s.substring(0, s.length() - 1);
+        while (str.endsWith("/") || str.startsWith(File.separator)) {
+            str = str.substring(0, str.length() - 1);
         }
-        return s;
+        return str;
     }
-
 
     private boolean allowedToUnzip(Path file, Path projectRoot) {
         if (!Files.exists(file)) {

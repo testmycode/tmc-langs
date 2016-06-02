@@ -1,8 +1,8 @@
 package fi.helsinki.cs.tmc.langs.io.zip;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static com.google.common.truth.Truth.assertThat;
 
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;

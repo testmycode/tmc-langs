@@ -1,36 +1,36 @@
 package fi.helsinki.cs.tmc.langs.io.zip;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
+import java.util.Set;
 
 public class StudentFileAwareUnzipperTest {
 
-    private static final Path TEST_DIR_ZIP =
-            TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zipTestResources")
-                    .resolve("testDirectory.zip");
-    private static final Path TEST_ZIP =
-            TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zipTestResources")
-                    .resolve("testZip.zip");
-
     private Path tmpDir;
     private Unzipper unzipper;
+    public static final Path MODULE_TRIVIAL =
+            TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                    .resolve("module-trivial.zip");
+    public static final Path COURSE_MODULE_TRIVIAL =
+            TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                    .resolve("course-module-trivial.zip");
 
     @Before
     public void setUp() throws IOException {
@@ -39,36 +39,8 @@ public class StudentFileAwareUnzipperTest {
     }
 
     @After
-    public void tearDown() throws IOException {
-        Files.walkFileTree(tmpDir, new FileVisitor<Path>() {
-
-            @Override
-            public FileVisitResult preVisitDirectory(Path path,
-                                                     BasicFileAttributes basicFileAttributes)
-                    throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes)
-                    throws IOException {
-                Files.delete(path);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFileFailed(Path path, IOException ex) throws IOException {
-                fail("Unable to clean temporary files!");
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path path, IOException ex)
-                    throws IOException {
-                Files.delete(path);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+    public void teardown() throws Exception {
+        FileUtils.deleteDirectory(tmpDir.toFile());
     }
 
     @Test(expected = FileNotFoundException.class)
@@ -77,81 +49,84 @@ public class StudentFileAwareUnzipperTest {
     }
 
     @Test
-    public void attemptingToUnzipToNonExistentTargetCreatesNecessaryDirectories()
-            throws IOException {
-        Path tmpDir = Files.createTempDirectory("tmc-tmp");
-        Path subDir = tmpDir.resolve("subDir");
-        Path subSubDir = subDir.resolve("subSubDir");
-        unzipper.unzip(TEST_ZIP, subSubDir);
+    public void detectsProjectrDirectoryProperlyWhenItsTheOnlySubfolder() throws Exception {
+        Path moduleTrivial =
+                TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                        .resolve("module-trivial");
+        unzipper.unzip(MODULE_TRIVIAL, tmpDir);
 
-        assertTrue(Files.exists(subSubDir));
+        Set<Path> expected = listFiles(moduleTrivial);
+
+        Set<Path> found = listFiles(tmpDir);
+
+        assertThat(found).containsExactlyElementsIn(expected);
+    }
+
+    private Set<Path> listFiles(Path path) {
+        return relativize(new HashSet<File>(FileUtils.listFiles(path.toFile(), null, true)), path);
+    }
+
+    private Set<Path> relativize(Set<File> files, Path from) {
+        Set<Path> results = new HashSet<>(files.size());
+        for (File file : files) {
+
+            results.add(from.relativize(file.toPath()));
+        }
+        return results;
     }
 
     @Test
-    public void unzippingCorrectlyUnzipsZipWithSingleFile() throws IOException {
-        unzipper.unzip(TEST_ZIP, tmpDir);
+    public void detectsProjectrDirectoryProperlyWhenItsDeeperInSubfolder() throws Exception {
+        Path moduleTrivial =
+                TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                        .resolve("module-trivial");
+        unzipper.unzip(COURSE_MODULE_TRIVIAL, tmpDir);
 
-        assertTrue(Files.exists(tmpDir.resolve("testFile.txt")));
+        Set<Path> expected = listFiles(moduleTrivial);
+
+        Set<Path> found = listFiles(tmpDir);
+
+        assertThat(found).containsExactlyElementsIn(expected);
     }
 
     @Test
-    public void unzippingCorrectlyUnzipsZipWithSubDirsAndFiles() throws IOException {
-        unzipper.unzip(TEST_DIR_ZIP, tmpDir);
+    public void unzipperOverwritesFilesThatAreNotStudentFiles() throws Exception {
+        Path srcFile = tmpDir.resolve(Paths.get("src", "Trivial.java"));
+        Files.createDirectories(srcFile.getParent());
+        Files.createFile(srcFile);
+        long originalSize = Files.size(srcFile);
 
-        assertTrue(Files.exists(tmpDir.resolve("testDirectory")));
-        assertTrue(Files.exists(tmpDir.resolve("testDirectory").resolve("testFile.txt")));
-        assertTrue(Files.exists(tmpDir.resolve("testDirectory").resolve("dir")));
-    }
+        unzipper.unzip(COURSE_MODULE_TRIVIAL, tmpDir);
 
-    @Test
-    public void unzipperUnzipsNonExistentStudentFiles() throws IOException {
-        unzipper = new StudentFileAwareUnzipper(getEverythingIsStudentFilePolicy());
-
-        unzipper.unzip(TEST_DIR_ZIP, tmpDir);
-
-        assertTrue(Files.exists(tmpDir.resolve("testDirectory")));
-        assertTrue(Files.exists(tmpDir.resolve("testDirectory").resolve("testFile.txt")));
-        assertTrue(Files.exists(tmpDir.resolve("testDirectory").resolve("dir")));
-    }
-
-    @Test
-    public void unzipperOverwritesFilesThatAreNotStudentFiles() throws IOException {
-        Path testFile = tmpDir.resolve("testDirectory").resolve("testFile.txt");
-        Files.createDirectories(testFile.getParent());
-        Files.createFile(testFile);
-        long originalSize = Files.size(testFile);
-
-        unzipper.unzip(TEST_DIR_ZIP, tmpDir);
-
-        assertTrue(originalSize != Files.size(testFile));
+        assertTrue(originalSize != Files.size(srcFile));
     }
 
     @Test
     public void unzipperDoesNotOverwriteStudentFiles() throws IOException {
         unzipper = new StudentFileAwareUnzipper(getEverythingIsStudentFilePolicy());
-        Path testFile = tmpDir.resolve("testDirectory").resolve("testFile.txt");
-        Files.createDirectories(testFile.getParent());
-        Files.createFile(testFile);
-        long originalSize = Files.size(testFile);
+        Path srcFile = tmpDir.resolve(Paths.get("src", "Trivial.java"));
+        Files.createDirectories(srcFile.getParent());
+        Files.createFile(srcFile);
+        long originalSize = Files.size(srcFile);
 
-        unzipper.unzip(TEST_DIR_ZIP, tmpDir);
+        unzipper.unzip(COURSE_MODULE_TRIVIAL, tmpDir);
 
-        assertEquals(originalSize, Files.size(testFile));
+        assertEquals(originalSize, Files.size(srcFile));
     }
 
     @Test
-    public void canChangePolicy() throws IOException {
-        Path testFile = tmpDir.resolve("testDirectory").resolve("testFile.txt");
-        Files.createDirectories(testFile.getParent());
-        Files.createFile(testFile);
+    public void canChangePolicy() throws Exception {
+        Path srcFile = tmpDir.resolve(Paths.get("src", "Trivial.java"));
+        Files.createDirectories(srcFile.getParent());
+        Files.createFile(srcFile);
 
         unzipper = new StudentFileAwareUnzipper(getEverythingIsStudentFilePolicy());
         unzipper.setStudentFilePolicy(getNothingIsStudentFilePolicy());
 
-        long originalSize = Files.size(testFile);
-        unzipper.unzip(TEST_DIR_ZIP, tmpDir);
+        long originalSize = Files.size(srcFile);
+        unzipper.unzip(COURSE_MODULE_TRIVIAL, tmpDir);
 
-        assertTrue(originalSize != Files.size(testFile));
+        assertTrue(originalSize != Files.size(srcFile));
     }
 
     private StudentFilePolicy getNothingIsStudentFilePolicy() {

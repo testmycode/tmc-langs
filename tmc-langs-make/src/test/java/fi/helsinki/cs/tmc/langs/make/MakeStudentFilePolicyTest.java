@@ -28,12 +28,6 @@ public class MakeStudentFilePolicyTest {
     }
 
     @Test
-    public void testItIncludesMakefiles() {
-        Path makefile = Paths.get("Makefile");
-        assertTrue(makeStudentFilePolicy.isStudentSourceFile(makefile, path));
-    }
-
-    @Test
     public void testItMovesFilesInSrc() throws IOException {
         final List<String> toBeMoved = new ArrayList<>();
 

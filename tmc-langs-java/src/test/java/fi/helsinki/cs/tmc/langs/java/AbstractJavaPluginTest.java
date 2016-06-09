@@ -44,12 +44,12 @@ public class AbstractJavaPluginTest {
         public StubLanguagePlugin(
                 Path testFolderPath,
                 SubmissionProcessor submissionProcessor,
-                TestScanner testScanner) {
+                LazyTestScanner testScanner) {
             super(testFolderPath, submissionProcessor, testScanner);
         }
 
         public StubLanguagePlugin(Path testFolderPath) {
-            super(testFolderPath, new StudentFileAwareSubmissionProcessor(), new TestScanner());
+            super(testFolderPath, new StudentFileAwareSubmissionProcessor(), new LazyTestScanner());
         }
 
         @Override

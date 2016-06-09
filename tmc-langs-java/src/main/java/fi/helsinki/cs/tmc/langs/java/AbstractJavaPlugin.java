@@ -46,13 +46,13 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
     private final TestResultParser resultParser = new TestResultParser();
     private final Path testFolderPath;
-    private final TestScanner testScanner;
+    private final LazyTestScanner testScanner;
 
     /**
      * Creates a new AbstractJavaPlugin.
      */
     public AbstractJavaPlugin(
-            Path testFolderPath, SubmissionProcessor submissionProcessor, TestScanner testScanner) {
+            Path testFolderPath, SubmissionProcessor submissionProcessor, LazyTestScanner testScanner) {
         super(
                 new ExerciseBuilder(),
                 submissionProcessor,
@@ -108,13 +108,14 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             stb.append(cp.toString());
             stb.append(":");
         }
-        testScanner.setClassPath(stb.toString());
+        TestScanner scanner = testScanner.get();
+        scanner.setClassPath(stb.toString());
         for (File sourceFile : sourceFiles.getSources()) {
-            testScanner.addSource(sourceFile);
+            scanner.addSource(sourceFile);
         }
 
-        List<TestMethod> tests = testScanner.findTests();
-        testScanner.clearSources();
+        List<TestMethod> tests = scanner.findTests();
+        scanner.clearSources();
 
         return Optional.of(ExerciseDesc.from(exerciseName, tests));
     }

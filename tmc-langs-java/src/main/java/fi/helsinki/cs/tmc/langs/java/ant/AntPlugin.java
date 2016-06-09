@@ -7,10 +7,10 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
+import fi.helsinki.cs.tmc.langs.java.LazyTestScanner;
 import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
-import fi.helsinki.cs.tmc.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -70,7 +70,7 @@ public class AntPlugin extends AbstractJavaPlugin {
      * Create a new AntPlugin.
      */
     public AntPlugin() {
-        super(TEST_DIR, new StudentFileAwareSubmissionProcessor(), new TestScanner());
+        super(TEST_DIR, new StudentFileAwareSubmissionProcessor(), new LazyTestScanner());
     }
 
     @Override

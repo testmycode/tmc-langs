@@ -6,6 +6,7 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.AbstractJavaPlugin;
 import fi.helsinki.cs.tmc.langs.java.ClassPath;
+import fi.helsinki.cs.tmc.langs.java.LazyTestScanner;
 import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
@@ -41,7 +42,7 @@ public final class MavenPlugin extends AbstractJavaPlugin {
      * Creates a new MavenPlugin.
      */
     public MavenPlugin() {
-        super(TEST_FOLDER, new StudentFileAwareSubmissionProcessor(), new TestScanner());
+        super(TEST_FOLDER, new StudentFileAwareSubmissionProcessor(), new LazyTestScanner());
     }
 
     @Override

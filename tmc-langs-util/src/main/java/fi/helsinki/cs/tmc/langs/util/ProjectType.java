@@ -18,9 +18,9 @@ import java.nio.file.Path;
  */
 public enum ProjectType {
     NO_TESTS(new NoTestsPlugin()), // Must be before Makefile for compatability reasons
-    JAVA_MAVEN(new MavenPlugin()),
     MAKEFILE(new MakePlugin()),
     PYTHON3(new Python3Plugin()),
+    JAVA_MAVEN(new MavenPlugin()),
     // for legacy and matching reasons keep the java ant as the last choise.
     JAVA_ANT(new AntPlugin());
 

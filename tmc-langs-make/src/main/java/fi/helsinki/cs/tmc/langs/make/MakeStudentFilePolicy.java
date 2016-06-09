@@ -24,6 +24,6 @@ public final class MakeStudentFilePolicy extends ConfigurableStudentFilePolicy {
      */
     @Override
     public boolean isStudentSourceFile(Path path, Path projectRootPath) {
-        return !path.endsWith(MAKEFILE_PATH) && path.startsWith(SOURCE_FOLDER_PATH);
+        return path.startsWith(SOURCE_FOLDER_PATH);
     }
 }

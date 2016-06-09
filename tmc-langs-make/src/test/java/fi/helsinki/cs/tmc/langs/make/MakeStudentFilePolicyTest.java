@@ -28,9 +28,9 @@ public class MakeStudentFilePolicyTest {
     }
 
     @Test
-    public void testItDoesNotMoveMakefiles() {
+    public void testItIncludesMakefiles() {
         Path makefile = Paths.get("Makefile");
-        assertFalse(makeStudentFilePolicy.isStudentSourceFile(makefile, path));
+        assertTrue(makeStudentFilePolicy.isStudentSourceFile(makefile, path));
     }
 
     @Test
@@ -38,10 +38,10 @@ public class MakeStudentFilePolicyTest {
         final List<String> toBeMoved = new ArrayList<>();
 
         TestUtils.collectPaths(path, toBeMoved, makeStudentFilePolicy);
+        System.out.println(toBeMoved);
+        assertEquals(4, toBeMoved.size());
 
-        assertEquals(3, toBeMoved.size());
-        // Should not move Makefile in source
-        assertFalse(toBeMoved.contains("src" + File.separatorChar + "Makefile"));
+        assertTrue(toBeMoved.contains("src" + File.separatorChar + "Makefile"));
         assertTrue(toBeMoved.contains("src" + File.separatorChar + "main.c"));
         assertTrue(toBeMoved.contains("src" + File.separatorChar + "source.c"));
         assertTrue(toBeMoved.contains("src" + File.separatorChar + "source.h"));

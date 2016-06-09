@@ -52,7 +52,9 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
      * Creates a new AbstractJavaPlugin.
      */
     public AbstractJavaPlugin(
-            Path testFolderPath, SubmissionProcessor submissionProcessor, LazyTestScanner testScanner) {
+            Path testFolderPath,
+            SubmissionProcessor submissionProcessor,
+            LazyTestScanner testScanner) {
         super(
                 new ExerciseBuilder(),
                 submissionProcessor,

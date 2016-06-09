@@ -47,9 +47,13 @@ public enum ProjectType {
     public static ProjectType getProjectType(Path path) throws NoLanguagePluginFoundException {
         log.info("Finding plugin for {}", path);
         for (ProjectType type : ProjectType.values()) {
-            if (type.getLanguagePlugin().isExerciseTypeCorrect(path)) {
-                log.info("Detected project as {}", type.getLanguagePlugin().getPluginName());
-                return type;
+            try {
+                if (type.getLanguagePlugin().isExerciseTypeCorrect(path)) {
+                    log.info("Detected project as {}", type.getLanguagePlugin().getPluginName());
+                    return type;
+                }
+            } catch (ExceptionInInitializerError e) {
+                log.warn("Exception while checking for exercise type, tried for {}. Exception: {}", type, e);
             }
         }
 

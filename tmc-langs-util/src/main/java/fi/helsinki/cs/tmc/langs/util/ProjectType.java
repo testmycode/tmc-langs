@@ -53,7 +53,10 @@ public enum ProjectType {
                     return type;
                 }
             } catch (ExceptionInInitializerError e) {
-                log.warn("Exception while checking for exercise type, tried for {}. Exception: {}", type, e);
+                log.warn(
+                        "Exception while checking for exercise type, tried for {}. Exception: {}",
+                        type,
+                        e);
             }
         }
 

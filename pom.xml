@@ -9,7 +9,9 @@
     <url>http://testmycode.net</url>
     <scm>
         <connection>scm:git:https://github.com/testmycode/tmc-langs.git</connection>
-      <tag>HEAD</tag>
+        <developerConnection>scm:git:git@github.com:testmycode/tmc-langs.git</developerConnection>
+        <url>https://github.com/testmycode/tmc-langs/</url>
+        <tag>0.4.0</tag>
   </scm>
 
     <properties>
@@ -102,6 +104,12 @@
     <build>
         <pluginManagement>
             <plugins>
+              <!-- Release -->
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-release-plugin</artifactId>
+                  <version>2.5</version>
+              </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>

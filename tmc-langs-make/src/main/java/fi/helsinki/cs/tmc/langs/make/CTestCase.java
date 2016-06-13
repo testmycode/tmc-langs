@@ -2,9 +2,8 @@ package fi.helsinki.cs.tmc.langs.make;
 
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +44,7 @@ public final class CTestCase {
     }
 
     private boolean failedDueToValgrind(String valgrindTrace) {
-        return failOnValgrindError && StringUtils.isNotBlank(valgrindTrace);
+        return failOnValgrindError && Strings.isNullOrEmpty(valgrindTrace);
     }
 
     /**

@@ -33,7 +33,7 @@ public class MakeStudentFilePolicyTest {
 
         TestUtils.collectPaths(path, toBeMoved, makeStudentFilePolicy);
         System.out.println(toBeMoved);
-        assertEquals(4, toBeMoved.size());
+        assertEquals(5, toBeMoved.size());
 
         assertTrue(toBeMoved.contains("src" + File.separatorChar + "Makefile"));
         assertTrue(toBeMoved.contains("src" + File.separatorChar + "main.c"));
@@ -47,7 +47,7 @@ public class MakeStudentFilePolicyTest {
 
         TestUtils.collectPaths(path, toBeMoved, makeStudentFilePolicy);
 
-        assertEquals(4, toBeMoved.size());
+        assertEquals(5, toBeMoved.size());
         assertFalse(toBeMoved.contains("test" + File.separatorChar + "test_source.c"));
         assertFalse(toBeMoved.contains("test" + File.separatorChar + "tmc-check.h"));
         assertFalse(toBeMoved.contains("test" + File.separatorChar + "tmc-check.c"));

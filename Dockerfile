@@ -11,7 +11,7 @@ RUN mkdir -p /usr/share/maven \
 ENV MAVEN_HOME /usr/share/maven
 
 RUN useradd -g users user && mkdir -p /home/user && chown -R user:users /home/user
-RUN apt-get update && apt-get install -y ruby build-essential check pkg-config python3.4  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ruby build-essential valgrind check pkg-config python3.4  && rm -rf /var/lib/apt/lists/*
 
 
 #RUN chown -R user:users /app

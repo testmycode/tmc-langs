@@ -17,8 +17,10 @@ public class CTestCaseTest {
     private static final ImmutableList<String> points = ImmutableList.of("1.1");
 
     private static final CTestCase passing = new CTestCase("test_passing", true, "", points);
-    private static final CTestCase failing = new CTestCase("test_failing", false, "Some tests failed", new ArrayList<String>());
-    private static final CTestCase valgrindFail = new CTestCase("test_valgrindFail", true, "", points);
+    private static final CTestCase failing =
+            new CTestCase("test_failing", false, "Some tests failed", new ArrayList<String>());
+    private static final CTestCase valgrindFail =
+            new CTestCase("test_valgrindFail", true, "", points);
     private static final String valgrindTrace =
             "\n"
                     + "==20737== \n"
@@ -53,12 +55,10 @@ public class CTestCaseTest {
                     + "==20737== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0"
                     + " from 0)";
 
-
-
-
-    private static final CTestCase bothFail = new CTestCase("test_bothFail", false, "Some tests failed", points);
-    private static final CTestCase valgrindFailAllowed = new CTestCase("test_valgrindFailAllowed", true, "", points, false);
-
+    private static final CTestCase bothFail =
+            new CTestCase("test_bothFail", false, "Some tests failed", points);
+    private static final CTestCase valgrindFailAllowed =
+            new CTestCase("test_valgrindFailAllowed", true, "", points, false);
 
     static {
         valgrindFail.setValgrindTrace(valgrindTrace);

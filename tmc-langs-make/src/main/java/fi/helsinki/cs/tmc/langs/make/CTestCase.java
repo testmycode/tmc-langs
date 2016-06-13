@@ -44,7 +44,7 @@ public final class CTestCase {
     }
 
     private boolean failedDueToValgrind(String valgrindTrace) {
-        return failOnValgrindError && Strings.isNullOrEmpty(valgrindTrace);
+        return failOnValgrindError && !Strings.isNullOrEmpty(valgrindTrace);
     }
 
     /**

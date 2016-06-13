@@ -3,7 +3,7 @@
 
     <groupId>fi.helsinki.cs.tmc</groupId>
     <artifactId>tmc-langs</artifactId>
-    <version>0.4.2-SNAPSHOT</version>
+    <version>0.4.2</version>
     <packaging>pom</packaging>
     <name>tmc-langs</name>
     <url>http://testmycode.net</url>
@@ -11,7 +11,7 @@
         <connection>scm:git:https://github.com/testmycode/tmc-langs.git</connection>
         <developerConnection>scm:git:git@github.com:testmycode/tmc-langs.git</developerConnection>
         <url>https://github.com/testmycode/tmc-langs/</url>
-        <tag>0.4.0</tag>
+        <tag>tmc-langs-0.4.2</tag>
   </scm>
 
     <properties>

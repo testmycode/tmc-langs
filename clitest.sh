@@ -1,4 +1,6 @@
 #!/bin/bash -v
+# The intention is not to really validate the results of the command,
+# but to make note should any commands fail and other packaging failures.
 
 mvn clean  package -Dmaven.test.skip=true
 

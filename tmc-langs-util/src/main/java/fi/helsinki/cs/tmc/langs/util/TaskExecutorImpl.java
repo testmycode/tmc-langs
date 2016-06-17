@@ -84,6 +84,13 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
+    public void extractAndRewriteEveryhing(Path compressedProject, Path targetLocation) throws IOException {
+            StudentFileAwareUnzipper unzipper =
+                    new StudentFileAwareUnzipper(new NothingIsStudentFileStudentFilePolicy());
+            unzipper.unzip(compressedProject, targetLocation);
+    }
+
+    @Override
     public void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath)
             throws NoLanguagePluginFoundException {
         new ExerciseBuilder().prepareStubs(exerciseMap, repoPath, destPath);

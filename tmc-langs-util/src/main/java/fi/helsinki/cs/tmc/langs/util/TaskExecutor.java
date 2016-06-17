@@ -96,6 +96,18 @@ public interface TaskExecutor {
     void extractProject(Path compressedProject, Path targetLocation, boolean overwriteEverything)
             throws IOException;
 
+
+    /**
+     * Extract a given archive file containing a compressed project to a target location.
+     *
+     * <p>This will overwrite all files, even when specified as student files. Similar to
+     * {@link fi.helsinki.cs.tmc.langs.util.TaskExecutor#extractProject(Path, Path, boolean)} but more implicit naming
+     *
+     * @param compressedProject A path to the compressed archive.
+     * @param targetLocation Location where the archive should be extracted to
+     */
+    void extractAndRewriteEveryhing(Path compressedProject, Path targetLocation) throws IOException;
+
     /**
      * Compresses a project, creating a zip that can be sent to the TMC server as a submission.
      */

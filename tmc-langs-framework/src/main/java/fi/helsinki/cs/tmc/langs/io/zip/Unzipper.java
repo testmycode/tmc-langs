@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 public interface Unzipper {
 
-    void unzip(Path zipfile, Path target) throws IOException;
+    UnzipResult unzip(Path zipFile, Path target) throws IOException;
 
     void setStudentFilePolicy(StudentFilePolicy studentFilePolicy);
 }

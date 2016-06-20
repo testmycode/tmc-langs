@@ -11,4 +11,9 @@ public final class EverythingIsStudentFileStudentFilePolicy implements StudentFi
     public boolean isStudentFile(Path path, Path projectRootPath) {
         return true;
     }
+
+    @Override
+    public boolean mayDelete(Path file, Path projectRoot) {
+        return false;
+    }
 }

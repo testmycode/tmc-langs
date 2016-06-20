@@ -135,6 +135,11 @@ public class StudentFileAwareUnzipperTest {
             public boolean isStudentFile(Path path, Path projectRootPath) {
                 return false;
             }
+
+            @Override
+            public boolean mayDelete(Path file, Path projectRoot) {
+                return true;
+            }
         };
     }
 
@@ -143,6 +148,11 @@ public class StudentFileAwareUnzipperTest {
             @Override
             public boolean isStudentFile(Path path, Path projectRootPath) {
                 return true;
+            }
+
+            @Override
+            public boolean mayDelete(Path file, Path projectRoot) {
+                return false;
             }
         };
     }

@@ -99,4 +99,9 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
             extraStudentFiles = parser.parseExtraStudentFiles(configFile, rootPath);
         }
     }
+
+    @Override
+    public boolean mayDelete(Path file, Path projectRoot) {
+        return false;
+    }
 }

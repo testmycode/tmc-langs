@@ -15,4 +15,10 @@ public interface StudentFilePolicy {
      * Answers whether the file in <tt>path</tt> is an student file.
      */
     boolean isStudentFile(Path path, Path projectRootPath);
+
+    /**
+     * Answers whether the file can be deleted, e.g. when extracting latest own submission or
+     * when replacing with model solution.
+     */
+    boolean mayDelete(Path file, Path projectRoot);
 }

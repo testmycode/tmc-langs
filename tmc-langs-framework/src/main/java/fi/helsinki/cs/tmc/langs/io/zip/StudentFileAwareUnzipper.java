@@ -83,9 +83,10 @@ public final class StudentFileAwareUnzipper implements Unzipper {
                     }
                     boolean shouldWrite;
                     InputStream entryContent = zipFile.getInputStream(entry);
+                    byte[] entryData = IOUtils.toByteArray(entryContent);
                     if (Files.exists(entryTargetPath)) {
                         log.trace("Allowed to unzip, unzipping");
-                        byte[] entryData = IOUtils.toByteArray(entryContent);
+
                         if (fileContentEquals(target.toFile(), entryData)) {
                             shouldWrite = false;
                             result.unchangedFiles.add(entryTargetPath);
@@ -101,7 +102,7 @@ public final class StudentFileAwareUnzipper implements Unzipper {
                         result.newFiles.add(entryTargetPath);
                     }
                     if (shouldWrite) {
-                        FileUtils.copyInputStreamToFile(entryContent, entryTargetPath.toFile());
+                        FileUtils.writeByteArrayToFile(entryTargetPath.toFile(), entryData);
                     } else {
                         log.trace("Not allowed to unzip, skipping file");
                         result.skippedFiles.add(entryTargetPath);

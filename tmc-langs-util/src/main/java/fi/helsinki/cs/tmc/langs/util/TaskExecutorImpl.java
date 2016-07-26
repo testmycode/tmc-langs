@@ -10,6 +10,7 @@ import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.NothingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
+import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
 
 import com.google.common.base.Optional;
 
@@ -85,7 +86,7 @@ public class TaskExecutorImpl implements TaskExecutor {
 
     @Override
     public void extractAndRewriteEveryhing(Path compressedProject, Path targetLocation) throws IOException {
-            StudentFileAwareUnzipper unzipper =
+            Unzipper unzipper =
                     new StudentFileAwareUnzipper(new NothingIsStudentFileStudentFilePolicy());
             unzipper.unzip(compressedProject, targetLocation);
     }

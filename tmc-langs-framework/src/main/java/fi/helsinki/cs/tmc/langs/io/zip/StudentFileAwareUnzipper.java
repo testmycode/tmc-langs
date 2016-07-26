@@ -30,8 +30,7 @@ public final class StudentFileAwareUnzipper implements Unzipper {
 
     private StudentFilePolicy filePolicy;
 
-    public StudentFileAwareUnzipper() {
-    }
+    public StudentFileAwareUnzipper() {}
 
     public StudentFileAwareUnzipper(StudentFilePolicy filePolicy) {
         this.filePolicy = filePolicy;
@@ -70,15 +69,22 @@ public final class StudentFileAwareUnzipper implements Unzipper {
                 ZipArchiveEntry entry = entries.nextElement();
 
                 if (entry.getName().startsWith(projectDirInZip)) {
-                    String restOfPath = trimSlashes(entry.getName().substring(projectDirInZip.length()));
+                    String restOfPath =
+                            trimSlashes(entry.getName().substring(projectDirInZip.length()));
 
-                    Path entryTargetPath = target.resolve(trimSlashes(restOfPath.replace("/", File.separator)));
+                    Path entryTargetPath =
+                            target.resolve(trimSlashes(restOfPath.replace("/", File.separator)));
                     pathsInZip.add(entryTargetPath);
 
-                    log.debug("Processing zipEntry with name {} to {}", entry.getName(), entryTargetPath);
+                    log.debug(
+                            "Processing zipEntry with name {} to {}",
+                            entry.getName(),
+                            entryTargetPath);
                     if (entry.isDirectory() || entryTargetPath.toFile().isDirectory()) {
                         Files.createDirectories(entryTargetPath);
-                        log.debug("{} is a directory - creating and off to the next file ", entry.getName());
+                        log.debug(
+                                "{} is a directory - creating and off to the next file ",
+                                entry.getName());
                         continue;
                     }
                     boolean shouldWrite;
@@ -121,10 +127,11 @@ public final class StudentFileAwareUnzipper implements Unzipper {
     }
 
     // TODO: validate
-    private void deleteFilesNotInZip(Path projectDir, Path curDir, UnzipResult result, Set<Path> pathsInZip) throws IOException {
+    private void deleteFilesNotInZip(
+            Path projectDir, Path curDir, UnzipResult result, Set<Path> pathsInZip)
+            throws IOException {
 
         for (File file : curDir.toFile().listFiles()) {
-//            Path relPath = Paths.get(trimSlashes(file.getPath().substring(projectDir.getPath().length())));
             Path filePath = file.toPath();
             if (file.isDirectory()) {
                 deleteFilesNotInZip(projectDir, file.toPath(), result, pathsInZip);

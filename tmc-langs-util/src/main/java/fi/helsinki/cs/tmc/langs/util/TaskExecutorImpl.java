@@ -85,10 +85,11 @@ public class TaskExecutorImpl implements TaskExecutor {
     }
 
     @Override
-    public void extractAndRewriteEveryhing(Path compressedProject, Path targetLocation) throws IOException {
-            Unzipper unzipper =
-                    new StudentFileAwareUnzipper(new NothingIsStudentFileStudentFilePolicy());
-            unzipper.unzip(compressedProject, targetLocation);
+    public void extractAndRewriteEveryhing(Path compressedProject, Path targetLocation)
+            throws IOException {
+        Unzipper unzipper =
+                new StudentFileAwareUnzipper(new NothingIsStudentFileStudentFilePolicy());
+        unzipper.unzip(compressedProject, targetLocation);
     }
 
     @Override

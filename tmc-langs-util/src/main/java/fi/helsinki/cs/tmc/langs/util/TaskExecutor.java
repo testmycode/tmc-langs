@@ -101,7 +101,8 @@ public interface TaskExecutor {
      * Extract a given archive file containing a compressed project to a target location.
      *
      * <p>This will overwrite all files, even when specified as student files. Similar to
-     * {@link fi.helsinki.cs.tmc.langs.util.TaskExecutor#extractProject(Path, Path, boolean)} but more implicit naming
+     * {@link fi.helsinki.cs.tmc.langs.util.TaskExecutor#extractProject(Path, Path, boolean)}
+     * but more implicit naming
      *
      * @param compressedProject A path to the compressed archive.
      * @param targetLocation Location where the archive should be extracted to

@@ -75,4 +75,13 @@ public final class RunResult {
         this.testResults = testResults;
         this.logs = logs;
     }
+
+    @Override
+    public String toString() {
+        return "RunResult{"
+                + "status=" + status
+                + ", testResults=" + testResults
+                + ", logKeys=" + logs.keySet()
+                + '}';
+    }
 }

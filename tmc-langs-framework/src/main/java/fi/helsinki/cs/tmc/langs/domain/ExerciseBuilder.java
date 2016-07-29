@@ -31,10 +31,6 @@ public class ExerciseBuilder {
 
             Path relativePath;
             if (repoPath.getNameCount() < project.getKey().getNameCount()) {
-                System.out.format(
-                        "repo: %d proj: %d\n",
-                        repoPath.getNameCount(),
-                        project.getKey().getNameCount());
                 relativePath =
                         project.getKey()
                                 .subpath(repoPath.getNameCount(), project.getKey().getNameCount());

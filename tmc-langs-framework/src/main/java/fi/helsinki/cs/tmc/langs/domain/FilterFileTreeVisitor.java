@@ -66,6 +66,7 @@ public class FilterFileTreeVisitor {
 
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                            System.out.println("File: " + file);
                             Path relativePath =
                                     file.subpath(repoPath.getNameCount(), file.getNameCount());
                             filer.visitFile(file, relativePath);

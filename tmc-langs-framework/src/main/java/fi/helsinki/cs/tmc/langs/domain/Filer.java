@@ -38,11 +38,14 @@ public class Filer {
         try {
             Path destination = toPath.resolve(relativePath);
             if (skipFilename(source)) {
+                System.out.println("  skipping");
                 return;
             }
             if (looksLikeBinary(source)) {
+                System.out.println("  binary");
                 justCopy(source, destination);
             } else {
+                System.out.println("  filtering");
                 copyWithFilters(source, destination);
             }
         } catch (IOException ex) {
@@ -74,10 +77,13 @@ public class Filer {
         List<String> originalFile = FileUtils.readLines(source.toFile());
         List<String> preparedFile = prepareFile(originalFile, getFileExtension(source));
         logger.debug("Filtered file while copying from: {} to:{}", source, destination);
+        System.out.println("  filtered");
         if (!originalFile.isEmpty() && preparedFile.isEmpty()) {
+            System.out.println("  to empty");
             logger.debug("skipped file as empty while copying from: {} to:{}", source, destination);
         } else {
             Files.createDirectories(destination.getParent());
+            System.out.println("  writing file");
             Files.write(
                     destination, preparedFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
         }

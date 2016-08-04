@@ -77,6 +77,7 @@ public final class TestResultParser {
         List<String> points = new ArrayList<>();
 
         if (testCase.exception != null) {
+            exception.add(testCase.exception.message);
             for (StackTraceElement stackTrace : testCase.exception.stackTrace) {
                 exception.add(stackTrace.toString());
             }

@@ -189,7 +189,7 @@ public class MavenPluginTest {
 
         assertTrue(result.testResults.get(0).getException().isEmpty());
         assertFalse(
-                "Lol:" + result.testResults.get(1).getException(),
+                "Expected not empty, was:" + result.testResults.get(1).getException(),
                 result.testResults.get(1).getException().isEmpty());
     }
 

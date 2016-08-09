@@ -110,6 +110,10 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             stb.append(cp.toString());
             stb.append(":");
         }
+
+        log.info("Determined classpath as {}", stb.toString());
+        log.info("Found following source files: {}", sourceFiles.toString());
+
         TestScanner scanner = testScanner.get();
         scanner.setClassPath(stb.toString());
         for (File sourceFile : sourceFiles.getSources()) {

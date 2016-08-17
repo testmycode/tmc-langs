@@ -105,17 +105,12 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             log.error("Unable to get classpath", ex);
             return Optional.absent();
         }
-        StringBuilder stb = new StringBuilder();
-        for (Path cp : classPath.getPaths()) {
-            stb.append(cp.toString());
-            stb.append(":");
-        }
 
-        log.info("Determined classpath as {}", stb.toString());
+        log.info("Determined classpath as {}", classPath.toString());
         log.info("Found following source files: {}", sourceFiles.toString());
 
         TestScanner scanner = testScanner.get();
-        scanner.setClassPath(stb.toString());
+        scanner.setClassPath(classPath.toString());
         for (File sourceFile : sourceFiles.getSources()) {
             scanner.addSource(sourceFile);
         }

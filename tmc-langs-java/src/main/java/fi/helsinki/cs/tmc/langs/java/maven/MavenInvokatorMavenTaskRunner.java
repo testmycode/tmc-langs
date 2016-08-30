@@ -34,8 +34,14 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         request.setMavenOpts(MAVEN_OPTS);
 
         DefaultInvoker invoker = new DefaultInvoker();
-
-        invoker.setMavenHome(new File(System.getenv("M3_HOME")));
+        String mavenHome = System.getenv("M3_HOME");
+        if (mavenHome == null) {
+            mavenHome = System.getenv("M2_HOME");
+        }
+        if (mavenHome == null) {
+            mavenHome = System.getenv("MAVEN_HOME");
+        }
+        invoker.setMavenHome(new File(mavenHome));
 
         final ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         final PrintStream out = new PrintStream(outBuf);

@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
@@ -87,7 +88,12 @@ public class MavenPluginTest {
     public void testFailingMavenProjectHasOneFailedTest() {
         Path path = TestUtils.getPath(getClass(), "maven_exercise");
         RunResult result = mavenPlugin.runTests(path);
-
+//        try {
+//            System.out.println(new String(result.logs.get("stderr"), "utf-8"));
+//            System.out.println(new String(result.logs.get("stdout"), "utf-8"));
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
         assertEquals(1, result.testResults.size());
     }
 

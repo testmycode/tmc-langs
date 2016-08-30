@@ -15,7 +15,8 @@ public class MavenExecutors {
     private static final Logger log = LoggerFactory.getLogger(MavenExecutors.class);
 
     public static final MavenExecutionResult tryAndExec(Path directory, String[] mavenArgs) {
-        if (!Strings.isNullOrEmpty(System.getenv("M3_HOME")) || !Strings.isNullOrEmpty(System.getenv("M2_HOME"))) {
+        if (!Strings.isNullOrEmpty(System.getenv("M3_HOME"))
+                || !Strings.isNullOrEmpty(System.getenv("M2_HOME"))) {
             log.info("Selected MavenInvokator");
             try {
                 return new MavenInvokatorMavenTaskRunner().exec(directory, mavenArgs);

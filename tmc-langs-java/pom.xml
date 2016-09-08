@@ -117,6 +117,12 @@
             <artifactId>ant</artifactId>
             <version>1.9.6</version>
         </dependency>
+        <dependency>
+
+            <groupId>org.rauschig</groupId>
+            <artifactId>jarchivelib</artifactId>
+            <version>0.7.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>

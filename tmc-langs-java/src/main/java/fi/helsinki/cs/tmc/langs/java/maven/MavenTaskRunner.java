@@ -1,12 +1,14 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
+import org.apache.maven.cli.MavenCli;
+
 import java.nio.file.Path;
 
 public interface MavenTaskRunner {
 
     MavenExecutionResult exec(Path directory, String[] mavenArgs);
 
-    public final class MavenExecutionResult {
+    final class MavenExecutionResult {
 
         private int exitCode;
 

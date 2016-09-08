@@ -42,7 +42,6 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setMavenOpts(MAVEN_OPTS);
 
-        DefaultInvoker invoker = new DefaultInvoker();
         String mavenHome = System.getenv("M3_HOME");
         if (mavenHome == null) {
             mavenHome = System.getenv("M2_HOME");
@@ -59,6 +58,7 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
         log.info("Using maven at: {}", mavenHome);
 
+        DefaultInvoker invoker = new DefaultInvoker();
         invoker.setMavenHome(new File(mavenHome));
 
         final ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -106,7 +106,8 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         try {
 
             InputStream data = getClass().getResourceAsStream("apache-maven-3.3.9.zip");
-            Preconditions.checkNotNull(data, "Couldn't load bundled maven from tmc-langs-java.jar.");
+            Preconditions.checkNotNull(data,
+                "Couldn't load bundled maven from tmc-langs-java.jar.");
             Path tmpFile = File.createTempFile("tmc-maven", "zip").toPath();
             Files.copy(data, tmpFile, StandardCopyOption.REPLACE_EXISTING);
             Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.ZIP);

@@ -264,6 +264,7 @@ public final class Main {
         }
 
         try {
+            System.out.println(new String(runResult.logs.get("stdout"), "UTF-8"));
             JsonWriter.writeObjectIntoJsonFormat(runResult, getOutputPathFromArgs());
             System.out.println("Test results can be found in " + getOutputPathFromArgs());
         } catch (IOException e) {

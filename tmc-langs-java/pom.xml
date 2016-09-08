@@ -12,6 +12,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <tmc.basedir>../target</tmc.basedir>
+        <maven.version>3.0.5</maven.version>
     </properties>
 
     <artifactId>tmc-langs-java</artifactId>
@@ -118,26 +119,199 @@
             <version>1.9.6</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-embedder</artifactId>
-            <version>3.3.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-compat</artifactId>
-            <version>3.3.9</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
-            <artifactId>maven-aether-provider</artifactId>
-            <version>3.3.9</version>
+            <artifactId>apache-maven</artifactId>
+            <version>${maven.version}</version>
+            <type>pom</type>
         </dependency>
         <dependency>
+            <artifactId>aether-api</artifactId>
+            <groupId>org.sonatype.aether</groupId>
+            <type>jar</type>
+            <version>1.13.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>aether-connector-wagon</artifactId>
+            <groupId>org.sonatype.aether</groupId>
+            <type>jar</type>
+            <version>1.13.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>aether-impl</artifactId>
+            <groupId>org.sonatype.aether</groupId>
+            <type>jar</type>
+            <version>1.13.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>aether-spi</artifactId>
+            <groupId>org.sonatype.aether</groupId>
+            <type>jar</type>
+            <version>1.13.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>aether-util</artifactId>
+            <groupId>org.sonatype.aether</groupId>
+            <type>jar</type>
+            <version>1.13.1</version>
+        </dependency>
+        <dependency>
+            <artifactId>commons-cli</artifactId>
+            <groupId>commons-cli</groupId>
+            <type>jar</type>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-aether-provider</artifactId>
             <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-artifact</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-compat</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
             <artifactId>maven-core</artifactId>
-            <version>3.3.9</version>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-embedder</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-model</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-model-builder</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-plugin-api</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-repository-metadata</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-settings</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>maven-settings-builder</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <type>jar</type>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>plexus-cipher</artifactId>
+            <groupId>org.sonatype.plexus</groupId>
+            <type>jar</type>
+            <version>1.7</version>
+        </dependency>
+        <dependency>
+            <artifactId>plexus-classworlds</artifactId>
+            <groupId>org.codehaus.plexus</groupId>
+            <type>jar</type>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <artifactId>plexus-component-annotations</artifactId>
+            <groupId>org.codehaus.plexus</groupId>
+            <type>jar</type>
+            <version>1.5.5</version>
+        </dependency>
+        <dependency>
+            <artifactId>plexus-interpolation</artifactId>
+            <groupId>org.codehaus.plexus</groupId>
+            <type>jar</type>
+            <version>1.14</version>
+        </dependency>
+        <dependency>
+            <artifactId>plexus-sec-dispatcher</artifactId>
+            <groupId>org.sonatype.plexus</groupId>
+            <type>jar</type>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <artifactId>plexus-utils</artifactId>
+            <groupId>org.codehaus.plexus</groupId>
+            <type>jar</type>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <artifactId>sisu-guava</artifactId>
+            <groupId>org.sonatype.sisu</groupId>
+            <type>jar</type>
+            <version>0.9.9</version>
+        </dependency>
+        <dependency>
+            <artifactId>sisu-guice</artifactId>
+            <groupId>org.sonatype.sisu</groupId>
+            <type>jar</type>
+            <version>3.1.0</version>
+            <classifier>no_aop</classifier>
+        </dependency>
+        <dependency>
+            <artifactId>sisu-inject-bean</artifactId>
+            <groupId>org.sonatype.sisu</groupId>
+            <type>jar</type>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>sisu-inject-plexus</artifactId>
+            <groupId>org.sonatype.sisu</groupId>
+            <type>jar</type>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>wagon-file</artifactId>
+            <groupId>org.apache.maven.wagon</groupId>
+            <type>jar</type>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <artifactId>wagon-http</artifactId>
+            <groupId>org.apache.maven.wagon</groupId>
+            <type>jar</type>
+            <version>2.2</version>
+            <classifier>shaded</classifier>
+        </dependency>
+        <dependency>
+            <artifactId>wagon-provider-api</artifactId>
+            <groupId>org.apache.maven.wagon</groupId>
+            <type>jar</type>
+            <version>2.2</version>
         </dependency>
 
         <dependency>
@@ -152,41 +326,6 @@
             <scope>system</scope>
             <version>1.6.0</version>  <!-- doesn't matter, the installed JDK's JAR is always used -->
             <systemPath>${toolsjar}</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-invoker</artifactId>
-            <version>2.2</version>
-            <type>jar</type>
-        </dependency>
-
-        <!-- Connector dependecies -->
-
-        <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-connector-basic</artifactId>
-            <version>1.0.2.v20150114</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-util</artifactId>
-            <version>1.0.2.v20150114</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-transport-wagon</artifactId>
-            <version>1.0.2.v20150114</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-http</artifactId>
-            <version>2.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-provider-api</artifactId>
-            <version>2.10</version>
         </dependency>
     </dependencies>
 

@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.java.maven;
 
 import fi.helsinki.cs.tmc.langs.java.exception.MavenExecutorException;
 
+import com.google.common.base.Preconditions;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationOutputHandler;
@@ -11,13 +12,21 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 
 import org.codehaus.plexus.util.cli.CommandLineException;
 
+import org.rauschig.jarchivelib.ArchiveFormat;
+import org.rauschig.jarchivelib.Archiver;
+import org.rauschig.jarchivelib.ArchiverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
 public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
@@ -41,6 +50,15 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         if (mavenHome == null) {
             mavenHome = System.getenv("MAVEN_HOME");
         }
+        if (mavenHome == null) {
+            mavenHome = System.getProperty("maven.home");
+        }
+        if (mavenHome == null) {
+            mavenHome = useBundledMaven().toString();
+        }
+
+        log.info("Using maven at: {}", mavenHome);
+
         invoker.setMavenHome(new File(mavenHome));
 
         final ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
@@ -75,4 +93,53 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
             throw new MavenExecutorException(e);
         }
     }
+
+    private Path useBundledMaven() {
+        Path mavenHome = getConfigDirectory();
+        if (Files.exists(mavenHome)) {
+            log.info("Maven already extracted");
+
+            // Add the name of the extracted folder to the path
+            return mavenHome.resolve("apache-maven-3.3.9");
+        }
+        log.info("Maven bundle not previously extracted, extracting...");
+        try {
+
+            InputStream data = getClass().getResourceAsStream("apache-maven-3.3.9.zip");
+            Preconditions.checkNotNull(data, "Couldn't load bundled maven from tmc-langs-java.jar.");
+            Path tmpFile = File.createTempFile("tmc-maven", "zip").toPath();
+            Files.copy(data, tmpFile, StandardCopyOption.REPLACE_EXISTING);
+            Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.ZIP);
+            archiver.extract(tmpFile.toFile(), mavenHome.toFile());
+
+            // Add the name of the extracted folder to the path
+            return mavenHome.resolve("apache-maven-3.3.9");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static Path getConfigDirectory() {
+        Path configPath;
+
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            String appdata = System.getenv("APPDATA");
+            if (appdata == null) {
+                configPath = Paths.get(System.getProperty("user.home"));
+            } else {
+                configPath = Paths.get(appdata);
+            }
+        } else {
+            //Assume we're using Unix (Linux, Mac OS X or *BSD)
+            String configEnv = System.getenv("XDG_CONFIG_HOME");
+
+            if (configEnv != null && configEnv.length() > 0) {
+                configPath = Paths.get(configEnv);
+            } else {
+                configPath = Paths.get(System.getProperty("user.home")).resolve(".config");
+            }
+        }
+        return configPath.resolve("tmc");
+    }
+
 }

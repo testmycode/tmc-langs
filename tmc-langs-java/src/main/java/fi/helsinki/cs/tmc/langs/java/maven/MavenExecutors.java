@@ -12,7 +12,7 @@ public class MavenExecutors {
     private static final Logger log = LoggerFactory.getLogger(MavenExecutors.class);
 
     public static final MavenExecutionResult tryAndExec(Path directory, String[] mavenArgs) {
-        log.info("Defaultin to MavenInvocator");
+        log.info("Defaulting to MavenInvokator");
         return new MavenInvokatorMavenTaskRunner().exec(directory, mavenArgs);
     }
 }

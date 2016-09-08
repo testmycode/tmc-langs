@@ -3,15 +3,15 @@ package fi.helsinki.cs.tmc.langs.java.maven;
 import fi.helsinki.cs.tmc.langs.java.exception.MavenExecutorException;
 
 import com.google.common.base.Preconditions;
+
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationOutputHandler;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.MavenInvocationException;
-
 import org.codehaus.plexus.util.cli.CommandLineException;
-
 import org.rauschig.jarchivelib.ArchiveFormat;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+
 
 public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
@@ -104,16 +105,20 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         }
         log.info("Maven bundle not previously extracted, extracting...");
         try {
-
             InputStream data = getClass().getResourceAsStream("apache-maven-3.3.9.zip");
-            Preconditions.checkNotNull(data,
-                "Couldn't load bundled maven from tmc-langs-java.jar.");
-            Path tmpFile = File.createTempFile("tmc-maven", "zip").toPath();
+            Preconditions.checkNotNull(
+                    data, "Couldn't load bundled maven from tmc-langs-java.jar.");
+            Path tmpFile = Files.createTempFile("tmc-maven", "zip");
             Files.copy(data, tmpFile, StandardCopyOption.REPLACE_EXISTING);
             Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.ZIP);
             archiver.extract(tmpFile.toFile(), mavenHome.toFile());
+            try {
+                Files.deleteIfExists(tmpFile);
+            } catch (IOException e) {
+                log.warn("Deleting tmp apache-maven.zip failed", e);
+            }
 
-            // Add the name of the extracted folder to the path
+                // Add the name of the extracted folder to the path
             return mavenHome.resolve("apache-maven-3.3.9");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -123,7 +128,7 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
     static Path getConfigDirectory() {
         Path configPath;
 
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             String appdata = System.getenv("APPDATA");
             if (appdata == null) {
                 configPath = Paths.get(System.getProperty("user.home"));
@@ -142,5 +147,4 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         }
         return configPath.resolve("tmc");
     }
-
 }

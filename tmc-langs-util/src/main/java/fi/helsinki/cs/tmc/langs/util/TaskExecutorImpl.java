@@ -9,8 +9,8 @@ import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.NothingIsStudentFileStudentFilePolicy;
-import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
-import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
+import fi.helsinki.cs.tmc.langs.util.zip.StudentFileAwareUnzipper;
+import fi.helsinki.cs.tmc.langs.util.zip.Unzipper;
 
 import com.google.common.base.Optional;
 

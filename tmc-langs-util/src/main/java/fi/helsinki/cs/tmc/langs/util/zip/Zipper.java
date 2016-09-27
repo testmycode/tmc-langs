@@ -1,13 +1,13 @@
-package fi.helsinki.cs.tmc.langs.io.zip;
+package fi.helsinki.cs.tmc.langs.util.zip;
 
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-public interface Unzipper {
+public interface Zipper {
 
-    UnzipResult unzip(Path zipFile, Path target) throws IOException;
+    byte[] zip(Path rootDirectory) throws IOException;
 
     void setStudentFilePolicy(StudentFilePolicy studentFilePolicy);
 }

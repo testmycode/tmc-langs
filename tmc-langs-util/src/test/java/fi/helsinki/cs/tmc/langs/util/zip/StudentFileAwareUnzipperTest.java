@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs.io.zip;
+package fi.helsinki.cs.tmc.langs.util.zip;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;

@@ -1,4 +1,4 @@
-package fi.helsinki.cs.tmc.langs.io.zip;
+package fi.helsinki.cs.tmc.langs.util.zip;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

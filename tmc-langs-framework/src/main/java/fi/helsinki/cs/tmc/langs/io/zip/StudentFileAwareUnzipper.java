@@ -173,8 +173,10 @@ public final class StudentFileAwareUnzipper implements Unzipper {
             // TODO: detect project root with util?
             if (name.endsWith("/nbproject/")
                     || name.endsWith("/pom.xml")
+                    || name.endsWith("/.idea")
                     || name.endsWith("Makefike")
-                    || name.endsWith("/src/")) {
+                    || name.endsWith("/src/")
+                    || name.endsWith("/test/")){
                 return dirname(name);
             }
         }

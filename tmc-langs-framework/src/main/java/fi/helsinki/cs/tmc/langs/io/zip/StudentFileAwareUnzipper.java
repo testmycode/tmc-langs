@@ -176,7 +176,7 @@ public final class StudentFileAwareUnzipper implements Unzipper {
                     || name.endsWith("/.idea")
                     || name.endsWith("Makefike")
                     || name.endsWith("/src/")
-                    || name.endsWith("/test/")){
+                    || name.endsWith("/test/")) {
                 return dirname(name);
             }
         }

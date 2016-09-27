@@ -1,0 +1,5 @@
+langs:
+  build: .
+  command: mvn clean test
+  volumes:
+    - .:/app

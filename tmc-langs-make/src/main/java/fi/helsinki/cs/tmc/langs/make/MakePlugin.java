@@ -233,7 +233,7 @@ public final class MakePlugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {
-        String[] command = {"make", "test"};
+        String[] command = {"make", "clean"};
         ProcessRunner runner = new ProcessRunner(command, path);
 
         try {

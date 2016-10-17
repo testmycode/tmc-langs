@@ -97,11 +97,12 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
     private Path useBundledMaven() {
         Path mavenHome = getConfigDirectory();
-        if (Files.exists(mavenHome)) {
+        Path extractedMavenLocation = mavenHome.resolve("apache-maven-3.3.9");
+        if (Files.exists(extractedMavenLocation)) {
             log.info("Maven already extracted");
 
             // Add the name of the extracted folder to the path
-            return mavenHome.resolve("apache-maven-3.3.9");
+            return extractedMavenLocation;
         }
         log.info("Maven bundle not previously extracted, extracting...");
         try {

@@ -86,9 +86,9 @@ public final class TestRunnerArgumentBuilder {
     }
 
     /**
-     * Get the arguments as a list of Strings, usable with ProcessBuilder.
+     * Get the command with the arguments as a string array. This can be used to start the process.
      */
-    public List<String> getArguments() {
-        return arguments;
+    public String[] getCommand() {
+        return arguments.toArray(new String[0]);
     }
 }

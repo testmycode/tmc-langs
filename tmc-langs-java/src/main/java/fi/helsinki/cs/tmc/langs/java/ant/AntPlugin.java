@@ -11,6 +11,8 @@ import fi.helsinki.cs.tmc.langs.java.LazyTestScanner;
 import fi.helsinki.cs.tmc.langs.java.TestRunFileAndLogs;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
+import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
+import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -25,11 +27,9 @@ import org.apache.tools.ant.ProjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -37,8 +37,6 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
@@ -211,37 +209,21 @@ public class AntPlugin extends AbstractJavaPlugin {
                         resultFile,
                         classPath,
                         exercise.get());
-        List<String> testRunnerArguments = argumentBuilder.getArguments();
 
-        StringBuilder stdout = new StringBuilder();
-        StringBuilder stderr = new StringBuilder();
+        ProcessRunner runner =  new ProcessRunner(argumentBuilder.getCommand(), projectBasePath);
 
         try {
-            Process process = new ProcessBuilder(testRunnerArguments).start();
-            process.waitFor();
-            final BufferedReader output =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-            final BufferedReader error =
-                    new BufferedReader(new InputStreamReader(process.getErrorStream()));
-
-            String line;
-            while ((line = output.readLine()) != null) {
-                stdout.append(line);
-            }
-            while ((line = error.readLine()) != null) {
-                stderr.append(line);
-            }
+            ProcessResult result = runner.call();
+            log.info("Successfully ran tests for project at {}", projectBasePath);
+            return new TestRunFileAndLogs(
+                resultFile.toFile(),
+                result.output.getBytes(Charset.forName("UTF-8")),
+                result.errorOutput.getBytes(Charset.forName("UTF-8"))
+            );
         } catch (InterruptedException | IOException e) {
             log.error("Failed to run tests", e);
             throw new TestRunnerException(e);
         }
-
-        log.info("Successfully ran tests for project at {}", projectBasePath);
-
-        return new TestRunFileAndLogs(
-                resultFile.toFile(),
-                stdout.toString().getBytes(Charset.forName("UTF-8")),
-                stderr.toString().getBytes(Charset.forName("UTF-8")));
     }
 
     private String getJvmOptions(Path projectBasePath) {

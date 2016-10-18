@@ -28,7 +28,7 @@ public final class ProcessRunner implements Callable<ProcessResult> {
     }
 
     @Override
-    public ProcessResult call() throws Exception {
+    public ProcessResult call() throws IOException, InterruptedException {
         Process process = null;
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command);

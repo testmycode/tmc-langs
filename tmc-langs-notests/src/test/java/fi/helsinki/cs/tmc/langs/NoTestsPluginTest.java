@@ -23,8 +23,7 @@ public class NoTestsPluginTest {
 
     @Test
     public void readsConfigsProperly() {
-        Path project = TestUtils.getPath(getClass(), "notests");
-        System.out.println(project.toAbsolutePath().toString());
+        Path project = TestUtils.getPath(getClass(), "notests-points");
         assertTrue(plugin.isExerciseTypeCorrect(project));
         ExerciseDesc desc = plugin.scanExercise(project, "No Tests Exercise").get();
         assertEquals(1, desc.tests.size());
@@ -32,6 +31,17 @@ public class NoTestsPluginTest {
                 ImmutableList.<String>of("1", "notests").toString(),
                 desc.tests.get(0).points.toString());
 
+        RunResult runResult = plugin.runTests(project);
+        assertEquals(RunResult.Status.PASSED, runResult.status);
+    }
+
+    @Test
+    public void worksWithoutPoints() {
+        Path project = TestUtils.getPath(getClass(), "notests");
+        assertTrue(plugin.isExerciseTypeCorrect(project));
+        ExerciseDesc desc = plugin.scanExercise(project, "No Tests Exercise").get();
+        assertEquals(1, desc.tests.size());
+        assertEquals(0, desc.tests.get(0).points.size());
         RunResult runResult = plugin.runTests(project);
         assertEquals(RunResult.Status.PASSED, runResult.status);
     }

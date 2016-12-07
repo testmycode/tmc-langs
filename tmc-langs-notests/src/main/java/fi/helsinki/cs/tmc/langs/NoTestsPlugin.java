@@ -74,9 +74,9 @@ public class NoTestsPlugin extends AbstractLanguagePlugin {
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-        TestDesc test = new TestDesc(getExerciseName(path) + "Test", getPoints(path));
+        TestDesc test = new TestDesc(exerciseName + "Test", getPoints(path));
         return Optional.of(
-                new ExerciseDesc(getExerciseName(path), ImmutableList.<TestDesc>of(test)));
+                new ExerciseDesc(exerciseName, ImmutableList.<TestDesc>of(test)));
     }
 
     private ImmutableList<String> getPoints(Path path) {
@@ -115,11 +115,4 @@ public class NoTestsPlugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {}
-
-    private String getExerciseName(Path path) {
-        if (!getConfiguration(path).isSet("no-tests.exercise_name")) {
-            return "DefaultName";
-        }
-        return getConfiguration(path).get("no-tests.exercise_name").asString();
-    }
 }

@@ -106,7 +106,7 @@ public final class MavenPlugin extends AbstractJavaPlugin {
         return new TestRunFileAndLogs(
                 path.toAbsolutePath().resolve(RESULT_FILE).toFile(),
                 result.getStdOut(),
-                result.getStdOut());
+                result.getStdErr());
     }
 
     @Override

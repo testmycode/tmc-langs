@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
@@ -74,6 +73,19 @@ public class MavenPluginTest {
         Path project = TestUtils.getPath(getClass(), "failing_maven_exercise");
         RunResult runResult = mavenPlugin.runTests(project);
         assertEquals(RunResult.Status.COMPILE_FAILED, runResult.status);
+    }
+
+    @Test
+    public void testRunTestsOutputLogIsNotEmptyWhenBuildFails() throws IOException {
+        Path project = TestUtils.getPath(getClass(), "failing_maven_exercise");
+        RunResult result = mavenPlugin.runTests(project);
+
+        byte[] stdoutBytes = result.logs.get("stdout");
+        String stdoutLog = new String(stdoutBytes, "utf-8");
+        assertTrue( "Expected stdout log of failed maven test build to contain any text",
+                    stdoutLog.length() > 0);
+        assertTrue("Expected stdout log of failed maven test build to contain \"BUILD_FAILURE\"!",
+                    stdoutLog.contains("BUILD FAILURE"));
     }
 
     @Test

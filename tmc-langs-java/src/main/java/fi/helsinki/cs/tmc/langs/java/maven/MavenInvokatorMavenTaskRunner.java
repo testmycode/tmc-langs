@@ -63,7 +63,9 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         invoker.setMavenHome(new File(mavenHome));
 
         final ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
+        final ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
         final PrintStream out = new PrintStream(outBuf);
+        final PrintStream err = new PrintStream(errBuf);
 
         InvocationResult result = null;
         request.setPomFile(projectPath.resolve("pom.xml").toFile());
@@ -73,18 +75,29 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
                     @Override
                     public void consumeLine(String line) {
-                        log.info("MavenInvokator: m{}", line);
-                        out.append(line);
+                        log.info("MavenInvokator: {}", line);
+                        out.println(line);
+                    }
+                });
+        request.setErrorHandler(
+                new InvocationOutputHandler() {
+
+                    @Override
+                    public void consumeLine(String line) {
+                        log.info("MavenInvokator: {}", line);
+                        err.println(line);
                     }
                 });
 
         request.setGoals(Arrays.asList(mavenArgs));
 
-        MavenExecutionResult compilationResult =
-                new MavenExecutionResult().setStdOut(outBuf.toByteArray()).setStdErr(new byte[0]);
+        MavenExecutionResult compilationResult = new MavenExecutionResult();
         try {
             result = invoker.execute(request);
             compilationResult.setExitCode(result.getExitCode());
+            // outBuf and errBuf are empty until invoker is executed
+            compilationResult.setStdOut(outBuf.toByteArray());
+            compilationResult.setStdErr(errBuf.toByteArray());
             CommandLineException exp = result.getExecutionException();
             if (exp != null) {
                 throw new MavenExecutorException(exp);

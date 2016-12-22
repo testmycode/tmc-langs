@@ -19,6 +19,9 @@ import java.nio.file.Path;
 public final class StudentFileAwareZipper implements Zipper {
 
     private static final Logger log = LoggerFactory.getLogger(StudentFileAwareZipper.class);
+    // The zip standard mandates the forward slash "/" to be used as path separator
+    private static final char ZIP_SEPARATOR = '/';
+
     private StudentFilePolicy filePolicy;
 
     public StudentFileAwareZipper() {}
@@ -109,13 +112,8 @@ public final class StudentFileAwareZipper implements Zipper {
 
         log.trace("Writing {} to zip", currentPath);
 
-        String name = projectPath.getParent().relativize(currentPath).toString();
-
-        if (Files.isDirectory(currentPath)) {
-            log.trace("{} is a directory", currentPath);
-            // Must be "/", can not be replaces with File.separator
-            name += "/";
-        }
+        Path relativePath = projectPath.getParent().relativize(currentPath);
+        String name = relativePathToZipCompliantName(relativePath, Files.isDirectory(currentPath));
 
         ZipArchiveEntry entry = new ZipArchiveEntry(name);
         zipStream.putArchiveEntry(entry);
@@ -128,5 +126,26 @@ public final class StudentFileAwareZipper implements Zipper {
 
         log.trace("Closing entry");
         zipStream.closeArchiveEntry();
+    }
+
+    private static String relativePathToZipCompliantName(Path path, boolean isDirectory) {
+        log.trace("Generating zip-compliant filename from Path \"{}\", isDirectory: {}",
+                path, isDirectory);
+
+        StringBuilder sb = new StringBuilder();
+        for (Path part : path) {
+            sb.append(part);
+            sb.append(ZIP_SEPARATOR);
+        }
+
+        if (!isDirectory) {
+            // ZipArchiveEntry assumes the entry represents a directory if and only
+            // if the name ends with a forward slash "/". Remove the trailing slash
+            // because this wasn't a directory.
+            log.trace("Path wasn't a directory, removing trailing slash");
+            sb.deleteCharAt(sb.length() - 1);
+        }
+
+        return sb.toString();
     }
 }

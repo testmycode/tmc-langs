@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -20,6 +21,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -77,8 +79,14 @@ public class StudentFileAwareZipperTest {
     }
 
     @Test(expected = FileNotFoundException.class)
-    public void zipperThrowsExceptionWhenUnzippingNonExistentFile() throws IOException {
+    public void zipperThrowsExceptionWhenZippingNonExistentFile() throws IOException {
         zipper.zip(TEST_ASSETS_DIR.resolve("noSuchDir"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void zipperThrowsExceptionWhenZippingRoot() throws IOException {
+        // platform-specific root
+        zipper.zip(Paths.get("/").toAbsolutePath());
     }
 
     @Test
@@ -137,7 +145,43 @@ public class StudentFileAwareZipperTest {
         expected.close();
         actual.close();
         Files.deleteIfExists(compressed);
+    }
 
+    @Test
+    public void zipperFollowsStudentPolicy() throws IOException {
+        Path uncompressed = TestUtils.getPath(StudentFileAwareUnzipperTest.class,
+                "zip_studentpolicy_test_case");
+
+        // Policy: zip every directory and file whose name starts with "include"
+        zipper.setStudentFilePolicy(new StudentFilePolicy() {
+            @Override
+            public boolean isStudentFile(Path path, Path projectRootPath) {
+                if (path.equals(projectRootPath)) {
+                    return true;
+                }
+                return path.getFileName().toString().startsWith("include");
+            }
+
+            @Override
+            public boolean mayDelete(Path file, Path projectRoot) {
+                return true;
+            }
+        });
+
+        byte[] zip = zipper.zip(uncompressed);
+        Path compressed = Files.createTempFile("testZip", ".zip");
+        Files.write(compressed, zip);
+
+        Path referenceZip = TEST_ASSETS_DIR.resolve("zip_studentpolicy_test_case.zip");
+
+        ZipFile expected = new ZipFile(referenceZip.toFile());
+        ZipFile actual = new ZipFile(compressed.toFile());
+
+        assertZipsEqualDecompressed(expected, actual);
+
+        expected.close();
+        actual.close();
+        Files.deleteIfExists(compressed);
     }
 
     private void assertZipsEqualDecompressed(ZipFile expected, ZipFile actual)

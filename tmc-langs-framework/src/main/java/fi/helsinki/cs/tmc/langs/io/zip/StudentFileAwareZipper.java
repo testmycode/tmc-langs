@@ -40,8 +40,14 @@ public final class StudentFileAwareZipper implements Zipper {
         log.debug("Starting to zip {}", rootDirectory);
 
         if (!Files.exists(rootDirectory)) {
-            log.error("Attempted to zip nonexistent directory {}", rootDirectory);
+            log.error("Attempted to zip nonexistent directory \"{}\"", rootDirectory);
             throw new FileNotFoundException("Attempted to zip nonexistent directory");
+        }
+
+        if (rootDirectory.toAbsolutePath().getNameCount() == 0) {
+            // getNameCount returns 0 if the path only represents a root component
+            log.error("Attempted to zip a root \"{}\"", rootDirectory);
+            throw new IllegalArgumentException("Filesystem root zipping is not supported");
         }
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();

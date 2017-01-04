@@ -97,6 +97,12 @@ public final class StudentFileAwareZipper implements Zipper {
             throw new IllegalArgumentException("Filesystem root zipping is not supported");
         }
 
+        if (filePolicy == null) {
+            log.error("Attepted to zip before setting the filePolicy");
+            throw new IllegalStateException(
+                    "The student file policy must be set before zipping files");
+        }
+
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try (ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(buffer)) {
             zipRecursively(rootDirectory, zipStream, rootDirectory);

@@ -89,6 +89,13 @@ public class StudentFileAwareZipperTest {
         zipper.zip(Paths.get("/").toAbsolutePath());
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void zipperThrowsExceptionWhenZippingWithoutSettingPolicy() throws IOException {
+        Path existingPath = TestUtils.getPath(StudentFileAwareUnzipperTest.class,
+                "tmcnosubmit_test_case");
+        new StudentFileAwareZipper().zip(existingPath);
+    }
+
     @Test
     public void zipperCorrectlyZipsSingleFile() throws IOException {
 
@@ -108,7 +115,7 @@ public class StudentFileAwareZipperTest {
     @Test
     public void zipperCorrectlyZipsFolderWithFilesAndSubFolders() throws IOException {
         // Create empty dir that is not in git
-        Path emptyDir = (TEST_DIR.resolve("dir"));
+        Path emptyDir = TEST_DIR.resolve("dir");
         if (Files.notExists(emptyDir)) {
             Files.createDirectory(emptyDir);
         }

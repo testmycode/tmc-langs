@@ -48,12 +48,13 @@ public class UnzipResult {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("Project: \"").append(projectDir).append("\"\n");
         sb.append("New: ").append(newFiles).append('\n');
         sb.append("Overwritten: ").append(overwrittenFiles).append('\n');
         sb.append("Skipped: ").append(skippedFiles).append('\n');
         sb.append("Unchanged: ").append(unchangedFiles).append('\n');
         sb.append("Deleted: ").append(deletedFiles).append('\n');
-        sb.append("Not deleted: ").append(deletedFiles).append('\n');
+        sb.append("Not deleted: ").append(skippedDeletingFiles).append('\n');
         return sb.toString();
     }
 }

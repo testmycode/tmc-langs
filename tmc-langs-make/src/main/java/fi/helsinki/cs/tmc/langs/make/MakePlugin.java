@@ -50,6 +50,12 @@ public final class MakePlugin extends AbstractLanguagePlugin {
     private static final String CANT_PARSE_EXERCISE_DESCRIPTION =
             "Couldn't parse exercise description.";
     private static final String COMPILE_FAILED_MESSAGE = "Failed to compile project.";
+    private static final String PERMISSION_MITIGATION_MESSAGE =
+            "Permission problems, cleaning and trying again.";
+    private static final String PERMISSIONS_FIX_FAILED_MESSAGE = "Fixing permission issues failed.";
+    private static final String RUNNING_WITHOUT_VALGRIND_MESSAGE =
+            "Trying to run tests without Valgrind.";
+    private static final String PERMISSION_PROBLEM_INDICATOR = "Permission denied";
 
     private static final Logger log = LoggerFactory.getLogger(MakePlugin.class);
 
@@ -166,13 +172,28 @@ public final class MakePlugin extends AbstractLanguagePlugin {
         try {
             runTests(path, withValgrind);
         } catch (Exception e) {
-            withValgrind = false;
-
-            try {
-                runTests(path, withValgrind);
-            } catch (Exception e1) {
-                log.error(e1.toString());
-                throw new RuntimeException(TEST_FAIL_MESSAGE);
+            // In case the folder has a test binary without the executable bit
+            if (e.getMessage().contains(PERMISSION_PROBLEM_INDICATOR)) {
+                log.info(PERMISSION_MITIGATION_MESSAGE);
+                clean(path);
+                try {
+                    runTests(path, withValgrind);
+                } catch (Exception e1) {
+                    log.info(PERMISSIONS_FIX_FAILED_MESSAGE);
+                    withValgrind = false;
+                }
+            } else {
+                withValgrind = false;
+            }
+            if (!withValgrind) {
+                // The system probably doesn't have Valgrind properly installed
+                log.info(RUNNING_WITHOUT_VALGRIND_MESSAGE);
+                try {
+                    runTests(path, withValgrind);
+                } catch (Exception e1) {
+                    log.error(e1.toString());
+                    throw new RuntimeException(TEST_FAIL_MESSAGE);
+                }
             }
         }
 

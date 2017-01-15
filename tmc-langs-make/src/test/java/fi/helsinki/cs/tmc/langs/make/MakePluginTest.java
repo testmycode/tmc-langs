@@ -246,4 +246,11 @@ public class MakePluginTest {
         Files.delete(make);
         Files.delete(parent);
     }
+
+    @Test
+    public void testProjectWithUnexecutableArtifacts() {
+        Path path = TestUtils.getPath(getClass(), "wrong-permissions");
+        RunResult result = makePlugin.runTests(path);
+        assertEquals(result.status, RunResult.Status.PASSED);
+    }
 }

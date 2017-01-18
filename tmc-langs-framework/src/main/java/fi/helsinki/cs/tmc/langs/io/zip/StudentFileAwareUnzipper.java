@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Set;
-import java.util.zip.ZipEntry;
 
 public final class StudentFileAwareUnzipper implements Unzipper {
 
@@ -121,23 +120,23 @@ public final class StudentFileAwareUnzipper implements Unzipper {
         }
 
         log.debug("Done unzipping");
-        deleteFilesNotInZip(target, target, result, pathsInZip);
+        deleteFilesNotInZip(target, result, pathsInZip);
         return null;
     }
 
     // TODO: validate
     private void deleteFilesNotInZip(
-            Path projectDir, Path curDir, UnzipResult result, Set<Path> pathsInZip)
+            Path projectDir, UnzipResult result, Set<Path> pathsInZip)
             throws IOException {
 
-        for (File file : curDir.toFile().listFiles()) {
+        for (File file : projectDir.toFile().listFiles()) {
             Path filePath = file.toPath();
             if (file.isDirectory()) {
-                deleteFilesNotInZip(projectDir, file.toPath(), result, pathsInZip);
+                deleteFilesNotInZip(file.toPath(), result, pathsInZip);
             }
 
             if (!pathsInZip.contains(filePath)) {
-                if (mayDelete(filePath, null)) {
+                if (mayDelete(filePath, projectDir)) {
                     if (file.isDirectory() && file.listFiles().length > 0) {
                         // Won't delete directories if they still have contents
                         result.skippedDeletingFiles.add(filePath);

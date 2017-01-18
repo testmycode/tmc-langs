@@ -134,7 +134,7 @@ public class StudentFileAwareUnzipperTest {
         Path bad = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
                 .resolve("bad-test-class-name.zip");
         Path fixed = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
-            .resolve("fixed-test-class-name.zip");
+                .resolve("fixed-test-class-name.zip");
 
         unzipper.unzip(bad, tmpDir);
 

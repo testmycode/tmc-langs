@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fi.helsinki.cs.tmc</groupId>
     <artifactId>build-tools</artifactId>
-    <version>0.7.4-SNAPSHOT</version>
+    <version>0.7.5-SNAPSHOT</version>
     <name>build-tools</name>
 
     <!-- Deploy to maven.testmycode.net/nexus -->

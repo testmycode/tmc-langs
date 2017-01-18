@@ -102,6 +102,6 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
 
     @Override
     public boolean mayDelete(Path file, Path projectRoot) {
-        return false;
+        return !isStudentFile(file, projectRoot);
     }
 }

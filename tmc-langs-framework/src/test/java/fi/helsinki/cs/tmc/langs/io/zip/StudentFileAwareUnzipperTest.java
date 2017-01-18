@@ -129,6 +129,26 @@ public class StudentFileAwareUnzipperTest {
         assertTrue(originalSize != Files.size(srcFile));
     }
 
+    @Test
+    public void testDeletion() throws Exception {
+        Path bad = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                .resolve("bad-test-class-name.zip");
+        Path fixed = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+            .resolve("fixed-test-class-name.zip");
+
+        unzipper.unzip(bad, tmpDir);
+
+        unzipper.unzip(fixed, tmpDir);
+
+        Path tmpDirCorrect = Files.createTempDirectory("tmc-tmp-correct");
+        unzipper.unzip(fixed, tmpDirCorrect);
+
+        Set<Path> found = listFiles(tmpDir);
+
+        assertThat(found).containsExactlyElementsIn(listFiles(tmpDirCorrect));
+        FileUtils.deleteDirectory(tmpDirCorrect.toFile());
+    }
+
     private StudentFilePolicy getNothingIsStudentFilePolicy() {
         return new StudentFilePolicy() {
             @Override

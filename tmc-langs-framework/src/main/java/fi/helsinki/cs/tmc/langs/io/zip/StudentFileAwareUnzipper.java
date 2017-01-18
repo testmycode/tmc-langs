@@ -67,57 +67,56 @@ public final class StudentFileAwareUnzipper implements Unzipper {
 
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
+                if (!entry.getName().startsWith(projectDirInZip)) {
+                    log.debug("Skipping non project file from zip - {}", entry.getName());
+                    continue;
+                }
 
-                if (entry.getName().startsWith(projectDirInZip)) {
-                    String restOfPath =
-                            trimSlashes(entry.getName().substring(projectDirInZip.length()));
+                String restOfPath =
+                        trimSlashes(entry.getName().substring(projectDirInZip.length()));
 
-                    Path entryTargetPath =
-                            target.resolve(trimSlashes(restOfPath.replace("/", File.separator)));
-                    pathsInZip.add(entryTargetPath);
+                Path entryTargetPath =
+                        target.resolve(trimSlashes(restOfPath.replace("/", File.separator)));
+                pathsInZip.add(entryTargetPath);
 
+                log.debug(
+                        "Processing zipEntry with name {} to {}",
+                        entry.getName(),
+                        entryTargetPath);
+                if (entry.isDirectory() || entryTargetPath.toFile().isDirectory()) {
+                    Files.createDirectories(entryTargetPath);
                     log.debug(
-                            "Processing zipEntry with name {} to {}",
-                            entry.getName(),
-                            entryTargetPath);
-                    if (entry.isDirectory() || entryTargetPath.toFile().isDirectory()) {
-                        Files.createDirectories(entryTargetPath);
-                        log.debug(
-                                "{} is a directory - creating and off to the next file ",
-                                entry.getName());
-                        continue;
-                    }
-                    boolean shouldWrite;
-                    InputStream entryContent = zipFile.getInputStream(entry);
-                    byte[] entryData = IOUtils.toByteArray(entryContent);
-                    if (Files.exists(entryTargetPath)) {
-                        log.trace("Allowed to unzip, unzipping");
+                            "{} is a directory - creating and off to the next file ",
+                            entry.getName());
+                    continue;
+                }
+                boolean shouldWrite;
+                InputStream entryContent = zipFile.getInputStream(entry);
+                byte[] entryData = IOUtils.toByteArray(entryContent);
+                if (Files.exists(entryTargetPath)) {
+                    log.trace("Allowed to unzip, unzipping");
 
-                        if (fileContentEquals(target.toFile(), entryData)) {
-                            shouldWrite = false;
-                            result.unchangedFiles.add(entryTargetPath);
-                        } else if (allowedToUnzip(entryTargetPath, target)) {
-                            shouldWrite = true;
-                            result.overwrittenFiles.add(entryTargetPath);
-                        } else {
-                            shouldWrite = false;
-                            result.skippedFiles.add(entryTargetPath);
-                        }
-                    } else {
+                    if (fileContentEquals(target.toFile(), entryData)) {
+                        shouldWrite = false;
+                        result.unchangedFiles.add(entryTargetPath);
+                    } else if (allowedToUnzip(entryTargetPath, target)) {
                         shouldWrite = true;
-                        result.newFiles.add(entryTargetPath);
-                    }
-                    if (shouldWrite) {
-                        FileUtils.writeByteArrayToFile(entryTargetPath.toFile(), entryData);
+                        result.overwrittenFiles.add(entryTargetPath);
                     } else {
-                        log.trace("Not allowed to unzip, skipping file");
+                        shouldWrite = false;
                         result.skippedFiles.add(entryTargetPath);
                     }
-                    log.debug("Done with file {}", entryTargetPath);
-
                 } else {
-                    log.debug("Skipping non project file from zip - {}", entry.getName());
+                    shouldWrite = true;
+                    result.newFiles.add(entryTargetPath);
                 }
+                if (shouldWrite) {
+                    FileUtils.writeByteArrayToFile(entryTargetPath.toFile(), entryData);
+                } else {
+                    log.trace("Not allowed to unzip, skipping file");
+                    result.skippedFiles.add(entryTargetPath);
+                }
+                log.debug("Done with file {}", entryTargetPath);
             }
         }
 

@@ -122,7 +122,7 @@ public class MainTest {
     @Test
     public void testScanExercise() throws NoLanguagePluginFoundException {
         final String exercisePath = getTargetPath("arith_funcs");
-        final String outputPath = exercisePath + "/checkstyle.txt";
+        final String outputPath = exercisePath + File.separator + "checkstyle.txt";
 
         Mockito.when(executor.scanExercise(Paths.get(exercisePath), "arith_funcs"))
                 .thenReturn(
@@ -153,7 +153,7 @@ public class MainTest {
     @Test
     public void testRunTests() {
         final String exercisePath = getTargetPath("arith_funcs");
-        final String outputPath = exercisePath + "/results.txt";
+        final String outputPath = exercisePath + File.separator + "results.txt";
         String[] args = {"run-tests", EXERCISE_PATH, exercisePath, OUTPUT_PATH, outputPath};
 
         exit.expectSystemExitWithStatus(0);
@@ -176,7 +176,7 @@ public class MainTest {
     @Test
     public void testRunCheckCodeStyle() {
         final String exercisePath = getTargetPath("arith_funcs");
-        final String outputPath = exercisePath + "/exercises.txt";
+        final String outputPath = exercisePath + File.separator + "exercises.txt";
         String[] args = {
             "checkstyle", EXERCISE_PATH, exercisePath, OUTPUT_PATH, outputPath, LOCALE, "en"
         };

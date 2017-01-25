@@ -133,9 +133,14 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
             RunResult result = resultParser.parseTestResult(results);
             results.getTestResultsFile().delete();
             return result;
-        } catch (TestRunnerException | TestScannerException ex) {
+        } catch (TestRunnerException ex) {
             log.error("Unable to create run result file", ex);
-            return null;
+            return new RunResult(RunResult.Status.TESTRUN_INTERRUPTED,
+                    ImmutableList.<TestResult>of(), ImmutableMap.<String, byte[]>of());
+        } catch (TestScannerException ex) {
+            log.error("Unable to create run result file", ex);
+            return new RunResult(RunResult.Status.COMPILE_FAILED, ImmutableList.<TestResult>of(),
+                    ImmutableMap.<String, byte[]>of());
         }
     }
 

@@ -14,6 +14,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
@@ -139,7 +140,7 @@ public class AbstractJavaPluginTest {
     }
 
     @Test
-    public void testRunnerExceptionDuringRunTestsReturnsNull() {
+    public void testRunnerExceptionDuringRunTestsReturnsStatusTestRunInterrupted() {
         AbstractJavaPlugin plugin =
                 new StubLanguagePlugin(Paths.get("")) {
                     @Override
@@ -149,11 +150,11 @@ public class AbstractJavaPluginTest {
                     }
                 };
 
-        assertNull(plugin.runTests(null));
+        assertEquals(plugin.runTests(null).status, RunResult.Status.TESTRUN_INTERRUPTED);
     }
 
     @Test
-    public void testScannerExceptionDuringRunTestsReturnsNull() {
+    public void testScannerExceptionDuringRunTestsReturnsStatusCompileFailed() {
         AbstractJavaPlugin plugin =
                 new StubLanguagePlugin(Paths.get("")) {
                     @Override
@@ -163,7 +164,7 @@ public class AbstractJavaPluginTest {
                     }
                 };
 
-        assertNull(plugin.runTests(null));
+        assertEquals(plugin.runTests(null).status, RunResult.Status.COMPILE_FAILED);
     }
 
     @Test

@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -53,6 +54,11 @@ public class AbstractLanguagePluginTest {
 
         @Override
         public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+            return null;
+        }
+
+        @Override
+        public Optional<ImmutableList<String>> availablePoints(Path path) {
             return null;
         }
 

@@ -2,19 +2,33 @@ package fi.helsinki.cs.tmc.langs;
 
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
+import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.Zipper;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class AbstractLanguagePlugin implements LanguagePlugin {
 
@@ -59,6 +73,22 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     @Override
     public String getLanguageName() {
         return getPluginName();
+    }
+
+    @Override
+    public Optional<ImmutableList<String>> availablePoints(Path path) {
+        Optional<ExerciseDesc> scanned = scanExercise(path, "lol");
+        if (!scanned.isPresent()) {
+            return Optional.absent();
+        }
+        List<String> res = new ArrayList<>();
+        ImmutableList<TestDesc> tests = scanned.get().tests;
+        for (TestDesc desc : tests) {
+            for (String point : desc.points) {
+                res.add(point);
+            }
+        }
+        return Optional.of(ImmutableList.copyOf(res));
     }
 
     @Override
@@ -155,5 +185,50 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     @Override
     public void maybeCopySharedStuff(Path destPath) {
         // Ignore by default.
+    }
+
+    protected Optional<ImmutableList<String>> findAvailablePoints(final Path rootPath,
+            Pattern pattern, Pattern commentPattern, String suffix) {
+        Set<String> points = new HashSet<>();
+        try {
+            final List<Path> potentialPointFiles = getPotentialPointFiles(rootPath, suffix);
+            for (Path p : potentialPointFiles) {
+
+                String contents = new String(Files.readAllBytes(p), "UTF-8");
+                String withoutComments = commentPattern.matcher(contents).replaceAll("");
+                Matcher matcher = pattern.matcher(withoutComments);
+                while (matcher.find()) {
+                    MatchResult matchResult = matcher.toMatchResult();
+                    String group = matchResult.group(1).trim().replaceAll("\\\"", "\"");
+                    points.add(group);
+                }
+            }
+            return Optional.of(ImmutableList.copyOf(points));
+        } catch (IOException e) {
+            // We could scan the exercise but that could be a security risk
+            return Optional.absent();
+        }
+    }
+
+    private List<Path> getPotentialPointFiles(final Path rootPath, final String suffix)
+            throws IOException {
+        final StudentFilePolicy studentFilePolicy = getStudentFilePolicy(rootPath);
+        final List<Path> potentialPointFiles = new ArrayList<>();
+
+        Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+                throws IOException {
+                if (studentFilePolicy.isStudentFile(path, rootPath)) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+                if (!Files.isDirectory(path) && path.toString().endsWith(suffix)) {
+                    potentialPointFiles.add(path);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
+        return  potentialPointFiles;
     }
 }

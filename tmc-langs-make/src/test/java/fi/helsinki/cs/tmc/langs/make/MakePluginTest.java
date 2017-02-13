@@ -10,6 +10,7 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 import org.junit.Test;
 
@@ -252,5 +253,31 @@ public class MakePluginTest {
         Path path = TestUtils.getPath(getClass(), "wrong-permissions");
         RunResult result = makePlugin.runTests(path);
         assertEquals(result.status, RunResult.Status.PASSED);
+    }
+
+
+    @Test
+    public void testAvailablePoints() {
+        Path project = TestUtils.getPath(getClass(), "passing-suite");
+        Optional<ImmutableList<String>> pointsResult = makePlugin.availablePoints(project);
+        assertTrue(pointsResult.isPresent());
+        ImmutableList<String> points = pointsResult.get();
+        assertEquals(points.size(), 3);
+        assertTrue(points.contains("1.1"));
+        assertTrue(points.contains("1.2"));
+        assertTrue(points.contains("1.3"));
+    }
+
+    @Test
+    public void testCommentedAvailablePoints() {
+        Path project = TestUtils.getPath(getClass(), "passing-commented-points");
+        Optional<ImmutableList<String>> pointsResult = makePlugin.availablePoints(project);
+        assertTrue(pointsResult.isPresent());
+        ImmutableList<String> points = pointsResult.get();
+        assertEquals(points.size(), 4);
+        assertTrue(points.contains("2"));
+        assertTrue(points.contains("//6"));
+        assertTrue(points.contains("/*7"));
+        assertTrue(points.contains("aaa\""));
     }
 }

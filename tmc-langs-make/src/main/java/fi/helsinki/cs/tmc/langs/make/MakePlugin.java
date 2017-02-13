@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public final class MakePlugin extends AbstractLanguagePlugin {
 
@@ -56,6 +57,11 @@ public final class MakePlugin extends AbstractLanguagePlugin {
     private static final String RUNNING_WITHOUT_VALGRIND_MESSAGE =
             "Trying to run tests without Valgrind.";
     private static final String PERMISSION_PROBLEM_INDICATOR = "Permission denied";
+
+    private static final Pattern POINT_PATTERN =
+            Pattern.compile("tmc_(?>register_test|suite_create)\\(.*(?<!\\\\)[\"'](.*)(?<!\\\\)[\"']\\)\\s*;");
+    private static final Pattern COMMENT_PATTERN =
+            Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/|(^[^\"\\r\\n]*\\/\\/[^\\r\\n]*))", Pattern.MULTILINE | Pattern.DOTALL);
 
     private static final Logger log = LoggerFactory.getLogger(MakePlugin.class);
 
@@ -268,5 +274,10 @@ public final class MakePlugin extends AbstractLanguagePlugin {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Optional<ImmutableList<String>> availablePoints(final Path rootPath) {
+        return findAvailablePoints(rootPath, POINT_PATTERN, COMMENT_PATTERN, ".c");
     }
 }

@@ -3,12 +3,6 @@ package fi.helsinki.cs.tmc.langs.java;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
@@ -20,15 +14,12 @@ import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
-import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
-import fi.helsinki.cs.tmc.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 
 import org.junit.Test;
 
-import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.IOException;

@@ -2,7 +2,6 @@ package fi.helsinki.cs.tmc.langs.java.maven;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -11,6 +10,9 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 import org.junit.Test;
 
@@ -224,5 +226,16 @@ public class MavenPluginTest {
 
         assertEquals("same-point", result.testResults.get(0).points.get(1));
         assertEquals("same-point", result.testResults.get(1).points.get(1));
+    }
+
+    @Test
+    public void testAvailablePoints() {
+        Path project = TestUtils.getPath(getClass(), "passing_maven_exercise_with_class_points");
+        Optional<ImmutableList<String>> pointsResult = mavenPlugin.availablePoints(project);
+        assertTrue(pointsResult.isPresent());
+        ImmutableList<String> points = pointsResult.get();
+        assertEquals(points.size(), 2);
+        assertTrue(points.contains("same-point"));
+        assertTrue(points.contains("class-point"));
     }
 }

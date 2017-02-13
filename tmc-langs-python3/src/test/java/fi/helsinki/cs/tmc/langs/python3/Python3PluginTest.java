@@ -12,6 +12,9 @@ import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -129,5 +132,27 @@ public class Python3PluginTest {
 
         assertEquals(RunResult.Status.PASSED, runResult.status);
         assertEquals(38, runResult.testResults.size());
+    }
+
+    @Test
+    public void testAvailablePoints() {
+        Path project = TestUtils.getPath(getClass(), "passing");
+        Optional<ImmutableList<String>> pointsResult = python3Plugin.availablePoints(project);
+        assertTrue(pointsResult.isPresent());
+        ImmutableList<String> points = pointsResult.get();
+        assertEquals(points.size(), 2);
+        assertTrue(points.contains("1.1"));
+        assertTrue(points.contains("1.2"));
+    }
+
+    @Test
+    public void testCommentedPoints() {
+        Path project = TestUtils.getPath(getClass(), "passing_commented_points");
+        Optional<ImmutableList<String>> pointsResult = python3Plugin.availablePoints(project);
+        assertTrue(pointsResult.isPresent());
+        ImmutableList<String> points = pointsResult.get();
+        assertEquals(points.size(), 2);
+        assertTrue(points.contains("1.1"));
+        assertTrue(points.contains("1.2"));
     }
 }

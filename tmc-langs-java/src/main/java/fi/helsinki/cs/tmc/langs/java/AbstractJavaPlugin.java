@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * An abstract extension of {@link AbstractLanguagePlugin} that implements features common to all
@@ -43,6 +44,11 @@ import java.util.Map;
 public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractJavaPlugin.class);
+    private static final Pattern POINT_PATTERN =
+            Pattern.compile("@\\s*Points\\s*\\(\\s*\"([^\\)\"]+)\"\\s*\\)");
+    private static final Pattern COMMENT_PATTERN =
+            Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/|(^[^\"\\r\\n]*\\/\\/[^\\r\\n]*))",
+                Pattern.MULTILINE | Pattern.DOTALL);
 
     private final TestResultParser resultParser = new TestResultParser();
     private final Path testFolderPath;
@@ -119,6 +125,11 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         scanner.clearSources();
 
         return Optional.of(ExerciseDesc.from(exerciseName, tests));
+    }
+
+    @Override
+    public Optional<ImmutableList<String>> availablePoints(final Path rootPath) {
+        return findAvailablePoints(rootPath, POINT_PATTERN, COMMENT_PATTERN, ".java");
     }
 
     @Override

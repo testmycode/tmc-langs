@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public final class Python3Plugin extends AbstractLanguagePlugin {
 
@@ -47,6 +48,13 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     private static final String CANNOT_SCAN_EXERCISE_MESSAGE = "Failed to scan exercise.";
     private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE =
             "Failed to parse exercise description.";
+
+    private static final Pattern POINT_PATTERN =
+            Pattern.compile("^[ \\t]*@\\s*points\\s*\\(\\s*[\"']([^\\)\"]+)[\"']\\s*\\)",
+                Pattern.MULTILINE);
+    private static final Pattern COMMENT_PATTERN =
+        Pattern.compile("(?>#[^\\n]*$)|(?>^[ \\t]*[\"']{3}.*^[ \\t]*[\"']{3})",
+                Pattern.MULTILINE | Pattern.DOTALL);
 
     private static Logger log = LoggerFactory.getLogger(Python3Plugin.class);
 
@@ -145,5 +153,10 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     @Override
     public void clean(Path path) {
         // no op
+    }
+
+    @Override
+    public Optional<ImmutableList<String>> availablePoints(final Path rootPath) {
+        return findAvailablePoints(rootPath, POINT_PATTERN, COMMENT_PATTERN, ".py");
     }
 }

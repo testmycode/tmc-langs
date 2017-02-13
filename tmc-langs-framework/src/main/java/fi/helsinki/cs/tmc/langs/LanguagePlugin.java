@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -68,6 +69,8 @@ public interface LanguagePlugin {
      */
     Optional<ExerciseDesc> scanExercise(Path path, String exerciseName);
 
+    Optional<ImmutableList<String>> availablePoints(Path path);
+
     /**
      * Runs the tests for the exercise.
      *
@@ -111,7 +114,7 @@ public interface LanguagePlugin {
      *
      * <p>The solution usually has stubs and special comments stripped.
      *
-     * @param clonePath path in which the original exercise is located.
+     * @param repoPath path in which the original exercise is located.
      * @param destPath path to which directory with prepared files will be copied.
      */
     void prepareSolutions(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath);
@@ -120,7 +123,7 @@ public interface LanguagePlugin {
      * Run checkstyle or similar plugin to project if applicable
      *
      * @param path The path to the exercise directory.
-     * @param locale Locale to use for code style messages.
+     * @param messageLocale Locale to use for code style messages.
      * @return Validation result of the checkstyle ran, or null if not
      *     applicable
      */

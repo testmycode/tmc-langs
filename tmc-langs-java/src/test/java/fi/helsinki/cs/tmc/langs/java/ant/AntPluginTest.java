@@ -195,6 +195,30 @@ public class AntPluginTest {
         assertEquals(RunResult.Status.TESTRUN_INTERRUPTED, result.status);
     }
 
+    @Test
+    public void testAvailablePoints() {
+        Path project = TestUtils.getPath(getClass(), "ant_project");
+        Optional<ImmutableList<String>> pointsResult = antPlugin.availablePoints(project);
+        assertTrue(pointsResult.isPresent());
+        ImmutableList<String> points = pointsResult.get();
+        assertEquals(points.size(), 2);
+        assertTrue(points.contains("one"));
+        assertTrue(points.contains("one two"));
+    }
+
+    @Test
+    public void testCommentedAvailablePoints() {
+        Path project = TestUtils.getPath(getClass(), "commented_points");
+        Optional<ImmutableList<String>> pointsResult = antPlugin.availablePoints(project);
+        assertTrue(pointsResult.isPresent());
+        ImmutableList<String> points = pointsResult.get();
+        assertEquals(points.size(), 3);
+        assertTrue(points.contains("1"));
+        assertTrue(points.contains("//4"));
+        assertTrue(points.contains("/*5"));
+    }
+
+
     private void assertPathContains(ClassPath cp, String file) {
         boolean found = false;
         for (Path path : cp.getPaths()) {

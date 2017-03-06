@@ -105,6 +105,13 @@ public final class StudentFileAwareZipper implements Zipper {
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try (ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(buffer)) {
+            // Fixes filenames with utf-8 characters on Windows
+            String encoding = zipStream.getEncoding();
+           // zipStream.setEncoding("Cp437");
+            zipStream.setFallbackToUTF8(true);
+            zipStream.setUseLanguageEncodingFlag(true);
+            zipStream.setCreateUnicodeExtraFields(
+                    ZipArchiveOutputStream.UnicodeExtraFieldPolicy.NOT_ENCODEABLE);
             zipRecursively(rootDirectory, zipStream, rootDirectory);
             zipStream.finish();
         }

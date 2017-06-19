@@ -82,6 +82,8 @@ The project is part of Software Lab project at the [University of Helsinki CS De
 ### Instructor
 Leo Leppänen [loezi](https://github.com/loezi)
 
-### Clients and current maintainers
+### Clients
   * Martin Pärtel [mpartel](https://github.com/mpartel)
   * Jarmo Isotalo [jamox](https://github.com/jamox)
+
+The project is currently maintained by the Agile Education Research group.

@@ -78,6 +78,13 @@
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
+        <!-- tar handling -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.14</version>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>com.github.stefanbirkner</groupId>
             <artifactId>system-rules</artifactId>

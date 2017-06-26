@@ -11,9 +11,11 @@ import fi.helsinki.cs.tmc.langs.io.EverythingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.NothingIsStudentFileStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
+import fi.helsinki.cs.tmc.langs.util.tarservice.TarCreator;
 
 import com.google.common.base.Optional;
 
+import org.apache.commons.compress.archivers.ArchiveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,6 +116,14 @@ public class TaskExecutorImpl implements TaskExecutor {
     public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path)
             throws NoLanguagePluginFoundException {
         return getLanguagePlugin(path).getExercisePackagingConfiguration();
+    }
+
+    @Override
+    public void compressTarForSubmitting(Path projectDir, Path tmcLangs,
+            Path tmcrun, Path targetLocation) throws IOException, ArchiveException {
+        TarCreator tarCompresser = new TarCreator();
+        log.info("Copying files to directory " + projectDir.toString() + " and creating tar ball");
+        tarCompresser.createTarFromProject(projectDir, tmcLangs, tmcrun, targetLocation);
     }
 
     @Override

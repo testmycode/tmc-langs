@@ -10,6 +10,8 @@ import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 
+import org.apache.commons.compress.archivers.ArchiveException;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -116,6 +118,18 @@ public interface TaskExecutor {
 
     ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path)
             throws NoLanguagePluginFoundException;
+
+    /**
+     * Creates a tarball that can be submitted to TMC-sandbox.
+     * The tar is created to the target location
+     * 
+     * @param projectDir Location of the unzipped project
+     * @param tmcLangs Location of tmc-langs-cli.jar
+     * @param tmcrun Location of tmc-run init script
+     * @param targetLocation Location where the tar archive should be extracted to
+     */
+    void compressTarForSubmitting(Path projectDir, Path tmcLangs, Path tmcrun, Path targetLocation)
+            throws IOException, ArchiveException;
 
     /**
      * Run clean for given path using proper language plugin.

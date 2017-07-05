@@ -56,7 +56,7 @@ public final class Main {
                     + "     Run checkstyle or similar plugin to project if applicable.\n"
                     + " help"
                     + "                                         Display help information.\n"
-                    + " prepare-solution --exercisePath --outputPath"
+                    + " prepare-solutions --exercisePath --outputPath"
                     + "             Prepare a presentable solution from the original.\n"
                     + " prepare-stubs --exercisePath -- outputPath"
                     + "                 Prepare a stub exercise from the original.\n"

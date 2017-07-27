@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class TarCreator {
 
@@ -29,8 +30,8 @@ public class TarCreator {
      */
     public void createTarFromProject(Path projectDir, Path tmcLangs, Path tmcrun,
                                      Path targetLocation) throws IOException, ArchiveException {
-        Files.copy(tmcrun, projectDir.resolve(tmcrun.getFileName()));
-        Files.copy(tmcLangs, projectDir.resolve(tmcLangs.getFileName()));
+        Files.copy(tmcrun, projectDir.resolve(Paths.get("tmc-run.sh")));
+        Files.copy(tmcLangs, projectDir.resolve(Paths.get("tmc-langs.jar")));
         createTarBall(projectDir, targetLocation);
     }
 
@@ -58,7 +59,6 @@ public class TarCreator {
      *
      * @param folder       The folder to add
      * @param tar          TarArchiveOutputStreamer tar
-     * @param lengthOfPath The length of String from root until the start folder.
      * @throws FileNotFoundException Error!
      * @throws IOException           Error!
      */

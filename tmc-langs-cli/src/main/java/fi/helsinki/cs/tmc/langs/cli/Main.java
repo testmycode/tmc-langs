@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /*
  * TODO: unstaticify this class
@@ -44,7 +45,10 @@ public final class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static final String EXERCISE_PATH = "exercisePath";
+    private static final String SUBMISSION_PATH = "submissionPath";
     private static final String OUTPUT_PATH = "outputPath";
+    private static final String TMC_RUN_PATH = "tmcRunPath";
+    private static final String TMC_LANGS_PATH = "tmcLangsPath";
     private static final String LOCALE = "locale";
 
     @VisibleForTesting static Map<String, String> argsMap = Maps.newHashMap();
@@ -62,8 +66,11 @@ public final class Main {
                     + "             Prepare a presentable solution from the original.\n"
                     + " prepare-stubs --exercisePath -- outputPath"
                     + "                 Prepare a stub exercise from the original.\n"
-                    + " prepare-submission  --clonePath --submissionPath --outputPath"
-                    + "      Prepares from submission and solution project for which the tests"
+            // TODO: Not implemented yet
+//                    + " prepare-submission  --exercisePath --submissionPath --outputPath"
+//                    + "      Prepares from submission and solution project for which the tests.\n"
+                    + " prepare-sandbox-task --exercisePath --submissionPath --outputPath --tmcRunPath --tmcLangsPath"
+                    + "     Creates a tarball that sandbox can consume.\n"
                     + " can be run in sandbox\n"
                     + " run-tests --exercisePath --outputPath"
                     + "      Run the tests for the exercise.\n"
@@ -138,6 +145,9 @@ public final class Main {
             case "prepare-solutions":
                 runPrepareSolutions();
                 break;
+            case "prepare-sandbox-task":
+                runPrepareSandboxTask();
+                break;
             case "get-exercise-packaging-configuration":
                 runGetExercisePackagingConfiguration();
                 break;
@@ -155,6 +165,13 @@ public final class Main {
             return Paths.get(argsMap.get(EXERCISE_PATH));
         }
         throw new IllegalStateException("No " + EXERCISE_PATH + " provided");
+    }
+
+    private static Path getSubmissionPathFromArgs() {
+        if (argsMap.containsKey(SUBMISSION_PATH)) {
+            return Paths.get(argsMap.get(SUBMISSION_PATH));
+        }
+        throw new IllegalStateException("No " + SUBMISSION_PATH + " provided");
     }
 
     private static Locale getLocaleFromArgs() {
@@ -182,17 +199,28 @@ public final class Main {
         }
     }
 
+
+    private static Path getTmcRunPathFromArgs() {
+        if (argsMap.containsKey(TMC_RUN_PATH)) {
+            return Paths.get(argsMap.get(TMC_RUN_PATH));
+        }
+        throw new IllegalStateException("No " + TMC_RUN_PATH + " provided");
+    }
+
+    private static Path getTmcLangsPathFromArgs() {
+        if (argsMap.containsKey(TMC_LANGS_PATH)) {
+            return Paths.get(argsMap.get(TMC_LANGS_PATH));
+        }
+        throw new IllegalStateException("No " + TMC_LANGS_PATH + " provided");
+    }
+
     private static void runCheckCodeStyle() {
         ValidationResult validationResult = null;
         try {
-            validationResult =
-                    executor.runCheckCodeStyle(getExercisePathFromArgs(), getLocaleFromArgs());
+            validationResult = executor.runCheckCodeStyle(getExercisePathFromArgs(), getLocaleFromArgs());
         } catch (NoLanguagePluginFoundException e) {
-            logger.error(
-                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
-            printErrAndExit(
-                    "ERROR: Could not find suitable language plugin for the given exercise "
-                            + "path.");
+            logger.error("No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
         }
 
         try {
@@ -215,18 +243,13 @@ public final class Main {
                 printErrAndExit("ERROR: Could not scan the exercises.");
             }
         } catch (NoLanguagePluginFoundException e) {
-            logger.error(
-                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
-            printErrAndExit(
-                    "ERROR: Could not find suitable language plugin for the given "
-                            + "exercise path.");
+            logger.error("No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
         }
 
         try {
             JsonWriter.writeObjectIntoJsonFormat(exerciseDesc.get(), getOutputPathFromArgs());
-            System.out.println(
-                    "Exercises scanned successfully, results can be found in "
-                            + getOutputPathFromArgs());
+            System.out.println("Exercises scanned successfully, results can be found in " + getOutputPathFromArgs());
         } catch (IOException e) {
             logger.error("Could not write output to {}", getOutputPathFromArgs(), e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
@@ -272,11 +295,8 @@ public final class Main {
         try {
             runResult = executor.runTests(getExercisePathFromArgs());
         } catch (NoLanguagePluginFoundException e) {
-            logger.error(
-                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
-            printErrAndExit(
-                    "ERROR: Could not find suitable language plugin for the given "
-                            + "exercise path.");
+            logger.error("No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
         }
 
         try {
@@ -295,11 +315,8 @@ public final class Main {
                     getExercisePathFromArgs(),
                     getOutputPathFromArgs());
         } catch (NoLanguagePluginFoundException e) {
-            logger.error(
-                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
-            printErrAndExit(
-                    "ERROR: Could not find suitable language plugin for the given "
-                            + "exercise path.");
+            logger.error("No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
         }
     }
 
@@ -307,11 +324,8 @@ public final class Main {
         try {
             executor.clean(getExercisePathFromArgs());
         } catch (NoLanguagePluginFoundException e) {
-            logger.error(
-                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
-            printErrAndExit(
-                    "ERROR: Could not find suitable language plugin for the given "
-                            + "exercise path.");
+            logger.error("No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
         }
     }
 
@@ -354,11 +368,26 @@ public final class Main {
                     getExercisePathFromArgs(),
                     getOutputPathFromArgs());
         } catch (NoLanguagePluginFoundException e) {
-            logger.error(
-                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
-            printErrAndExit(
-                    "ERROR: Could not find suitable language plugin for the given "
-                            + "exercise path.");
+            logger.error("No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
+        }
+    }
+
+    private static void runPrepareSandboxTask() {
+        Path exercisePath = getExercisePathFromArgs();
+        Path submissionPath = getSubmissionPathFromArgs();
+        Path outputPath = getOutputPathFromArgs();
+        Path tmcRunPath = getTmcRunPathFromArgs();
+        Path tmcLangsPath = getTmcLangsPathFromArgs();
+
+        try {
+            executor.prepareSandboxTask(exercisePath, submissionPath, outputPath, tmcRunPath, tmcLangsPath);
+        } catch (NoLanguagePluginFoundException ex) {
+            logger.error("No suitable language plugin for project at {}", exercisePath, ex);
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
+        } catch (IOException e) {
+            logger.error("An error occurred while preparing task.", e);
+            printErrAndExit("ERROR: Could not prepare task.");
         }
     }
 
@@ -367,11 +396,8 @@ public final class Main {
         try {
             configuration = executor.getExercisePackagingConfiguration(getExercisePathFromArgs());
         } catch (NoLanguagePluginFoundException e) {
-            logger.error(
-                    "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
-            printErrAndExit(
-                    "ERROR: Could not find suitable language plugin for the given "
-                            + "exercise path.");
+            logger.error("No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
+            printErrAndExit("ERROR: Could not find suitable language plugin for the given exercise path.");
         }
 
         try {

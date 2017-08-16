@@ -6,6 +6,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
@@ -145,5 +146,11 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     @Override
     public void clean(Path path) {
         // no op
+    }
+
+    @Override
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration() {
+        return new ExercisePackagingConfiguration(
+                ImmutableList.of("src"), ImmutableList.of("test", "tmc"));
     }
 }

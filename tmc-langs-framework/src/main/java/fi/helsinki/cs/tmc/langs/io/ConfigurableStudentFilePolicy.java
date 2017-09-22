@@ -69,16 +69,18 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
                         projectRootPath);
     }
 
-    /**
-     * Determines whether a file is an <tt>ExtraStudentFile</tt>.
-     */
+    /** Determines whether a file is an <tt>ExtraStudentFile</tt>. */
     private boolean isExtraStudentFile(Path path) {
         if (extraStudentFiles == null) {
             loadExtraStudentFileList();
         }
 
         for (Path extraStudentFile : extraStudentFiles) {
-            if (rootPath.resolve(extraStudentFile).toAbsolutePath().equals(path.toAbsolutePath())) {
+            Path extraStudentPath = rootPath.resolve(extraStudentFile).toAbsolutePath();
+            Path userSuppliedPath = path.toAbsolutePath();
+            if (extraStudentPath.equals(userSuppliedPath)
+                    || (userSuppliedPath.startsWith((extraStudentPath))
+                            && Files.isDirectory(extraStudentPath))) {
                 return true;
             }
         }

@@ -107,10 +107,19 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
 
     private void addIfString(Object value) {
         if (value instanceof String) {
-            Path path = Paths.get((String) value);
+            String[] pathParts = ((String) value).split("/");
+            Path path = constructPathfromArray(pathParts);
             extraStudentFiles.add(path);
             log.trace("Added {} as extra student file", path);
         }
+    }
+
+    private Path constructPathfromArray(String[] parts) {
+        Path path = Paths.get(parts[0]);
+        for (int i = 1; i < parts.length; i++) {
+            path = path.resolve(parts[i]);
+        }
+        return path;
     }
 
     private String initFileContents(File file) {

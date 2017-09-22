@@ -115,7 +115,7 @@ public class TaskExecutorImpl implements TaskExecutor {
     @Override
     public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path)
             throws NoLanguagePluginFoundException {
-        return getLanguagePlugin(path).getExercisePackagingConfiguration();
+        return getLanguagePlugin(path).getExercisePackagingConfiguration(path);
     }
 
     @Override

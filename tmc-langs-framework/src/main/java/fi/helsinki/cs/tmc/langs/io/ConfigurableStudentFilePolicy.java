@@ -78,7 +78,7 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
         }
 
         for (Path extraStudentFile : extraStudentFiles) {
-            if (extraStudentFile.toAbsolutePath().equals(path.toAbsolutePath())) {
+            if (rootPath.resolve(extraStudentFile).toAbsolutePath().equals(path.toAbsolutePath())) {
                 return true;
             }
         }
@@ -96,7 +96,7 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
 
         if (Files.exists(configFile)) {
             TmcProjectYmlParser parser = new TmcProjectYmlParser();
-            extraStudentFiles = parser.parseExtraStudentFiles(configFile, rootPath);
+            extraStudentFiles = parser.parseExtraStudentFiles(configFile);
         }
     }
 

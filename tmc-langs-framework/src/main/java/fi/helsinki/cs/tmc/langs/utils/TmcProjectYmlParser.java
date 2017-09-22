@@ -12,6 +12,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,18 +21,15 @@ import java.util.Map;
 public final class TmcProjectYmlParser implements ConfigurationParser {
 
     private static final Logger log = LoggerFactory.getLogger(TmcProjectYmlParser.class);
-
-    private Path rootPath;
     private List<Path> extraStudentFiles;
 
     /**
      * Parses a list of extra student files from a <tt>.tmcproject.yml</tt> file.
      */
-    public List<Path> parseExtraStudentFiles(Path configFilePath, Path projectRootPath) {
+    public List<Path> parseExtraStudentFiles(Path configFilePath) {
 
         log.debug("Parsing extra student files from {}", configFilePath);
 
-        rootPath = projectRootPath;
         extraStudentFiles = new ArrayList<>();
 
         Object yamlSpecifications = getYamlSpecs(configFilePath.toAbsolutePath());
@@ -109,7 +107,7 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
 
     private void addIfString(Object value) {
         if (value instanceof String) {
-            Path path = this.rootPath.resolve((String) value);
+            Path path = Paths.get((String) value);
             extraStudentFiles.add(path);
             log.trace("Added {} as extra student file", path);
         }

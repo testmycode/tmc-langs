@@ -13,6 +13,8 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -147,9 +149,17 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
     }
 
     @Override
-    public ExercisePackagingConfiguration getExercisePackagingConfiguration() {
-        return new ExercisePackagingConfiguration(
-                ImmutableList.of("src"), ImmutableList.of("test"));
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
+        Configuration configuration = getConfiguration(path);
+        List<Path> extraStudentFiles = configuration.getExtraStudentFiles();
+        List<String> extraStudentStrings = new ArrayList<>();
+        for (Path p : extraStudentFiles) {
+            extraStudentStrings.add(p.toString());
+        }
+        ImmutableList<String> studentFiles =
+                ImmutableList.<String>builder().add("src").addAll(extraStudentStrings).build();
+        ImmutableList<String> src = ImmutableList.of("src");
+        return new ExercisePackagingConfiguration(studentFiles, ImmutableList.of("test"));
     }
 
     @Override

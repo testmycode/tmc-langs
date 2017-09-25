@@ -89,7 +89,7 @@ public class RPlugin extends AbstractLanguagePlugin{
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         // TO DO
-        return null;
+        return Optional.absent();
     }
 
     @Override

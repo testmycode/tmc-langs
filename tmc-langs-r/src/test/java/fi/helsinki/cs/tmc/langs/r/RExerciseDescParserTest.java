@@ -1,6 +1,8 @@
 
 package fi.helsinki.cs.tmc.langs.r;
 
+import static org.junit.Assert.assertEquals;
+
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
@@ -11,7 +13,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static org.junit.Assert.assertEquals;
+
 
 public class RExerciseDescParserTest {
     private ImmutableList<TestDesc> re;

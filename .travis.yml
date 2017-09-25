@@ -19,9 +19,9 @@ env:
 before_install:
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
-  - mvn install -Dmaven.test.skip=true -pl tmc-langs-r
+  - mvn install -Dmaven.test.skip=true
 script:
-  - mvn clean test -rf tmc-langs-r
+  - mvn clean test
   - mvn checkstyle:check
   - . ./clitest.sh
 after_success:

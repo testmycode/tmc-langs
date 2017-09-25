@@ -67,7 +67,7 @@ public class RTestResultParser {
             backTrace.add(line.asText());
         }
         
-        boolean passed = node.get("status").asText().equals("pass");
+        boolean passed = node.get("status").asText().equals("passed");
 
         return new TestResult(
                 node.get("name").asText(),

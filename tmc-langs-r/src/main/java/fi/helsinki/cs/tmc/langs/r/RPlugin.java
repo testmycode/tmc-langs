@@ -1,5 +1,6 @@
 package fi.helsinki.cs.tmc.langs.r;
 
+
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
@@ -7,12 +8,8 @@ import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
-import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
-import fi.helsinki.cs.tmc.langs.io.zip.Unzipper;
-import fi.helsinki.cs.tmc.langs.io.zip.Zipper;
-import fi.helsinki.cs.tmc.langs.python3.Python3TestResultParser;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 
 import com.google.common.base.Optional;
@@ -62,7 +59,7 @@ public final class RPlugin extends AbstractLanguagePlugin {
         return null;
     }
 
-       @Override
+    @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), path);
         try {
@@ -113,11 +110,14 @@ public final class RPlugin extends AbstractLanguagePlugin {
         }
         return ArrayUtils.addAll(rscr, command);
     }
+    
     private String[] getAvailablePointsCommand() {
         String[] rscr = new String[] {"Rscript", "-e"};
-        String[] command = new String[] {"\"library('tmcRtestrunner');getAvailablePoints(\"$PWD\")\""};
+        String[] command = new String[] {"\"library('tmcRtestrunner');"
+                                         + "getAvailablePoints(\"$PWD\")\""};
         return ArrayUtils.addAll(rscr, command);
     }
+    
     @Override
     public void clean(Path path) {
 

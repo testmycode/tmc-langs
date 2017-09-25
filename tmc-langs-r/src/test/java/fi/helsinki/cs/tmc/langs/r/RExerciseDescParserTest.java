@@ -1,26 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package fi.helsinki.cs.tmc.langs.r;
 
-import com.google.common.collect.ImmutableList;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
-import java.io.IOException;
-import java.nio.file.Path;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import com.google.common.collect.ImmutableList;
+
 import org.junit.Test;
 
-/**
- *
- * @author janne
- */
+import java.io.IOException;
+import java.nio.file.Path;
+
+import static org.junit.Assert.assertEquals;
+
 public class RExerciseDescParserTest {
     private ImmutableList<TestDesc> re;
     private Path jsonDir;
+    
     public RExerciseDescParserTest() {
         jsonDir = TestUtils.getPath(getClass(), "example_json");
         try {
@@ -29,9 +25,9 @@ public class RExerciseDescParserTest {
             System.out.println("Something wrong: " + e.getMessage());
         }
     }
+    
     @Test
-    public void testThatParseSeemsToWorkOnExampleJson(){
-        System.out.println(re);
+    public void testThatParseSeemsToWorkOnExampleJson() {
         assertEquals(re.size(),6);
         assertEquals(re.get(0).points.size(),2);
         assertEquals(re.get(0).name,"Addition works");

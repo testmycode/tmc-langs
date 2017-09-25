@@ -1,14 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package fi.helsinki.cs.tmc.langs.r;
+
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,20 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author janne
- */
+
+
 class RExerciseDescParser {
+    
     private static Path RESULT_FILE = Paths.get(".available_points.json");
     private static final TypeReference<Map<String, List<String>>> MAP_TYPE_REFERENCE =
             new TypeReference<Map<String, List<String>>>() {};
     private Path path;
     private ObjectMapper mapper;
+    
     public RExerciseDescParser(Path path) {
-       this.path = path;
-       this.mapper = new ObjectMapper();
+        this.path = path;
+        this.mapper = new ObjectMapper();
     }
+    
     public ImmutableList<TestDesc> parse() throws IOException {
         List<TestDesc> testDescs = new ArrayList<>();
         byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));

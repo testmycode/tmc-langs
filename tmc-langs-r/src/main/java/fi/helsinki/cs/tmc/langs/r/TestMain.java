@@ -10,7 +10,6 @@ import org.apache.commons.lang3.SystemUtils;
 import java.io.IOException;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class TestMain {
 

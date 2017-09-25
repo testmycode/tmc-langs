@@ -237,6 +237,7 @@
 
         <module>tmc-langs-util</module>
         <module>tmc-langs-cli</module>
+        <module>tmc-langs-r</module>
     </modules>
 
     <profiles>

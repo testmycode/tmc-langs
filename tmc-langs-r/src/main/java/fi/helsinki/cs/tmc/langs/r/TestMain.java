@@ -11,8 +11,8 @@ import java.nio.file.Paths;
 public class TestMain {
 
     /**
-     * @param args the command line arguments
      * Just testing.
+     * @param args Nothing.
      */
     public static void main(String[] args) {
 

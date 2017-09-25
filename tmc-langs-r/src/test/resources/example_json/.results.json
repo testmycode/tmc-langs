@@ -1,6 +1,6 @@
 [
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Addition works",
         "message": "",
         "backtrace": "",
@@ -10,7 +10,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Multiplication works",
         "message": "",
         "backtrace": "",
@@ -20,7 +20,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Subtraction works",
         "message": "",
         "backtrace": "",
@@ -29,7 +29,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Division works",
         "message": "",
         "backtrace": "",
@@ -38,7 +38,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Test with no points",
         "message": "",
         "backtrace": "",
@@ -47,7 +47,7 @@
         ]
     },
     {
-        "status": "failed",
+        "status": "fail",
         "name": "Dummy test set to fail",
         "message": "Failed with call: expect_true, FALSE\nFALSE isn't true.\nFailed with call: expect_equal, 1, 2\n1 not equal to 2.\n1/1 mismatches\n[1] 1 - 2 == -1\n",
         "backtrace": "",
@@ -56,7 +56,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Matrix transpose with [[1,2]] works",
         "message": "",
         "backtrace": "",
@@ -65,7 +65,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Matrix transpose with [[1,2],[3,4]] works",
         "message": "",
         "backtrace": "",
@@ -74,7 +74,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Constant string works",
         "message": "",
         "backtrace": "",
@@ -83,7 +83,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 1 is correct",
         "message": "",
         "backtrace": "",
@@ -92,7 +92,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 2 is correct",
         "message": "",
         "backtrace": "",
@@ -101,7 +101,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 3 is correct",
         "message": "",
         "backtrace": "",
@@ -111,7 +111,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 4 is correct",
         "message": "",
         "backtrace": "",
@@ -120,7 +120,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 5 is correct",
         "message": "",
         "backtrace": "",
@@ -129,7 +129,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 6 is correct",
         "message": "",
         "backtrace": "",
@@ -138,7 +138,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 7 is correct",
         "message": "",
         "backtrace": "",
@@ -147,7 +147,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 8 is correct",
         "message": "",
         "backtrace": "",
@@ -156,7 +156,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 9 is correct",
         "message": "",
         "backtrace": "",
@@ -165,7 +165,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 10 is correct",
         "message": "",
         "backtrace": "",
@@ -174,7 +174,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 11 is correct",
         "message": "",
         "backtrace": "",
@@ -183,7 +183,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 12 is correct",
         "message": "",
         "backtrace": "",
@@ -192,7 +192,7 @@
         ]
     },
     {
-        "status": "passed",
+        "status": "pass",
         "name": "Exercise 13 is correct",
         "message": "",
         "backtrace": "",
@@ -201,4 +201,3 @@
         ]
     }
 ]
-

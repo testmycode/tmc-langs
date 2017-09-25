@@ -23,11 +23,7 @@ public class TestMain {
 
         //For now, add the path you want to test here fully,
         //for example: pathToGithubFolder/tmc-r/example_projects/example_project1
-        String exampleProjectLocation = "/tmc-r/example_projects/example_project1";
-        Path path = Paths.get(exampleProjectLocation);
-        RunResult runRes = runTests(path);
-        printTestResult(runRes);
-        RunResult rr;
+      
 
 /*        try {
             rr = new RTestResultParser(path).parse();

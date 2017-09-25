@@ -16,6 +16,8 @@ import fi.helsinki.cs.tmc.langs.python3.Python3TestResultParser;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -60,9 +62,22 @@ public final class RPlugin extends AbstractLanguagePlugin {
         return null;
     }
 
-    @Override
+       @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-        return null;
+        ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), path);
+        try {
+            runner.call();
+        } catch (Exception e) {
+            System.out.println(e);
+            log.error(CANNOT_SCAN_EXERCISE_MESSAGE, e);
+        }
+        try {
+            ImmutableList<TestDesc> testDescs = new RExerciseDescParser(path).parse();
+            return Optional.of(new ExerciseDesc(exerciseName, testDescs));
+        } catch (IOException e) {
+            log.error(CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE, e);
+        }
+        return Optional.absent();
     }
 
     @Override
@@ -98,7 +113,11 @@ public final class RPlugin extends AbstractLanguagePlugin {
         }
         return ArrayUtils.addAll(rscr, command);
     }
-
+    private String[] getAvailablePointsCommand() {
+        String[] rscr = new String[] {"Rscript", "-e"};
+        String[] command = new String[] {"\"library('tmcRtestrunner');getAvailablePoints(\"$PWD\")\""};
+        return ArrayUtils.addAll(rscr, command);
+    }
     @Override
     public void clean(Path path) {
 

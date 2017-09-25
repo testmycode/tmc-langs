@@ -10,7 +10,6 @@ addons:
     packages:
       - valgrind
       - check
-      - python3.4
 env:
   global:
   - secure: yiW+hXiZEycKFzF19rLlejJX8BTGbncSisBHyE8uulZee5n7UVGXnG1yvt9+6hz0nvMbxL7r1Daql0xxRHXUFB9VYVUKhF0ycHyJO5ze87U51mlIKAL8UnCkmxpkHNdxY45olEdK+mEbZBtot67nenlwGDfxLI7laITkR8IBAvY=
@@ -18,10 +17,8 @@ env:
   - M3_HOME=/usr/local/maven
 
 before_install:
-  - curl -L https://static.rust-lang.org/rustup.sh | sh -s -- --channel=stable --yes --prefix=$PWD --disable-sudo
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
-  - mkdir $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"
   - mvn install -Dmaven.test.skip=true -pl tmc-langs-r
 script:
   - mvn clean test -rf tmc-langs-r

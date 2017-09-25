@@ -31,7 +31,8 @@ import java.util.Locale;
 
 public final class RPlugin extends AbstractLanguagePlugin {
 
-    // Various static final Path-variables for filepaths to various folders and files in a R exercise project here
+    // Various static final Path-variables for filepaths
+    // to various folders and files in a R exercise project here
     private static final Path R_FOLDER_PATH = Paths.get("R");
     private static final Path TEST_FOLDER_PATH = Paths.get("tests");
     private static final Path TESTTHAT_FOLDER_PATH = Paths.get("testthat");
@@ -46,7 +47,8 @@ public final class RPlugin extends AbstractLanguagePlugin {
     private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE =
             "Failed to parse exercise description.";
 
-    // Various static final String-variables for error messages related to parsing and running R tests here
+    // Various static final String-variables for
+    // error messages related to parsing and running R tests here
 
     private static Logger log = LoggerFactory.getLogger(RPlugin.class);
 
@@ -65,17 +67,20 @@ public final class RPlugin extends AbstractLanguagePlugin {
                 || Files.exists(path.resolve(DESCRIPTION_PATH))
                 || Files.exists(path.resolve(RHISTORY_PATH))
                 || Files.exists(path.resolve(TMC_FOLDER_PATH).resolve(RESULT_R_PATH));
-
         /*
-        R folder contains the actual R files used in the project/package. It is automatically included when creating a
+        R folder contains the actual R files used in the
+        project/package. It is automatically included when creating a
         R package but now when making a regular project in RStudio.
 
-        test/testthat folder contains the unit testing files which use the testThat library for the R project.
+        test/testthat folder contains the unit testing
+        files which use the testThat library for the R project.
 
-        DESCRIPTION file contains package information. Included automatically when making a new package, but not
+        DESCRIPTION file contains package information.
+        Included automatically when making a new package, but not
         included when making a regular project in RStudio.
 
-        .RHistory file contains the history of executed code on the R terminal. Generated after running code on the R
+        .RHistory file contains the history of executed code on
+        the R terminal. Generated after running code on the R
         terminal for the first time.
 
         tmc/result.R contains the call to tmcRtestrunner's runTests function.

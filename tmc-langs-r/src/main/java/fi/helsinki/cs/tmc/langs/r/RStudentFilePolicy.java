@@ -5,7 +5,7 @@ import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class RStudentFilePolicy extends ConfigurableStudentFilePolicy{
+public class RStudentFilePolicy extends ConfigurableStudentFilePolicy {
     public RStudentFilePolicy(Path configFileParent) {
         super(configFileParent);
     }

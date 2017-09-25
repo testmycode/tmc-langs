@@ -5,11 +5,19 @@
  */
 package fi.helsinki.cs.tmc.langs.r;
 
+import org.junit.Test;
+
 /**
  *
  * @author janne
  */
 public class RPluginTest {
-   
+    
+    @Test
+    public void testGetAvailablePointsCommand(){
+        String[] command = new String[] {"Rscript", "-e","\"library('tmcRtestrunner');getAvailablePoints(\"$PWD\")\""};
+    
+    }
+    
     
 }

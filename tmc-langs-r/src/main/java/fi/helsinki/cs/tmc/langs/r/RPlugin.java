@@ -156,7 +156,7 @@ public class RPlugin extends AbstractLanguagePlugin{
     
     private String[] getAvailablePointsCommand() {
         String[] rscr = new String[] {"Rscript", "-e"};
-        String[] command = new String[] {"\"library('tmcRtestrunner');"
+        String[] command = new String[] {"\"library(tmcRtestrunner);"
                                          + "getAvailablePoints(\"$PWD\")\""};
         return ArrayUtils.addAll(rscr, command);
     }

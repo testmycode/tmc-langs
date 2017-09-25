@@ -24,7 +24,7 @@ before_install:
   - mkdir $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"
   - mvn install -Dmaven.test.skip=true -pl tmc-langs-r
 script:
-  - mvn clean test -rf tmc-lang-r
+  - mvn clean test -rf tmc-langs-r
   - mvn checkstyle:check
   - . ./clitest.sh
 after_success:

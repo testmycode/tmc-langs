@@ -10,6 +10,7 @@ import org.apache.commons.lang3.SystemUtils;
 import java.io.IOException;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class TestMain {
 
@@ -22,16 +23,12 @@ public class TestMain {
 
         //For now, add the path you want to test here fully,
         //for example: pathToGithubFolder/tmc-r/example_projects/example_project1
-      
+        String exampleProjectLocation = "/example_projects/example_project1";
+        Path path = Paths.get(exampleProjectLocation);
+        RunResult runRes = runTests(path);
+        printTestResult(runRes);
+        RunResult rr;
 
-/*        try {
-            rr = new RTestResultParser(path).parse();
-            for (TestResult tr : rr.testResults) {
-                System.out.println(tr.toString());
-            }
-        } catch (IOException e) {
-            System.out.println("Something wrong: " + e.getMessage());
-        }*/
     }
 
     public static void printTestResult(RunResult rr) {

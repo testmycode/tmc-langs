@@ -32,7 +32,6 @@ public class RTestResultParserTest {
         assertEquals(22, rr.testResults.size());
 
         for (TestResult tr : rr.testResults) {
-            System.out.println(tr);
             if (tr.getName().equals("Addition works")) {
                 assertTrue(tr.isSuccessful());
                 assertEquals(2, tr.points.size());

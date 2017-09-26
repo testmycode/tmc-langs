@@ -1,0 +1,8 @@
+{"Addition works": ["r1.1","r1.2"],
+ "Multiplication works":["r1.3", "r1.4"],
+ "Subtraction works":["r1.5"],
+ "Division works":["r1.6"],
+ "Test with no points":[],
+ "Dummy test set to fail":[]
+}
+

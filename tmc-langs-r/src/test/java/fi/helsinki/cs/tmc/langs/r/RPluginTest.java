@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
-git 
+
 import org.junit.Before;
 import org.junit.Test;
 

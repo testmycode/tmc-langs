@@ -86,6 +86,9 @@ public final class RPlugin extends AbstractLanguagePlugin {
         terminal for the first time.
 
         tmc/result.R contains the call to tmcRtestrunner's runTests function.
+
+        NOTE: Files.exists does not seem to be able to verify the R and
+        testthat folder's existence if they are empty.
          */
     }
 

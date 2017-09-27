@@ -40,7 +40,7 @@ public class RPlugin extends AbstractLanguagePlugin{
     private static final Path TESTTHAT_FOLDER_PATH = Paths.get("testthat");
     private static final Path TMC_FOLDER_PATH = Paths.get("tmc");
     private static final Path DESCRIPTION_PATH = Paths.get("DESCRIPTION");
-    private static final Path RHISTORY_PATH = Paths.get(".RHistory");
+    private static final Path RHISTORY_PATH = Paths.get(".Rhistory");
     private static final Path RESULT_R_PATH = Paths.get("result.R");
 
 
@@ -87,6 +87,9 @@ public class RPlugin extends AbstractLanguagePlugin{
         terminal for the first time.
 
         tmc/result.R contains the call to tmcRtestrunner's runTests function.
+
+        NOTE: Files.exists does not seem to be able to verify the R and
+        testthat folder's existence if they are empty.
          */
     }
 
@@ -95,7 +98,6 @@ public class RPlugin extends AbstractLanguagePlugin{
         return new RStudentFilePolicy(projectPath);
     }
 
-
     @Override
     public String getPluginName() {
         return "r";
@@ -103,7 +105,7 @@ public class RPlugin extends AbstractLanguagePlugin{
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-        ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), path);
+        ProcessRunner runner = new ProcessRunner(this.getAvailablePointsCommand(), path);
         try {
             runner.call();
         } catch (Exception e) {
@@ -143,21 +145,32 @@ public class RPlugin extends AbstractLanguagePlugin{
         return null;
     }
 
-    private String[] getTestCommand() {
-        String[] rscr = new String[] {"Rscript", "-e"};
+    public String[] getTestCommand() {
+        
+        String[] rscr;
         String[] command;
         if (SystemUtils.IS_OS_WINDOWS) {
-            command = new String[] {"\"library('tmcRtestrunner');runTestsWithDefault(TRUE)\""};
+            rscr = new String[] {"Rscript", "-e"};
+            command = new String[] {"\"library('tmcRtestrunner');run_tests_with_default(TRUE)\""};
         } else {
-            command = new String[] {"\"library(tmcRtestrunner);runTests(\"$PWD\", print=TRUE)\""};
+            rscr = new String[] {"bash"};
+            command = new String[] {Paths.get("").toAbsolutePath().toString() + "/runTests.sh"};
         }
         return ArrayUtils.addAll(rscr, command);
     }
     
-    private String[] getAvailablePointsCommand() {
-        String[] rscr = new String[] {"Rscript", "-e"};
-        String[] command = new String[] {"\"library(tmcRtestrunner);"
-                                         + "getAvailablePoints(\"$PWD\")\""};
+    public String[] getAvailablePointsCommand() {
+        String[] rscr;
+        String[] command;
+        if (SystemUtils.IS_OS_WINDOWS) {
+            rscr = new String[] {"Rscript", "-e"};
+            command = new String[] {"\"library(tmcRtestrunner);"
+                                    + "run_available_points(\"$PWD\")\""};
+        } else {
+            rscr = new String[] {"bash"};
+            command = new String[] {Paths.get("").toAbsolutePath().toString() 
+                    + "/getAvailablePoints.sh"};
+        }
         return ArrayUtils.addAll(rscr, command);
     }
 

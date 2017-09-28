@@ -56,15 +56,13 @@ public class RPluginTest {
         assertTrue(plugin.isExerciseTypeCorrect(project));
     }
 
-    // For some reason doesn't work in travis
-    //
-    // @Test
-    // public void excerciseIsCorrectTypeIfItContainsRhistory() {
-    //    Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
-    //    Path project = testCasesRoot.resolve("rhistory");
+    @Test
+    public void excerciseIsCorrectTypeIfItContainsRhistory() {
+        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
+        Path project = testCasesRoot.resolve("rhistory");
 
-    //    assertTrue(plugin.isExerciseTypeCorrect(project));
-    // }
+       assertTrue(plugin.isExerciseTypeCorrect(project));
+    }
 
     @Test
     public void excerciseIsCorrectTypeIfItContainsResultR() {

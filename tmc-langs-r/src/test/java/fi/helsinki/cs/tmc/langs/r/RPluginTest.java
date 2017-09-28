@@ -61,7 +61,7 @@ public class RPluginTest {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("rhistory");
 
-       assertTrue(plugin.isExerciseTypeCorrect(project));
+        assertTrue(plugin.isExerciseTypeCorrect(project));
     }
 
     @Test

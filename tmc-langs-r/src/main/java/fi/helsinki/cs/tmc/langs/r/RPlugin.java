@@ -40,7 +40,7 @@ public final class RPlugin extends AbstractLanguagePlugin {
     private static final Path TESTTHAT_FOLDER_PATH = Paths.get("testthat");
     private static final Path TMC_FOLDER_PATH = Paths.get("tmc");
     private static final Path DESCRIPTION_PATH = Paths.get("DESCRIPTION");
-    private static final Path RHISTORY_PATH = Paths.get(".RHistory");
+    private static final Path RHISTORY_PATH = Paths.get(".Rhistory");
     private static final Path RESULT_R_PATH = Paths.get("result.R");
 
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
@@ -86,6 +86,9 @@ public final class RPlugin extends AbstractLanguagePlugin {
         terminal for the first time.
 
         tmc/result.R contains the call to tmcRtestrunner's runTests function.
+
+        NOTE: Files.exists does not seem to be able to verify the R and
+        testthat folder's existence if they are empty.
          */
     }
 

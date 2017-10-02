@@ -2,24 +2,33 @@ package fi.helsinki.cs.tmc.langs.domain;
 
 import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class Configuration {
 
+    private final TmcProjectYmlParser tmcProjectYmlParser;
+    private final Path path;
     private Map<String, ValueObject> options;
     public static final Path TMC_PROJECT_YML = Paths.get(".tmcproject.yml");
 
+    @VisibleForTesting
     public Configuration() {
+        tmcProjectYmlParser = new TmcProjectYmlParser();
         options = new HashMap<>();
+        path = null;
     }
 
     public Configuration(Path path) {
+        this.path = path;
+        tmcProjectYmlParser = new TmcProjectYmlParser();
         parseOptions(path);
     }
 
@@ -40,19 +49,23 @@ public final class Configuration {
         return null;
     }
 
+    public List<Path> getExtraStudentFiles() {
+        return tmcProjectYmlParser.parseExtraStudentFiles(path.resolve(TMC_PROJECT_YML));
+    }
+
     /**
      * Parse options from the path.
      *
      * @param path Absolute path to configuration, e.g. .tmcproject.yml -file.
      */
-    public void parseOptions(Path path) {
+    void parseOptions(Path path) {
         this.options = parseTmcProjectYmlOptions(path);
     }
 
     private Map<String, ValueObject> parseTmcProjectYmlOptions(Path path) {
         Path configFile = path.resolve(TMC_PROJECT_YML);
         if (Files.exists(path)) {
-            return new TmcProjectYmlParser().parseOptions(configFile);
+            return tmcProjectYmlParser.parseOptions(configFile);
         }
         return Maps.newHashMap();
     }

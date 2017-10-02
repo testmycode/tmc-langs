@@ -164,7 +164,7 @@ public interface LanguagePlugin {
      * Returns configuration which is used to package submission on tmc-server.
      */
     @Beta
-    public ExercisePackagingConfiguration getExercisePackagingConfiguration();
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path);
 
     /**
      * Runs clean command e.g {@code make clean} for make or {@code mvn clean} for maven.

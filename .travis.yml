@@ -20,7 +20,6 @@ before_install:
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
   - mkdir -p $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"
-  - export PATH="$HOME/bin:$PATH"
   - mvn install -Dmaven.test.skip=true
 script:
   - mvn clean test -pl tmc-langs-r

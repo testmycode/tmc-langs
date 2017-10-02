@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -54,6 +55,7 @@ public final class Main {
                     + " Commands:\n"
                     + " checkstyle --exercisePath --outputPath --locale"
                     + "     Run checkstyle or similar plugin to project if applicable.\n"
+                    + " compress-project --exercisePath --outputPath\n"
                     + " help"
                     + "                                         Display help information.\n"
                     + " prepare-solutions --exercisePath --outputPath"
@@ -118,6 +120,9 @@ public final class Main {
             case "checkstyle":
                 runCheckCodeStyle();
                 break;
+            case "compress-project":
+                runCompressProject();
+                break;
             case "scan-exercise":
                 runScanExercise();
                 break;
@@ -164,6 +169,17 @@ public final class Main {
             return Paths.get(argsMap.get(OUTPUT_PATH));
         }
         throw new IllegalStateException("No " + OUTPUT_PATH + " provided");
+    }
+
+    private static void runCompressProject() {
+        Path exercisePath = getExercisePathFromArgs();
+        Path outputPath = getOutputPathFromArgs();
+        try {
+            byte[] compressed = executor.compressProject(exercisePath);
+            Files.write(outputPath, compressed);
+        } catch (IOException | NoLanguagePluginFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void runCheckCodeStyle() {

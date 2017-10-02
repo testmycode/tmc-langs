@@ -109,8 +109,9 @@ public final class MavenPlugin extends AbstractJavaPlugin {
                 result.getStdErr());
     }
 
+    // TODO: ADD extra student file support to here too
     @Override
-    public ExercisePackagingConfiguration getExercisePackagingConfiguration() {
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
         return new ExercisePackagingConfiguration(
                 ImmutableList.of("src/main"), ImmutableList.of("src/test"));
     }

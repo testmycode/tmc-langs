@@ -148,8 +148,9 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
         // no op
     }
 
+    // TODO: Add extra student files to here too
     @Override
-    public ExercisePackagingConfiguration getExercisePackagingConfiguration() {
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
         return new ExercisePackagingConfiguration(
                 ImmutableList.of("src"), ImmutableList.of("test", "tmc"));
     }

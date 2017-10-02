@@ -55,7 +55,7 @@ public class RPluginTest {
     public void testGetAvailablePointsCommand() {
         if (SystemUtils.IS_OS_WINDOWS) {
             String[] expectedCommand = new String[]{"Rscript", "-e","\"library('tmcRtestrunner');"
-                    + "getAvailablePoints(\"$PWD\")\""};
+                    + "get_available_points(\"$PWD\")\""};
             
             Assert.assertArrayEquals(expectedCommand,plugin.getAvailablePointsCommand());
         } else if (SystemUtils.IS_OS_LINUX) {

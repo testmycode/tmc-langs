@@ -17,9 +17,6 @@ env:
   - M3_HOME=/usr/local/maven
 
 before_install:
-  - sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/debian stretch-cran34/"
-  - sudo apt-get update 
-  - sudo apt-get install libc6 libgomp1 libicu57 libjpeg62-turbo libpng16-16 libreadline7 r-base-core  r-recommended r-base r-base-dev
   - sudo chmod 2777 /usr/local/lib/R /usr/local/lib/R/site-library
   - R --vanilla -e "install.packages('devtools',repos='https://mirrors.dotsrc.org/cran/');library('devtools');install_github('RTMC/tmc-r-tester/tmcRtestrunner');"
   - export PATH=$PATH:$PWD/bin
@@ -41,6 +38,10 @@ jdk:
   - oraclejdk7
   - openjdk7
 matrix:
+  include:
+    language: r
+    r:
+      - release
   allow_failures:
   - os: osx
   - jdk: oraclejdk7

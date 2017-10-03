@@ -17,6 +17,8 @@ env:
   - M3_HOME=/usr/local/maven
 
 before_install:
+  - Rscript -e 'install.packages("devtools")'
+  - Rscript -e 'devtools::install_github("RTMC/tmc-r-tester/tmcRtestrunner'
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
   - mkdir -p $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"
@@ -38,9 +40,7 @@ jdk:
 matrix:
   include:
     language: R
-    install:
-      - Rscript -e 'install.packages("devtools")'
-      - Rscript -e 'devtools::install_github("RTMC/tmc-r-tester/tmcRtestrunner'
+     
   allow_failures:
   - os: osx
   - jdk: oraclejdk7

@@ -38,6 +38,8 @@ jdk:
 matrix:
   include:
     language: r
+    r_packages:
+      - devtools
     r_github_packages: 
       - RTMC/tmc-r-tester/tmcRtestrunner
 

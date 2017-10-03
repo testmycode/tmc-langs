@@ -18,6 +18,7 @@ env:
   - M3_HOME=/usr/local/maven
 
 before_install:
+  - sudo chmod 277 /usr/local/lib/R/site-library
   - Rscript -e 'install.packages("devtools")'
   - Rscript -e 'devtools::install_github("RTMC/tmc-r-tester/tmcRtestrunner'
   - export PATH=$PATH:$PWD/bin

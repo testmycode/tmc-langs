@@ -17,6 +17,7 @@ env:
   - M3_HOME=/usr/local/maven
 
 before_install:
+  - sudo apt-get install r-base-core
   - R --vanilla -e "install.packages('devtools',repos='https://mirrors.dotsrc.org/cran/');library('devtools');install_github('RTMC/tmc-r-tester/tmcRtestrunner');"
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib

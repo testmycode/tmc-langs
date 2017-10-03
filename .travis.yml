@@ -18,7 +18,7 @@ env:
 
 before_install:
   - sudo apt-get update 
-  - sudo apt-get install R
+  - sudo apt-get install r-base
   - R --vanilla -e "library('devtools');install_github('RTMC/tmc-r-tester/tmcRtestrunner');"
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib

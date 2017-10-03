@@ -41,9 +41,7 @@ jdk:
   - oraclejdk7
   - openjdk7
 matrix:
-  include:
-    language: R
-     
+  
   allow_failures:
   - os: osx
   - jdk: oraclejdk7

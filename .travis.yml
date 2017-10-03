@@ -1,5 +1,5 @@
 language: java
-sudo: true
+sudo: false
 cache:
   directories:
     - "$HOME/.m2"
@@ -19,6 +19,7 @@ env:
 before_install:
   - sudo apt-get update 
   - sudo apt-get install r-base
+  - udo chmod 2777 /usr/local/lib/R /usr/local/lib/R/site-library
   - R --vanilla -e "install.packages('devtools',repos='https://mirrors.dotsrc.org/cran/');library('devtools');install_github('RTMC/tmc-r-tester/tmcRtestrunner');"
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib

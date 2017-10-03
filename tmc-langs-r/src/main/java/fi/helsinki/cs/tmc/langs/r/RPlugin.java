@@ -149,7 +149,7 @@ public final class RPlugin extends AbstractLanguagePlugin {
         String[] command;
         if (SystemUtils.IS_OS_WINDOWS) {
             rscr = new String[] {"Rscript", "-e"};
-            command = new String[] {"\"library('tmcRtestrunner');runTestsWithDefault(TRUE)\""};
+            command = new String[] {"\"library('tmcRtestrunner');run_tests_with_default(TRUE)\""};
         } else {
             rscr = new String[] {"bash"};
             command = new String[] {Paths.get("").toAbsolutePath().toString() + "/runTests.sh"};
@@ -163,7 +163,7 @@ public final class RPlugin extends AbstractLanguagePlugin {
         if (SystemUtils.IS_OS_WINDOWS) {
             rscr = new String[] {"Rscript", "-e"};
             command = new String[] {"\"library(tmcRtestrunner);"
-                                    + "get_available_points(\"$PWD\")\""};
+                                    + "run_available_points(\"$PWD\")\""};
         } else {
             rscr = new String[] {"bash"};
             command = new String[] {Paths.get("").toAbsolutePath().toString() 

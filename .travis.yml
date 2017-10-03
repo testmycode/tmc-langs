@@ -38,9 +38,8 @@ jdk:
 matrix:
   include:
     language: r
-    r:
-      - release
     r_github_packages: "RTMC/tmc-r-tester/tmcRtestrunner"
+
   allow_failures:
   - os: osx
   - jdk: oraclejdk7

@@ -37,12 +37,10 @@ jdk:
   - openjdk7
 matrix:
   include:
-    language: r
-    r_packages:
-      - devtools
-    r_github_packages: 
-      - RTMC/tmc-r-tester/tmcRtestrunner
-
+    language: R
+    install:
+      - Rscript -e 'install.packages("devtools")'
+      - Rscript -e 'devtools::install_github("RTMC/tmc-r-tester/tmcRtestrunner'
   allow_failures:
   - os: osx
   - jdk: oraclejdk7

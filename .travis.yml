@@ -8,6 +8,7 @@ addons:
     sources:
       - deadsnakes
     packages:
+      - r-base-core
       - valgrind
       - check
 env:

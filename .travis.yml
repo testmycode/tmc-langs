@@ -23,6 +23,7 @@ before_install:
   - sudo apt-get install r-base -y
   - Rscript -e 'install.packages(c("devtools","testthat"),repos="http://cran.us.r-project.org")'
   - Rscript -e 'devtools::install_github("RTMC/tmc-r-tester/tmcRtestrunner")'
+  - sudo chmod 277 /usr/local/lib/R/site-library
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
   - mkdir -p $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"

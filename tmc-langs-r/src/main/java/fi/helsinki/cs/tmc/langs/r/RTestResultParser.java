@@ -48,7 +48,7 @@ public class RTestResultParser {
         
         List<TestResult> results = new ArrayList<>();
 
-        JsonNode tree = mapper.readTree(json);
+        JsonNode tree = mapper.readTree(json).get("testResults");
         for (JsonNode node : tree) {
             results.add(toTestResult(node));
         }

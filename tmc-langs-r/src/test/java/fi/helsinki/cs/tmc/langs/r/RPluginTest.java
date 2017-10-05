@@ -40,7 +40,7 @@ public class RPluginTest {
     public void testGetTestCommand() {
         if (SystemUtils.IS_OS_WINDOWS) {
             String[] expectedCommand = new String[]{"Rscript", "-e",
-                    "\"library('tmcRtestrunner');runTestsWithDefault(TRUE)\""};
+                    "\"library('tmcRtestrunner');run_tests_with_default(TRUE)\""};
             
             Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
         } else if (SystemUtils.IS_OS_LINUX) {
@@ -70,9 +70,7 @@ public class RPluginTest {
     public void testGetPluginName() {
         assertEquals("r", plugin.getLanguageName());
     }
-    /**
-     * Need to configure .travis.yml for these tests to work
-     
+    
     @Test
     public void testScanExercise() {
         Path testDir = TestUtils.getPath(getClass(), "passing");
@@ -87,7 +85,7 @@ public class RPluginTest {
         
         assertTrue(resultsJson.exists());
     }
-    */
+    
     @Test
     public void excerciseIsCorrectTypeIfItContainsRFolder() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");

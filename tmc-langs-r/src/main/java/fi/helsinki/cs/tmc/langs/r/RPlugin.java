@@ -38,9 +38,8 @@ public class RPlugin extends AbstractLanguagePlugin{
     private static final Path R_FOLDER_PATH = Paths.get("R");
     private static final Path TEST_FOLDER_PATH = Paths.get("tests");
     private static final Path TESTTHAT_FOLDER_PATH = Paths.get("testthat");
-    private static final Path TMC_FOLDER_PATH = Paths.get("tmc");
+    private static final Path TESTTHAT_FILE_PATH = Paths.get("testthat.R");
     private static final Path DESCRIPTION_PATH = Paths.get("DESCRIPTION");
-    private static final Path RHISTORY_PATH = Paths.get(".Rhistory");
     private static final Path RESULT_R_PATH = Paths.get("result.R");
 
 
@@ -67,9 +66,8 @@ public class RPlugin extends AbstractLanguagePlugin{
     public boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.resolve(R_FOLDER_PATH))
                 || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FOLDER_PATH))
-                || Files.exists(path.resolve(DESCRIPTION_PATH))
-                || Files.exists(path.resolve(RHISTORY_PATH))
-                || Files.exists(path.resolve(TMC_FOLDER_PATH).resolve(RESULT_R_PATH));
+                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FILE_PATH))
+                || Files.exists(path.resolve(DESCRIPTION_PATH));
         /*
         R folder contains the actual R files used in the
         project/package. It is automatically included when creating a
@@ -146,32 +144,25 @@ public class RPlugin extends AbstractLanguagePlugin{
     }
 
     public String[] getTestCommand() {
-        
-        String[] rscr;
-        String[] command;
+        String[] command = new String[]{"Rscript"};
+        String[] args;
         if (SystemUtils.IS_OS_WINDOWS) {
-            rscr = new String[] {"Rscript", "-e"};
-            command = new String[] {"\"library('tmcRtestrunner');run_tests_with_default(TRUE)\""};
+            args = new String[]{"-e", "\"library('tmcRtestrunner');run_tests()\""};
         } else {
-            rscr = new String[] {"bash"};
-            command = new String[] {Paths.get("").toAbsolutePath().toString() + "/runTests.sh"};
+            args = new String[]{"-e", "library(tmcRtestrunner);run_tests()"};
         }
-        return ArrayUtils.addAll(rscr, command);
+        return ArrayUtils.addAll(command, args);
     }
-    
+
     public String[] getAvailablePointsCommand() {
-        String[] rscr;
-        String[] command;
+        String[] command = new String[]{"Rscript"};
+        String[] args;
         if (SystemUtils.IS_OS_WINDOWS) {
-            rscr = new String[] {"Rscript", "-e"};
-            command = new String[] {"\"library(tmcRtestrunner);"
-                                    + "run_available_points(\"$PWD\")\""};
+            args = new String[]{"-e", "\"library('tmcRtestrunner');run_available_points()\""};
         } else {
-            rscr = new String[] {"bash"};
-            command = new String[] {Paths.get("").toAbsolutePath().toString() 
-                    + "/getAvailablePoints.sh"};
+            args = new String[]{"-e", "library(tmcRtestrunner);run_available_points()"};
         }
-        return ArrayUtils.addAll(rscr, command);
+        return ArrayUtils.addAll(command, args);
     }
 
 

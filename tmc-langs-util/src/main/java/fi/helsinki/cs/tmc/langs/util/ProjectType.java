@@ -8,6 +8,8 @@ import fi.helsinki.cs.tmc.langs.java.maven.MavenPlugin;
 import fi.helsinki.cs.tmc.langs.make.MakePlugin;
 import fi.helsinki.cs.tmc.langs.python3.Python3Plugin;
 import fi.helsinki.cs.tmc.langs.r.RPlugin;
+import fi.helsinki.cs.tmc.langs.qmake.QmakePlugin;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import java.nio.file.Path;
  */
 public enum ProjectType {
     NO_TESTS(new NoTestsPlugin()), // Must be before Makefile for compatability reasons
+    QMAKE(new QmakePlugin()),
     MAKEFILE(new MakePlugin()),
     PYTHON3(new Python3Plugin()),
     R(new RPlugin()),

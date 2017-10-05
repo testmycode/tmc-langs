@@ -80,6 +80,12 @@
         </dependency-->
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>tmc-langs-qmake</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-notests</artifactId>
             <version>${project.version}</version>
             <type>jar</type>

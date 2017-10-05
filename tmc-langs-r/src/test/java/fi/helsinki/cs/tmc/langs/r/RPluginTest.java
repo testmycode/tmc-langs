@@ -21,14 +21,14 @@ import java.nio.file.Paths;
 
 
 public class RPluginTest {
-    
+
     private RPlugin plugin;
 
     @Before
     public void setUp() {
         plugin = new RPlugin();
     }
-    
+
     @After
     public void tearDown() {
         Path testDir = TestUtils.getPath(getClass(), "passing");
@@ -41,51 +41,51 @@ public class RPluginTest {
         if (SystemUtils.IS_OS_WINDOWS) {
             String[] expectedCommand = new String[]{"Rscript", "-e",
                     "\"library('tmcRtestrunner');run_tests_with_default(TRUE)\""};
-            
+
             Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
         } else if (SystemUtils.IS_OS_LINUX) {
             String[] expectedCommand = new String[]{"bash",
                 Paths.get("").toAbsolutePath().toString() + "/runTests.sh"};
-            
+
             Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
         }
     }
-    
+
     @Test
     public void testGetAvailablePointsCommand() {
         if (SystemUtils.IS_OS_WINDOWS) {
             String[] expectedCommand = new String[]{"Rscript", "-e","\"library('tmcRtestrunner');"
                     + "get_available_points(\"$PWD\")\""};
-            
+
             Assert.assertArrayEquals(expectedCommand,plugin.getAvailablePointsCommand());
         } else if (SystemUtils.IS_OS_LINUX) {
             String[] expectedCommand = new String[]{"bash",
                 Paths.get("").toAbsolutePath().toString() + "/getAvailablePoints.sh"};
-            
+
             Assert.assertArrayEquals(expectedCommand,plugin.getAvailablePointsCommand());
         }
     }
-    
+
     @Test
     public void testGetPluginName() {
         assertEquals("r", plugin.getLanguageName());
     }
-    
+
     @Test
     public void testScanExercise() {
         Path testDir = TestUtils.getPath(getClass(), "passing");
         plugin.scanExercise(testDir, "arithmetics.R");
     }
-    
+
     @Test
     public void testRunTests() {
         Path testDir = TestUtils.getPath(getClass(), "passing");
         plugin.runTests(testDir);
         File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
-        
+
         assertTrue(resultsJson.exists());
     }
-    
+
     @Test
     public void excerciseIsCorrectTypeIfItContainsRFolder() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
@@ -111,11 +111,11 @@ public class RPluginTest {
     }
 
     @Test
-    public void excerciseIsCorrectTypeIfItContainsRhistory() {
-        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
-        Path project = testCasesRoot.resolve("rhistory");
+    public void exeriseIsCorrectTypeIfItContainsTestthatFile() {
+      Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
+      Path.project = testCasesRoot.resolve("testthat_folder").resolve("testthat.R");
 
-        assertTrue(plugin.isExerciseTypeCorrect(project));
+      assertTrue(plugin.isExerciseTypeCorrect(project));
     }
 
     @Test

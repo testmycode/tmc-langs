@@ -21,7 +21,7 @@ public class Filer {
     private Path toPath;
 
     private static final Pattern NON_TEXT_TYPES =
-            Pattern.compile("class|jar|exe|jpg|jpeg|gif|png|zip|tar|gz|db");
+            Pattern.compile("class|jar|exe|jpg|jpeg|gif|png|zip|tar|gz|db|bin");
     private static final Pattern FILES_TO_SKIP_ALLWAYS =
             Pattern.compile("\\.tmcrc|metadata\\.yml|(.*)Hidden(.*)");
 

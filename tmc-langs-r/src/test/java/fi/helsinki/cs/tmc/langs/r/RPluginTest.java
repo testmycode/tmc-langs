@@ -109,9 +109,11 @@ public class RPluginTest {
     @Test
     public void exeriseIsCorrectTypeIfItContainsTestthatFile() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
-        Path project = testCasesRoot.resolve("testthat_folder").resolve("tests").resolve("testthat.R");
+        Path project = testCasesRoot.resolve("testthat_folder")
+                                    .resolve("tests");
 
-        assertTrue(plugin.isExerciseTypeCorrect(project));
+        File testThatR = new File(project.toAbsolutePath().toString() + "/testthat.R");
+        assertTrue(testThatR.exists());
     }
 
     @Test

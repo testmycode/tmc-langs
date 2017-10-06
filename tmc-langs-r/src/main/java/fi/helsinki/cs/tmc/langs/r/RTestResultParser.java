@@ -37,6 +37,9 @@ public class RTestResultParser {
                 status = RunResult.Status.TESTS_FAILED;
             }
         }
+        if (!testResults.isEmpty() && testResults.get(0).getName().equals("COMPILATION FAILED")) {
+            status = RunResult.Status.COMPILE_FAILED;
+        }
 
         ImmutableList<TestResult> immutableResults = ImmutableList.copyOf(testResults);
         ImmutableMap<String, byte[]> logs = ImmutableMap.copyOf(new HashMap<String, byte[]>());
@@ -45,9 +48,24 @@ public class RTestResultParser {
 
     private List<TestResult> getTestResults() throws IOException {
         byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
-        
         List<TestResult> results = new ArrayList<>();
 
+        JsonNode runStatus = mapper.readTree(json).get("runStatus");
+        if (!runStatus.toString().equals("\"success\"")) {
+            List<String> backTrace = new ArrayList<>();
+            for (JsonNode line : mapper.readTree(json).get("backtrace")) {
+                backTrace.add(line.asText());
+            }
+        
+            List<String> dummy = new ArrayList();
+            results.add(new TestResult(
+                    "COMPILATION FAILED",
+                    false,
+                    ImmutableList.copyOf(dummy),
+                    "Something wrong with source code",
+                    ImmutableList.copyOf(backTrace)));
+        }
+        
         JsonNode tree = mapper.readTree(json).get("testResults");
         for (JsonNode node : tree) {
             results.add(toTestResult(node));

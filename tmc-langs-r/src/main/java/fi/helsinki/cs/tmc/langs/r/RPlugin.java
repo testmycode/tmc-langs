@@ -144,32 +144,19 @@ public final class RPlugin extends AbstractLanguagePlugin {
     }
 
     public String[] getTestCommand() {
-        
-        String[] rscr;
-        String[] command;
         if (SystemUtils.IS_OS_WINDOWS) {
-            rscr = new String[] {"Rscript", "-e"};
-            command = new String[] {"\"library('tmcRtestrunner');run_tests_with_default(TRUE)\""};
+            return new String[] {"Rscript", "-e", "\"library('tmcRtestrunner');run_tests()\""};
         } else {
-            rscr = new String[] {"bash"};
-            command = new String[] {Paths.get("").toAbsolutePath().toString() + "/runTests.sh"};
+            return new String[] {"Rscript", "-e", "library(tmcRtestrunner);run_tests()"};
         }
-        return ArrayUtils.addAll(rscr, command);
     }
     
     public String[] getAvailablePointsCommand() {
-        String[] rscr;
-        String[] command;
         if (SystemUtils.IS_OS_WINDOWS) {
-            rscr = new String[] {"Rscript", "-e"};
-            command = new String[] {"\"library(tmcRtestrunner);"
-                                    + "run_available_points(\"$PWD\")\""};
+            return new String[] {"Rscript", "-e", "\"library('tmcRtestrunner');run_available_points()\""};
         } else {
-            rscr = new String[] {"bash"};
-            command = new String[] {Paths.get("").toAbsolutePath().toString() 
-                    + "/getAvailablePoints.sh"};
+            return new String[] {"Rscript", "-e", "library('tmcRtestrunner');run_available_points()"};
         }
-        return ArrayUtils.addAll(rscr, command);
     }
     
     @Override

@@ -38,32 +38,25 @@ public class RPluginTest {
 
     @Test
     public void testGetTestCommand() {
+
+        String[] expectedCommand;
         if (SystemUtils.IS_OS_WINDOWS) {
-            String[] expectedCommand = new String[]{"Rscript", "-e",
-                    "\"library('tmcRtestrunner');run_tests_with_default(TRUE)\""};
-            
-            Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
-        } else if (SystemUtils.IS_OS_LINUX) {
-            String[] expectedCommand = new String[]{"bash",
-                Paths.get("").toAbsolutePath().toString() + "/runTests.sh"};
-            
-            Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
+            expectedCommand = new String[] {"Rscript", "-e", "\"library('tmcRtestrunner');run_tests()\""};
+        } else {
+            expectedCommand = new String[] {"Rscript", "-e", "library(tmcRtestrunner);run_tests()"};
         }
+        Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
     }
     
     @Test
     public void testGetAvailablePointsCommand() {
+        String[] expectedCommand;
         if (SystemUtils.IS_OS_WINDOWS) {
-            String[] expectedCommand = new String[]{"Rscript", "-e","\"library('tmcRtestrunner');"
-                    + "get_available_points(\"$PWD\")\""};
-            
-            Assert.assertArrayEquals(expectedCommand,plugin.getAvailablePointsCommand());
-        } else if (SystemUtils.IS_OS_LINUX) {
-            String[] expectedCommand = new String[]{"bash",
-                Paths.get("").toAbsolutePath().toString() + "/getAvailablePoints.sh"};
-            
-            Assert.assertArrayEquals(expectedCommand,plugin.getAvailablePointsCommand());
+            expectedCommand = new String[] {"Rscript", "-e", "\"library('tmcRtestrunner');run_available_points()\""};
+        } else {
+            expectedCommand = new String[] {"Rscript", "-e", "library('tmcRtestrunner');run_available_points()"};
         }
+        Assert.assertArrayEquals(expectedCommand, plugin.getAvailablePointsCommand());
     }
     
     @Test

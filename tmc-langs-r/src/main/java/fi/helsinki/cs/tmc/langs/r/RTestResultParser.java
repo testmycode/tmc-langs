@@ -37,7 +37,7 @@ public class RTestResultParser {
                 status = RunResult.Status.TESTS_FAILED;
             }
         }
-        if (testResults.get(0).getName().equals("COMPILATION FAILED")) {
+        if (!testResults.isEmpty() && testResults.get(0).getName().equals("COMPILATION FAILED")) {
             status = RunResult.Status.COMPILE_FAILED;
         }
 

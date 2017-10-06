@@ -1,4 +1,3 @@
-
 package fi.helsinki.cs.tmc.langs.r;
 
 import static org.junit.Assert.assertEquals;
@@ -7,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -16,7 +16,6 @@ import org.junit.Test;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 
 
 

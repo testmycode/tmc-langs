@@ -16,12 +16,15 @@ public class TestMain {
     public static void main(String[] args) {
         //For now, add the path you want to test here fully,
         //for example: pathToGithubFolder/tmc-r/example_projects/example_project1
-        /**String exampleProjectLocation = "/path/to/r-project"
-                + "/example_projects/example_project1";
-        Path path = Paths.get(exampleProjectLocation);
-        RPlugin rplugin = new RPlugin();
-        RunResult runRes = rplugin.runTests(path);
-        printTestResult(runRes);**/
+//        String exampleProjectLocation = "/path/to/r-project"
+//                + "/example_projects/example_project1";
+//        Path path = Paths.get(exampleProjectLocation);
+//        RPlugin rplugin = new RPlugin();
+//        RunResult runRes = rplugin.runTests(path);
+//        
+//        printTestResult(runRes);
+//        
+//        System.out.println(runRes.status);
     }
 
     public static void printTestResult(RunResult rr) {

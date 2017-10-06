@@ -148,22 +148,30 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         return listBuilder.build();
     }
 
+    // TODO: Make extra file handling to apply to all language plugins
     @Override
     public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
         Configuration configuration = getConfiguration(path);
-        List<Path> extraStudentFiles = configuration.getExtraStudentFiles();
-        List<String> extraStudentStrings = new ArrayList<>();
-        for (Path p : extraStudentFiles) {
-            extraStudentStrings.add(p.toString());
-        }
+        List<String> extraStudentFiles = pathListToStringList(configuration.getExtraStudentFiles());
+        List<String> extraTestFiles = pathListToStringList(configuration.getExtraTestFiles());
+
         ImmutableList<String> studentFiles =
-                ImmutableList.<String>builder().add("src").addAll(extraStudentStrings).build();
-        ImmutableList<String> src = ImmutableList.of("src");
-        return new ExercisePackagingConfiguration(studentFiles, ImmutableList.of("test"));
+                ImmutableList.<String>builder().add("src").addAll(extraStudentFiles).build();
+        ImmutableList<String> testFiles =
+                ImmutableList.<String>builder().add("test").addAll(extraTestFiles).build();
+        return new ExercisePackagingConfiguration(studentFiles, testFiles);
     }
 
     @Override
     public void maybeCopySharedStuff(Path destPath) {
         // Ignore by default.
+    }
+
+    private List<String> pathListToStringList(List<Path> paths) {
+        List<String> strings = new ArrayList<>();
+        for (Path p : paths) {
+            strings.add(p.toString());
+        }
+        return strings;
     }
 }

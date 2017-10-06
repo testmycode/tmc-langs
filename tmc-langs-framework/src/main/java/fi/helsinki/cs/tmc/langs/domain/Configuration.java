@@ -53,6 +53,10 @@ public final class Configuration {
         return tmcProjectYmlParser.parseExtraStudentFiles(path.resolve(TMC_PROJECT_YML));
     }
 
+    public List<Path> getExtraTestFiles() {
+        return tmcProjectYmlParser.parseExtraTestFiles(path.resolve(TMC_PROJECT_YML));
+    }
+
     /**
      * Parse options from the path.
      *

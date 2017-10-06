@@ -1,6 +1,7 @@
 package fi.helsinki.cs.tmc.langs.java.maven;
 
 import fi.helsinki.cs.tmc.langs.domain.CompileResult;
+import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
@@ -23,6 +24,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A {@link fi.helsinki.cs.tmc.langs.LanguagePlugin} that defines the behaviour
@@ -109,11 +112,17 @@ public final class MavenPlugin extends AbstractJavaPlugin {
                 result.getStdErr());
     }
 
-    // TODO: ADD extra student file support to here too
     @Override
     public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
-        return new ExercisePackagingConfiguration(
-                ImmutableList.of("src/main"), ImmutableList.of("src/test"));
+        Configuration configuration = getConfiguration(path);
+        List<String> extraStudentFiles = pathListToStringList(configuration.getExtraStudentFiles());
+        List<String> extraTestFiles = pathListToStringList(configuration.getExtraTestFiles());
+
+        ImmutableList<String> studentFiles =
+                ImmutableList.<String>builder().add("src/main").addAll(extraStudentFiles).build();
+        ImmutableList<String> testFiles =
+                ImmutableList.<String>builder().add("src/test").addAll(extraTestFiles).build();
+        return new ExercisePackagingConfiguration(studentFiles, testFiles);
     }
 
     @Override
@@ -128,5 +137,13 @@ public final class MavenPlugin extends AbstractJavaPlugin {
         } else {
             log.info("Failed to cleaning maven project at {}", path);
         }
+    }
+
+    private List<String> pathListToStringList(List<Path> paths) {
+        List<String> strings = new ArrayList<>();
+        for (Path p : paths) {
+            strings.add(p.toString());
+        }
+        return strings;
     }
 }

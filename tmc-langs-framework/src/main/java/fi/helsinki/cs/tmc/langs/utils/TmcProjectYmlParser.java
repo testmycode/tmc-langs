@@ -21,28 +21,16 @@ import java.util.Map;
 public final class TmcProjectYmlParser implements ConfigurationParser {
 
     private static final Logger log = LoggerFactory.getLogger(TmcProjectYmlParser.class);
-    private List<Path> extraStudentFiles;
 
     /**
      * Parses a list of extra student files from a <tt>.tmcproject.yml</tt> file.
      */
     public List<Path> parseExtraStudentFiles(Path configFilePath) {
+        return parseExtraFiles("extra_student_files", configFilePath);
+    }
 
-        log.debug("Parsing extra student files from {}", configFilePath);
-
-        extraStudentFiles = new ArrayList<>();
-
-        Object yamlSpecifications = getYamlSpecs(configFilePath.toAbsolutePath());
-
-        if (!(yamlSpecifications instanceof Map)) {
-            return extraStudentFiles;
-        }
-
-        Map<?, ?> specsAsMap = (Map<?, ?>) yamlSpecifications;
-        Object fileMap = specsAsMap.get("extra_student_files");
-        addFiles(fileMap);
-
-        return extraStudentFiles;
+    public List<Path> parseExtraTestFiles(Path configFilePath) {
+        return parseExtraFiles("extra_test_files", configFilePath);
     }
 
     @Override
@@ -61,6 +49,24 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
         parseRecursiveDefinitions(options, specsAsMap, "");
 
         return options;
+    }
+
+    private List<Path> parseExtraFiles(String key, Path configFilePath) {
+        log.debug("Parsing " + key + " files from {}", configFilePath);
+
+        List<Path> extraFiles = new ArrayList<>();
+
+        Object yamlSpecifications = getYamlSpecs(configFilePath.toAbsolutePath());
+
+        if (!(yamlSpecifications instanceof Map)) {
+            return extraFiles;
+        }
+
+        Map<?, ?> specsAsMap = (Map<?, ?>) yamlSpecifications;
+        Object fileMap = specsAsMap.get(key);
+        addFiles(fileMap, extraFiles);
+
+        return extraFiles;
     }
 
     private void parseRecursiveDefinitions(
@@ -91,25 +97,25 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
         return yaml.load(fileContents);
     }
 
-    private void addFiles(Object files) {
-        addAllIfList(files);
-        addIfString(files);
+    private void addFiles(Object files, List<Path> extraFiles) {
+        addAllIfList(files, extraFiles);
+        addIfString(files, extraFiles);
     }
 
-    private void addAllIfList(Object files) {
+    private void addAllIfList(Object files, List<Path> extraFiles) {
         if (files instanceof List) {
             log.trace("extra_student_files contains a list, parsing");
             for (Object value : (List<?>) files) {
-                addIfString(value);
+                addIfString(value, extraFiles);
             }
         }
     }
 
-    private void addIfString(Object value) {
+    private void addIfString(Object value, List<Path> extraFiles) {
         if (value instanceof String) {
             String[] pathParts = ((String) value).split("/");
             Path path = constructPathfromArray(pathParts);
-            extraStudentFiles.add(path);
+            extraFiles.add(path);
             log.trace("Added {} as extra student file", path);
         }
     }

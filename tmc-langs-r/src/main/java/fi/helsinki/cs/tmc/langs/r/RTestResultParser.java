@@ -59,11 +59,11 @@ public class RTestResultParser {
         
             List<String> dummy = new ArrayList();
             results.add(new TestResult(
-                "COMPILATION FAILED",
-                false,
-                ImmutableList.copyOf(dummy),
-                "Something wrong with source code",
-                ImmutableList.copyOf(backTrace)));
+                    "COMPILATION FAILED",
+                    false,
+                    ImmutableList.copyOf(dummy),
+                    "Something wrong with source code",
+                    ImmutableList.copyOf(backTrace)));
         }
         
         JsonNode tree = mapper.readTree(json).get("testResults");

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -38,24 +39,28 @@ public class RPluginTest {
 
     @Test
     public void testGetTestCommand() {
+        String[] command = new String[] {"Rscript"};
+        String[] args;
 
-        String[] expectedCommand;
         if (SystemUtils.IS_OS_WINDOWS) {
-            expectedCommand = new String[] {"Rscript", "-e", "\"library('tmcRtestrunner');run_tests()\""};
+            args = new String[] {"-e", "\"library('tmcRtestrunner');run_tests()\""};
         } else {
-            expectedCommand = new String[] {"Rscript", "-e", "library(tmcRtestrunner);run_tests()"};
+            args = new String[] {"-e", "library(tmcRtestrunner);run_tests()"};
         }
+        String[] expectedCommand = ArrayUtils.addAll(command, args);
         Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
     }
     
     @Test
     public void testGetAvailablePointsCommand() {
-        String[] expectedCommand;
+        String[] command = new String[] {"Rscript"};
+        String[] args;
         if (SystemUtils.IS_OS_WINDOWS) {
-            expectedCommand = new String[] {"Rscript", "-e", "\"library('tmcRtestrunner');run_available_points()\""};
+            args = new String[] {"-e", "\"library('tmcRtestrunner');run_available_points()\""};
         } else {
-            expectedCommand = new String[] {"Rscript", "-e", "library('tmcRtestrunner');run_available_points()"};
+            args = new String[] {"-e", "library(tmcRtestrunner);run_available_points()"};
         }
+        String[] expectedCommand = ArrayUtils.addAll(command, args);
         Assert.assertArrayEquals(expectedCommand, plugin.getAvailablePointsCommand());
     }
     

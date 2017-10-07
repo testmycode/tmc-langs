@@ -110,7 +110,7 @@ public class RPluginTest {
         assertEquals(re.get(8).getName(), "Constant string works");
         for (int i = 1;i <= 13;i++) {
             assertEquals(re.get(8 + i).getName(), "Exercise " + i + " is correct");
-            assertTrue(re.get(8 + i).isSuccessful());;
+            assertTrue(re.get(8 + i).isSuccessful());
 
         }
         File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");

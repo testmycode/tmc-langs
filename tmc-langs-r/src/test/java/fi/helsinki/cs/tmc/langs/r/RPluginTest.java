@@ -11,6 +11,7 @@ import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
@@ -119,7 +120,7 @@ public class RPluginTest {
     }
 
     @Test
-    public void excerciseIsCorrectTypeIfItContainsRFolder() {
+    public void exerciseIsCorrectTypeIfItContainsRFolder() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("R_folder");
 
@@ -127,7 +128,7 @@ public class RPluginTest {
     }
 
     @Test
-    public void excerciseIsCorrectTypeIfItContainsTestthatFolder() {
+    public void exerciseIsCorrectTypeIfItContainsTestthatFolder() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("testthat_folder");
 
@@ -135,7 +136,7 @@ public class RPluginTest {
     }
 
     @Test
-    public void excerciseIsCorrectTypeIfItContainsDescription() {
+    public void exerciseIsCorrectTypeIfItContainsDescription() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("description");
 
@@ -143,7 +144,7 @@ public class RPluginTest {
     }
 
     @Test
-    public void exeriseIsCorrectTypeIfItContainsTestthatFile() {
+    public void exerciseIsCorrectTypeIfItContainsTestthatFile() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("testthat_folder")
                                     .resolve("tests");

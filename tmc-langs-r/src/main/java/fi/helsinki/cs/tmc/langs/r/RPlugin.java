@@ -38,9 +38,9 @@ public final class RPlugin extends AbstractLanguagePlugin {
     private static final Path R_FOLDER_PATH = Paths.get("R");
     private static final Path TEST_FOLDER_PATH = Paths.get("tests");
     private static final Path TESTTHAT_FOLDER_PATH = Paths.get("testthat");
+    private static final Path TESTTHAT_FILE_PATH = Paths.get("testthat.R");
     private static final Path TMC_FOLDER_PATH = Paths.get("tmc");
     private static final Path DESCRIPTION_PATH = Paths.get("DESCRIPTION");
-    private static final Path RHISTORY_PATH = Paths.get(".Rhistory");
     private static final Path RESULT_R_PATH = Paths.get("result.R");
 
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
@@ -66,8 +66,8 @@ public final class RPlugin extends AbstractLanguagePlugin {
     public boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.resolve(R_FOLDER_PATH))
                 || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FOLDER_PATH))
+                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FILE_PATH))
                 || Files.exists(path.resolve(DESCRIPTION_PATH))
-                || Files.exists(path.resolve(RHISTORY_PATH))
                 || Files.exists(path.resolve(TMC_FOLDER_PATH).resolve(RESULT_R_PATH));
         /*
         R folder contains the actual R files used in the
@@ -153,7 +153,7 @@ public final class RPlugin extends AbstractLanguagePlugin {
         }
         return ArrayUtils.addAll(command, args);
     }
-    
+
     public String[] getAvailablePointsCommand() {
         String[] command = new String[] {"Rscript"};
         String[] args;
@@ -164,7 +164,7 @@ public final class RPlugin extends AbstractLanguagePlugin {
         }
         return ArrayUtils.addAll(command, args);
     }
-    
+
     @Override
     public void clean(Path path) {
         // TO DO

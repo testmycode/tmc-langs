@@ -1,4 +1,3 @@
-
 package fi.helsinki.cs.tmc.langs.r;
 
 
@@ -26,29 +25,21 @@ import java.nio.file.Paths;
 
 
 
-
-
-
-
-
-
-
-
 public class RPluginTest {
-    
+
     private RPlugin plugin;
 
     @Before
     public void setUp() {
         plugin = new RPlugin();
     }
-    
+
     @After
     public void tearDown() {
         Path testDir = TestUtils.getPath(getClass(), "project1");
         File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
         resultsJson.delete();
-        File availablePointsJson = new File(testDir.toAbsolutePath().toString() 
+        File availablePointsJson = new File(testDir.toAbsolutePath().toString()
                 + "/.available_points.json");
         availablePointsJson.delete();
     }
@@ -66,7 +57,7 @@ public class RPluginTest {
         String[] expectedCommand = ArrayUtils.addAll(command, args);
         Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
     }
-    
+
     @Test
     public void testGetAvailablePointsCommand() {
         String[] command = new String[] {"Rscript"};
@@ -79,22 +70,22 @@ public class RPluginTest {
         String[] expectedCommand = ArrayUtils.addAll(command, args);
         Assert.assertArrayEquals(expectedCommand, plugin.getAvailablePointsCommand());
     }
-    
+
     @Test
     public void testGetPluginName() {
         assertEquals("r", plugin.getLanguageName());
     }
-    
+
     @Test
     public void testScanExercise() {
         Path testDir = TestUtils.getPath(getClass(), "project1");
         plugin.scanExercise(testDir, "arithmetics.R");
-        File availablePointsJson = new File(testDir.toAbsolutePath().toString() 
+        File availablePointsJson = new File(testDir.toAbsolutePath().toString()
                 + "/.available_points.json");
-        
+
         assertTrue(availablePointsJson.exists());
     }
-    
+
     @Test
     public void testRunTests() {
         Path testDir = TestUtils.getPath(getClass(), "project1");
@@ -119,17 +110,17 @@ public class RPluginTest {
         assertTrue(re.get(8).isSuccessful());
         assertEquals(re.get(8).getName(), "Constant string works");
         for (int i = 1;i <= 13;i++) {
-            assertEquals(re.get(8 + i).getName(), "Exercise " + i + " is correct"); 
-            assertTrue(re.get(8 + i).isSuccessful());; 
-           
+            assertEquals(re.get(8 + i).getName(), "Exercise " + i + " is correct");
+            assertTrue(re.get(8 + i).isSuccessful());
+
         }
         File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
-        
+
         assertTrue(resultsJson.exists());
     }
-    
+
     @Test
-    public void excerciseIsCorrectTypeIfItContainsRFolder() {
+    public void exerciseIsCorrectTypeIfItContainsRFolder() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("R_folder");
 
@@ -137,7 +128,7 @@ public class RPluginTest {
     }
 
     @Test
-    public void excerciseIsCorrectTypeIfItContainsTestthatFolder() {
+    public void exerciseIsCorrectTypeIfItContainsTestthatFolder() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("testthat_folder");
 
@@ -145,7 +136,7 @@ public class RPluginTest {
     }
 
     @Test
-    public void excerciseIsCorrectTypeIfItContainsDescription() {
+    public void exerciseIsCorrectTypeIfItContainsDescription() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("description");
 
@@ -153,11 +144,13 @@ public class RPluginTest {
     }
 
     @Test
-    public void excerciseIsCorrectTypeIfItContainsRhistory() {
+    public void exerciseIsCorrectTypeIfItContainsTestthatFile() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
-        Path project = testCasesRoot.resolve("rhistory");
+        Path project = testCasesRoot.resolve("testthat_folder")
+                                    .resolve("tests");
 
-        assertTrue(plugin.isExerciseTypeCorrect(project));
+        File testThatR = new File(project.toAbsolutePath().toString() + "/testthat.R");
+        assertTrue(testThatR.exists());
     }
 
     @Test

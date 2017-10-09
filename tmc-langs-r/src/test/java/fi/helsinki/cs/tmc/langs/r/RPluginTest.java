@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.r;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -24,8 +23,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-
-
 public class RPluginTest {
 
     private RPlugin plugin;
@@ -43,30 +40,38 @@ public class RPluginTest {
         File availablePointsJson = new File(testDir.toAbsolutePath().toString()
                 + "/.available_points.json");
         availablePointsJson.delete();
+
+        testDir = TestUtils.getPath(getClass(), "simple_source_code_error");
+        resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
+        resultsJson.delete();
+        
+        testDir = TestUtils.getPath(getClass(), "simple_all_tests_pass");
+        resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
+        resultsJson.delete();
     }
 
     @Test
     public void testGetTestCommand() {
-        String[] command = new String[] {"Rscript"};
+        String[] command = new String[]{"Rscript"};
         String[] args;
 
         if (SystemUtils.IS_OS_WINDOWS) {
-            args = new String[] {"-e", "\"library('tmcRtestrunner');run_tests()\""};
+            args = new String[]{"-e", "\"library('tmcRtestrunner');run_tests()\""};
         } else {
-            args = new String[] {"-e", "library(tmcRtestrunner);run_tests()"};
+            args = new String[]{"-e", "library(tmcRtestrunner);run_tests()"};
         }
         String[] expectedCommand = ArrayUtils.addAll(command, args);
-        Assert.assertArrayEquals(expectedCommand,plugin.getTestCommand());
+        Assert.assertArrayEquals(expectedCommand, plugin.getTestCommand());
     }
 
     @Test
     public void testGetAvailablePointsCommand() {
-        String[] command = new String[] {"Rscript"};
+        String[] command = new String[]{"Rscript"};
         String[] args;
         if (SystemUtils.IS_OS_WINDOWS) {
-            args = new String[] {"-e", "\"library('tmcRtestrunner');run_available_points()\""};
+            args = new String[]{"-e", "\"library('tmcRtestrunner');run_available_points()\""};
         } else {
-            args = new String[] {"-e", "library(tmcRtestrunner);run_available_points()"};
+            args = new String[]{"-e", "library(tmcRtestrunner);run_available_points()"};
         }
         String[] expectedCommand = ArrayUtils.addAll(command, args);
         Assert.assertArrayEquals(expectedCommand, plugin.getAvailablePointsCommand());
@@ -129,9 +134,38 @@ public class RPluginTest {
             assertTrue(re.get(8 + i).isSuccessful());
 
         }
+
         File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
 
         assertTrue(resultsJson.exists());
+    }
+
+    @Test
+    public void runTestsCreatesJsonWithCorrectStatus() {
+        Path testDir = TestUtils.getPath(getClass(), "project1");
+        RunResult res = plugin.runTests(testDir);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, res.status);
+    }
+
+    @Test
+    public void runTestsWorksWithErronousSourceCode() {
+        Path testDir = TestUtils.getPath(getClass(), "simple_source_code_error");
+        RunResult res = plugin.runTests(testDir);
+
+        assertEquals(RunResult.Status.COMPILE_FAILED, res.status);
+        assertEquals(1, res.testResults.size());
+    }
+
+    @Test
+    public void runTestsHasCorrectStatusesWhenAllTestsPass() {
+        Path testDir = TestUtils.getPath(getClass(), "simple_all_tests_pass");
+        RunResult res = plugin.runTests(testDir);
+
+        assertEquals(RunResult.Status.PASSED, res.status);
+        for (TestResult tr : res.testResults) {
+            assertTrue(tr.isSuccessful());
+        }
     }
 
     @Test

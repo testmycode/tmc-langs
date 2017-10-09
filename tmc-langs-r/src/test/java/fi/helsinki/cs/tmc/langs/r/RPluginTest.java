@@ -34,6 +34,14 @@ public class RPluginTest {
         Path testDir = TestUtils.getPath(getClass(), "passing");
         File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
         resultsJson.delete();
+        
+        testDir = TestUtils.getPath(getClass(), "simple_source_code_error");
+        resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
+        resultsJson.delete();
+        
+        testDir = TestUtils.getPath(getClass(), "simple_all_tests_pass");
+        resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
+        resultsJson.delete();
     }
 
     @Test

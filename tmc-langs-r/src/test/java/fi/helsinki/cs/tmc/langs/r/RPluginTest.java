@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -84,6 +85,20 @@ public class RPluginTest {
                 + "/.available_points.json");
 
         assertTrue(availablePointsJson.exists());
+    }
+
+    @Test
+    public void testScanExerciseInTheWrongPlace() {
+        Path testDir = TestUtils.getPath(getClass(), "project1");
+        plugin.scanExercise(testDir, "ar.R");
+        Path availablePointsJson = testDir.resolve(".available_points.json");
+        ImmutableList<TestDesc> re = null;
+        try {
+            re = new RExerciseDescParser(availablePointsJson).parse();
+        } catch (IOException e) {
+            System.out.println("Something wrong: " + e.getMessage());
+        }
+        assertTrue(re == null);
     }
 
     @Test
@@ -153,13 +168,6 @@ public class RPluginTest {
         assertTrue(testThatR.exists());
     }
 
-    @Test
-    public void excerciseIsCorrectTypeIfItContainsResultR() {
-        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
-        Path project = testCasesRoot.resolve("result_r");
-
-        assertTrue(plugin.isExerciseTypeCorrect(project));
-    }
 
     @Test
     public void getStudentFilePolicyReturnsRStudentFilePolicy() {

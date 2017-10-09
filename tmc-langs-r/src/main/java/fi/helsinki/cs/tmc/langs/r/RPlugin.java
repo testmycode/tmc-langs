@@ -39,7 +39,6 @@ public final class RPlugin extends AbstractLanguagePlugin {
     private static final Path TEST_FOLDER_PATH = Paths.get("tests");
     private static final Path TESTTHAT_FOLDER_PATH = Paths.get("testthat");
     private static final Path TESTTHAT_FILE_PATH = Paths.get("testthat.R");
-    private static final Path TMC_FOLDER_PATH = Paths.get("tmc");
     private static final Path DESCRIPTION_PATH = Paths.get("DESCRIPTION");
     private static final Path RESULT_R_PATH = Paths.get("result.R");
 

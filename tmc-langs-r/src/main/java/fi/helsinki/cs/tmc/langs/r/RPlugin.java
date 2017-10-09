@@ -67,8 +67,7 @@ public final class RPlugin extends AbstractLanguagePlugin {
         return Files.exists(path.resolve(R_FOLDER_PATH))
                 || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FOLDER_PATH))
                 || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FILE_PATH))
-                || Files.exists(path.resolve(DESCRIPTION_PATH))
-                || Files.exists(path.resolve(TMC_FOLDER_PATH).resolve(RESULT_R_PATH));
+                || Files.exists(path.resolve(DESCRIPTION_PATH));
         /*
         R folder contains the actual R files used in the
         project/package. It is automatically included when creating a

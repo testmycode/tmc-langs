@@ -9,6 +9,7 @@ import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
@@ -31,10 +32,13 @@ public class RPluginTest {
 
     @After
     public void tearDown() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
+        Path testDir = TestUtils.getPath(getClass(), "project1");
         File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
         resultsJson.delete();
-        
+        File availablePointsJson = new File(testDir.toAbsolutePath().toString() 
+                + "/.available_points.json");
+        availablePointsJson.delete();
+
         testDir = TestUtils.getPath(getClass(), "simple_source_code_error");
         resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
         resultsJson.delete();
@@ -78,14 +82,49 @@ public class RPluginTest {
 
     @Test
     public void testScanExercise() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
+        Path testDir = TestUtils.getPath(getClass(), "project1");
         plugin.scanExercise(testDir, "arithmetics.R");
+        File availablePointsJson = new File(testDir.toAbsolutePath().toString() 
+                + "/.available_points.json");
+        
+        assertTrue(availablePointsJson.exists());
     }
 
     @Test
     public void runTestsCreatesAJson() {
         Path testDir = TestUtils.getPath(getClass(), "passing");
         plugin.runTests(testDir);
+    }
+
+    @Test
+    public void testRunTests() {
+        Path testDir = TestUtils.getPath(getClass(), "project1");
+        RunResult runRes = plugin.runTests(testDir);
+        ImmutableList<TestResult> re = runRes.testResults;
+        assertEquals(re.size(),22);
+        assertEquals(re.get(0).getName(),"Addition works");
+        assertTrue(re.get(1).isSuccessful());
+        assertEquals(re.get(1).getName(),"Multiplication works");
+        assertTrue(re.get(2).isSuccessful());
+        assertEquals(re.get(2).getName(),"Subtraction works");
+        assertTrue(re.get(3).isSuccessful());
+        assertEquals(re.get(3).getName(),"Division works");
+        assertTrue(re.get(4).isSuccessful());
+        assertEquals(re.get(4).getName(), "Test with no points");
+        assertFalse(re.get(5).isSuccessful());
+        assertEquals(re.get(5).getName(), "Dummy test set to fail");
+        assertTrue(re.get(6).isSuccessful());
+        assertEquals(re.get(6).getName(), "Matrix transpose with [[1,2]] works");
+        assertTrue(re.get(7).isSuccessful());
+        assertEquals(re.get(7).getName(), "Matrix transpose with [[1,2],[3,4]] works");
+        assertTrue(re.get(8).isSuccessful());
+        assertEquals(re.get(8).getName(), "Constant string works");
+        for (int i = 1;i <= 13;i++) {
+            assertEquals(re.get(8 + i).getName(), "Exercise " + i + " is correct"); 
+            assertTrue(re.get(8 + i).isSuccessful());; 
+           
+        }
+
         File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
 
         assertTrue(resultsJson.exists());
@@ -93,7 +132,7 @@ public class RPluginTest {
 
     @Test
     public void runTestsCreatesJsonWithCorrectStatus() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
+        Path testDir = TestUtils.getPath(getClass(), "project1");
         RunResult res = plugin.runTests(testDir);
 
         assertEquals(RunResult.Status.TESTS_FAILED, res.status);
@@ -101,15 +140,15 @@ public class RPluginTest {
 
     @Test
     public void runTestsCreatesJsonWithCorrectNumberOfResults() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
+        Path testDir = TestUtils.getPath(getClass(), "project1");
         RunResult res = plugin.runTests(testDir);
 
-        assertEquals(19, res.testResults.size());
+        assertEquals(22, res.testResults.size());
     }
 
     @Test
     public void testResultsFromRunTestsHaveCorrectStatuses() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
+        Path testDir = TestUtils.getPath(getClass(), "project1");
         RunResult res = plugin.runTests(testDir);
 
         for (TestResult tr : res.testResults) {

@@ -89,18 +89,19 @@ public class RPluginTest {
 
     @Test
     public void testScanExerciseInTheWrongPlace() {
-      Path testDir = TestUtils.getPath(getClass(), "project1");
-      plugin.scanExercise(testDir, "ar.R");
-      Path availablePointsJson = testDir.resolve(".available_points.json");
-      ImmutableList<TestDesc> re = null;
-      try {
-         re = new RExerciseDescParser(availablePointsJson).parse();
-      } catch (IOException e) {
-          System.out.println("Something wrong: " + e.getMessage());
-      }
+        Path testDir = TestUtils.getPath(getClass(), "project1");
+        plugin.scanExercise(testDir, "ar.R");
+        Path availablePointsJson = testDir.resolve(".available_points.json");
+        ImmutableList<TestDesc> re = null;
+        try {
+            re = new RExerciseDescParser(availablePointsJson).parse();
+        } catch (IOException e) {
+            System.out.println("Something wrong: " + e.getMessage());
+        }
 
-      assertTrue(re == null);
+        assertTrue(re == null);
     }
+    
     @Test
     public void testRunTests() {
         Path testDir = TestUtils.getPath(getClass(), "project1");

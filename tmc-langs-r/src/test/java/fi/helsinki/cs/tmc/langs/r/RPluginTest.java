@@ -153,13 +153,6 @@ public class RPluginTest {
         assertTrue(testThatR.exists());
     }
 
-    @Test
-    public void excerciseIsCorrectTypeIfItContainsResultR() {
-        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
-        Path project = testCasesRoot.resolve("result_r");
-
-        assertTrue(plugin.isExerciseTypeCorrect(project));
-    }
 
     @Test
     public void getStudentFilePolicyReturnsRStudentFilePolicy() {

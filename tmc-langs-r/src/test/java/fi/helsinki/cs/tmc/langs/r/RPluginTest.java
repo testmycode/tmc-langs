@@ -98,10 +98,9 @@ public class RPluginTest {
         } catch (IOException e) {
             System.out.println("Something wrong: " + e.getMessage());
         }
-
         assertTrue(re == null);
     }
-    
+
     @Test
     public void testRunTests() {
         Path testDir = TestUtils.getPath(getClass(), "project1");

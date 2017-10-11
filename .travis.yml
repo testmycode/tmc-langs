@@ -10,6 +10,7 @@ addons:
     packages:
       - valgrind
       - check
+      - python3.4
 env:
   global:
   - secure: yiW+hXiZEycKFzF19rLlejJX8BTGbncSisBHyE8uulZee5n7UVGXnG1yvt9+6hz0nvMbxL7r1Daql0xxRHXUFB9VYVUKhF0ycHyJO5ze87U51mlIKAL8UnCkmxpkHNdxY45olEdK+mEbZBtot67nenlwGDfxLI7laITkR8IBAvY=
@@ -17,6 +18,7 @@ env:
   - M3_HOME=/usr/local/maven
 
 before_install:
+  - curl -L https://static.rust-lang.org/rustup.sh | sh -s -- --channel=stable --yes --prefix=$PWD --disable-sudo
   - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
   - echo "deb https://cloud.r-project.org/bin/linux/ubuntu trusty/" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -qq
@@ -30,7 +32,7 @@ before_install:
   - mvn install -Dmaven.test.skip=true
 
 script:
-  - mvn clean test -pl tmc-langs-r
+  - mvn clean test
   - mvn checkstyle:check
   - . ./clitest.sh
 after_success:
@@ -44,7 +46,9 @@ jdk:
   - oraclejdk7
   - openjdk7
 matrix:
-  
   allow_failures:
   - os: osx
-  - jdk: oraclejdk7
+notifications:
+  slack:
+    secure: elwVbriXdc/RkeP3UfVpSC0N6mbdk60ro7Pu1+2ddktmgQIEHjAVSdzpy2FLGTz/gK2MEXo2XU1rSg3t8GqlJNh1RTASzhyhcCUJTa7UdKe84mcRWDxJffunQKsBpUJv71tXBy1OyL8pcdnw1qkpr5NDyqXvBk67VwepVqy8em4=
+

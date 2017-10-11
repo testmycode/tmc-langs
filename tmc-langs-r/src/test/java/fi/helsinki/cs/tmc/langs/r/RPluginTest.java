@@ -1,25 +1,21 @@
 package fi.helsinki.cs.tmc.langs.r;
 
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
-import fi.helsinki.cs.tmc.langs.domain.TestResult;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
-import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -27,127 +23,97 @@ public class RPluginTest {
 
     private RPlugin plugin;
 
+    private Path simpleAllTestsPassProject;
+    private Path simpleSomeTestsFailProject;
+    private Path simpleSourceCodeErrorProject;
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
     @Before
     public void setUp() {
         plugin = new RPlugin();
+
+        simpleAllTestsPassProject = TestUtils.getPath(getClass(),
+                "simple_all_tests_pass");
+        simpleSomeTestsFailProject = TestUtils.getPath(getClass(),
+                "simple_some_tests_fail");
+        simpleSourceCodeErrorProject = TestUtils.getPath(getClass(),
+                "simple_source_code_error");
     }
 
     @After
-    public void tearDown() {
-        Path testDir = TestUtils.getPath(getClass(), "project1");
-        File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
-        resultsJson.delete();
-        
-        testDir = TestUtils.getPath(getClass(), "simple_source_code_error");
-        resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
-        resultsJson.delete();
-        
-        testDir = TestUtils.getPath(getClass(), "simple_all_tests_pass");
-        resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
-        resultsJson.delete();
+    public void tearDown() throws IOException {
+        removeAvailablePointsJson(simpleAllTestsPassProject);
+        removeResultsJson(simpleAllTestsPassProject);
+        removeResultsJson(simpleSomeTestsFailProject);
+        removeResultsJson(simpleSourceCodeErrorProject);
     }
 
-    @Test
-    public void testGetTestCommand() {
-        String[] command = new String[]{"Rscript"};
-        String[] args;
-
-        if (SystemUtils.IS_OS_WINDOWS) {
-            args = new String[]{"-e", "\"library('tmcRtestrunner');run_tests()\""};
-        } else {
-            args = new String[]{"-e", "library(tmcRtestrunner);run_tests()"};
-        }
-        String[] expectedCommand = ArrayUtils.addAll(command, args);
-        Assert.assertArrayEquals(expectedCommand, plugin.getTestCommand());
+    private void removeResultsJson(Path projectPath) throws IOException {
+        Files.deleteIfExists(projectPath.resolve(".results.json"));
     }
 
-    @Test
-    public void testGetAvailablePointsCommand() {
-        String[] command = new String[]{"Rscript"};
-        String[] args;
-        if (SystemUtils.IS_OS_WINDOWS) {
-            args = new String[]{"-e", "\"library('tmcRtestrunner');run_available_points()\""};
-        } else {
-            args = new String[]{"-e", "library(tmcRtestrunner);run_available_points()"};
-        }
-        String[] expectedCommand = ArrayUtils.addAll(command, args);
-        Assert.assertArrayEquals(expectedCommand, plugin.getAvailablePointsCommand());
-    }
-
-    @Test
-    public void testGetPluginName() {
-        assertEquals("r", plugin.getLanguageName());
+    private void removeAvailablePointsJson(Path projectPath) throws IOException {
+        Files.deleteIfExists(projectPath.resolve(".available_points.json"));
     }
 
     @Test
     public void testScanExercise() {
-        Path testDir = TestUtils.getPath(getClass(), "project1");
-        plugin.scanExercise(testDir, "arithmetics.R");
-        File availablePointsJson = new File(testDir.toAbsolutePath().toString() 
-                + "/.available_points.json");
+        plugin.scanExercise(simpleAllTestsPassProject, "main.R");
+        assertTrue(Files.exists(simpleAllTestsPassProject.resolve(".available_points.json")));
+    }
+
+    @Test
+    public void testScanExerciseInTheWrongPlace() throws IOException {
+        plugin.scanExercise(simpleAllTestsPassProject, "ar.R");
+        Path availablePointsJson = simpleAllTestsPassProject.resolve(".available_points.json");
         
-        assertTrue(availablePointsJson.exists());
+        exception.expect(IOException.class);
+        new RExerciseDescParser(availablePointsJson).parse();
     }
 
     @Test
-    public void runTestsCreatesAJson() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
-        plugin.runTests(testDir);
-        File resultsJson = new File(testDir.toAbsolutePath().toString() + "/.results.json");
+    public void runTestsRunResultWithCorrectStatusForSimpleAllPass() {
+        RunResult result = plugin.runTests(simpleAllTestsPassProject);
 
-        assertTrue(resultsJson.exists());
+        assertEquals(RunResult.Status.PASSED, result.status);
     }
 
     @Test
-    public void runTestsCreatesJsonWithCorrectStatus() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
-        RunResult res = plugin.runTests(testDir);
+    public void runTestsRunResultWithCorrectStatusForSimpleSomeFail() {
+        RunResult result = plugin.runTests(simpleSomeTestsFailProject);
 
-        assertEquals(RunResult.Status.TESTS_FAILED, res.status);
+        assertEquals(RunResult.Status.TESTS_FAILED, result.status);
     }
 
     @Test
-    public void runTestsCreatesJsonWithCorrectNumberOfResults() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
-        RunResult res = plugin.runTests(testDir);
-
-        assertEquals(19, res.testResults.size());
-    }
-
-    @Test
-    public void testResultsFromRunTestsHaveCorrectStatuses() {
-        Path testDir = TestUtils.getPath(getClass(), "passing");
-        RunResult res = plugin.runTests(testDir);
-
-        for (TestResult tr : res.testResults) {
-            if (!tr.getName().equals("Dummy test set to fail")) {
-                assertTrue(tr.isSuccessful());
-            } else {
-                assertFalse(tr.isSuccessful());
-            }
-        }
-    }
-
-    @Test
-    public void runTestsWorksWithErronousSourceCode() {
-        Path testDir = TestUtils.getPath(getClass(), "simple_source_code_error");
-        RunResult res = plugin.runTests(testDir);
+    public void runTestsCreatesRunResultWithCorrectStatusWhenSourceCodeHasError() {
+        RunResult res = plugin.runTests(simpleSourceCodeErrorProject);
 
         assertEquals(RunResult.Status.COMPILE_FAILED, res.status);
-        assertEquals(1, res.testResults.size());
     }
 
     @Test
-    public void runTestsHasCorrectStatusesWhenAllTestsPass() {
-        Path testDir = TestUtils.getPath(getClass(), "simple_all_tests_pass");
-        RunResult res = plugin.runTests(testDir);
+    public void runTestsReturnsGenericErrorWhenPathDoesNotExist() {
+        Path doesNotExist = TestUtils.getPath(getClass(),
+                "aijoigad0");
+        RunResult res = plugin.runTests(doesNotExist);
 
-        assertEquals(RunResult.Status.PASSED, res.status);
-        for (TestResult tr : res.testResults) {
-            assertTrue(tr.isSuccessful());
-        }
+        assertEquals(RunResult.Status.GENERIC_ERROR, res.status);
     }
 
+    @Test
+    public void runTestsReturnsStackTraceWhenPathDoesNotExist() {
+        Path doesNotExist = TestUtils.getPath(getClass(),
+                "aijoigad0");
+        RunResult res = plugin.runTests(doesNotExist);
+        
+        String stackTrace = new String(res.logs.get(SpecialLogs.GENERIC_ERROR_MESSAGE));
+        assertEquals("java.lang.NullPointerException", stackTrace.split("\n")[0]);
+        assertTrue(stackTrace.split("\n").length > 1);
+    }
+    
     @Test
     public void exerciseIsCorrectTypeIfItContainsRFolder() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
@@ -165,23 +131,13 @@ public class RPluginTest {
     }
 
     @Test
-    public void exerciseIsCorrectTypeIfItContainsDescription() {
-        Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
-        Path project = testCasesRoot.resolve("description");
-
-        assertTrue(plugin.isExerciseTypeCorrect(project));
-    }
-
-    @Test
     public void exerciseIsCorrectTypeIfItContainsTestthatFile() {
         Path testCasesRoot = TestUtils.getPath(getClass(), "recognition_test_cases");
         Path project = testCasesRoot.resolve("testthat_folder")
                                     .resolve("tests");
 
-        File testThatR = new File(project.toAbsolutePath().toString() + "/testthat.R");
-        assertTrue(testThatR.exists());
+        assertTrue(Files.exists(project.resolve("testthat.R")));
     }
-
 
     @Test
     public void getStudentFilePolicyReturnsRStudentFilePolicy() {

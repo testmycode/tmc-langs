@@ -7,20 +7,18 @@
         <version>0.7.7-SNAPSHOT</version>
     </parent>
     <artifactId>tmc-langs-r</artifactId>
-    <version>0.7.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <dependencies>
-    <dependency>
-        <groupId>fi.helsinki.cs.tmc</groupId>
-        <artifactId>tmc-langs-framework</artifactId>
-        <version>0.7.7-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-        <groupId>fi.helsinki.cs.tmc</groupId>
-        <artifactId>tmc-langs-util</artifactId>
-        <version>0.7.7-SNAPSHOT</version>
-    </dependency>
-</dependencies>
-
+        <dependency>
+            <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>tmc-langs-framework</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>tmc-langs-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

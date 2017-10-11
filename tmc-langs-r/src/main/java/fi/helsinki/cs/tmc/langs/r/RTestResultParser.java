@@ -1,10 +1,12 @@
 package fi.helsinki.cs.tmc.langs.r;
 
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -15,21 +17,32 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RTestResultParser {
 
-    Path path;
-    private ObjectMapper mapper;
+    private final Path path;
+    private final ObjectMapper mapper;
 
-    private static Path RESULT_FILE = Paths.get(".results.json");
+    private static final Path RESULT_FILE = Paths.get(".results.json");
 
     public RTestResultParser(Path path) {
         this.path = path;
         this.mapper = new ObjectMapper();
     }
 
-    RunResult parse() throws IOException {
-        List<TestResult> testResults = getTestResults();
+    public RunResult parse() throws IOException {
+        byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
+        JsonNode rootNode = mapper.readTree(json);
+        
+        JsonNode runStatus = rootNode.get("runStatus");
+        
+        if (!runStatus.toString().equals("\"success\"")) {
+            return getRunResultForCompileFail(rootNode);
+        }
+        
+        JsonNode testResultsNode = rootNode.get("testResults");
+        List<TestResult> testResults = getTestResults(testResultsNode);
 
         RunResult.Status status = RunResult.Status.PASSED;
         for (TestResult result : testResults) {
@@ -37,61 +50,50 @@ public class RTestResultParser {
                 status = RunResult.Status.TESTS_FAILED;
             }
         }
-        if (!testResults.isEmpty() && testResults.get(0).getName().equals("COMPILATION FAILED")) {
-            status = RunResult.Status.COMPILE_FAILED;
-        }
 
         ImmutableList<TestResult> immutableResults = ImmutableList.copyOf(testResults);
         ImmutableMap<String, byte[]> logs = ImmutableMap.copyOf(new HashMap<String, byte[]>());
         return new RunResult(status, immutableResults, logs);
     }
 
-    private List<TestResult> getTestResults() throws IOException {
-        byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
+    private RunResult getRunResultForCompileFail(JsonNode rootNode) throws IOException {
+        Map<String, byte[]> logMap = new HashMap<>();
+        byte[] backtrace = mapper.writeValueAsBytes(rootNode.get("backtrace"));
+        logMap.put(SpecialLogs.COMPILER_OUTPUT, backtrace);
+        ImmutableMap<String, byte[]> logs = ImmutableMap.copyOf(logMap);
+        
+        return new RunResult(RunResult.Status.COMPILE_FAILED,
+                ImmutableList.copyOf(new ArrayList<TestResult>()), logs);
+    }
+
+    private List<TestResult> getTestResults(JsonNode testResultsNode) {
         List<TestResult> results = new ArrayList<>();
 
-        JsonNode runStatus = mapper.readTree(json).get("runStatus");
-        if (!runStatus.toString().equals("\"success\"")) {
-            List<String> backTrace = new ArrayList<>();
-            for (JsonNode line : mapper.readTree(json).get("backtrace")) {
-                backTrace.add(line.asText());
-            }
-        
-            List<String> dummy = new ArrayList();
-            results.add(new TestResult(
-                    "COMPILATION FAILED",
-                    false,
-                    ImmutableList.copyOf(dummy),
-                    "Something wrong with source code",
-                    ImmutableList.copyOf(backTrace)));
-        }
-        
-        JsonNode tree = mapper.readTree(json).get("testResults");
-        for (JsonNode node : tree) {
-            results.add(toTestResult(node));
+        for (JsonNode testResultNode : testResultsNode) {
+            results.add(toTestResult(testResultNode));
         }
 
         return results;
     }
     
-    private TestResult toTestResult(JsonNode node) {
+    private TestResult toTestResult(JsonNode testResultNode) {
         List<String> points = new ArrayList<>();
-        for (JsonNode point : node.get("points")) {
+        for (JsonNode point : testResultNode.get("points")) {
             points.add(point.asText());
         }
 
         List<String> backTrace = new ArrayList<>();
-        for (JsonNode line : node.get("backtrace")) {
+        for (JsonNode line : testResultNode.get("backtrace")) {
             backTrace.add(line.asText());
         }
         
-        boolean passed = node.get("status").asText().equals("pass");
+        boolean passed = testResultNode.get("status").asText().equals("pass");
 
         return new TestResult(
-                node.get("name").asText(),
+                testResultNode.get("name").asText(),
                 passed,
                 ImmutableList.copyOf(points),
-                node.get("message").toString(),
+                testResultNode.get("message").toString(),
                 ImmutableList.copyOf(backTrace));
     }
 }

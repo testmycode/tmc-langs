@@ -1,51 +1,60 @@
 package fi.helsinki.cs.tmc.langs.r;
 
-
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
+import fi.helsinki.cs.tmc.langs.abstraction.Strategy;
+import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
-
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
-
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+public final class RPlugin extends AbstractLanguagePlugin {
 
-
-public class RPlugin extends AbstractLanguagePlugin{
-
-    // Various static final Path-variables for filepaths
-    // to various folders and files in a R exercise project here
+    /**
+     * R folder contains the actual R files used in the 
+     * project/package. It is automatically included when creating a
+     * R package but now when making a regular project in RStudio.
+     */
     private static final Path R_FOLDER_PATH = Paths.get("R");
+
+    /** 
+     * test/testthat folder contains the unit testing 
+     * files which use the testThat library for the R project.
+     */
     private static final Path TEST_FOLDER_PATH = Paths.get("tests");
     private static final Path TESTTHAT_FOLDER_PATH = Paths.get("testthat");
-    private static final Path TESTTHAT_FILE_PATH = Paths.get("testthat.R");
-    private static final Path DESCRIPTION_PATH = Paths.get("DESCRIPTION");
-    private static final Path RESULT_R_PATH = Paths.get("result.R");
 
-
-
-    // Various static final String-variables for
-    // error messages related to parsing and running R tests here
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
     private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
     private static final String CANNOT_SCAN_EXERCISE_MESSAGE = "Failed to scan exercise.";
@@ -62,33 +71,14 @@ public class RPlugin extends AbstractLanguagePlugin{
                 new StudentFileAwareUnzipper());
     }
 
+    /**
+     * NOTE: Files.exists does not seem to be able to verify the R and 
+     * testthat folder's existence if they are empty.
+     */
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
         return Files.exists(path.resolve(R_FOLDER_PATH))
-                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FOLDER_PATH))
-                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FILE_PATH))
-                || Files.exists(path.resolve(DESCRIPTION_PATH));
-        /*
-        R folder contains the actual R files used in the
-        project/package. It is automatically included when creating a
-        R package but now when making a regular project in RStudio.
-
-        test/testthat folder contains the unit testing
-        files which use the testThat library for the R project.
-
-        DESCRIPTION file contains package information.
-        Included automatically when making a new package, but not
-        included when making a regular project in RStudio.
-
-        .RHistory file contains the history of executed code on
-        the R terminal. Generated after running code on the R
-        terminal for the first time.
-
-        tmc/result.R contains the call to tmcRtestrunner's runTests function.
-
-        NOTE: Files.exists does not seem to be able to verify the R and
-        testthat folder's existence if they are empty.
-         */
+                || Files.exists(path.resolve(TEST_FOLDER_PATH).resolve(TESTTHAT_FOLDER_PATH));
     }
 
     @Override
@@ -104,43 +94,67 @@ public class RPlugin extends AbstractLanguagePlugin{
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         ProcessRunner runner = new ProcessRunner(this.getAvailablePointsCommand(), path);
+
         try {
             runner.call();
         } catch (Exception e) {
-            System.out.println(e);
             log.error(CANNOT_SCAN_EXERCISE_MESSAGE, e);
+            return Optional.absent();
         }
+
         try {
             ImmutableList<TestDesc> testDescs = new RExerciseDescParser(path).parse();
             return Optional.of(new ExerciseDesc(exerciseName, testDescs));
         } catch (IOException e) {
             log.error(CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE, e);
         }
+
         return Optional.absent();
     }
 
     @Override
     public RunResult runTests(Path path) {
-
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
+ 
         try {
             runner.call();
         } catch (Exception e) {
             log.error(CANNOT_RUN_TESTS_MESSAGE, e);
+            return getGenericErrorRunResult(e);
         }
 
         try {
             return new RTestResultParser(path).parse();
         } catch (IOException e) {
             log.error(CANNOT_PARSE_TEST_RESULTS_MESSAGE, e);
+            return getGenericErrorRunResult(e);
         }
-        return null;
+    }
+
+    private RunResult getGenericErrorRunResult(Throwable exception) {
+        Map<String, byte[]> logMap = new HashMap<>();
+        byte[] stackTraceAsByteArray = ExceptionUtils.getStackTrace(exception).getBytes();
+        logMap.put(SpecialLogs.GENERIC_ERROR_MESSAGE, stackTraceAsByteArray);
+        
+        ImmutableMap<String, byte[]> logs = ImmutableMap.copyOf(logMap);
+        
+        return new RunResult(RunResult.Status.GENERIC_ERROR,
+                ImmutableList.copyOf(new ArrayList<TestResult>()), logs);
     }
 
     @Override
-    public ValidationResult checkCodeStyle(Path path, Locale messageLocale) throws UnsupportedOperationException {
-        // TO DO
-        return null;
+    public ValidationResult checkCodeStyle(Path path, Locale messageLocale) {
+        return new ValidationResult() {
+            @Override
+            public Strategy getStrategy() {
+                return Strategy.DISABLED;
+            }
+
+            @Override
+            public Map<File, List<ValidationError>> getValidationErrors() {
+                return Maps.newHashMap();
+            }
+        };
     }
 
     public String[] getTestCommand() {
@@ -165,9 +179,10 @@ public class RPlugin extends AbstractLanguagePlugin{
         return ArrayUtils.addAll(command, args);
     }
 
-
+    /**
+     * No operation for now. To be possibly implemented later: remove .Rdata, .Rhistory etc
+     */
     @Override
     public void clean(Path path) {
-        // TO DO
     }
 }

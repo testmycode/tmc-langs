@@ -1,0 +1,57 @@
+{
+    "runStatus": "success",
+    "backtrace": [
+
+    ],
+    "testResults": [
+        {
+            "status": "pass",
+            "name": "ret_true works.",
+            "message": "",
+            "backtrace": [
+
+            ],
+            "points": [
+                "r1",
+                "r1.1"
+            ]
+        },
+        {
+            "status": "pass",
+            "name": "ret_one works.",
+            "message": "",
+            "backtrace": [
+
+            ],
+            "points": [
+                "r1",
+                "r1.2"
+            ]
+        },
+        {
+            "status": "pass",
+            "name": "add works.",
+            "message": "",
+            "backtrace": [
+
+            ],
+            "points": [
+                "r1",
+                "r1.3",
+                "r1.4"
+            ]
+        },
+        {
+            "status": "pass",
+            "name": "minus works",
+            "message": "",
+            "backtrace": [
+
+            ],
+            "points": [
+                "r2",
+                "r2.1"
+            ]
+        }
+    ]
+}

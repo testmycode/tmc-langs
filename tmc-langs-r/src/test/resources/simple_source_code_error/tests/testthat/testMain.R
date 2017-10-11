@@ -1,7 +1,5 @@
 library('testthat')
 
-source("../../R/main.R")
-
 pointsForAllTests(c("r1"))
 
 test("RetTrue works.", c("r1.1"), {

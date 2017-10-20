@@ -27,20 +27,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class QmakePlugin extends AbstractLanguagePlugin {
 
-    private static final Path TEST_DIR = Paths.get("test");
     private static final Path TMC_TEST_RESULTS = Paths.get("tmc_test_results.xml");
+
+    // POINT(exercise_name, 1)
+    private static final Pattern POINT_PATTERN
+            = Pattern.compile("POINT\\(\\s*(\\w+),\\s*(\\w+)\\s*\\)\\s*;");
+    private static final Pattern COMMENT_PATTERN
+            = Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/|(^[^\"\\r\\n]*\\/\\/[^\\r\\n]*))", Pattern.MULTILINE | Pattern.DOTALL);
 
     private static final RunResult EMPTY_FAILURE
             = new RunResult(
@@ -71,7 +84,8 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
      * be named after the directory.
      */
     private Path getProFile(Path basePath) {
-        return basePath.resolve(new File(basePath.toFile().getName() + ".pro").toPath());
+        Path proFile = new File(basePath.toFile().getName() + ".pro").toPath();
+        return basePath.resolve(proFile);
     }
 
     @Override
@@ -81,43 +95,13 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
             return Optional.absent();
         }
 
-        try {
-            runTests(path);
-        } catch (Exception e) {
-            log.error("Failed to run tests {}", e);
+        Optional<ImmutableList<TestDesc>> tests = availablePoints(path);
+        if (!tests.isPresent()) {
+            log.error("Failed to scan exercise due to parsing error.");
             return Optional.absent();
         }
 
-        return Optional.of(parseExerciseDesc(path, exerciseName));
-    }
-
-    private ExerciseDesc parseExerciseDesc(Path testResults, String exerciseName) {
-        List<TestDesc> tests = createTestDescs(testResults);
-        return new ExerciseDesc(exerciseName, ImmutableList.copyOf(tests));
-    }
-
-    private List<TestDesc> createTestDescs(Path testResults) {
-        List<TestDesc> tests = new ArrayList<>();
-        List<String> addedTests = new ArrayList<>();
-
-        List<TestResult> testCases = readTestResults(testResults);
-
-        for (int i = 0; i < testCases.size(); i++) {
-            TestResult testCase = testCases.get(i);
-
-            String testClass = testCase.getName();
-            String testMethod = testCase.getName();
-            String testName = testClass + "." + testMethod;
-
-            List<String> points = Arrays.asList(testCase.getMessage().split(""));
-
-            if (!addedTests.contains(testName)) {
-                tests.add(new TestDesc(testName, ImmutableList.copyOf(points)));
-                addedTests.add(testName);
-            }
-        }
-
-        return tests;
+        return Optional.of(new ExerciseDesc(exerciseName, ImmutableList.copyOf(tests.get())));
     }
 
     @Override
@@ -181,13 +165,6 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         }
 
         return Optional.absent();
-    }
-
-    private List<TestResult> readTestResults(Path testPath) {
-        Path baseTestPath = testPath.toAbsolutePath().resolve(TEST_DIR);
-        Path testResults = baseTestPath.resolve(TMC_TEST_RESULTS);
-
-        return new QTestResultParser(testResults).getTestResults();
     }
 
     @Override
@@ -262,5 +239,73 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
                 .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
                 .<String, byte[]>build();
         return new RunResult(Status.COMPILE_FAILED, ImmutableList.<TestResult>of(), logs);
+    }
+
+    /**
+     * TODO: This is copy paste from tmc-langs regex branch. Regex branch method
+     * 'availablePoints' does not parse test names at this time.
+     *
+     * POINT_PATTERN matches the #define macro in the tests, for example:
+     *
+     * POINT(test_name2, suite_point);
+     *
+     * POINT(test_name, 1);
+     *
+     * etc.
+     */
+    public Optional<ImmutableList<TestDesc>> availablePoints(final Path rootPath) {
+        return findAvailablePoints(rootPath, POINT_PATTERN, COMMENT_PATTERN, ".cpp");
+    }
+
+    protected Optional<ImmutableList<TestDesc>> findAvailablePoints(final Path rootPath,
+            Pattern pattern, Pattern commentPattern, String suffix) {
+        Map<String, List<String>> tests = new HashMap<>();
+        List<TestDesc> descs = new ArrayList<>();
+        try {
+            final List<Path> potentialPointFiles = getPotentialPointFiles(rootPath, suffix);
+            for (Path p : potentialPointFiles) {
+
+                String contents = new String(Files.readAllBytes(p), "UTF-8");
+                String withoutComments = commentPattern.matcher(contents).replaceAll("");
+                Matcher matcher = pattern.matcher(withoutComments);
+                while (matcher.find()) {
+                    MatchResult matchResult = matcher.toMatchResult();
+                    String testName = matchResult.group(1).trim();
+                    String point = matchResult.group(2).trim();
+                    tests.putIfAbsent(testName, new ArrayList<String>());
+                    tests.get(testName).add(point);
+                }
+            }
+            for (String testName : tests.keySet()) {
+                List<String> points = tests.getOrDefault(testName, new ArrayList<String>());
+                descs.add(new TestDesc(testName, ImmutableList.<String>copyOf(points)));
+            }
+            return Optional.of(ImmutableList.copyOf(descs));
+        } catch (IOException e) {
+            // We could scan the exercise but that could be a security risk
+            return Optional.absent();
+        }
+    }
+
+    private List<Path> getPotentialPointFiles(final Path rootPath, final String suffix)
+            throws IOException {
+        final StudentFilePolicy studentFilePolicy = getStudentFilePolicy(rootPath);
+        final List<Path> potentialPointFiles = new ArrayList<>();
+
+        Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+                    throws IOException {
+                if (studentFilePolicy.isStudentFile(path, rootPath)) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+                if (!Files.isDirectory(path) && path.toString().endsWith(suffix)) {
+                    potentialPointFiles.add(path);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
+        return potentialPointFiles;
     }
 }

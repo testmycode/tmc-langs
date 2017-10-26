@@ -169,15 +169,14 @@ public final class QTestResultParser {
 
     /**
      * Returns the test results of the tests in this file.
+     *
+     * @return
      */
     public List<TestResult> getTestResults() {
         return this.tests;
     }
 
-    /**
-     * Returns the combined status of the tests in this file.
-     */
-    public Status getResultStatus() {
+    private Status getResultStatus() {
         for (TestResult result : getTestResults()) {
             if (!result.isSuccessful()) {
                 return Status.TESTS_FAILED;
@@ -189,6 +188,8 @@ public final class QTestResultParser {
 
     /**
      * Returns the run result of this file.
+     *
+     * @return
      */
     public RunResult result() {
         return new RunResult(

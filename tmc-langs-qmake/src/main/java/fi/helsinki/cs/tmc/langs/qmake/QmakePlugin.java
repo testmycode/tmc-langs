@@ -7,6 +7,8 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
@@ -20,8 +22,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
-import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +80,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     }
 
     /**
-     * Resolve the excercise .pro file from excercise directory. The file should
+     * Resolve the exercise .pro file from exercise directory. The file should
      * be named after the directory.
      */
     private Path getProFile(Path basePath) {

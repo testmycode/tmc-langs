@@ -1,4 +1,3 @@
-
 package fi.helsinki.cs.tmc.langs.qmake;
 
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
@@ -16,6 +15,11 @@ public final class QTestCase {
 
     /**
      * Create a test case for QT tests.
+     *
+     * @param name
+     * @param passed
+     * @param message for failed assertion
+     * @param points for test case
      */
     public QTestCase(String name, boolean passed, String message, List<String> points) {
         this.name = name;
@@ -49,6 +53,10 @@ public final class QTestCase {
 
     public String getMessage() {
         return message;
+    }
+
+    public List<String> getPoints() {
+        return points;
     }
 
 }

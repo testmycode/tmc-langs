@@ -1,4 +1,4 @@
-#include <Qtest>
+#include <QTest>
 #include "test_case_test_runner.h"
 #include "test_case_app.h"
 

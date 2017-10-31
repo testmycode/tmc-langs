@@ -49,11 +49,13 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
     private static final Path TMC_TEST_RESULTS = Paths.get("tmc_test_results.xml");
 
-    // POINT(exercise_name, 1)
+    // Finds pattern 'POINT(exercise_name, 1)'
     private static final Pattern POINT_PATTERN
             = Pattern.compile("POINT\\(\\s*(\\w+),\\s*(\\w+)\\s*\\)\\s*;");
+    // Pattern to find comments
     private static final Pattern COMMENT_PATTERN
-            = Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/|(^[^\"\\r\\n]*\\/\\/[^\\r\\n]*))", Pattern.MULTILINE | Pattern.DOTALL);
+            = Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/"
+                    + "|(^[^\"\\r\\n]*\\/\\/[^\\r\\n]*))", Pattern.MULTILINE | Pattern.DOTALL);
 
     private static final RunResult EMPTY_FAILURE
             = new RunResult(
@@ -84,8 +86,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
      * be named after the directory.
      */
     private Path getProFile(Path basePath) {
-        Path proFile = new File(basePath.toFile().getName() + ".pro").toPath();
-        return basePath.resolve(proFile);
+        return Paths.get(basePath.toString() + "/" + basePath.getFileName() + ".pro");
     }
 
     @Override
@@ -115,7 +116,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
      * <p>
      * The project root path must be specified for the {@link StudentFilePolicy}
      * to read any configuration files such as <tt>.tmcproject.yml</tt>.
-     *
+     * </p>
      * @param projectPath The project's root path
      */
     @Override
@@ -144,24 +145,25 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
                 log.error("Failed to get test output at {}", testResults);
                 return filledFailure(test.get());
             }
-
-            return new QTestResultParser(testResults).result();
+            QTestResultParser parser = new QTestResultParser();
+            parser.loadTests(testResults);
+            return parser.result();
         }
 
         return EMPTY_FAILURE;
     }
 
     private Optional<RunResult> build(Path path) {
-        Optional<RunResult> result = buildWithQmake(path);
-        if (result.isPresent()) {
+        Optional<RunResult> error = buildWithQmake(path);
+        if (error.isPresent()) {
             log.warn("Failed to compile project with qmake");
-            return result;
+            return error;
         }
 
-        result = buildWithMake(path);
-        if (result.isPresent()) {
+        error = buildWithMake(path);
+        if (error.isPresent()) {
             log.warn("Failed to compile project with make");
-            return result;
+            return error;
         }
 
         return Optional.absent();
@@ -199,12 +201,12 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         return checkBuildResult(result);
     }
 
-    private Optional<RunResult> checkBuildResult(Optional<ProcessResult> result) {
-        if (result.isPresent()) {
-            if (result.get().statusCode == 0) {
+    private Optional<RunResult> checkBuildResult(Optional<ProcessResult> error) {
+        if (error.isPresent()) {
+            if (error.get().statusCode == 0) {
                 return Optional.absent();
             }
-            return Optional.of(filledFailure(result.get()));
+            return Optional.of(filledFailure(error.get()));
         }
         return Optional.of(EMPTY_FAILURE);
     }
@@ -216,7 +218,6 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
             log.info("Cleaned project");
         } else {
             log.warn("Cleaning project was not successful");
-
         }
     }
 
@@ -225,11 +226,12 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
         try {
             return Optional.of(runner.call());
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             log.error("Running command {} failed {}", Arrays.deepToString(command), e);
+            return Optional.absent();
         }
 
-        return Optional.absent();
+        
     }
 
     private RunResult filledFailure(ProcessResult processResult) {
@@ -244,13 +246,13 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     /**
      * TODO: This is copy paste from tmc-langs regex branch. Regex branch method
      * 'availablePoints' does not parse test names at this time.
-     *
+     * <p>
      * POINT_PATTERN matches the #define macro in the tests, for example:
      *
      * POINT(test_name2, suite_point);
      *
      * POINT(test_name, 1);
-     *
+     * </p>
      * etc.
      */
     public Optional<ImmutableList<TestDesc>> availablePoints(final Path rootPath) {
@@ -282,7 +284,6 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
             }
             return Optional.of(ImmutableList.copyOf(descs));
         } catch (IOException e) {
-            // We could scan the exercise but that could be a security risk
             return Optional.absent();
         }
     }

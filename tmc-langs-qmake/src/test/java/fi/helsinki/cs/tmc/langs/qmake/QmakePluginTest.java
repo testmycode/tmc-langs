@@ -1,16 +1,19 @@
 package fi.helsinki.cs.tmc.langs.qmake;
 
-import com.google.common.base.Optional;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
+import com.google.common.base.Optional;
+
 import org.junit.Test;
 
 import java.nio.file.Path;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
 
 public class QmakePluginTest {
 

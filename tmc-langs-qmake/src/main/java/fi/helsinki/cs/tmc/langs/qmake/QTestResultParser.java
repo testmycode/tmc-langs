@@ -38,12 +38,15 @@ public final class QTestResultParser {
 
     private static final Logger log = LoggerFactory.getLogger(QTestResultParser.class);
 
-    private final List<TestResult> tests;
+    private List<TestResult> tests;
 
-    public QTestResultParser(Path testResults) {
-        this.tests = parseTestCases(testResults);
+    public QTestResultParser() {
     }
 
+    public void loadTests(Path testResult) {
+        this.tests = parseTestCases(testResult);
+    }
+    
     private List<TestResult> parseTestCases(Path testOutput) {
         Document doc;
         try {
@@ -93,7 +96,7 @@ public final class QTestResultParser {
 
     /**
      * Parses Qt testlib XML output, as generated with -o filename.xml,xml.
-     *
+     * <p>
      * Points are mapped to test cases with Message node type 'qinfo'. These
      * messages contain: prefix "TMC:" test case name: "test_function_name"
      * points separated by period: ".1"
@@ -103,13 +106,15 @@ public final class QTestResultParser {
      *
      * When the testcase assertion(s) has passed, there will be an Incident node
      * with type "pass" and no Description node.
-     *
+     * </p>
      * <TestFunction name="test_function_name">
      * <Message type="qinfo" file="" line="0">
      * <Description><![CDATA[TMC:test_function_name.1]]></Description>
      * </Message>
      * <Incident type="fail" file="test_source.cpp" line="420">
-     * <Description><![CDATA['!strcmp(hello_msg(), "Helo, world!" )' returned FALSE. ()]]></Description>
+     * <Description>
+     * <![CDATA['!strcmp(hello_msg(), "Helo, world!" )' returned FALSE. ()]]>
+     * </Description>
      * </Incident>
      * <Duration msecs="0.135260"/>
      * </TestFunction>
@@ -147,31 +152,31 @@ public final class QTestResultParser {
     }
 
     /**
-     *
+     * <p>
      * Parse potential points from testcase.
-     *
+     * </p>
      */
     private List<String> parsePoints(Element testcase) {
         List<String> points = new ArrayList<>();
         NodeList messages = testcase.getElementsByTagName("Message");
         for (int i = 0; i < messages.getLength(); i++) {
+            // Convert node to element, messages.item(i) returns a node
             Element message = (Element) messages.item(i);
             Element desc = (Element) message.getElementsByTagName("Description").item(0);
             String text = desc.getTextContent();
             if (text.matches("^(TMC:.*)")) {
                 String[] split = text.split("\\.");
-                points.add(split[1]);
+                String result = split[1];
+                for (int j = 2; j < split.length; j++) {
+                    result += "." + split[j];
+                }
+                points.add(result);
             }
         }
 
         return points;
     }
 
-    /**
-     * Returns the test results of the tests in this file.
-     *
-     * @return
-     */
     public List<TestResult> getTestResults() {
         return this.tests;
     }
@@ -189,7 +194,7 @@ public final class QTestResultParser {
     /**
      * Returns the run result of this file.
      *
-     * @return
+     * @return Runresults
      */
     public RunResult result() {
         return new RunResult(

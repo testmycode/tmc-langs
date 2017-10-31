@@ -1,16 +1,22 @@
 package fi.helsinki.cs.tmc.langs.qmake;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
+
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class QTestResultParserTest {
 
@@ -20,14 +26,16 @@ public class QTestResultParserTest {
 
     public QTestResultParserTest() {
         passing = new QTestCase("passing", true, "Passed", Arrays.asList(new String[]{"1"}));
-        failing = new QTestCase("failing", false, "This test should've failed", Arrays.asList(new String[]{"2"}));
+        failing = new QTestCase("failing", false, "This test should've failed", 
+                                 Arrays.asList(new String[]{"2"}));
         another = new QTestCase("another", true, "Passed", Arrays.asList(new String[]{"3"}));
     }
 
     @Test(expected = IllegalStateException.class)
     public void testParsingWithNoTests() throws Exception {
-        Path empty_test_output = TestUtils.initTempFileWithContent("empty_test_output", "xml", "");
-        QTestResultParser qtparser = new QTestResultParser(empty_test_output);
+        Path emptyTestOutput = TestUtils.initTempFileWithContent("empty_test_output", "xml", "");
+        QTestResultParser qtparser = new QTestResultParser();
+        qtparser.loadTests(emptyTestOutput);
         assertTrue(qtparser.getTestResults().isEmpty());
     }
 
@@ -136,7 +144,10 @@ public class QTestResultParserTest {
         } catch (Exception e) {
             fail("Error creating or parsing output file: " + e.getMessage());
         }
-        return new QTestResultParser(testPath);
+        QTestResultParser qtparser = new QTestResultParser();
+        qtparser.loadTests(testPath);
+        
+        return qtparser;
     }
 
     private Path constructTestOutput(List<QTestCase> testCases) throws IOException {
@@ -148,7 +159,9 @@ public class QTestResultParserTest {
             pw.println("<TestFunction name=\"" + t.getName() + "\">");
             for (String point : t.getPoints()) {
                 pw.println("<Message type=\"qinfo\" file=\"\" line=\"0\">");
-                pw.println("<Description><![CDATA[TMC:" + t.getName() + "." + point + "]]></Description>");
+                pw.println("<Description><![CDATA[TMC:" + t.getName() 
+                        + "." + point 
+                        + "]]></Description>");
                 pw.println("</Message>");
             }
 

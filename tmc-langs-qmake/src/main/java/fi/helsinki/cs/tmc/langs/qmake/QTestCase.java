@@ -16,8 +16,8 @@ public final class QTestCase {
     /**
      * Create a test case for QT tests.
      *
-     * @param name
-     * @param passed
+     * @param name Name of the test
+     * @param passed Passed status
      * @param message for failed assertion
      * @param points for test case
      */

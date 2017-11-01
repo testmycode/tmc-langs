@@ -35,8 +35,6 @@ os:
   - osx
 jdk:
   - oraclejdk8
-  - oraclejdk7
-  - openjdk7
 matrix:
   allow_failures:
   - os: osx

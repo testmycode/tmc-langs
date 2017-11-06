@@ -19,10 +19,18 @@ env:
 
 before_install:
   - curl -L https://static.rust-lang.org/rustup.sh | sh -s -- --channel=stable --yes --prefix=$PWD --disable-sudo
+  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+  - echo "deb https://cloud.r-project.org/bin/linux/ubuntu trusty/" | sudo tee -a /etc/apt/sources.list
+  - sudo apt-get update -qq
+  - sudo apt-get install r-base -y
+  - sudo chmod 277 /usr/local/lib/R/site-library
+  - Rscript -e 'install.packages(c("devtools","testthat"),repos="http://cran.us.r-project.org")'
+  - Rscript -e 'devtools::install_github("RTMC/tmc-r-tester/tmcRtestrunner")'
   - export PATH=$PATH:$PWD/bin
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
   - mkdir -p $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"
   - mvn install -Dmaven.test.skip=true
+
 script:
   - mvn clean test
   - mvn checkstyle:check

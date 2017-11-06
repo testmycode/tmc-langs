@@ -1,0 +1,19 @@
+{
+    "ret_true works.": [
+        "r1",
+        "r1.1"
+    ],
+    "ret_one works.": [
+        "r1",
+        "r1.2"
+    ],
+    "add works.": [
+        "r1",
+        "r1.3",
+        "r1.4"
+    ],
+    "minus works": [
+        "r2",
+        "r2.1"
+    ]
+}

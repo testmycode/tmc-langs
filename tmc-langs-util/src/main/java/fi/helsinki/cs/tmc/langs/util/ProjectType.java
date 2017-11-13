@@ -7,6 +7,7 @@ import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenPlugin;
 import fi.helsinki.cs.tmc.langs.make.MakePlugin;
 import fi.helsinki.cs.tmc.langs.python3.Python3Plugin;
+import fi.helsinki.cs.tmc.langs.r.RPlugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public enum ProjectType {
     NO_TESTS(new NoTestsPlugin()), // Must be before Makefile for compatability reasons
     MAKEFILE(new MakePlugin()),
     PYTHON3(new Python3Plugin()),
+    R(new RPlugin()),
     JAVA_MAVEN(new MavenPlugin()),
     // for legacy and matching reasons keep the java ant as the last choise.
     JAVA_ANT(new AntPlugin());

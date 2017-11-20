@@ -6,6 +6,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
@@ -193,5 +194,11 @@ public final class RPlugin extends AbstractLanguagePlugin {
      */
     @Override
     public void clean(Path path) {
+    }
+
+    @Override
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
+        return new ExercisePackagingConfiguration(
+                ImmutableList.of("R"), ImmutableList.of("tests"));
     }
 }

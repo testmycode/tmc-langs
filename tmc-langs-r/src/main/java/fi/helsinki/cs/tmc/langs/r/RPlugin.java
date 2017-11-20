@@ -14,6 +14,7 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
+import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 
 import com.google.common.base.Optional;
@@ -96,7 +97,11 @@ public final class RPlugin extends AbstractLanguagePlugin {
         ProcessRunner runner = new ProcessRunner(this.getAvailablePointsCommand(), path);
 
         try {
-            runner.call();
+            ProcessResult result = runner.call();
+            if (result.statusCode != 0) {
+                log.error(CANNOT_SCAN_EXERCISE_MESSAGE);
+                return Optional.absent();
+            }
         } catch (Exception e) {
             log.error(CANNOT_SCAN_EXERCISE_MESSAGE, e);
             return Optional.absent();
@@ -117,7 +122,11 @@ public final class RPlugin extends AbstractLanguagePlugin {
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
  
         try {
-            runner.call();
+            ProcessResult result = runner.call();
+            if (result.statusCode != 0) {
+                log.error(CANNOT_RUN_TESTS_MESSAGE);
+                return getGenericErrorRunResult(new Exception(CANNOT_RUN_TESTS_MESSAGE));
+            }
         } catch (Exception e) {
             log.error(CANNOT_RUN_TESTS_MESSAGE, e);
             return getGenericErrorRunResult(e);

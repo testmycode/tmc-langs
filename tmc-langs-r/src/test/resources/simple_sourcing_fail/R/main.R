@@ -1,12 +1,12 @@
-RetTrue <- function() {
+ret_true <- function() {
   return(TRUE)
 }
 
 #This function produces an error
-RetOne <- function() {
+ret_one <- function() {
   error in source code
 }
 
-Add <- function(a, b) {
+add <- function(a, b) {
   return(a + b)
 }

@@ -25,7 +25,8 @@ public class RPluginTest {
 
     private Path simpleAllTestsPassProject;
     private Path simpleSomeTestsFailProject;
-    private Path simpleSourceCodeErrorProject;
+    private Path simpleSourcingFailProject;
+    private Path simpleRunFailProject;
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
@@ -38,8 +39,10 @@ public class RPluginTest {
                 "simple_all_tests_pass");
         simpleSomeTestsFailProject = TestUtils.getPath(getClass(),
                 "simple_some_tests_fail");
-        simpleSourceCodeErrorProject = TestUtils.getPath(getClass(),
-                "simple_source_code_error");
+        simpleSourcingFailProject = TestUtils.getPath(getClass(),
+                "simple_sourcing_fail");
+        simpleRunFailProject = TestUtils.getPath(getClass(),
+                "simple_run_fail");
     }
 
     @After
@@ -47,7 +50,7 @@ public class RPluginTest {
         removeAvailablePointsJson(simpleAllTestsPassProject);
         removeResultsJson(simpleAllTestsPassProject);
         removeResultsJson(simpleSomeTestsFailProject);
-        removeResultsJson(simpleSourceCodeErrorProject);
+        removeResultsJson(simpleSourcingFailProject);
     }
 
     private void removeResultsJson(Path projectPath) throws IOException {
@@ -88,8 +91,15 @@ public class RPluginTest {
     }
 
     @Test
-    public void runTestsCreatesRunResultWithCorrectStatusWhenSourceCodeHasError() {
-        RunResult res = plugin.runTests(simpleSourceCodeErrorProject);
+    public void runTestsCreatesRunResultWithCorrectStatusForSourcingFail() {
+        RunResult res = plugin.runTests(simpleSourcingFailProject);
+
+        assertEquals(RunResult.Status.COMPILE_FAILED, res.status);
+    }
+
+    @Test
+    public void runTestsCreatesRunResultWithCorrecStatusForRunFails() {
+        RunResult res = plugin.runTests(simpleRunFailProject);
 
         assertEquals(RunResult.Status.COMPILE_FAILED, res.status);
     }

@@ -117,6 +117,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
      * The project root path must be specified for the {@link StudentFilePolicy}
      * to read any configuration files such as <tt>.tmcproject.yml</tt>.
      * </p>
+     *
      * @param projectPath The project's root path
      */
     @Override
@@ -126,9 +127,26 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        Optional<RunResult> result = build(path);
-        if (result.isPresent()) {
-            return result.get();
+        try {
+            ProcessResult qmakeBuild = buildWithQmake(path);
+            if (qmakeBuild.statusCode != 0) {
+                log.error("Building project with qmake failed: {}", qmakeBuild.errorOutput);
+                return filledFailure(qmakeBuild.errorOutput);
+            }
+        } catch (Exception e) {
+            log.error("Building project with qmake failed", e);
+            throw new RuntimeException(e);
+        }
+
+        try {
+            ProcessResult makeBuild = buildWithMake(path);
+            if (makeBuild.statusCode != 0) {
+                log.error("Building project with make failed: {}", makeBuild.errorOutput);
+                return filledFailure(makeBuild.errorOutput);
+            }
+        } catch (Exception e) {
+            log.error("Building project with make failed", e);
+            throw new RuntimeException(e);
         }
 
         Path testResults = path.resolve(TMC_TEST_RESULTS);
@@ -139,34 +157,21 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
         log.info("Testing project with command {}", Arrays.toString(makeCommand));
 
-        Optional<ProcessResult> test = run(makeCommand, path);
-        if (test.isPresent()) {
+        try {
+            ProcessResult testRun = run(makeCommand, path);
+
             if (!Files.exists(testResults)) {
                 log.error("Failed to get test output at {}", testResults);
-                return filledFailure(test.get());
+                return filledFailure(testRun.output);
             }
-            QTestResultParser parser = new QTestResultParser();
-            parser.loadTests(testResults);
-            return parser.result();
+        } catch (Exception e) {
+            log.error("Testing with make check failed", e);
+            throw new RuntimeException(e);
         }
 
-        return EMPTY_FAILURE;
-    }
-
-    private Optional<RunResult> build(Path path) {
-        Optional<RunResult> error = buildWithQmake(path);
-        if (error.isPresent()) {
-            log.warn("Failed to compile project with qmake");
-            return error;
-        }
-
-        error = buildWithMake(path);
-        if (error.isPresent()) {
-            log.warn("Failed to compile project with make");
-            return error;
-        }
-
-        return Optional.absent();
+        QTestResultParser parser = new QTestResultParser();
+        parser.loadTests(testResults);
+        return parser.result();
     }
 
     @Override
@@ -184,58 +189,42 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         };
     }
 
-    private Optional<RunResult> buildWithQmake(Path dir) {
+    private ProcessResult buildWithQmake(Path dir) throws Exception {
         String qmakeArguments = "CONFIG+=test";
         Path pro = getProFile(dir);
         String[] qmakeCommand = {"qmake", qmakeArguments, pro.toString()};
 
         log.info("Building project with command {}", Arrays.deepToString(qmakeCommand));
-        Optional<ProcessResult> result = run(qmakeCommand, dir);
-        return checkBuildResult(result);
+        return run(qmakeCommand, dir);
     }
 
-    private Optional<RunResult> buildWithMake(Path dir) {
+    private ProcessResult buildWithMake(Path dir) throws Exception {
         String[] makeCommand = {"make"};
         log.info("Building project with command {}", Arrays.deepToString(makeCommand));
-        Optional<ProcessResult> result = run(makeCommand, dir);
-        return checkBuildResult(result);
-    }
-
-    private Optional<RunResult> checkBuildResult(Optional<ProcessResult> error) {
-        if (error.isPresent()) {
-            if (error.get().statusCode == 0) {
-                return Optional.absent();
-            }
-            return Optional.of(filledFailure(error.get()));
-        }
-        return Optional.of(EMPTY_FAILURE);
+        return run(makeCommand, dir);
     }
 
     @Override
     public void clean(Path path) {
         String[] command = {"make", "clean"};
-        if (run(command, path).isPresent()) {
-            log.info("Cleaned project");
-        } else {
-            log.warn("Cleaning project was not successful");
-        }
-    }
-
-    private Optional<ProcessResult> run(String[] command, Path dir) {
-        ProcessRunner runner = new ProcessRunner(command, dir);
-
         try {
-            return Optional.of(runner.call());
-        } catch (IOException | InterruptedException e) {
-            log.error("Running command {} failed {}", Arrays.deepToString(command), e);
-            return Optional.absent();
+            ProcessResult result = run(command, path);
+            if (result.statusCode != 0) {
+                log.error("Cleaning project was not successful", result.errorOutput);
+            }
+            log.info("Cleaned project");
+        } catch (Exception e) {
+            log.error("Cleaning project was not successful", e);
         }
-
-        
     }
 
-    private RunResult filledFailure(ProcessResult processResult) {
-        byte[] errorOutput = processResult.errorOutput.getBytes(StandardCharsets.UTF_8);
+    private ProcessResult run(String[] command, Path dir) throws Exception {
+        ProcessRunner runner = new ProcessRunner(command, dir);
+        return runner.call();
+    }
+
+    private RunResult filledFailure(String output) {
+        byte[] errorOutput = output.getBytes(StandardCharsets.UTF_8);
         ImmutableMap<String, byte[]> logs
                 = new ImmutableMap.Builder()
                 .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)

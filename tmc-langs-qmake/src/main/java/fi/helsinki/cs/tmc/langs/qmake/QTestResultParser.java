@@ -46,7 +46,7 @@ public final class QTestResultParser {
     public void loadTests(Path testResult) {
         this.tests = parseTestCases(testResult);
     }
-    
+
     private List<TestResult> parseTestCases(Path testOutput) {
         Document doc;
         try {
@@ -80,8 +80,7 @@ public final class QTestResultParser {
         try {
             doc = documentBuilder.parse(is);
         } catch (SAXException ex) {
-            log.info(SAX_PARSER_ERROR);
-            log.info(ex.toString());
+            log.info(SAX_PARSER_ERROR, ex);
         }
 
         if (doc == null) {

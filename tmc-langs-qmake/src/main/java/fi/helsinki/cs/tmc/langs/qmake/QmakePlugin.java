@@ -57,12 +57,6 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
             = Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/"
                     + "|(^[^\"\\r\\n]*\\/\\/[^\\r\\n]*))", Pattern.MULTILINE | Pattern.DOTALL);
 
-    private static final RunResult EMPTY_FAILURE
-            = new RunResult(
-                    Status.COMPILE_FAILED,
-                    ImmutableList.<TestResult>of(),
-                    new ImmutableMap.Builder<String, byte[]>().build());
-
     private static final Logger log = LoggerFactory.getLogger(QmakePlugin.class);
 
     /**

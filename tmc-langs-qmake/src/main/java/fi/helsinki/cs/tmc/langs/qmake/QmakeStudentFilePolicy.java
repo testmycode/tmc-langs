@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 
 public final class QmakeStudentFilePolicy extends ConfigurableStudentFilePolicy {
 
-    // TODO: figure this out
     private static final Path SOURCE_FOLDER_PATH = Paths.get("src");
 
     public QmakeStudentFilePolicy(Path configFileParent) {

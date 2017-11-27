@@ -127,8 +127,10 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
+        Path shadowDir = makeShadowBuildDir(path);
+
         try {
-            ProcessResult qmakeBuild = buildWithQmake(path);
+            ProcessResult qmakeBuild = buildWithQmake(shadowDir);
             if (qmakeBuild.statusCode != 0) {
                 log.error("Building project with qmake failed: {}", qmakeBuild.errorOutput);
                 return filledFailure(qmakeBuild.errorOutput);
@@ -139,7 +141,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         }
 
         try {
-            ProcessResult makeBuild = buildWithMake(path);
+            ProcessResult makeBuild = buildWithMake(shadowDir);
             if (makeBuild.statusCode != 0) {
                 log.error("Building project with make failed: {}", makeBuild.errorOutput);
                 return filledFailure(makeBuild.errorOutput);
@@ -158,7 +160,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         log.info("Testing project with command {}", Arrays.toString(makeCommand));
 
         try {
-            ProcessResult testRun = run(makeCommand, path);
+            ProcessResult testRun = run(makeCommand, shadowDir);
 
             if (!Files.exists(testResults)) {
                 log.error("Failed to get test output at {}", testResults);
@@ -189,9 +191,21 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         };
     }
 
+    private Path makeShadowBuildDir(Path dir) {
+        File buildDir = dir.resolve("build").toFile();
+        log.info("Making shadow build dir to {}", buildDir.toPath());
+        if (!buildDir.mkdirs()) {
+            throw new RuntimeException(
+                    "Unable to create shadow build directory: "
+                    + buildDir.toPath());
+        }
+
+        return buildDir.toPath();
+    }
+
     private ProcessResult buildWithQmake(Path dir) throws Exception {
         String qmakeArguments = "CONFIG+=test";
-        Path pro = getProFile(dir);
+        Path pro = getProFile(dir.getParent());
         String[] qmakeCommand = {"qmake", qmakeArguments, pro.toString()};
 
         log.info("Building project with command {}", Arrays.deepToString(qmakeCommand));

@@ -20,7 +20,7 @@ public class MetaSyntaxGenerator {
             list.add(new MetaSyntax("\\/\\*+", "\\*+\\/")); /* */
         } else if (fileType.matches("xml|http|html")) {
             list.add(new MetaSyntax("<!--", "-->"));
-        } else if (fileType.matches("properties|py")) {
+        } else if (fileType.matches("properties|py|R")) {
             list.add(new MetaSyntax("#", ""));
         }
         cache.put(fileType, list);

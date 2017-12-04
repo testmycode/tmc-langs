@@ -7,8 +7,9 @@ import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenPlugin;
 import fi.helsinki.cs.tmc.langs.make.MakePlugin;
 import fi.helsinki.cs.tmc.langs.python3.Python3Plugin;
-import fi.helsinki.cs.tmc.langs.r.RPlugin;
 import fi.helsinki.cs.tmc.langs.qmake.QmakePlugin;
+import fi.helsinki.cs.tmc.langs.r.RPlugin;
+
 
 
 import org.slf4j.Logger;

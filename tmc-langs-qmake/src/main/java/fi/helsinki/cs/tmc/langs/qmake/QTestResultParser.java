@@ -164,11 +164,7 @@ public final class QTestResultParser {
             Element desc = (Element) message.getElementsByTagName("Description").item(0);
             String text = desc.getTextContent();
             if (text.matches("^(TMC:.*)")) {
-                String[] split = text.split("\\.");
-                String result = split[1];
-                for (int j = 2; j < split.length; j++) {
-                    result += "." + split[j];
-                }
+                String result = text.substring(text.indexOf(".") + 1);
                 points.add(result);
             }
         }

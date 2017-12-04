@@ -129,9 +129,9 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
                 log.error("Building project with qmake failed: {}", qmakeBuild.errorOutput);
                 return filledFailure(qmakeBuild.errorOutput);
             }
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             log.error("Building project with qmake failed", e);
-            throw new RuntimeException(e);
+            throw new QmakeBuildException(e);
         }
 
         try {
@@ -140,9 +140,9 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
                 log.error("Building project with make failed: {}", makeBuild.errorOutput);
                 return filledFailure(makeBuild.errorOutput);
             }
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             log.error("Building project with make failed", e);
-            throw new RuntimeException(e);
+            throw new QmakeBuildException(e);
         }
 
         Path testResults = path.resolve(TMC_TEST_RESULTS);
@@ -160,9 +160,9 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
                 log.error("Failed to get test output at {}", testResults);
                 return filledFailure(testRun.output);
             }
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             log.error("Testing with make check failed", e);
-            throw new RuntimeException(e);
+            throw new QmakeBuildException(e);
         }
 
         QTestResultParser parser = new QTestResultParser();
@@ -197,7 +197,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         return buildDir.toPath();
     }
 
-    private ProcessResult buildWithQmake(Path dir) throws Exception {
+    private ProcessResult buildWithQmake(Path dir) throws IOException, InterruptedException {
         String qmakeArguments = "CONFIG+=test";
         Path pro = getProFile(dir.getParent());
         String[] qmakeCommand = {"qmake", qmakeArguments, pro.toString()};
@@ -206,7 +206,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         return run(qmakeCommand, dir);
     }
 
-    private ProcessResult buildWithMake(Path dir) throws Exception {
+    private ProcessResult buildWithMake(Path dir) throws IOException, InterruptedException {
         String[] makeCommand = {"make"};
         log.info("Building project with command {}", Arrays.deepToString(makeCommand));
         return run(makeCommand, dir);
@@ -226,7 +226,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         }
     }
 
-    private ProcessResult run(String[] command, Path dir) throws Exception {
+    private ProcessResult run(String[] command, Path dir) throws IOException, InterruptedException {
         ProcessRunner runner = new ProcessRunner(command, dir);
         return runner.call();
     }

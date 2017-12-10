@@ -121,6 +121,8 @@ public final class RPlugin extends AbstractLanguagePlugin {
     @Override
     public RunResult runTests(Path path) {
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
+
+        deleteResultsJson(path);
  
         try {
             ProcessResult result = runner.call();
@@ -187,6 +189,14 @@ public final class RPlugin extends AbstractLanguagePlugin {
             args = new String[]{"-e", "library(tmcRtestrunner);run_available_points()"};
         }
         return ArrayUtils.addAll(command, args);
+    }
+
+    public void deleteResultsJson(Path path) {
+        try {
+            Files.deleteIfExists(path.resolve(".results.json"));
+        } catch (Exception e) {
+            log.error("Could not delete .results.json", e);
+        }
     }
 
     /**

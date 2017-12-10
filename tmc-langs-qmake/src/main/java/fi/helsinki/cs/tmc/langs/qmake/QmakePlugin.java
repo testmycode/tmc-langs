@@ -49,9 +49,9 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
     private static final Path TMC_TEST_RESULTS = Paths.get("tmc_test_results.xml");
 
-    // Finds pattern 'POINT(exercise_name, 1)'
+    // Finds pattern 'POINT(exercise_name, 1.1)'
     private static final Pattern POINT_PATTERN
-            = Pattern.compile("POINT\\(\\s*(\\w+),\\s*(\\w+)\\s*\\)\\s*;");
+            = Pattern.compile("POINT\\(\\s*(\\w+),\\s*([^\\s|\\)]+)\\s*\\)\\s*;");
     // Pattern to find comments
     private static final Pattern COMMENT_PATTERN
             = Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/"

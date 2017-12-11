@@ -7,10 +7,10 @@ import static org.junit.Assert.assertTrue;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import com.google.common.base.Optional;
-import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
 import org.junit.Test;
 

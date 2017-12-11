@@ -11,7 +11,6 @@ import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import com.google.common.base.Optional;
-import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
 import org.junit.Test;
 

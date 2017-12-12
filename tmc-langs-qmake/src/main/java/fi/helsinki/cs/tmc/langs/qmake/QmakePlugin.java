@@ -146,16 +146,16 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         try {
             fullPath = path.toRealPath(LinkOption.NOFOLLOW_LINKS);
         } catch (IOException e) {
-            log.error("Path does not exist", path);
-            throw new RuntimeException("Path does not exist", e);
+            log.error("Exercise directory not found", e);
+            return filledFailure(Status.GENERIC_ERROR, "Exercise directory not found");
         }
 
         Path shadowDir;
         try {
             shadowDir = makeShadowBuildDir(fullPath);
         } catch (IOException e) {
-            log.error("Unable to make shadow build dir to path", fullPath);
-            throw new RuntimeException(e);
+            log.error("Preparing exercise failed", e);
+            return filledFailure(Status.GENERIC_ERROR, "Could not create build directory");
         }
 
         try {

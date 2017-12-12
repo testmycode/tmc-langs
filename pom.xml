@@ -233,6 +233,7 @@
         <module>tmc-langs-python3</module>
         <module>tmc-langs-notests</module>
 	    <!--module>tmc-langs-rust</module-->
+        <module>tmc-langs-qmake</module>
         <!-- TODO: add plugins and support libraries here -->
 
         <module>tmc-langs-util</module>

@@ -120,7 +120,8 @@ public class RPluginTest {
         RunResult res = plugin.runTests(doesNotExist);
         
         String stackTrace = new String(res.logs.get(SpecialLogs.GENERIC_ERROR_MESSAGE));
-        assertEquals("java.lang.NullPointerException", stackTrace.split("\n")[0]);
+        assertEquals("java.lang.NullPointerException",
+                stackTrace.split(System.getProperty("line.separator"))[0]);
         assertTrue(stackTrace.split("\n").length > 1);
     }
     
@@ -154,5 +155,18 @@ public class RPluginTest {
         StudentFilePolicy policy = plugin.getStudentFilePolicy(Paths.get(""));
 
         assertTrue(policy instanceof RStudentFilePolicy);
+    }
+
+    @Test
+    public void resultsJsonIsDeletedBeforeRunning() throws IOException {
+        Files.createFile(simpleAllTestsPassProject.resolve(".results.json"));
+        plugin.deleteResultsJson(simpleAllTestsPassProject);
+        assertTrue(!Files.exists(simpleAllTestsPassProject.resolve(".results.json")));
+    }
+
+    @Test
+    public void deleteResultsJsonWorksCorrectlyWhenNoJson() throws IOException {
+        plugin.deleteResultsJson(simpleAllTestsPassProject);
+        assertTrue(!Files.exists(simpleAllTestsPassProject.resolve(".results.json")));
     }
 }

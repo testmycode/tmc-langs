@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -49,9 +50,9 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
     private static final Path TMC_TEST_RESULTS = Paths.get("tmc_test_results.xml");
 
-    // Finds pattern 'POINT(exercise_name, 1)'
+    // Finds pattern 'POINT(exercise_name, 1.1)'
     private static final Pattern POINT_PATTERN
-            = Pattern.compile("POINT\\(\\s*(\\w+),\\s*(\\w+)\\s*\\)\\s*;");
+            = Pattern.compile("POINT\\(\\s*(\\w+),\\s*([^\\s|\\)]+)\\s*\\)\\s*;");
     // Pattern to find comments
     private static final Pattern COMMENT_PATTERN
             = Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/"
@@ -79,8 +80,9 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
      * Resolve the exercise .pro file from exercise directory. The file should
      * be named after the directory.
      */
-    private Path getProFile(Path basePath) {
-        return Paths.get(basePath.toString() + "/" + basePath.getFileName() + ".pro");
+    private Path getProFile(Path basePath) throws IOException {
+        Path fullPath = basePath.toRealPath(LinkOption.NOFOLLOW_LINKS);
+        return fullPath.resolve(fullPath.getFileName() + ".pro");
     }
 
     @Override
@@ -101,7 +103,11 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
-        return Files.isRegularFile(getProFile(path));
+        try {
+            return Files.isRegularFile(getProFile(path));
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /**
@@ -121,31 +127,45 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        Path shadowDir = makeShadowBuildDir(path);
+        Path fullPath;
+        try {
+            fullPath = path.toRealPath(LinkOption.NOFOLLOW_LINKS);
+        } catch (IOException e) {
+            log.error("Exercise directory not found", e);
+            return filledFailure(Status.GENERIC_ERROR, "Exercise directory not found");
+        }
+
+        Path shadowDir;
+        try {
+            shadowDir = makeShadowBuildDir(fullPath);
+        } catch (IOException e) {
+            log.error("Preparing exercise failed", e);
+            return filledFailure(Status.GENERIC_ERROR, "Could not create build directory");
+        }
 
         try {
             ProcessResult qmakeBuild = buildWithQmake(shadowDir);
             if (qmakeBuild.statusCode != 0) {
                 log.error("Building project with qmake failed: {}", qmakeBuild.errorOutput);
-                return filledFailure(qmakeBuild.errorOutput);
+                return filledFailure(Status.COMPILE_FAILED, qmakeBuild.errorOutput);
             }
         } catch (IOException | InterruptedException e) {
             log.error("Building project with qmake failed", e);
-            throw new QmakeBuildException(e);
+            return filledFailure(Status.GENERIC_ERROR, "Building project with qmake failed");
         }
 
         try {
             ProcessResult makeBuild = buildWithMake(shadowDir);
             if (makeBuild.statusCode != 0) {
                 log.error("Building project with make failed: {}", makeBuild.errorOutput);
-                return filledFailure(makeBuild.errorOutput);
+                return filledFailure(Status.COMPILE_FAILED, makeBuild.errorOutput);
             }
         } catch (IOException | InterruptedException e) {
             log.error("Building project with make failed", e);
-            throw new QmakeBuildException(e);
+            return filledFailure(Status.GENERIC_ERROR, "Building project with make failed");
         }
 
-        Path testResults = path.resolve(TMC_TEST_RESULTS);
+        Path testResults = shadowDir.resolve(TMC_TEST_RESULTS);
 
         String target = "check";
         String config = "TESTARGS=-o " + testResults.toString() + ",xml";
@@ -158,11 +178,11 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
             if (!Files.exists(testResults)) {
                 log.error("Failed to get test output at {}", testResults);
-                return filledFailure(testRun.output);
+                return filledFailure(Status.GENERIC_ERROR, testRun.output);
             }
         } catch (IOException | InterruptedException e) {
             log.error("Testing with make check failed", e);
-            throw new QmakeBuildException(e);
+            return filledFailure(Status.GENERIC_ERROR, "Testing with make check failed");
         }
 
         QTestResultParser parser = new QTestResultParser();
@@ -185,11 +205,18 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         };
     }
 
-    private Path makeShadowBuildDir(Path dir) {
-        File buildDir = dir.resolve("build").toFile();
+    private Path makeShadowBuildDir(Path dir) throws IOException {
+        Path shadowPath = dir.resolve("build");
+        if (Files.exists(shadowPath)) {
+            log.info("Shadow dir already exists at {}", shadowPath);
+            return shadowPath;
+        }
+
+        File buildDir = shadowPath.toFile();
+
         log.info("Making shadow build dir to {}", buildDir.toPath());
         if (!buildDir.mkdirs()) {
-            throw new RuntimeException(
+            throw new IOException(
                     "Unable to create shadow build directory: "
                     + buildDir.toPath());
         }
@@ -231,13 +258,13 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         return runner.call();
     }
 
-    private RunResult filledFailure(String output) {
+    private RunResult filledFailure(Status status, String output) {
         byte[] errorOutput = output.getBytes(StandardCharsets.UTF_8);
         ImmutableMap<String, byte[]> logs
                 = new ImmutableMap.Builder()
                 .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
                 .<String, byte[]>build();
-        return new RunResult(Status.COMPILE_FAILED, ImmutableList.<TestResult>of(), logs);
+        return new RunResult(status, ImmutableList.<TestResult>of(), logs);
     }
 
     /**

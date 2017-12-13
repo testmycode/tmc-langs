@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import com.google.common.base.Optional;
@@ -20,6 +21,7 @@ public class QmakePluginTest {
     private final QmakePlugin qmakePlugin;
 
     public QmakePluginTest() {
+        TestUtils.skipIfNotAvailable("qmake");
         qmakePlugin = new QmakePlugin();
     }
 
@@ -50,6 +52,37 @@ public class QmakePluginTest {
     }
 
     @Test
+    public void testQtTestsPassingWithMultipleLibSamePoints() {
+        RunResult result = runTests(TestUtils.getPath(getClass(),
+                "passing_multiple_lib_same_point"));
+        assertEquals("Tests passing with multiple libraries and same points",
+                RunResult.Status.PASSED, result.status);
+
+        assertEquals(3, result.testResults.size());
+
+        TestResult test1 = result.testResults.get(0);
+        assertEquals(test1.getName(), "test_function_one_here");
+        assertTrue(test1.isSuccessful());
+        assertEquals(2, test1.points.size());
+        assertEquals("testPoint1", test1.points.get(0));
+        assertEquals("testPoint1.1", test1.points.get(1));
+
+        TestResult test2 = result.testResults.get(1);
+        assertEquals(test2.getName(), "test_function_two_here");
+        assertTrue(test2.isSuccessful());
+        assertEquals(2, test2.points.size());
+        assertEquals("testPoint1", test2.points.get(0));
+        assertEquals("testPoint1.2", test2.points.get(1));
+
+        TestResult test3 = result.testResults.get(2);
+        assertEquals(test3.getName(), "test_function_two_here_2");
+        assertTrue(test3.isSuccessful());
+        assertEquals(2, test3.points.size());
+        assertEquals("testPoint1", test3.points.get(0));
+        assertEquals("testPoint1.3", test3.points.get(1));
+    }
+
+    @Test
     public void testQtBuildFailingWithSingleLib() {
         assertEquals("Student source not compiling with compiling single lib",
                 RunResult.Status.COMPILE_FAILED,
@@ -58,9 +91,24 @@ public class QmakePluginTest {
 
     @Test
     public void testQtFailingSingleLib() {
+        RunResult result = runTests(TestUtils.getPath(getClass(), "failing_single_lib"));
         assertEquals("Tests failing with single library",
                 RunResult.Status.TESTS_FAILED,
-                runTests("failing_single_lib"));
+                result.status);
+
+        assertEquals(2, result.testResults.size());
+
+        TestResult test1 = result.testResults.get(0);
+        assertEquals(test1.getName(), "test_function_one_here");
+        assertTrue(test1.isSuccessful());
+        assertEquals(1, test1.points.size());
+        assertEquals("1", test1.points.get(0));
+
+        TestResult test2 = result.testResults.get(1);
+        assertEquals(test2.getName(), "test_function_two_here");
+        assertFalse(test2.isSuccessful());
+        assertEquals(1, test2.points.size());
+        assertEquals("2", test2.points.get(0));
     }
 
     @Test
@@ -128,6 +176,38 @@ public class QmakePluginTest {
     }
 
     @Test
+    public void testScanExerciseWithPartialPoints() {
+        Optional<ExerciseDesc> optional = scanExercise("passing_multiple_lib_same_point");
+        assertTrue(optional.isPresent());
+
+        ExerciseDesc desc = optional.get();
+
+        assertEquals("passing_multiple_lib_same_point", desc.name);
+
+        assertEquals(3, desc.tests.size());
+        TestDesc test1 = desc.tests.get(2);
+        TestDesc test2 = desc.tests.get(0);
+        TestDesc test3 = desc.tests.get(1);
+
+        assertEquals("test_function_one_here", test1.name);
+        assertEquals("test_function_two_here", test2.name);
+        assertEquals("test_function_two_here_2", test3.name);
+
+        assertEquals(2, test1.points.size());
+        assertEquals("testPoint1", test1.points.get(0));
+        assertEquals("testPoint1.1", test1.points.get(1));
+
+        assertEquals(2, test2.points.size());
+        assertEquals("testPoint1", test2.points.get(0));
+        assertEquals("testPoint1.2", test2.points.get(1));
+
+        assertEquals(2, test2.points.size());
+        assertEquals("testPoint1", test3.points.get(0));
+        assertEquals("testPoint1.3", test3.points.get(1));
+
+    }
+
+    @Test
     public void testScanExerciseWithFailingSamePoints() {
         Optional<ExerciseDesc> optional = scanExercise("failing_single_lib_same_point");
         assertTrue(optional.isPresent());
@@ -177,6 +257,10 @@ public class QmakePluginTest {
     public void testScanExerciseWithNonexistentProject() {
         Optional<ExerciseDesc> optional = scanExercise("");
         assertFalse(optional.isPresent());
+    }
+
+    private RunResult runTests(Path testExercise) {
+        return qmakePlugin.runTests(testExercise);
     }
 
     private RunResult.Status runTests(String testExercise) {

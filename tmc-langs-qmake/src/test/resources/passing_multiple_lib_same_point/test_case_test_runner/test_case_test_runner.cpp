@@ -15,7 +15,8 @@ void test_case_test_runner::test_function_one_here() {
 
     test_case_lib test_case;
 
-    POINT(test_function_one_here, 1);
+    POINT(test_function_one_here, testPoint1);
+    POINT(test_function_one_here, testPoint1.1);
     QVERIFY(!strcmp(test_case.piece_of_string(), "Hello, world!"));
 
 }
@@ -24,8 +25,9 @@ void test_case_test_runner::test_function_two_here() {
 
     test_case_lib2 test_case;
 
-     POINT(test_function_two_here, 2);
-     QVERIFY(test_case.adding_ints(666, 1337) == 2003);
+    POINT(test_function_two_here, testPoint1);
+    POINT(test_function_two_here, testPoint1.2);
+    QVERIFY(test_case.adding_ints(666, 1337) == 2003);
 
 }
 
@@ -33,6 +35,7 @@ void test_case_test_runner::test_function_two_here_2() {
 
     test_case_lib2 test_case;
 
-    POINT(test_function_two_here_2, 1);
+    POINT(test_function_two_here_2, testPoint1);
+    POINT(test_function_two_here_2, testPoint1.3);
     QVERIFY(test_case.adding_ints(-341, 428) == 87);
 }

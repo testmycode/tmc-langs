@@ -44,6 +44,15 @@ public interface TaskExecutor {
      */
     void prepareStubs(Map<Path, LanguagePlugin> exerciseMap, Path repoPath, Path destPath)
             throws NoLanguagePluginFoundException;
+    
+    /**
+     * Finds the correct language plug-in for the given exercise path. After which
+     * it copies all files from exercisePath and all student files from submissionPath
+     * and creates a tarball with the aforementioned files and tmc-langs, and tmc-run.
+     */
+    public void prepareSandboxTask(Path exercisePath, Path submissionPath,
+            Path outputPath, Path tmcRunPath, Path tmcLangsPath)
+            throws NoLanguagePluginFoundException, IOException;
 
     /**
      * Finds the correct language plug-in for the given exercise path. After which calls the
@@ -120,19 +129,8 @@ public interface TaskExecutor {
             throws NoLanguagePluginFoundException;
 
     /**
-     * Creates a tarball that can be submitted to TMC-sandbox.
-     * The tar is created to the target location
-     * 
-     * @param projectDir Location of the unzipped project
-     * @param tmcLangs Location of tmc-langs-cli.jar
-     * @param tmcrun Location of tmc-run init script
-     * @param targetLocation Location where the tar archive should be extracted to
-     */
-    void compressTarForSubmitting(Path projectDir, Path tmcLangs, Path tmcrun, Path targetLocation)
-            throws IOException, ArchiveException;
-
-    /**
      * Run clean for given path using proper language plugin.
      */
     void clean(Path path) throws NoLanguagePluginFoundException;
+
 }

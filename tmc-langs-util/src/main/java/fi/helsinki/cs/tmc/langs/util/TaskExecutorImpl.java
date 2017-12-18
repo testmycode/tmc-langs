@@ -16,13 +16,19 @@ import fi.helsinki.cs.tmc.langs.util.tarservice.TarCreator;
 import com.google.common.base.Optional;
 
 import org.apache.commons.compress.archivers.ArchiveException;
+
+import org.codehaus.plexus.util.FileUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+
 
 public class TaskExecutorImpl implements TaskExecutor {
 
@@ -106,7 +112,26 @@ public class TaskExecutorImpl implements TaskExecutor {
             throws NoLanguagePluginFoundException {
         new ExerciseBuilder().prepareSolutions(exerciseMap, repoPath, destPath);
     }
-
+    
+    @Override
+    public void prepareSandboxTask(Path exercisePath, Path submissionPath, Path outputPath,
+                                   Path tmcRunPath, Path tmcLangsPath)
+            throws NoLanguagePluginFoundException, IOException {
+        Path tempdir = Files.createTempDirectory("sandbox-task");
+        FileUtils.copyDirectoryStructure(exercisePath.toFile(), tempdir.toFile());
+        getLanguagePlugin(exercisePath).prepareSubmission(submissionPath, tempdir);
+        TarCreator tarCreator = new TarCreator();
+        log.info("Copying files to directory " + submissionPath.toString()
+                + " and creating tar ball");
+        try {
+            tarCreator.createTarFromProject(tempdir, tmcLangsPath, tmcRunPath, outputPath);
+        } catch (ArchiveException ex) {
+            java.util.logging.Logger.getLogger(TaskExecutorImpl.class.getName()).log(Level.SEVERE,
+                    "Failed to create tar from project " + submissionPath, ex);
+        }
+        FileUtils.forceDelete(tempdir.toFile());
+    }
+    
     @Override
     public byte[] compressProject(Path path) throws NoLanguagePluginFoundException, IOException {
         return getLanguagePlugin(path).compressProject(path);
@@ -116,14 +141,6 @@ public class TaskExecutorImpl implements TaskExecutor {
     public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path)
             throws NoLanguagePluginFoundException {
         return getLanguagePlugin(path).getExercisePackagingConfiguration(path);
-    }
-
-    @Override
-    public void compressTarForSubmitting(Path projectDir, Path tmcLangs,
-            Path tmcrun, Path targetLocation) throws IOException, ArchiveException {
-        TarCreator tarCompresser = new TarCreator();
-        log.info("Copying files to directory " + projectDir.toString() + " and creating tar ball");
-        tarCompresser.createTarFromProject(projectDir, tmcLangs, tmcrun, targetLocation);
     }
 
     @Override

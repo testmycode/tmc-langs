@@ -4,6 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
@@ -149,6 +150,30 @@ public class StudentFileAwareUnzipperTest {
         FileUtils.deleteDirectory(tmpDirCorrect.toFile());
     }
 
+    @Test
+    public void testForceUpdate() throws IOException {
+        StudentFilePolicy policy = new ConfigurableStudentFilePolicy(tmpDir) {
+            @Override
+            public boolean isStudentSourceFile(Path path, Path projectRootPath) {
+                return true;
+            }
+        };
+        unzipper = new StudentFileAwareUnzipper(policy);
+
+        Path faulty = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zipTestResources")
+                .resolve("faulty.zip");
+        Path correction = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zipTestResources")
+                .resolve("correction.zip");
+
+        unzipper.unzip(faulty, tmpDir);
+
+        unzipper.unzip(correction, tmpDir);
+
+        Path testFile = tmpDir.resolve(Paths.get("src", "test_file"));
+        String contents = new String(Files.readAllBytes(testFile));
+        assertEquals("correct", contents.trim());
+    }
+
     private StudentFilePolicy getNothingIsStudentFilePolicy() {
         return new StudentFilePolicy() {
             @Override
@@ -159,6 +184,11 @@ public class StudentFileAwareUnzipperTest {
             @Override
             public boolean mayDelete(Path file, Path projectRoot) {
                 return true;
+            }
+
+            @Override
+            public boolean isUpdatingForced(Path path, Path projectRootPath) {
+                return false;
             }
         };
     }
@@ -172,6 +202,11 @@ public class StudentFileAwareUnzipperTest {
 
             @Override
             public boolean mayDelete(Path file, Path projectRoot) {
+                return false;
+            }
+
+            @Override
+            public boolean isUpdatingForced(Path path, Path projectRootPath) {
                 return false;
             }
         };

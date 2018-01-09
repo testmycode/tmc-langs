@@ -1,13 +1,15 @@
 package fi.helsinki.cs.tmc.langs.io.zip;
 
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
+import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
 import com.google.common.collect.Sets;
+
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
-
 import org.apache.commons.io.IOUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,25 +59,26 @@ public final class StudentFileAwareUnzipper implements Unzipper {
 
         Set<Path> pathsInZip = Sets.newHashSet();
         try (ZipFile zipFile = new ZipFile(zip.toFile())) {
-
-            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-
             String projectDirInZip = findProjectDirInZip(zipFile.getEntries());
-
             log.debug("Project dir in zip: {}", projectDirInZip);
 
+            ZipArchiveEntry newTmcProjectYml = zipFile.getEntry(projectDirInZip + "/"
+                    + TmcProjectYmlParser.CONFIG_PATH);
+            if (newTmcProjectYml != null) {
+                byte[] entryData = IOUtils.toByteArray(zipFile.getInputStream(newTmcProjectYml));
+
+                Path entryTargetPath = getEntryTargetPath(newTmcProjectYml,
+                        projectDirInZip, target);
+                FileUtils.writeByteArrayToFile(entryTargetPath.toFile(), entryData);
+            }
+            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
                 if (!entry.getName().startsWith(projectDirInZip)) {
                     log.debug("Skipping non project file from zip - {}", entry.getName());
                     continue;
                 }
-
-                String restOfPath =
-                        trimSlashes(entry.getName().substring(projectDirInZip.length()));
-
-                Path entryTargetPath =
-                        target.resolve(trimSlashes(restOfPath.replace("/", File.separator)));
+                Path entryTargetPath = getEntryTargetPath(entry, projectDirInZip, target);
                 pathsInZip.add(entryTargetPath);
 
                 log.debug(
@@ -93,8 +96,6 @@ public final class StudentFileAwareUnzipper implements Unzipper {
                 InputStream entryContent = zipFile.getInputStream(entry);
                 byte[] entryData = IOUtils.toByteArray(entryContent);
                 if (Files.exists(entryTargetPath)) {
-                    log.trace("Allowed to unzip, unzipping");
-
                     if (fileContentEquals(target.toFile(), entryData)) {
                         shouldWrite = false;
                         result.unchangedFiles.add(entryTargetPath);
@@ -110,6 +111,7 @@ public final class StudentFileAwareUnzipper implements Unzipper {
                     result.newFiles.add(entryTargetPath);
                 }
                 if (shouldWrite) {
+                    log.trace("Allowed to unzip, unzipping");
                     FileUtils.writeByteArrayToFile(entryTargetPath.toFile(), entryData);
                 } else {
                     log.trace("Not allowed to unzip, skipping file");
@@ -172,7 +174,7 @@ public final class StudentFileAwareUnzipper implements Unzipper {
             if (name.endsWith("/nbproject/")
                     || name.endsWith("/pom.xml")
                     || name.endsWith("/.idea")
-                    || name.endsWith("Makefike")
+                    || name.endsWith("Makefile")
                     || name.endsWith("/src/")
                     || name.endsWith("/test/")) {
                 return dirname(name);
@@ -206,12 +208,13 @@ public final class StudentFileAwareUnzipper implements Unzipper {
 
         log.trace("File exists, checking whether overwriting is allowed");
 
-        if (filePolicy.isStudentFile(file, projectRoot)) {
-            log.trace("File is student file, do not allow to overwrite");
+        if (filePolicy.isStudentFile(file, projectRoot)
+                && !filePolicy.isUpdatingForced(file, projectRoot)) {
+            log.trace("File is student file and updating isn't forced, do not allow to overwrite");
             return false;
         }
 
-        log.trace("File is not a student file, allow overwriting");
+        log.trace("File is not a student file or updating is forced, allow overwriting");
 
         return true;
     }
@@ -229,5 +232,10 @@ public final class StudentFileAwareUnzipper implements Unzipper {
             return true;
         }
         return false;
+    }
+
+    private Path getEntryTargetPath(ZipArchiveEntry entry, String projectDirInZip, Path target) {
+        String restOfPath = trimSlashes(entry.getName().substring(projectDirInZip.length()));
+        return target.resolve(trimSlashes(restOfPath.replace("/", File.separator)));
     }
 }

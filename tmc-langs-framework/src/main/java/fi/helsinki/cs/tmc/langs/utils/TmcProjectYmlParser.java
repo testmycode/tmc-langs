@@ -11,6 +11,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -20,17 +21,28 @@ import java.util.Map;
 
 public final class TmcProjectYmlParser implements ConfigurationParser {
 
+    public static final Path CONFIG_PATH = Paths.get(".tmcproject.yml");
     private static final Logger log = LoggerFactory.getLogger(TmcProjectYmlParser.class);
+
+    private final Path configFilePath;
+
+    public TmcProjectYmlParser(Path rootPath) {
+        this.configFilePath = rootPath.resolve(CONFIG_PATH);
+    }
 
     /**
      * Parses a list of extra student files from a <tt>.tmcproject.yml</tt> file.
      */
-    public List<Path> parseExtraStudentFiles(Path configFilePath) {
-        return parseExtraFiles("extra_student_files", configFilePath);
+    public List<Path> parseExtraStudentFiles() {
+        return parseExtraFiles("extra_student_files");
     }
 
-    public List<Path> parseExtraTestFiles(Path configFilePath) {
-        return parseExtraFiles("extra_test_files", configFilePath);
+    public List<Path> parseExtraTestFiles() {
+        return parseExtraFiles("extra_test_files");
+    }
+
+    public List<Path> parseForceUpdateFiles() {
+        return parseExtraFiles("force_update");
     }
 
     @Override
@@ -51,7 +63,10 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
         return options;
     }
 
-    private List<Path> parseExtraFiles(String key, Path configFilePath) {
+    private List<Path> parseExtraFiles(String key) {
+        if (!Files.exists(configFilePath)) {
+            return new ArrayList<>();
+        }
         log.debug("Parsing " + key + " files from {}", configFilePath);
 
         List<Path> extraFiles = new ArrayList<>();

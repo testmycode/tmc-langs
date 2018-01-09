@@ -16,4 +16,9 @@ public final class NothingIsStudentFileStudentFilePolicy implements StudentFileP
     public boolean mayDelete(Path file, Path projectRoot) {
         return !isStudentFile(file, projectRoot);
     }
+
+    @Override
+    public boolean isUpdatingForced(Path path, Path projectRootPath) {
+        return false;
+    }
 }

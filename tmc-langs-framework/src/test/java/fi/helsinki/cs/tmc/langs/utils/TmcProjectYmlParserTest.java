@@ -18,15 +18,16 @@ import java.util.Map;
 public class TmcProjectYmlParserTest {
 
     private TmcProjectYmlParser tmcProjectYmlParser;
+    private Path path;
 
     @Before
-    public void setUp() {
-        this.tmcProjectYmlParser = new TmcProjectYmlParser();
+    public void setUp() throws IOException {
+        this.path = Files.createTempFile("temp", ".txt");
+        this.tmcProjectYmlParser = new TmcProjectYmlParser(path);
     }
 
     @Test
     public void testParserParsesOptions() throws IOException {
-        Path path = Files.createTempFile("temp", ".txt");
         FileUtils.writeStringToFile(path.toFile(), "simple_option: true");
         Map<String, ValueObject> options = tmcProjectYmlParser.parseOptions(path);
 
@@ -37,7 +38,6 @@ public class TmcProjectYmlParserTest {
 
     @Test
     public void testParserWithSimpleBooleanOption() throws IOException {
-        Path path = Files.createTempFile("temp", ".txt");
         FileUtils.writeStringToFile(path.toFile(), "simple_option: true");
         Map<String, ValueObject> options = tmcProjectYmlParser.parseOptions(path);
 
@@ -46,7 +46,6 @@ public class TmcProjectYmlParserTest {
 
     @Test
     public void testParserWithSimpleFalseBooleanOption() throws IOException {
-        Path path = Files.createTempFile("temp", ".txt");
         FileUtils.writeStringToFile(path.toFile(), "simple_option: false");
         Map<String, ValueObject> options = tmcProjectYmlParser.parseOptions(path);
 
@@ -55,7 +54,6 @@ public class TmcProjectYmlParserTest {
 
     @Test
     public void testParserWithSimpleStringOption() throws IOException {
-        Path path = Files.createTempFile("temp", ".txt");
         FileUtils.writeStringToFile(path.toFile(), "simple_option: option");
         Map<String, ValueObject> options = tmcProjectYmlParser.parseOptions(path);
 

@@ -60,9 +60,7 @@ public class ConfigurationTest {
     public void testParseOptions() throws IOException {
         Files.write(file, "option: true".getBytes());
 
-        this.configuration = new Configuration();
-
-        assertFalse(configuration.isSet("option"));
+        this.configuration = new Configuration(folder);
 
         configuration.parseOptions(folder);
 

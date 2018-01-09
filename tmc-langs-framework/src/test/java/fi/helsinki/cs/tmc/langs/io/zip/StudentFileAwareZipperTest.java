@@ -173,6 +173,11 @@ public class StudentFileAwareZipperTest {
             public boolean mayDelete(Path file, Path projectRoot) {
                 return true;
             }
+
+            @Override
+            public boolean isUpdatingForced(Path path, Path projectRootPath) {
+                return false;
+            }
         });
 
         byte[] zip = zipper.zip(uncompressed);
@@ -208,6 +213,11 @@ public class StudentFileAwareZipperTest {
             @Override
             public boolean mayDelete(Path file, Path projectRoot) {
                 return true;
+            }
+
+            @Override
+            public boolean isUpdatingForced(Path path, Path projectRootPath) {
+                return false;
             }
         });
 

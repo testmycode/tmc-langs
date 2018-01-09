@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 import fi.helsinki.cs.tmc.langs.domain.Configuration;
 import fi.helsinki.cs.tmc.langs.domain.TestResult;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,13 +26,21 @@ public class CTestResultParserTest {
 
     private ArrayList<CTestCase> oneOfEachTest;
 
+    private Path tempDir;
+
     public CTestResultParserTest() {}
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         oneOfEachTest = new ArrayList<>();
         oneOfEachTest.add(new CTestCase("passing", true, "Passed", null));
         oneOfEachTest.add(new CTestCase("failing", false, "This test should've failed", null));
+        this.tempDir = Files.createTempDirectory("temporary");
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        Files.deleteIfExists(tempDir);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -39,7 +48,7 @@ public class CTestResultParserTest {
         CTestResultParser cpar = null;
         Path tmp = mkTempFile("test_output", ".xml");
         try {
-            cpar = new CTestResultParser(null, tmp, null, new Configuration(), true);
+            cpar = new CTestResultParser(null, tmp, null, new Configuration(tempDir), true);
         } finally {
             Files.delete(tmp);
         }
@@ -54,8 +63,8 @@ public class CTestResultParserTest {
             testCases.add(oneOfEachTest.get(0));
             Path tmp = constructTestOutput(testCases);
             cpar =
-                    new CTestResultParser(
-                            tmpFolder(), tmp, emptyValgrindOutput(), new Configuration(), true);
+                    new CTestResultParser(tmpFolder(), tmp,
+                            emptyValgrindOutput(), new Configuration(tempDir), true);
             Files.delete(tmp);
         } catch (Exception e) {
             fail("Error creating or parsing mock output file: " + e.getMessage());
@@ -74,7 +83,7 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
             Path tmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmpFolder(), tmp, null, new Configuration(), true);
+            cpar = new CTestResultParser(tmpFolder(), tmp, null, new Configuration(tempDir), true);
             Files.delete(tmp);
 
         } catch (Exception e) {
@@ -97,8 +106,8 @@ public class CTestResultParserTest {
         try {
             Path tmp = constructTestOutput(oneOfEachTest);
             cpar =
-                    new CTestResultParser(
-                            tmpFolder(), tmp, emptyValgrindOutput(), new Configuration(), true);
+                    new CTestResultParser(tmpFolder(), tmp,
+                            emptyValgrindOutput(), new Configuration(tempDir), true);
             tmp.toFile().delete();
 
         } catch (Exception e) {
@@ -117,7 +126,7 @@ public class CTestResultParserTest {
             ArrayList<CTestCase> testCases = new ArrayList<>();
             testCases.add(oneOfEachTest.get(1));
             Path ttmp = constructTestOutput(testCases);
-            cpar = new CTestResultParser(tmpFolder(), ttmp, null, new Configuration(), true);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, null, new Configuration(tempDir), true);
             ttmp.toFile().delete();
             Path vtmp = constructNotMemoryFailingValgrindOutput(testCases);
             vtmp.toFile().delete();
@@ -143,7 +152,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructMemoryFailingValgrindOutput();
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(), true);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(tempDir), true);
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (IOException e) {
@@ -168,7 +177,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructNotMemoryFailingValgrindOutput(oneOfEachTest);
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(), true);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(tempDir), true);
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (Exception e) {
@@ -191,7 +200,7 @@ public class CTestResultParserTest {
             Path ttmp = constructTestOutput(oneOfEachTest);
             Path vtmp = constructMemoryFailingValgrindOutput();
 
-            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(), true);
+            cpar = new CTestResultParser(tmpFolder(), ttmp, vtmp, new Configuration(tempDir), true);
             vtmp.toFile().delete();
             ttmp.toFile().delete();
         } catch (IOException e) {

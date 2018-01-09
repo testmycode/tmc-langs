@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +23,14 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurableStudentFilePolicy.class);
 
-    private static final Path CONFIG_PATH = Paths.get(".tmcproject.yml");
-
-    private Path configFile;
+    private Path configFileParentPath;
 
     private List<Path> extraStudentFiles;
+    private List<Path> forceUpdateFiles;
     private Path rootPath;
 
     public ConfigurableStudentFilePolicy(Path configFileParent) {
-        this.configFile = configFileParent.resolve(CONFIG_PATH);
+        this.configFileParentPath = configFileParent;
     }
 
     /**
@@ -56,7 +54,7 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
             return false;
         }
 
-        if (path.getFileName().equals(configFile.getFileName())) {
+        if (path.getFileName().equals(TmcProjectYmlParser.CONFIG_PATH.getFileName())) {
             return false;
         }
 
@@ -72,38 +70,38 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
     /** Determines whether a file is an <tt>ExtraStudentFile</tt>. */
     private boolean isExtraStudentFile(Path path) {
         if (extraStudentFiles == null) {
-            loadExtraStudentFileList();
+            TmcProjectYmlParser parser = new TmcProjectYmlParser(configFileParentPath);
+            extraStudentFiles = parser.parseExtraStudentFiles();
         }
 
-        for (Path extraStudentFile : extraStudentFiles) {
-            Path extraStudentPath = rootPath.resolve(extraStudentFile).toAbsolutePath();
-            Path userSuppliedPath = path.toAbsolutePath();
-            if (extraStudentPath.equals(userSuppliedPath)
-                    || (userSuppliedPath.startsWith((extraStudentPath))
-                            && Files.isDirectory(extraStudentPath))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Loads the <tt>ExtraStudentFiles</tt> of the project specified during construction.
-     *
-     * <p>More specifically, this reads the <tt>.tmcproject.yml</tt> file from the project root
-     * and parses it for the necessary information.
-     */
-    private void loadExtraStudentFileList() {
-        extraStudentFiles = new ArrayList<>();
-
-        if (Files.exists(configFile)) {
-            TmcProjectYmlParser parser = new TmcProjectYmlParser();
-            extraStudentFiles = parser.parseExtraStudentFiles(configFile);
-        }
+        return isPathWhitelisted(path, extraStudentFiles);
     }
 
     @Override
     public boolean mayDelete(Path file, Path projectRoot) {
         return !isStudentFile(file, projectRoot);
+    }
+
+    @Override
+    public boolean isUpdatingForced(Path path, Path projectRootPath) {
+        if (forceUpdateFiles == null) {
+            TmcProjectYmlParser parser = new TmcProjectYmlParser(rootPath);
+            forceUpdateFiles = parser.parseForceUpdateFiles();
+        }
+
+        return isPathWhitelisted(path, forceUpdateFiles);
+    }
+
+    private boolean isPathWhitelisted(Path path, List<Path> paths) {
+        for (Path whitelistedPath : paths) {
+            Path whitelistedFullPath = rootPath.resolve(whitelistedPath).toAbsolutePath();
+            Path fullPath = path.toAbsolutePath();
+            if (whitelistedFullPath.equals(fullPath)
+                    || (fullPath.startsWith((whitelistedFullPath))
+                    && Files.isDirectory(whitelistedFullPath))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

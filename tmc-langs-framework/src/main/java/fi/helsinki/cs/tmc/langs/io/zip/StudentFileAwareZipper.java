@@ -118,7 +118,9 @@ public final class StudentFileAwareZipper implements Zipper {
 
         log.trace("Processing {}", currentPath);
 
-        if (filePolicy.isStudentFile(currentPath, projectRoot)) {
+        boolean studentFile = filePolicy.isStudentFile(currentPath, projectRoot);
+        boolean isDirectory = Files.isDirectory(currentPath);
+        if (studentFile || isDirectory) {
             log.trace("{} is student file", currentPath);
 
             if (isExplicitlyIgnoredDirectory(currentPath)) {
@@ -126,9 +128,11 @@ public final class StudentFileAwareZipper implements Zipper {
                 return;
             }
 
-            writeToZip(currentPath, zipStream, projectRoot);
+            if (studentFile) {
+                writeToZip(currentPath, zipStream, projectRoot);
+            }
 
-            if (Files.isDirectory(currentPath)) {
+            if (isDirectory) {
                 log.trace("Recursing to zip contents of {}", currentPath);
                 try (DirectoryStream<Path> directory = Files.newDirectoryStream(currentPath)) {
                     for (Path child : directory) {

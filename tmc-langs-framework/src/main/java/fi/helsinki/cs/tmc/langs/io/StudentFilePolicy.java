@@ -21,4 +21,10 @@ public interface StudentFilePolicy {
      * when replacing with model solution.
      */
     boolean mayDelete(Path file, Path projectRoot);
+
+    /**
+     * Tells whether this file should always be updated,
+     * used when decompressing zips.
+     */
+    boolean isUpdatingForced(Path path, Path projectRootPath);
 }

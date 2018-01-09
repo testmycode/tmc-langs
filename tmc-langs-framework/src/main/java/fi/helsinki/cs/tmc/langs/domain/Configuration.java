@@ -19,16 +19,9 @@ public final class Configuration {
     private Map<String, ValueObject> options;
     public static final Path TMC_PROJECT_YML = Paths.get(".tmcproject.yml");
 
-    @VisibleForTesting
-    public Configuration() {
-        tmcProjectYmlParser = new TmcProjectYmlParser();
-        options = new HashMap<>();
-        path = null;
-    }
-
     public Configuration(Path path) {
         this.path = path;
-        tmcProjectYmlParser = new TmcProjectYmlParser();
+        tmcProjectYmlParser = new TmcProjectYmlParser(path);
         parseOptions(path);
     }
 
@@ -50,11 +43,11 @@ public final class Configuration {
     }
 
     public List<Path> getExtraStudentFiles() {
-        return tmcProjectYmlParser.parseExtraStudentFiles(path.resolve(TMC_PROJECT_YML));
+        return tmcProjectYmlParser.parseExtraStudentFiles();
     }
 
     public List<Path> getExtraTestFiles() {
-        return tmcProjectYmlParser.parseExtraTestFiles(path.resolve(TMC_PROJECT_YML));
+        return tmcProjectYmlParser.parseExtraTestFiles();
     }
 
     /**

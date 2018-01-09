@@ -191,6 +191,44 @@ public class StudentFileAwareZipperTest {
         Files.deleteIfExists(compressed);
     }
 
+    @Test
+    public void extraStudentFilesGetZipped() throws IOException {
+        Path projectFolder = TestUtils.getPath(StudentFileAwareUnzipperTest.class,
+                "with_extra_student_files");
+
+        zipper.setStudentFilePolicy(new StudentFilePolicy() {
+            @Override
+            public boolean isStudentFile(Path path, Path projectRootPath) {
+                if (path.equals(projectRootPath)) {
+                    return true;
+                }
+                return path.getFileName().toString().endsWith("TehtavienhallintaTest.java");
+            }
+
+            @Override
+            public boolean mayDelete(Path file, Path projectRoot) {
+                return true;
+            }
+        });
+
+        byte[] zip = zipper.zip(projectFolder);
+        Path compressed = Files.createTempFile("testZip", ".zip");
+        Files.write(compressed, zip);
+
+        System.out.println("debug");
+
+        Path referenceZip = TEST_ASSETS_DIR.resolve("with_extra_student_files_target.zip");
+
+        ZipFile expected = new ZipFile(referenceZip.toFile());
+        ZipFile actual = new ZipFile(compressed.toFile());
+
+        assertZipsEqualDecompressed(expected, actual);
+
+        expected.close();
+        actual.close();
+        Files.deleteIfExists(compressed);
+    }
+
     private void assertZipsEqualDecompressed(ZipFile expected, ZipFile actual)
             throws IOException {
         Map<String, ZipArchiveEntry> expectedEntries = new HashMap<>();

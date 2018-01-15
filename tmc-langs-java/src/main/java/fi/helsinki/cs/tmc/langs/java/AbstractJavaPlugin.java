@@ -68,7 +68,8 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
 
     protected abstract CompileResult build(Path projectRootPath);
 
-    protected abstract TestRunFileAndLogs createRunResultFile(Path path)
+    protected abstract TestRunFileAndLogs createRunResultFile(Path path,
+                                                              CompileResult compileResult)
             throws TestRunnerException, TestScannerException;
 
     @Override
@@ -90,6 +91,15 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         }
 
         CompileResult compileResult = build(path);
+        return scanExercise(path, exerciseName, compileResult);
+
+    }
+
+    public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName,
+                                               CompileResult compileResult) {
+        if (!isExerciseTypeCorrect(path)) {
+            return Optional.absent();
+        }
         if (compileResult.getStatusCode() != 0) {
             return Optional.absent();
         }
@@ -129,7 +139,7 @@ public abstract class AbstractJavaPlugin extends AbstractLanguagePlugin {
         }
 
         try {
-            TestRunFileAndLogs results = createRunResultFile(projectRootPath);
+            TestRunFileAndLogs results = createRunResultFile(projectRootPath, compileResult);
             RunResult result = resultParser.parseTestResult(results);
             results.getTestResultsFile().delete();
             return result;

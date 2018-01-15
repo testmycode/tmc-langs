@@ -186,13 +186,14 @@ public class AntPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    protected TestRunFileAndLogs createRunResultFile(Path projectBasePath)
+    protected TestRunFileAndLogs createRunResultFile(Path projectBasePath,
+                                                     CompileResult compileResult)
             throws TestRunnerException, TestScannerException {
 
         log.info("Running tests for project at {}", projectBasePath);
 
         Optional<ExerciseDesc> exercise =
-                scanExercise(projectBasePath, projectBasePath.toString() + TEST_DIR);
+                scanExercise(projectBasePath, projectBasePath.toString() + TEST_DIR, compileResult);
         if (!exercise.isPresent()) {
             log.error("Unable to create run result file due to absent ExerciseDesc");
             throw new TestScannerException();

@@ -159,7 +159,8 @@ public class AntPluginTest {
                     }
                 };
 
-        plugin.createRunResultFile(Paths.get(""));
+        final Path projectBasePath = Paths.get("");
+        plugin.createRunResultFile(projectBasePath, plugin.build(projectBasePath));
     }
 
     private void assertFileLinesCount(File expected, File actual) throws IOException {

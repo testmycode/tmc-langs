@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -20,15 +19,11 @@ import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.sandbox.SubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.java.exception.TestRunnerException;
 import fi.helsinki.cs.tmc.langs.java.exception.TestScannerException;
-import fi.helsinki.cs.tmc.langs.utils.SourceFiles;
 import fi.helsinki.cs.tmc.langs.utils.TestUtils;
-import fi.helsinki.cs.tmc.testscanner.TestScanner;
 
 import com.google.common.base.Optional;
 
 import org.junit.Test;
-
-import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +59,7 @@ public class AbstractJavaPluginTest {
         }
 
         @Override
-        protected TestRunFileAndLogs createRunResultFile(Path path)
+        protected TestRunFileAndLogs createRunResultFile(Path path, CompileResult compileResult)
                 throws TestRunnerException, TestScannerException {
             return null;
         }
@@ -144,7 +139,8 @@ public class AbstractJavaPluginTest {
         AbstractJavaPlugin plugin =
                 new StubLanguagePlugin(Paths.get("")) {
                     @Override
-                    protected TestRunFileAndLogs createRunResultFile(Path path)
+                    protected TestRunFileAndLogs createRunResultFile(Path path,
+                                                                     CompileResult compileResult)
                             throws TestRunnerException, TestScannerException {
                         throw new TestRunnerException();
                     }
@@ -158,7 +154,8 @@ public class AbstractJavaPluginTest {
         AbstractJavaPlugin plugin =
                 new StubLanguagePlugin(Paths.get("")) {
                     @Override
-                    protected TestRunFileAndLogs createRunResultFile(Path path)
+                    protected TestRunFileAndLogs createRunResultFile(Path path,
+                                                                     CompileResult compileResult)
                             throws TestRunnerException, TestScannerException {
                         throw new TestScannerException();
                     }

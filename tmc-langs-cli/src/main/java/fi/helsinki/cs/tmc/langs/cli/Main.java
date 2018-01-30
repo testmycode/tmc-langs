@@ -44,6 +44,7 @@ public final class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static final String EXERCISE_PATH = "exercisePath";
+    private static final String CHECKSTYLE_OUTPUT_PATH = "CHECKSTYLE_OUTPUT_PATH";
     private static final String OUTPUT_PATH = "outputPath";
     private static final String LOCALE = "locale";
 
@@ -65,8 +66,8 @@ public final class Main {
                     + " prepare-submission  --clonePath --submissionPath --outputPath"
                     + "      Prepares from submission and solution project for which the tests"
                     + " can be run in sandbox\n"
-                    + " run-tests --exercisePath --outputPath"
-                    + "      Run the tests for the exercise.\n"
+                    + " run-tests --exercisePath --outputPath (--checkstyleOutputPath --locale)"
+                    + "      Run the tests for the exercise. Runs checkstyle if checkstyleOutputPath defined \n"
                     + " scan-exercise --exercisePath --outputPath"
                     + "  Produce an exercise description of an exercise directory.\n"
                     + " find-exercises --exercisePath --outputPath"
@@ -118,7 +119,7 @@ public final class Main {
                 printHelpAndExit();
                 break;
             case "checkstyle":
-                runCheckCodeStyle();
+                runCheckCodeStyle(getOutputPathFromArgs());
                 break;
             case "compress-project":
                 runCompressProject();
@@ -157,6 +158,13 @@ public final class Main {
         throw new IllegalStateException("No " + EXERCISE_PATH + " provided");
     }
 
+    private static Optional<Path> getCheckstyleOutputPathFromArgs() {
+        if (argsMap.containsKey(CHECKSTYLE_OUTPUT_PATH)) {
+            return Optional.of(Paths.get(argsMap.get(CHECKSTYLE_OUTPUT_PATH)));
+        }
+        return Optional.absent();
+    }
+
     private static Locale getLocaleFromArgs() {
         if (argsMap.containsKey(LOCALE)) {
             return new Locale(argsMap.get(LOCALE));
@@ -182,7 +190,7 @@ public final class Main {
         }
     }
 
-    private static void runCheckCodeStyle() {
+    private static void runCheckCodeStyle(final Path outputPath) {
         ValidationResult validationResult = null;
         try {
             validationResult =
@@ -196,10 +204,10 @@ public final class Main {
         }
 
         try {
-            JsonWriter.writeObjectIntoJsonFormat(validationResult, getOutputPathFromArgs());
-            System.out.println("Codestyle report can be found at " + getOutputPathFromArgs());
+            JsonWriter.writeObjectIntoJsonFormat(validationResult, outputPath);
+            System.out.println("Codestyle report can be found at " + outputPath);
         } catch (IOException e) {
-            logger.error("Could not write result into {}", getOutputPathFromArgs(), e);
+            logger.error("Could not write result into {}", outputPath, e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
     }
@@ -270,7 +278,9 @@ public final class Main {
     private static void runTests() {
         RunResult runResult = null;
         try {
+            logger.info("Preparing to run tests.");
             runResult = executor.runTests(getExercisePathFromArgs());
+
         } catch (NoLanguagePluginFoundException e) {
             logger.error(
                     "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
@@ -286,6 +296,12 @@ public final class Main {
             logger.error("Could not write output to {}", getOutputPathFromArgs(), e);
             printErrAndExit("ERROR: Could not write the results to the given file.");
         }
+        final Optional<Path> checkstyleOutputPath = getCheckstyleOutputPathFromArgs();
+        if (!checkstyleOutputPath.isPresent()) {
+            return;
+        }
+        logger.info("Preparing to check code style.");
+        runCheckCodeStyle(checkstyleOutputPath.get());
     }
 
     private static void runPrepareStubs() {

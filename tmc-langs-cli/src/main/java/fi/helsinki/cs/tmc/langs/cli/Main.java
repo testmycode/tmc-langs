@@ -44,7 +44,7 @@ public final class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static final String EXERCISE_PATH = "exercisePath";
-    private static final String CHECKSTYLE_OUTPUT_PATH = "CHECKSTYLE_OUTPUT_PATH";
+    private static final String CHECKSTYLE_OUTPUT_PATH = "checkstyleOutputPath";
     private static final String OUTPUT_PATH = "outputPath";
     private static final String LOCALE = "locale";
 
@@ -67,7 +67,8 @@ public final class Main {
                     + "      Prepares from submission and solution project for which the tests"
                     + " can be run in sandbox\n"
                     + " run-tests --exercisePath --outputPath (--checkstyleOutputPath --locale)"
-                    + "      Run the tests for the exercise. Runs checkstyle if checkstyleOutputPath defined \n"
+                    + "      Run the tests for the exercise. Runs checkstyle if"
+                    + "checkstyleOutputPath is defined \n"
                     + " scan-exercise --exercisePath --outputPath"
                     + "  Produce an exercise description of an exercise directory.\n"
                     + " find-exercises --exercisePath --outputPath"

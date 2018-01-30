@@ -37,8 +37,8 @@ public final class TmcProjectYmlParser implements ConfigurationParser {
         return parseExtraFiles("extra_student_files");
     }
 
-    public List<Path> parseExtraTestFiles() {
-        return parseExtraFiles("extra_test_files");
+    public List<Path> parseExtraExerciseFiles() {
+        return parseExtraFiles("extra_exercise_files");
     }
 
     public List<Path> parseForceUpdateFiles() {

@@ -2,13 +2,11 @@ package fi.helsinki.cs.tmc.langs.domain;
 
 import fi.helsinki.cs.tmc.langs.utils.TmcProjectYmlParser;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +44,8 @@ public final class Configuration {
         return tmcProjectYmlParser.parseExtraStudentFiles();
     }
 
-    public List<Path> getExtraTestFiles() {
-        return tmcProjectYmlParser.parseExtraTestFiles();
+    public List<Path> getExtraExerciseFiles() {
+        return tmcProjectYmlParser.parseExtraExerciseFiles();
     }
 
     /**

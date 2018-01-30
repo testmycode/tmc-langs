@@ -114,7 +114,7 @@ public final class MavenPlugin extends AbstractJavaPlugin {
     public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
         Configuration configuration = getConfiguration(path);
         List<String> extraStudentFiles = pathListToStringList(configuration.getExtraStudentFiles());
-        List<String> extraTestFiles = pathListToStringList(configuration.getExtraTestFiles());
+        List<String> extraTestFiles = pathListToStringList(configuration.getExtraExerciseFiles());
 
         ImmutableList<String> studentFiles =
                 ImmutableList.<String>builder().add("src/main").addAll(extraStudentFiles).build();

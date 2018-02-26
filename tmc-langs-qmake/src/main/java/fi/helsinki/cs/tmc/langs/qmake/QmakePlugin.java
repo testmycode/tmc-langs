@@ -6,6 +6,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
@@ -332,5 +333,11 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         });
 
         return potentialPointFiles;
+    }
+
+    @Override
+    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
+        return new ExercisePackagingConfiguration(
+                ImmutableList.of("src"), ImmutableList.of("test_runner", "test"));
     }
 }

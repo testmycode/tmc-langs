@@ -78,12 +78,26 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     }
 
     /**
-     * Resolve the exercise .pro file from exercise directory. The file should
-     * be named after the directory.
+     * Resolve an exercise .pro file from an exercise directory.
+     *
+     * @throws IOException if .pro file is not found in basePath
      */
     private Path getProFile(Path basePath) throws IOException {
-        Path fullPath = basePath.toRealPath(LinkOption.NOFOLLOW_LINKS);
-        return fullPath.resolve(fullPath.getFileName() + ".pro");
+        File exerciseDir = basePath.toFile();
+        File[] matchingFiles = exerciseDir.listFiles((dir, name) -> name.endsWith(".pro"));
+
+        if (matchingFiles == null || matchingFiles.length == 0) {
+            throw new IOException("Could not find .pro file!");
+        }
+
+        File proFile = matchingFiles[0];
+
+        if (matchingFiles.length > 1) {
+            log.warn("Found multiple .pro files: {}", Arrays.deepToString(matchingFiles));
+            log.warn("Chose {}", proFile);
+        }
+
+        return proFile.toPath();
     }
 
     @Override

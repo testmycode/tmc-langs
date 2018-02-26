@@ -261,7 +261,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     private RunResult filledFailure(Status status, String output) {
         byte[] errorOutput = output.getBytes(StandardCharsets.UTF_8);
         ImmutableMap<String, byte[]> logs
-                = new ImmutableMap.Builder()
+                = new ImmutableMap.Builder<String, byte[]>()
                 .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
                 .<String, byte[]>build();
         return new RunResult(status, ImmutableList.<TestResult>of(), logs);

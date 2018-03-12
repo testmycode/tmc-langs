@@ -39,6 +39,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +47,7 @@ import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class QmakePlugin extends AbstractLanguagePlugin {
 
@@ -83,21 +85,23 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
      * @throws IOException if .pro file is not found in basePath
      */
     private Path getProFile(Path basePath) throws IOException {
-        File exerciseDir = basePath.toFile();
-        File[] matchingFiles = exerciseDir.listFiles((dir, name) -> name.endsWith(".pro"));
+        List<Path> matchingFiles = Files.walk(basePath, 1)
+                .filter(f -> f.toString().endsWith(".pro"))
+                .sorted(Comparator.comparing(a -> a.getFileName().toString()))
+                .collect(Collectors.toList());
 
-        if (matchingFiles == null || matchingFiles.length == 0) {
+        if (matchingFiles.isEmpty()) {
             throw new IOException("Could not find .pro file!");
         }
 
-        File proFile = matchingFiles[0];
+        Path proFile = matchingFiles.get(0);
 
-        if (matchingFiles.length > 1) {
-            log.warn("Found multiple .pro files: {}", Arrays.deepToString(matchingFiles));
+        if (matchingFiles.size() > 1) {
+            log.warn("Found multiple .pro files: {}", matchingFiles);
             log.warn("Chose {}", proFile);
         }
 
-        return proFile.toPath();
+        return proFile;
     }
 
     @Override

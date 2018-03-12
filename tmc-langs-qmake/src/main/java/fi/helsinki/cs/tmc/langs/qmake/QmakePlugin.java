@@ -6,6 +6,7 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
+import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.RunResult.Status;
 import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
@@ -38,6 +39,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +47,7 @@ import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class QmakePlugin extends AbstractLanguagePlugin {
 
@@ -77,12 +80,28 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     }
 
     /**
-     * Resolve the exercise .pro file from exercise directory. The file should
-     * be named after the directory.
+     * Resolve an exercise .pro file from an exercise directory.
+     *
+     * @throws IOException if .pro file is not found in basePath
      */
     private Path getProFile(Path basePath) throws IOException {
-        Path fullPath = basePath.toRealPath(LinkOption.NOFOLLOW_LINKS);
-        return fullPath.resolve(fullPath.getFileName() + ".pro");
+        List<Path> matchingFiles = Files.walk(basePath, 1)
+                .filter(f -> f.toString().endsWith(".pro"))
+                .sorted(Comparator.comparing(a -> a.getFileName().toString()))
+                .collect(Collectors.toList());
+
+        if (matchingFiles.isEmpty()) {
+            throw new IOException("Could not find .pro file!");
+        }
+
+        Path proFile = matchingFiles.get(0);
+
+        if (matchingFiles.size() > 1) {
+            log.warn("Found multiple .pro files: {}", matchingFiles);
+            log.warn("Chose {}", proFile);
+        }
+
+        return proFile;
     }
 
     @Override
@@ -261,7 +280,7 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     private RunResult filledFailure(Status status, String output) {
         byte[] errorOutput = output.getBytes(StandardCharsets.UTF_8);
         ImmutableMap<String, byte[]> logs
-                = new ImmutableMap.Builder()
+                = new ImmutableMap.Builder<String, byte[]>()
                 .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
                 .<String, byte[]>build();
         return new RunResult(status, ImmutableList.<TestResult>of(), logs);
@@ -332,5 +351,15 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         });
 
         return potentialPointFiles;
+    }
+
+    @Override
+    protected ImmutableList<String> getDefaultExerciseFilePaths() {
+        return ImmutableList.of("src");
+    }
+
+    @Override
+    protected ImmutableList<String> getDefaultStudentFilePaths() {
+        return ImmutableList.of("test_runner", "test");
     }
 }

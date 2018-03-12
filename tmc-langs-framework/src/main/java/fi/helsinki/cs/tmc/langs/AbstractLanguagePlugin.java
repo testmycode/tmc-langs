@@ -156,10 +156,18 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         List<String> extraTestFiles = pathListToStringList(configuration.getExtraExerciseFiles());
 
         ImmutableList<String> studentFiles =
-                ImmutableList.<String>builder().add("src").addAll(extraStudentFiles).build();
+                ImmutableList.<String>builder().addAll(getDefaultStudentFilePaths()).addAll(extraStudentFiles).build();
         ImmutableList<String> exerciseFiles =
-                ImmutableList.<String>builder().add("test").addAll(extraTestFiles).build();
+                ImmutableList.<String>builder().addAll(getDefaultExerciseFilePaths()).addAll(extraTestFiles).build();
         return new ExercisePackagingConfiguration(studentFiles, exerciseFiles);
+    }
+
+    private ImmutableList<String> getDefaultStudentFilePaths() {
+        return ImmutableList.<String>builder().add("src").build();
+    }
+
+    private ImmutableList<String> getDefaultExerciseFilePaths() {
+        return ImmutableList.<String>builder().add("test").build();
     }
 
     @Override

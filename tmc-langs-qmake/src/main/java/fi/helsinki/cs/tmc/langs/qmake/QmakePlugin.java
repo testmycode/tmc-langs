@@ -354,8 +354,12 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
-        return new ExercisePackagingConfiguration(
-                ImmutableList.of("src"), ImmutableList.of("test_runner", "test"));
+    protected ImmutableList<String> getDefaultExerciseFilePaths() {
+        return ImmutableList.of("src");
+    }
+
+    @Override
+    protected ImmutableList<String> getDefaultStudentFilePaths() {
+        return ImmutableList.of("test_runner", "test");
     }
 }

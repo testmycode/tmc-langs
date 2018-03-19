@@ -355,11 +355,11 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
     @Override
     protected ImmutableList<String> getDefaultExerciseFilePaths() {
-        return ImmutableList.of("src");
+        return ImmutableList.of("test_runner", "test");
     }
 
     @Override
     protected ImmutableList<String> getDefaultStudentFilePaths() {
-        return ImmutableList.of("test_runner", "test");
+        return ImmutableList.of("src");
     }
 }

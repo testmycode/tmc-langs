@@ -229,8 +229,11 @@ public final class StudentFileAwareUnzipper implements Unzipper {
         }
 
         log.trace("File exists, checking whether it's studentfile is allowed");
-        // TODO: Handle forced updates
-        if (filePolicy.mayDelete(file, projectRoot)) {
+
+        if (filePolicy.isUpdatingForced(file, projectRoot)) {
+            log.trace("Updating is forced, which allows the deletion of file {}", file);
+            return true;
+        } else if (filePolicy.mayDelete(file, projectRoot)) {
             log.trace("File {} can be deleted", file);
             return true;
         }

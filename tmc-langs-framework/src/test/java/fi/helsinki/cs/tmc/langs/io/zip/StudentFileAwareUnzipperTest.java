@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.io.zip;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.io.ConfigurableStudentFilePolicy;
@@ -172,6 +173,65 @@ public class StudentFileAwareUnzipperTest {
         Path testFile = tmpDir.resolve(Paths.get("src", "test_file"));
         String contents = new String(Files.readAllBytes(testFile));
         assertEquals("correct", contents.trim());
+    }
+
+    @Test
+    public void testForceUpdateSingleFile() throws IOException {
+        Path withStudentChanges = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                .resolve("with_student_changes.zip");
+        Path update = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                .resolve("force_update_file.zip");
+
+        unzipper.setStudentFilePolicy(new ConfigurableStudentFilePolicy(update) {
+            @Override
+            public boolean isStudentSourceFile(Path path, Path projectRootPath) {
+                return path.startsWith(Paths.get("src"));
+            }
+        });
+        unzipper.unzip(withStudentChanges, tmpDir);
+        unzipper.unzip(update, tmpDir);
+
+        Path tmpDirCorrect = Files.createTempDirectory("tmc-tmp-correct");
+        unzipper.unzip(withStudentChanges, tmpDirCorrect);
+
+        Set<Path> found = listFiles(tmpDir);
+
+        assertThat(found).containsExactlyElementsIn(listFiles(tmpDirCorrect));
+
+        Path changedFile = tmpDir.resolve(Paths.get("src", "SuurempiTaiYhtasuuri.java"));
+        String contents = new String(Files.readAllBytes(changedFile));
+        assertFalse(contents.contains("System.out.println(\"Muutos testiä varten\")"));
+
+        FileUtils.deleteDirectory(tmpDirCorrect.toFile());
+    }
+
+    @Test
+    public void testForceUpdateWholeDir() throws IOException {
+        Path withStudentChanges = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                .resolve("with_student_changes.zip");
+        Path update = TestUtils.getPath(StudentFileAwareUnzipperTest.class, "zip")
+                .resolve("force_update_dir.zip");
+
+        unzipper.setStudentFilePolicy(new ConfigurableStudentFilePolicy(update) {
+            @Override
+            public boolean isStudentSourceFile(Path path, Path projectRootPath) {
+                return path.startsWith(Paths.get("src"));
+            }
+        });
+        unzipper.unzip(withStudentChanges, tmpDir);
+        unzipper.unzip(update, tmpDir);
+
+        Path tmpDirCorrect = Files.createTempDirectory("tmc-tmp-correct");
+        unzipper.unzip(withStudentChanges, tmpDirCorrect);
+
+        Set<Path> found = listFiles(tmpDir);
+        assertThat(found).doesNotContain(Paths.get("src", "Studentfile.java"));
+
+        Path changedFile = tmpDir.resolve(Paths.get("src", "SuurempiTaiYhtasuuri.java"));
+        String contents = new String(Files.readAllBytes(changedFile));
+        assertFalse(contents.contains("System.out.println(\"Muutos testiä varten\")"));
+
+        FileUtils.deleteDirectory(tmpDirCorrect.toFile());
     }
 
     private StudentFilePolicy getNothingIsStudentFilePolicy() {

@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 
 public final class StudentFileAwareUnzipper implements Unzipper {
@@ -130,20 +132,21 @@ public final class StudentFileAwareUnzipper implements Unzipper {
     private void deleteFilesNotInZip(
             Path projectDir, UnzipResult result, Set<Path> pathsInZip)
             throws IOException {
-
-        for (File file : projectDir.toFile().listFiles()) {
-            Path filePath = file.toPath();
-            if (file.isDirectory()) {
-                deleteFilesNotInZip(file.toPath(), result, pathsInZip);
+        List<Path> toBeProcessed = new ArrayList<>();
+        toBeProcessed.add(projectDir);
+        while (!toBeProcessed.isEmpty()) {
+            Path filePath = toBeProcessed.remove(toBeProcessed.size() - 1);
+            if (Files.isDirectory(filePath)) {
+                Files.list(filePath).forEach(toBeProcessed::add);
             }
 
             if (!pathsInZip.contains(filePath)) {
                 if (mayDelete(filePath, projectDir)) {
-                    if (file.isDirectory() && file.listFiles().length > 0) {
+                    if (Files.isDirectory(filePath) && Files.list(filePath).count() > 0) {
                         // Won't delete directories if they still have contents
                         result.skippedDeletingFiles.add(filePath);
                     } else {
-                        file.delete();
+                        Files.delete(filePath);
                         result.deletedFiles.add(filePath);
                     }
                 } else {
@@ -227,7 +230,10 @@ public final class StudentFileAwareUnzipper implements Unzipper {
 
         log.trace("File exists, checking whether it's studentfile is allowed");
 
-        if (filePolicy.mayDelete(file, projectRoot)) {
+        if (filePolicy.isUpdatingForced(file, projectRoot)) {
+            log.trace("Updating is forced, which allows the deletion of file {}", file);
+            return true;
+        } else if (filePolicy.mayDelete(file, projectRoot)) {
             log.trace("File {} can be deleted", file);
             return true;
         }

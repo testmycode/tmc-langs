@@ -12,6 +12,7 @@ import fi.helsinki.cs.tmc.langs.utils.TestUtils;
 
 import com.google.common.base.Optional;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -147,6 +148,31 @@ public class QmakePluginTest {
     }
 
     @Test
+    public void testQuickTestsGenericProject() {
+        Assume.assumeTrue("Set QT_QPA_PLATFORM if testing quick project build",
+                System.getenv("QT_QPA_PLATFORM") != null);
+
+        RunResult result = runTests(TestUtils.getPath(getClass(),"quick_project"));
+        assertEquals("Tests passing with Generic Quick project",
+                RunResult.Status.PASSED, result.status);
+
+        assertEquals(2, result.testResults.size());
+
+        TestResult test1 = result.testResults.get(0);
+        assertEquals("tst_Clicker::test_click", test1.getName());
+        assertTrue(test1.isSuccessful());
+        assertEquals(1, test1.points.size());
+        assertEquals("test_point", test1.points.get(0));
+
+        TestResult test2 = result.testResults.get(1);
+        assertEquals(test2.getName(), "tst_Clicker::test_text");
+        assertTrue(test2.isSuccessful());
+        assertEquals(1, test2.points.size());
+        assertEquals("test_point2", test2.points.get(0));
+
+    }
+
+    @Test
     public void testScanInvalidMakefileExercise() {
         Optional<ExerciseDesc> optional = scanExercise("makefile");
         assertFalse(optional.isPresent());
@@ -232,6 +258,26 @@ public class QmakePluginTest {
         assertEquals("1", test1.points.get(0));
         assertEquals("2", test2.points.get(0));
         assertEquals("1", test21.points.get(0));
+    }
+
+    @Test
+    public void test_ScanQuickProject() {
+        Optional<ExerciseDesc> optional = scanExercise("quick_project");
+        assertTrue(optional.isPresent());
+
+        ExerciseDesc desc = optional.get();
+
+        assertEquals("quick_project", desc.name);
+
+        assertEquals(2, desc.tests.size());
+        TestDesc test1 = desc.tests.get(0);
+        TestDesc test2 = desc.tests.get(1);
+
+        assertEquals("tst_Clicker::test_click", test1.name);
+        assertEquals("tst_Clicker::test_text", test2.name);
+
+        assertEquals("test_point2", test2.points.get(0));
+        assertEquals("test_point", test1.points.get(0));
     }
 
     @Test

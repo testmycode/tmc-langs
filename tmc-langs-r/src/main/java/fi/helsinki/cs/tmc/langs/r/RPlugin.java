@@ -207,8 +207,12 @@ public final class RPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
-        return new ExercisePackagingConfiguration(
-                ImmutableList.of("R"), ImmutableList.of("tests"));
+    protected ImmutableList<String> getDefaultStudentFilePaths() {
+        return ImmutableList.of("R");
+    }
+
+    @Override
+    protected ImmutableList<String> getDefaultExerciseFilePaths() {
+        return ImmutableList.of("tests");
     }
 }

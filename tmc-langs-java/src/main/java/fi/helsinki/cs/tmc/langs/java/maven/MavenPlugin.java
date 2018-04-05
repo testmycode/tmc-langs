@@ -111,19 +111,6 @@ public final class MavenPlugin extends AbstractJavaPlugin {
     }
 
     @Override
-    public ExercisePackagingConfiguration getExercisePackagingConfiguration(Path path) {
-        Configuration configuration = getConfiguration(path);
-        List<String> extraStudentFiles = pathListToStringList(configuration.getExtraStudentFiles());
-        List<String> extraTestFiles = pathListToStringList(configuration.getExtraExerciseFiles());
-
-        ImmutableList<String> studentFiles =
-                ImmutableList.<String>builder().add("src/main").addAll(extraStudentFiles).build();
-        ImmutableList<String> testFiles =
-                ImmutableList.<String>builder().add("src/test").addAll(extraTestFiles).build();
-        return new ExercisePackagingConfiguration(studentFiles, testFiles);
-    }
-
-    @Override
     public void clean(Path path) {
         log.info("Cleaning maven project at {}", path);
 
@@ -137,11 +124,13 @@ public final class MavenPlugin extends AbstractJavaPlugin {
         }
     }
 
-    private List<String> pathListToStringList(List<Path> paths) {
-        List<String> strings = new ArrayList<>();
-        for (Path p : paths) {
-            strings.add(p.toString());
-        }
-        return strings;
+    @Override
+    protected ImmutableList<String> getDefaultStudentFilePaths() {
+        return ImmutableList.of("src/main");
+    }
+
+    @Override
+    protected ImmutableList<String> getDefaultExerciseFilePaths() {
+        return ImmutableList.of("src/test");
     }
 }

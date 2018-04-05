@@ -161,6 +161,12 @@ public abstract class AbstractLanguagePlugin implements LanguagePlugin {
         ImmutableList<String> exerciseFiles =
                 ImmutableList.<String>builder().addAll(getDefaultExerciseFilePaths())
                         .addAll(extraTestFiles).build();
+
+        List<String> exerciseFilesWithoutStudentFiles = new ArrayList<>(exerciseFiles);
+        exerciseFilesWithoutStudentFiles.removeAll(studentFiles);
+        exerciseFiles =
+                ImmutableList.<String>builder().addAll(exerciseFilesWithoutStudentFiles).build();
+
         return new ExercisePackagingConfiguration(studentFiles, exerciseFiles);
     }
 

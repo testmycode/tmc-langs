@@ -57,6 +57,8 @@ public final class Main {
                     + " checkstyle --exercisePath --outputPath --locale"
                     + "     Run checkstyle or similar plugin to project if applicable.\n"
                     + " compress-project --exercisePath --outputPath\n"
+                    + " extract-project --exercisePath --outputPath\n"
+                    + "             Given a downloaded zip, extracts to specified folder.\n"
                     + " help"
                     + "                                         Display help information.\n"
                     + " prepare-solutions --exercisePath --outputPath"
@@ -125,6 +127,9 @@ public final class Main {
             case "compress-project":
                 runCompressProject();
                 break;
+            case "extract-project":
+                runExtractProject();
+                break;
             case "scan-exercise":
                 runScanExercise();
                 break;
@@ -188,6 +193,19 @@ public final class Main {
             Files.write(outputPath, compressed);
         } catch (IOException | NoLanguagePluginFoundException e) {
             e.printStackTrace();
+            printErrAndExit("Could not compress project " + exercisePath + ".");
+        }
+    }
+
+
+    private static void runExtractProject() {
+        Path downloadedExercisePath = getExercisePathFromArgs();
+        Path outputPath = getOutputPathFromArgs();
+        try {
+            executor.extractProject(downloadedExercisePath, outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            printErrAndExit("Could not extract project " + downloadedExercisePath + ".");
         }
     }
 
@@ -201,7 +219,7 @@ public final class Main {
                     "No suitable language plugin for project at {}", getExercisePathFromArgs(), e);
             printErrAndExit(
                     "ERROR: Could not find suitable language plugin for the given exercise "
-                            + "path.");
+                            + outputPath + ".");
         }
 
         try {

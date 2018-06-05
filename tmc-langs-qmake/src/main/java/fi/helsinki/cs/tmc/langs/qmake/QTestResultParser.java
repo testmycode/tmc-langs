@@ -152,7 +152,9 @@ public final class QTestResultParser {
 
     /**
      * <p>
-     * Parse potential points from testcase.
+     * Parse potential points from a qInfo message.
+     * QTest points are in the format of TMC:test_function.point.
+     * QuickTest output prepends "qml: " to qInfo messages
      * </p>
      */
     private List<String> parsePoints(Element testcase) {
@@ -163,7 +165,7 @@ public final class QTestResultParser {
             Element message = (Element) messages.item(i);
             Element desc = (Element) message.getElementsByTagName("Description").item(0);
             String text = desc.getTextContent();
-            if (text.matches("^(TMC:.*)")) {
+            if (text.matches("^(?:qml: )*(TMC:.*)")) {
                 String result = text.substring(text.indexOf(".") + 1);
                 points.add(result);
             }

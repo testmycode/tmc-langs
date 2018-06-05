@@ -15,12 +15,12 @@ public class MetaSyntaxGenerator {
             return cache.get(fileType);
         }
         List<MetaSyntax> list = new ArrayList<>();
-        if (fileType.matches("java|c|cpp|h|hpp|js|css|rs")) {
+        if (fileType.matches("java|c|cpp|h|hpp|js|css|rs|qml")) {
             list.add(new MetaSyntax("\\/\\/", "")); //
             list.add(new MetaSyntax("\\/\\*+", "\\*+\\/")); /* */
-        } else if (fileType.matches("xml|http|html")) {
+        } else if (fileType.matches("xml|http|html|qrc")) {
             list.add(new MetaSyntax("<!--", "-->"));
-        } else if (fileType.matches("properties|py|R")) {
+        } else if (fileType.matches("properties|py|R|pro")) {
             list.add(new MetaSyntax("#", ""));
         }
         cache.put(fileType, list);

@@ -44,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -54,8 +53,17 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     private static final Path TMC_TEST_RESULTS = Paths.get("tmc_test_results.xml");
 
     // Finds pattern 'POINT(exercise_name, 1.1)'
-    private static final Pattern POINT_PATTERN
-            = Pattern.compile("POINT\\(\\s*(\\w+),\\s*([^\\s|\\)]+)\\s*\\)\\s*;");
+    private static final Pattern QTEST_POINT_PATTERN
+            = Pattern.compile("POINT\\(\\s*"
+            + "(?<testName>\\w+),\\s*"
+            + "(?<point>[^\\s|\\)]+)\\s*\\)\\s*;");
+
+    // Finds pattern 'quickPOINT("testclass::exercise_name", "1.1")'
+    private static final Pattern QUICKTEST_POINT_PATTERN
+            = Pattern.compile("quickPOINT\\(\\s*"
+            + "\"(?<testName>.+)\",\\s*"
+            + "\"(?<point>[^\\s|\\)]+)\"\\s*\\)\\s*;");
+
     // Pattern to find comments
     private static final Pattern COMMENT_PATTERN
             = Pattern.compile("(^[^\"\\r\\n]*\\/\\*{1,2}.*?\\*\\/"
@@ -197,6 +205,8 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
             if (!Files.exists(testResults)) {
                 log.error("Failed to get test output at {}", testResults);
+                log.error("Test stdout\n {}", testRun.output);
+                log.error("Test stderr\n {}", testRun.errorOutput);
                 return filledFailure(Status.GENERIC_ERROR, testRun.output);
             }
         } catch (IOException | InterruptedException e) {
@@ -287,23 +297,27 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
     }
 
     /**
-     * TODO: This is copy paste from tmc-langs regex branch. Regex branch method
-     * 'availablePoints' does not parse test names at this time.
+     * Parses available points from test source files (.cpp and .qml)
      * <p>
-     * POINT_PATTERN matches the #define macro in the tests, for example:
-     *
-     * POINT(test_name2, suite_point);
-     *
-     * POINT(test_name, 1);
+     * QTEST_POINT_PATTERN matches the #define macro in the QTests, for example:
+     *      POINT(test_name2, suite_point);
+     *      POINT(test_name, 1);
      * </p>
-     * etc.
+     * <p>QUICKTEST_POINT_PATTERN matches the QML js syntax: </p>
+     * <p>
+     *      qmlPOINT("test_name", "1.1");
+     *      qmlPOINT("test_name2", "point");
+     * </p>
      */
     public Optional<ImmutableList<TestDesc>> availablePoints(final Path rootPath) {
-        return findAvailablePoints(rootPath, POINT_PATTERN, COMMENT_PATTERN, ".cpp");
+        ImmutableList<Pattern> pointPatterns =
+                ImmutableList.of(QTEST_POINT_PATTERN, QUICKTEST_POINT_PATTERN);
+        ImmutableList<String> fileSuffixes = ImmutableList.of(".cpp", ".qml");
+        return findAvailablePoints(rootPath, pointPatterns, COMMENT_PATTERN, fileSuffixes);
     }
 
     protected Optional<ImmutableList<TestDesc>> findAvailablePoints(final Path rootPath,
-            Pattern pattern, Pattern commentPattern, String suffix) {
+            List<Pattern> patterns, Pattern commentPattern, List<String> suffix) {
         Map<String, List<String>> tests = new HashMap<>();
         List<TestDesc> descs = new ArrayList<>();
         try {
@@ -312,13 +326,14 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
 
                 String contents = new String(Files.readAllBytes(p), "UTF-8");
                 String withoutComments = commentPattern.matcher(contents).replaceAll("");
-                Matcher matcher = pattern.matcher(withoutComments);
-                while (matcher.find()) {
-                    MatchResult matchResult = matcher.toMatchResult();
-                    String testName = matchResult.group(1).trim();
-                    String point = matchResult.group(2).trim();
-                    tests.putIfAbsent(testName, new ArrayList<String>());
-                    tests.get(testName).add(point);
+                for (Pattern pointPattern : patterns) {
+                    Matcher matcher = pointPattern.matcher(withoutComments);
+                    while (matcher.find()) {
+                        String testName = matcher.group("testName").trim();
+                        String point = matcher.group("point").trim();
+                        tests.putIfAbsent(testName, new ArrayList<String>());
+                        tests.get(testName).add(point);
+                    }
                 }
             }
             for (String testName : tests.keySet()) {
@@ -331,21 +346,28 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         }
     }
 
-    private List<Path> getPotentialPointFiles(final Path rootPath, final String suffix)
+    private List<Path> getPotentialPointFiles(final Path rootPath, List<String> suffixes)
             throws IOException {
         final StudentFilePolicy studentFilePolicy = getStudentFilePolicy(rootPath);
         final List<Path> potentialPointFiles = new ArrayList<>();
 
         Files.walkFileTree(rootPath, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
-                    throws IOException {
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
                 if (studentFilePolicy.isStudentFile(path, rootPath)) {
                     return FileVisitResult.SKIP_SUBTREE;
                 }
-                if (!Files.isDirectory(path) && path.toString().endsWith(suffix)) {
-                    potentialPointFiles.add(path);
+
+                if (Files.isDirectory(path)) {
+                    return FileVisitResult.CONTINUE;
                 }
+
+                for (String suf : suffixes) {
+                    if (path.toString().endsWith(suf)) {
+                        potentialPointFiles.add(path);
+                    }
+                }
+
                 return FileVisitResult.CONTINUE;
             }
         });

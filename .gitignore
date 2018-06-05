@@ -50,6 +50,7 @@ __pycache__/
 /tmc-langs-java/src/main/resources/tmc-junit-runner.jar
 /tmc-langs-java/src/test/resources/exit_zero/build/
 
-# Qt Creator user files
+# Qt stuff
 *.pro.user*
-
+*.qmlc
+*.qmake.stash

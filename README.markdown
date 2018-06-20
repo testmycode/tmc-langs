@@ -17,9 +17,12 @@ Build the project with `mvn clean package`. Install the dependency to your local
 ## Test
 
 Test the project with `mvn test`.
-For the tmc-langs-java maven tests to pass it either needs to be invoced with mvn exec magic, like NetBeans does it. However, when executed from commandline `M3_HOME` must be configured. Either via `$M3_HOME` or from mavens configuration files.
+For the tmc-langs-java maven tests to pass it either needs to be invoked with mvn exec magic, like NetBeans does it. However, when executed from commandline `M3_HOME` must be configured. Either via `$M3_HOME` or from mavens configuration files.
 
-For running tests for the `tmc-langs-python` `python` executable must be accessible from your `$PATH` and for the `tmc-langs-rust` `rust` and rust-package-manager executables must be accessible from your `$PATH`.
+Running tests for:
+- `tmc-langs-python`: `python` executable must be accessible from your `$PATH`
+- `tmc-langs-rust`: `rust` and rust-package-manager executables must be accessible from your `$PATH`.
+- `tmc-langs-qmake`: a valid Qt install with `qmake` executable must be accessible from your `$PATH` and `$QT_QPA_PLATFORM` set to `minimal`
 
 ## Usage
 

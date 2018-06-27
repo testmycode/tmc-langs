@@ -31,6 +31,10 @@ public class RPluginTest {
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
+    public RPluginTest() {
+        TestUtils.skipIfNotAvailable("Rscript");
+    }
+
     @Before
     public void setUp() {
         plugin = new RPlugin();

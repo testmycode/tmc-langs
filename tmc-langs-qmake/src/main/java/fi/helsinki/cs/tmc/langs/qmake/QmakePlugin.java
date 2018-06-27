@@ -203,11 +203,11 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
         try {
             ProcessResult testRun = run(makeCommand, shadowDir);
 
-            if (!Files.exists(testResults)) {
+            if (!Files.exists(testResults) || Files.size(testResults) == 0) {
                 log.error("Failed to get test output at {}", testResults);
                 log.error("Test stdout\n {}", testRun.output);
                 log.error("Test stderr\n {}", testRun.errorOutput);
-                return filledFailure(Status.GENERIC_ERROR, testRun.output);
+                return filledFailure(Status.COMPILE_FAILED, testRun.errorOutput);
             }
         } catch (IOException | InterruptedException e) {
             log.error("Testing with make check failed", e);
@@ -305,8 +305,8 @@ public final class QmakePlugin extends AbstractLanguagePlugin {
      * </p>
      * <p>QUICKTEST_POINT_PATTERN matches the QML js syntax: </p>
      * <p>
-     *      qmlPOINT("test_name", "1.1");
-     *      qmlPOINT("test_name2", "point");
+     *      quickPOINT("test_name", "1.1");
+     *      quickPOINT("test_name2", "point");
      * </p>
      */
     public Optional<ImmutableList<TestDesc>> availablePoints(final Path rootPath) {

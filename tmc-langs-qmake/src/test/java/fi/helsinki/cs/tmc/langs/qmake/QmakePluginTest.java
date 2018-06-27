@@ -173,6 +173,15 @@ public class QmakePluginTest {
     }
 
     @Test
+    public void testQuickTestsInvalidQuickProject() {
+        Assume.assumeTrue("Set QT_QPA_PLATFORM if testing quick project build",
+                System.getenv("QT_QPA_PLATFORM") != null);
+        RunResult result = runTests(TestUtils.getPath(getClass(),"invalid_quick_project"));
+        assertEquals("Compile should be failing with invalid component",
+                RunResult.Status.COMPILE_FAILED, result.status);
+    }
+
+    @Test
     public void testScanInvalidMakefileExercise() {
         Optional<ExerciseDesc> optional = scanExercise("makefile");
         assertFalse(optional.isPresent());
@@ -295,6 +304,8 @@ public class QmakePluginTest {
         assertTrue(isExerciseTypeCorrect("failing_single_lib"));
         assertTrue(isExerciseTypeCorrect("failing_single_lib_not_compiling"));
         assertTrue(isExerciseTypeCorrect("failing_single_lib_same_point"));
+        assertTrue(isExerciseTypeCorrect("quick_project"));
+        assertTrue(isExerciseTypeCorrect("invalid_quick_project"));
         assertFalse(isExerciseTypeCorrect("makefile"));
         assertFalse(isExerciseTypeCorrect(""));
     }

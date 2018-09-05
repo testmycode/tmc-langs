@@ -35,7 +35,7 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
     private static final Logger log = LoggerFactory.getLogger(MavenInvokatorMavenTaskRunner.class);
 
     private static final String MAVEN_OPTS =
-            "-Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8";
+            "-Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8 -XX:+TieredCompilation -XX:TieredStopAtLevel=1";
 
     @Override
     public MavenExecutionResult exec(Path projectPath, String[] mavenArgs) {

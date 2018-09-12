@@ -27,7 +27,6 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
 
     private List<Path> extraStudentFiles;
     private List<Path> forceUpdateFiles;
-    private Path rootPath;
 
     public ConfigurableStudentFilePolicy(Path configFileParent) {
         this.configFileParentPath = configFileParent;
@@ -58,9 +57,7 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
             return false;
         }
 
-        this.rootPath = projectRootPath;
-
-        return isExtraStudentFile(path)
+        return isExtraStudentFile(path, projectRootPath)
                 || projectRootPath.equals(path)
                 || isStudentSourceFile(
                         path.subpath(projectRootPath.getNameCount(), path.getNameCount()),
@@ -68,13 +65,13 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
     }
 
     /** Determines whether a file is an <tt>ExtraStudentFile</tt>. */
-    private boolean isExtraStudentFile(Path path) {
+    private boolean isExtraStudentFile(Path path, Path rootPath) {
         if (extraStudentFiles == null) {
             TmcProjectYmlParser parser = new TmcProjectYmlParser(configFileParentPath);
             extraStudentFiles = parser.parseExtraStudentFiles();
         }
 
-        return isPathWhitelisted(path, extraStudentFiles);
+        return isPathWhitelisted(path, extraStudentFiles, rootPath);
     }
 
     @Override
@@ -85,14 +82,14 @@ public abstract class ConfigurableStudentFilePolicy implements StudentFilePolicy
     @Override
     public boolean isUpdatingForced(Path path, Path projectRootPath) {
         if (forceUpdateFiles == null) {
-            TmcProjectYmlParser parser = new TmcProjectYmlParser(rootPath);
+            TmcProjectYmlParser parser = new TmcProjectYmlParser(projectRootPath);
             forceUpdateFiles = parser.parseForceUpdateFiles();
         }
 
-        return isPathWhitelisted(path, forceUpdateFiles);
+        return isPathWhitelisted(path, forceUpdateFiles, projectRootPath);
     }
 
-    private boolean isPathWhitelisted(Path path, List<Path> paths) {
+    private boolean isPathWhitelisted(Path path, List<Path> paths, Path rootPath) {
         for (Path whitelistedPath : paths) {
             Path whitelistedFullPath = rootPath.resolve(whitelistedPath).toAbsolutePath();
             Path fullPath = path.toAbsolutePath();

@@ -43,6 +43,11 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
         InvocationRequest request = new DefaultInvocationRequest();
         request.setMavenOpts(MAVEN_OPTS);
+        String jdkhome = System.getenv("jdkhome");
+        Path jdkhomePath = Paths.get(jdkhome);
+        if (jdkhome != null && jdkhome.length() > 0 && Files.exists(jdkhomePath)) {
+            request.setJavaHome(jdkhomePath.toFile());
+        }
 
         String mavenHome = System.getenv("M3_HOME");
         if (mavenHome == null) {

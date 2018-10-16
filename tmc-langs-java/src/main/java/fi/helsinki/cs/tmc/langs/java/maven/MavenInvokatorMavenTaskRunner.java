@@ -116,7 +116,7 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
     private Path useBundledMaven() {
         Path mavenHome = getConfigDirectory();
-        Path extractedMavenLocation = mavenHome.resolve("apache-maven-3.3.9");
+        Path extractedMavenLocation = mavenHome.resolve("apache-maven-3.5.4");
         if (Files.exists(extractedMavenLocation)) {
             log.info("Maven already extracted");
 
@@ -125,7 +125,7 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         }
         log.info("Maven bundle not previously extracted, extracting...");
         try {
-            InputStream data = getClass().getResourceAsStream("apache-maven-3.3.9.zip");
+            InputStream data = getClass().getResourceAsStream("apache-maven-3.5.4.zip");
             Preconditions.checkNotNull(
                     data, "Couldn't load bundled maven from tmc-langs-java.jar.");
             Path tmpFile = Files.createTempFile("tmc-maven", "zip");
@@ -139,7 +139,7 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
             }
 
                 // Add the name of the extracted folder to the path
-            return mavenHome.resolve("apache-maven-3.3.9");
+            return mavenHome.resolve("apache-maven-3.5.4");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

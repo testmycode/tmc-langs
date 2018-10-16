@@ -43,11 +43,18 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
         InvocationRequest request = new DefaultInvocationRequest();
         request.setMavenOpts(MAVEN_OPTS);
-        String jdkhome = System.getenv("jdkhome");
-        Path jdkhomePath = Paths.get(jdkhome);
-        if (jdkhome != null && jdkhome.length() > 0 && Files.exists(jdkhomePath)) {
-            request.setJavaHome(jdkhomePath.toFile());
+        try {
+            String jdkhome = System.getenv("jdkhome");
+            if (jdkhome != null) {
+                Path jdkhomePath = Paths.get(jdkhome);
+                if (jdkhome != null && jdkhome.length() > 0 && Files.exists(jdkhomePath)) {
+                    request.setJavaHome(jdkhomePath.toFile());
+                }
+            }
+        } catch (Exception e) {
+            log.debug("jdkhome variable not valid, skipping", e);
         }
+
 
         String mavenHome = System.getenv("M3_HOME");
         if (mavenHome == null) {
@@ -77,22 +84,14 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         request.setPomFile(projectPath.resolve("pom.xml").toFile());
         request.setBaseDirectory(projectPath.toFile());
         request.setOutputHandler(
-                new InvocationOutputHandler() {
-
-                    @Override
-                    public void consumeLine(String line) {
-                        log.info("MavenInvokator: {}", line);
-                        out.println(line);
-                    }
+                line -> {
+                    log.info("MavenInvokator: {}", line);
+                    out.println(line);
                 });
         request.setErrorHandler(
-                new InvocationOutputHandler() {
-
-                    @Override
-                    public void consumeLine(String line) {
-                        log.info("MavenInvokator: {}", line);
-                        err.println(line);
-                    }
+                line -> {
+                    log.info("MavenInvokator: {}", line);
+                    err.println(line);
                 });
 
         request.setGoals(Arrays.asList(mavenArgs));

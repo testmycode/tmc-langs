@@ -28,21 +28,44 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-
+import java.util.Optional;
 
 public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
     private static final Logger log = LoggerFactory.getLogger(MavenInvokatorMavenTaskRunner.class);
 
-    private static final String MAVEN_OPTS =
-            "-Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8"
+    private static final String MAVEN_OPTS = "-Dmaven.compiler.source=1.8 "
+            + " -Dmaven.compiler.target=1.8"
             + " -XX:+TieredCompilation -XX:TieredStopAtLevel=1";
+
+    private static final Path WINDOWS_JAVA_DEFAULT_FOLDER = Paths.get("C:\\Program Files\\Java");
 
     @Override
     public MavenExecutionResult exec(Path projectPath, String[] mavenArgs) {
 
         InvocationRequest request = new DefaultInvocationRequest();
         request.setMavenOpts(MAVEN_OPTS);
+
+        try {
+            String javaHome = System.getenv("JAVA_HOME");
+            if (SystemUtils.IS_OS_WINDOWS
+                    && (javaHome == null || javaHome.trim().isEmpty()
+                        || !Files.exists(Paths.get(javaHome.trim())))) {
+                String currentJava = System.getProperty("java.version").trim();
+                Optional<Path> foundHome = Files.list(WINDOWS_JAVA_DEFAULT_FOLDER)
+                        .filter(Files::isDirectory)
+                        .filter(path -> {
+                            return path.getFileName().toString().contains(currentJava);
+                        }).findAny();
+                if (foundHome.isPresent()) {
+                    Path home = foundHome.get();
+                    request.setJavaHome(home.toFile());
+                }
+            }
+        } catch (Exception e) {
+            log.debug("Could not fix java home", e);
+        }
+
         try {
             String jdkhome = System.getenv("jdkhome");
             if (jdkhome != null) {
@@ -54,7 +77,6 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         } catch (Exception e) {
             log.debug("jdkhome variable not valid, skipping", e);
         }
-
 
         String mavenHome = System.getenv("M3_HOME");
         if (mavenHome == null) {
@@ -83,16 +105,14 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         InvocationResult result = null;
         request.setPomFile(projectPath.resolve("pom.xml").toFile());
         request.setBaseDirectory(projectPath.toFile());
-        request.setOutputHandler(
-                line -> {
-                    log.info("MavenInvokator: {}", line);
-                    out.println(line);
-                });
-        request.setErrorHandler(
-                line -> {
-                    log.info("MavenInvokator: {}", line);
-                    err.println(line);
-                });
+        request.setOutputHandler(line -> {
+            log.info("MavenInvokator: {}", line);
+            out.println(line);
+        });
+        request.setErrorHandler(line -> {
+            log.info("MavenInvokator: {}", line);
+            err.println(line);
+        });
 
         request.setGoals(Arrays.asList(mavenArgs));
 
@@ -155,7 +175,7 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
                 configPath = Paths.get(appdata);
             }
         } else {
-            //Assume we're using Unix (Linux, Mac OS X or *BSD)
+            // Assume we're using Unix (Linux, Mac OS X or *BSD)
             String configEnv = System.getenv("XDG_CONFIG_HOME");
 
             if (configEnv != null && configEnv.length() > 0) {

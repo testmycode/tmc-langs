@@ -18,7 +18,6 @@ env:
   - M3_HOME=/usr/local/maven
 
 before_install:
-  - curl -L https://static.rust-lang.org/rustup.sh | sh -s -- --channel=stable --yes --prefix=$PWD --disable-sudo
   - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
   - echo "deb https://cloud.r-project.org/bin/linux/ubuntu trusty/" | sudo tee -a /etc/apt/sources.list
   - sudo add-apt-repository --yes ppa:beineri/opt-qt591-trusty

@@ -37,7 +37,7 @@ public final class MavenPlugin extends AbstractJavaPlugin {
     private static final Path RESULT_FILE = Paths.get("target", "test_output.txt");
     private static final Path TEST_FOLDER = Paths.get("src");
 
-    private static final String TEST_RUNNER_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.6:test";
+    private static final String TEST_RUNNER_GOAL = "fi.helsinki.cs.tmc:tmc-maven-plugin:1.12:test";
 
     /**
      * Creates a new MavenPlugin.

@@ -143,7 +143,8 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
             command = new String[] {"py", "-3"};
             // Conda only works with the "python"-command on windows
             String condaPython = System.getenv("CONDA_PYTHON_EXE");
-            if (condaPython != null && !condaPython.isEmpty() && Files.exists(Paths.get(condaPython))) {
+            if (condaPython != null && !condaPython.isEmpty()
+                    && Files.exists(Paths.get(condaPython))) {
                 command = new String[] {condaPython};
             }
         } else {

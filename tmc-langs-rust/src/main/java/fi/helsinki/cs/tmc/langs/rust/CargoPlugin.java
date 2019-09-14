@@ -64,7 +64,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     @Override
     public ValidationResult checkCodeStyle(Path path, Locale locale) {
         if (run(new String[] {"cargo", "clean"}, path).isPresent()) {
-            String[] command = {"cargo", "rustc", "--", "--forbid", "warnings"};
+            String[] command = {"cargo", "--message-format", "json" , "rustc", "--", "--forbid", "warnings"};
             log.info("Building for lints with command {}", Arrays.deepToString(command));
             Optional<ProcessResult> result = run(command, path);
             if (result.isPresent()) {

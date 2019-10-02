@@ -11,11 +11,13 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LinterResultParser {
     
@@ -27,13 +29,18 @@ public class LinterResultParser {
     public ValidationResult parse(ProcessResult processResult) {
         String output = processResult.errorOutput;
         String[] lines = output.split("\\r?\\n");
-        Arrays.stream(lines)
+        List<LintError> errors = Arrays.stream(lines)
             .map((line) -> mapper.readTree(line))
             .filter((parseTree) -> parseTree.get("reason").asText().equals("compiler-message"))
-            .map((parseTree) -> {
-
-                return null;
-            });
+            .flatMap((parseTree) -> {
+                for (JsonNode node : parseTree.get("message").get("spans")) {
+                    if (node.get("is_primary").asBoolean()) {
+                        return Stream.of(createLintError(node, parseTree.get("rendered").asText()));
+                    }
+                }
+                return Stream.empty();
+            })
+            .collect(Collectors.toList());
         
         
         // LinterResult result = new LinterResult();
@@ -56,6 +63,11 @@ public class LinterResultParser {
         //     }
         // }
         return result;
+    }
+
+    private LintError createLintError(JsonNode node, String message) {
+        String file = node.get(fieldName)
+        return new LintError(file, message, code, startLine, startColumn, endLine, endColumn);
     }
 
     private void addLintError(Matcher matcher, List<String> code, LinterResult result) {

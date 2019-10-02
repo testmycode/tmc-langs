@@ -1,0 +1,144 @@
+[
+  {
+    "reason": "compiler-message",
+    "package_id": "passing 0.1.0 (path+file:///home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/compileFail)",
+    "target": {
+      "kind": ["lib"],
+      "crate_types": ["lib"],
+      "name": "passing",
+      "src_path": "/home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/compileFail/src/lib.rs",
+      "edition": "2015"
+    },
+    "message": {
+      "message": "mismatched types",
+      "code": {
+        "code": "E0308",
+        "explanation": "\nThis error occurs when the compiler was unable to infer the concrete type of a\nvariable. It can occur for several cases, the most common of which is a\nmismatch in the expected type that the compiler inferred for a variable's\ninitializing expression, and the actual type explicitly assigned to the\nvariable.\n\nFor example:\n\n```compile_fail,E0308\nlet x: i32 = \"I am not a number!\";\n//     ~~~   ~~~~~~~~~~~~~~~~~~~~\n//      |             |\n//      |    initializing expression;\n//      |    compiler infers type `&str`\n//      |\n//    type `i32` assigned to variable `x`\n```\n"
+      },
+      "level": "error",
+      "spans": [
+        {
+          "file_name": "src/lib.rs",
+          "byte_start": 39,
+          "byte_end": 42,
+          "line_start": 2,
+          "line_end": 2,
+          "column_start": 39,
+          "column_end": 42,
+          "is_primary": true,
+          "text": [
+            {
+              "text": "pub fn mul_xor_add(a: u64, b: u64) -> u64 {",
+              "highlight_start": 39,
+              "highlight_end": 42
+            }
+          ],
+          "label": "expected u64, found ()",
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "expansion": null
+        },
+        {
+          "file_name": "src/lib.rs",
+          "byte_start": 8,
+          "byte_end": 19,
+          "line_start": 2,
+          "line_end": 2,
+          "column_start": 8,
+          "column_end": 19,
+          "is_primary": false,
+          "text": [
+            {
+              "text": "pub fn mul_xor_add(a: u64, b: u64) -> u64 {",
+              "highlight_start": 8,
+              "highlight_end": 19
+            }
+          ],
+          "label": "this function's body doesn't return",
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "expansion": null
+        }
+      ],
+      "children": [
+        {
+          "message": "expected type `u64`\n   found type `()`",
+          "code": null,
+          "level": "note",
+          "spans": [],
+          "children": [],
+          "rendered": null
+        },
+        {
+          "message": "consider removing this semicolon",
+          "code": null,
+          "level": "help",
+          "spans": [
+            {
+              "file_name": "src/lib.rs",
+              "byte_start": 85,
+              "byte_end": 86,
+              "line_start": 4,
+              "line_end": 4,
+              "column_start": 22,
+              "column_end": 23,
+              "is_primary": true,
+              "text": [
+                {
+                  "text": "    (x ^ a) + (x ^ b);",
+                  "highlight_start": 22,
+                  "highlight_end": 23
+                }
+              ],
+              "label": null,
+              "suggested_replacement": "",
+              "suggestion_applicability": "MachineApplicable",
+              "expansion": null
+            }
+          ],
+          "children": [],
+          "rendered": null
+        }
+      ],
+      "rendered": "error[E0308]: mismatched types\n --> src/lib.rs:2:39\n  |\n2 | pub fn mul_xor_add(a: u64, b: u64) -> u64 {\n  |        -----------                    ^^^ expected u64, found ()\n  |        |\n  |        this function's body doesn't return\n3 |     let x = a * b;\n4 |     (x ^ a) + (x ^ b);\n  |                      - help: consider removing this semicolon\n  |\n  = note: expected type `u64`\n             found type `()`\n\n"
+    }
+  },
+  {
+    "reason": "compiler-message",
+    "package_id": "passing 0.1.0 (path+file:///home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/compileFail)",
+    "target": {
+      "kind": ["lib"],
+      "crate_types": ["lib"],
+      "name": "passing",
+      "src_path": "/home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/compileFail/src/lib.rs",
+      "edition": "2015"
+    },
+    "message": {
+      "message": "aborting due to previous error",
+      "code": null,
+      "level": "error",
+      "spans": [],
+      "children": [],
+      "rendered": "error: aborting due to previous error\n\n"
+    }
+  },
+  {
+    "reason": "compiler-message",
+    "package_id": "passing 0.1.0 (path+file:///home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/compileFail)",
+    "target": {
+      "kind": ["lib"],
+      "crate_types": ["lib"],
+      "name": "passing",
+      "src_path": "/home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/compileFail/src/lib.rs",
+      "edition": "2015"
+    },
+    "message": {
+      "message": "For more information about this error, try `rustc --explain E0308`.",
+      "code": null,
+      "level": "",
+      "spans": [],
+      "children": [],
+      "rendered": "For more information about this error, try `rustc --explain E0308`.\n"
+    }
+  }
+]

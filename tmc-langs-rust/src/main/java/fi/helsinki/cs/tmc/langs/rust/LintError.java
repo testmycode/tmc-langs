@@ -9,7 +9,7 @@ public class LintError implements ValidationError {
     private final List<String> code;
     private final int startLine;
     private final int startColumn;
-    private final String description;
+    private final String message;
     private final String file;
     private final int endLine;
     private final int endColumn;
@@ -18,7 +18,7 @@ public class LintError implements ValidationError {
      * Creates new error that failing lints generate.
      * 
      * @param file file that the error is in
-     * @param description describes what is wrong
+     * @param message describes what is wrong
      * @param code list of code lines the error is in
      * @param startLine from what line error start
      * @param startColumn from what column in that line error starts
@@ -27,7 +27,7 @@ public class LintError implements ValidationError {
      */
     public LintError(
             String file,
-            String description,
+            String message,
             List<String> code,
             int startLine,
             int startColumn,
@@ -35,7 +35,7 @@ public class LintError implements ValidationError {
             int endColumn) {
         this.code = code;
         this.file = file;
-        this.description = description;
+        this.message = message;
         this.startLine = startLine;
         this.startColumn = startColumn;
         this.endLine = endLine;
@@ -62,7 +62,7 @@ public class LintError implements ValidationError {
 
     @Override
     public String getMessage() {
-        return description;
+        return message;
     }
 
     @Override

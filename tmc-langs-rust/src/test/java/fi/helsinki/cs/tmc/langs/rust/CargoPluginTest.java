@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class CargoPluginTest {
 
@@ -56,7 +58,7 @@ public class CargoPluginTest {
 
         assertEquals(RunResult.Status.PASSED, result.status);
         assertEquals(1, result.testResults.size());
-        assertTrue(result.testResults.get(0).passed);
+        assertTrue(result.testResults.get(0).isSuccessful());
     }
 
     @Test
@@ -66,8 +68,8 @@ public class CargoPluginTest {
 
         assertEquals(RunResult.Status.PASSED, result.status);
         assertEquals(2, result.testResults.size());
-        assertTrue(result.testResults.get(0).passed);
-        assertTrue(result.testResults.get(1).passed);
+        assertTrue(result.testResults.get(0).isSuccessful());
+        assertTrue(result.testResults.get(1).isSuccessful());
     }
 
     @Test
@@ -77,7 +79,7 @@ public class CargoPluginTest {
 
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
         assertEquals(1, result.testResults.size());
-        assertFalse(result.testResults.get(0).passed);
+        assertFalse(result.testResults.get(0).isSuccessful());
     }
 
     @Test
@@ -87,11 +89,11 @@ public class CargoPluginTest {
 
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
         assertEquals(2, result.testResults.size());
-        boolean first = result.testResults.get(0).passed;
+        boolean first = result.testResults.get(0).isSuccessful();
         if (first) {
-            assertFalse(result.testResults.get(1).passed);
+            assertFalse(result.testResults.get(1).isSuccessful());
         } else {
-            assertTrue(result.testResults.get(1).passed);
+            assertTrue(result.testResults.get(1).isSuccessful());
         }
     }
 
@@ -102,7 +104,7 @@ public class CargoPluginTest {
 
         assertEquals(RunResult.Status.TESTS_FAILED, result.status);
         assertEquals(1, result.testResults.size());
-        assertFalse(result.testResults.get(0).passed);
+        assertFalse(result.testResults.get(0).isSuccessful());
     }
 
     @Test
@@ -135,7 +137,7 @@ public class CargoPluginTest {
                 .getValidationErrors().values()
                 .iterator().next().get(0);
         assertEquals(7, validation.getLine());
-        assertEquals(1, validation.getColumn());
+        assertEquals(4, validation.getColumn());
         assertTrue(validation.getMessage().contains("snake case"));
         assertTrue(validation.getSourceName().contains("lib.rs"));
     }
@@ -179,6 +181,14 @@ public class CargoPluginTest {
         Path path = TestUtils.getPath(getClass(), "warningFiles");
         ValidationResult result = cargoPlugin.checkCodeStyle(path, new Locale("en"));
         Map<File, List<ValidationError>> errors = result.getValidationErrors();
+        // TODO: Debug
+        errors.entrySet().stream()
+            .forEach((e) ->
+                System.out.println("key: " + e.getKey() + ", value: " + e.getValue()
+                    .stream()
+                    .map(t -> t.getMessage())
+                    .collect(Collectors.joining()))
+            );
         assertEquals(2, errors.size());
         Iterator<Entry<File, List<ValidationError>>> errorIt = errors.entrySet().iterator();
         Entry<File, List<ValidationError>> error1 = errorIt.next();

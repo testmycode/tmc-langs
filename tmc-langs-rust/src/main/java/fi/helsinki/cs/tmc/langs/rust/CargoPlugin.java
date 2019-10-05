@@ -64,7 +64,9 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     @Override
     public ValidationResult checkCodeStyle(Path path, Locale locale) {
         if (run(new String[] {"cargo", "clean"}, path).isPresent()) {
-            String[] command = {"cargo", "--message-format", "json" , "rustc", "--", "--forbid", "warnings"};
+            String[] command = {
+                "cargo" , "rustc", "--message-format", "json", "--", "--forbid", "warnings"
+            };
             log.info("Building for lints with command {}", Arrays.deepToString(command));
             Optional<ProcessResult> result = run(command, path);
             if (result.isPresent()) {
@@ -152,9 +154,9 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     private RunResult filledFailure(ProcessResult processResult) {
         byte[] errorOutput = processResult.errorOutput.getBytes(StandardCharsets.UTF_8);
         ImmutableMap<String, byte[]> logs =
-                new ImmutableMap.Builder()
+                new ImmutableMap.Builder<String, byte[]>()
                         .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
-                        .<String, byte[]>build();
+                        .build();
         return new RunResult(Status.COMPILE_FAILED, ImmutableList.<TestResult>of(), logs);
     }
 

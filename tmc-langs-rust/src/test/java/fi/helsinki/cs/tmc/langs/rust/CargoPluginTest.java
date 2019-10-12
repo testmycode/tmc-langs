@@ -181,14 +181,6 @@ public class CargoPluginTest {
         Path path = TestUtils.getPath(getClass(), "warningFiles");
         ValidationResult result = cargoPlugin.checkCodeStyle(path, new Locale("en"));
         Map<File, List<ValidationError>> errors = result.getValidationErrors();
-        // TODO: Debug
-        errors.entrySet().stream()
-            .forEach((e) ->
-                System.out.println("key: " + e.getKey() + ", value: " + e.getValue()
-                    .stream()
-                    .map(t -> t.getMessage())
-                    .collect(Collectors.joining()))
-            );
         assertEquals(2, errors.size());
         Iterator<Entry<File, List<ValidationError>>> errorIt = errors.entrySet().iterator();
         Entry<File, List<ValidationError>> error1 = errorIt.next();

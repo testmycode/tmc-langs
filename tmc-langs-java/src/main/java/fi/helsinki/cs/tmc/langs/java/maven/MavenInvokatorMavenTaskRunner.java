@@ -78,19 +78,7 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
             log.debug("jdkhome variable not valid, skipping", e);
         }
 
-        String mavenHome = System.getenv("M3_HOME");
-        if (mavenHome == null) {
-            mavenHome = System.getenv("M2_HOME");
-        }
-        if (mavenHome == null) {
-            mavenHome = System.getenv("MAVEN_HOME");
-        }
-        if (mavenHome == null) {
-            mavenHome = System.getProperty("maven.home");
-        }
-        if (mavenHome == null) {
-            mavenHome = useBundledMaven().toString();
-        }
+        String mavenHome = getMavenHome();
 
         log.info("Using maven at: {}", mavenHome);
 
@@ -131,6 +119,23 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
         } catch (MavenInvocationException e) {
             throw new MavenExecutorException(e);
         }
+    }
+
+    public String getMavenHome() {
+        String mavenHome = System.getenv("M3_HOME");
+        if (mavenHome == null) {
+            mavenHome = System.getenv("M2_HOME");
+        }
+        if (mavenHome == null) {
+            mavenHome = System.getenv("MAVEN_HOME");
+        }
+        if (mavenHome == null) {
+            mavenHome = System.getProperty("maven.home");
+        }
+        if (mavenHome == null) {
+            mavenHome = useBundledMaven().toString();
+        }
+        return mavenHome;
     }
 
     private Path useBundledMaven() {

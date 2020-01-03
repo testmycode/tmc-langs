@@ -4,7 +4,7 @@
     <parent>
         <groupId>fi.helsinki.cs.tmc</groupId>
         <artifactId>tmc-langs</artifactId>
-        <version>0.7.15-SNAPSHOT</version>
+        <version>0.7.16-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -29,32 +29,7 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <!-- Find tools.jar - http://stackoverflow.com/questions/3080437/jdk-tools-jar-as-maven-dependency -->
     <profiles>
-        <profile>
-            <id>default-profile</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-                <file>
-                    <exists>${java.home}/../lib/tools.jar</exists>
-                </file>
-            </activation>
-            <properties>
-                <toolsjar>${java.home}/../lib/tools.jar</toolsjar>
-            </properties>
-        </profile>
-        <profile>
-            <id>mac-profile</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <file>
-                    <exists>${java.home}/../Classes/classes.jar</exists>
-                </file>
-            </activation>
-            <properties>
-                <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
-            </properties>
-        </profile>
         <profile>
             <id>jdk8</id>
             <activation>
@@ -117,7 +92,7 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.9.6</version>
+            <version>1.10.6</version>
         </dependency>
         <dependency>
 
@@ -152,14 +127,6 @@
             <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-checkstyle-runner</artifactId>
             <version>3.0.3-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <scope>system</scope>
-            <version>1.6.0</version>  <!-- doesn't matter, the installed JDK's JAR is always used -->
-            <systemPath>${toolsjar}</systemPath>
         </dependency>
 
         <dependency>

@@ -170,19 +170,19 @@ public class AntPluginTest {
         assertEquals("Build log should match by length", expectedLines.size(), actualLines.size());
     }
 
-    @Test
-    public void toolsJarIsIncludedToThePath() {
-        Path project = TestUtils.getPath(getClass(), "UsingToolsJar");
-        ClassPath cp = antPlugin.getProjectClassPath(project);
-        assertPathContains(cp, "tools.jar");
-        String name = "ToolsJar";
-        ExerciseDesc description = antPlugin.scanExercise(project, name).get();
-        assertEquals(name, description.name);
-        assertEquals(1, description.tests.size());
-        RunResult runResult = antPlugin.runTests(project);
-        assertEquals(RunResult.Status.PASSED, runResult.status);
-        assertEquals(1, runResult.testResults.size());
-    }
+//    @Test
+//    public void toolsJarIsIncludedToThePath() {
+//        Path project = TestUtils.getPath(getClass(), "UsingToolsJar");
+//        ClassPath cp = antPlugin.getProjectClassPath(project);
+//        assertPathContains(cp, "tools.jar");
+//        String name = "ToolsJar";
+//        ExerciseDesc description = antPlugin.scanExercise(project, name).get();
+//        assertEquals(name, description.name);
+//        assertEquals(1, description.tests.size());
+//        RunResult runResult = antPlugin.runTests(project);
+//        assertEquals(RunResult.Status.PASSED, runResult.status);
+//        assertEquals(1, runResult.testResults.size());
+//    }
 
     @Test
     public void testShouldNotDieWhenStudentCodeUsesSystemExitZero() {

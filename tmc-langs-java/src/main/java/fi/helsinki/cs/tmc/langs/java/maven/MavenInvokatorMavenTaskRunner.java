@@ -27,8 +27,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 
 public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
 
@@ -156,17 +158,27 @@ public class MavenInvokatorMavenTaskRunner implements MavenTaskRunner {
             Files.copy(data, tmpFile, StandardCopyOption.REPLACE_EXISTING);
             Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.ZIP);
             archiver.extract(tmpFile.toFile(), mavenHome.toFile());
+            tryToChmod(extractedMavenLocation.resolve("bin").resolve("mvn"));
             try {
                 Files.deleteIfExists(tmpFile);
             } catch (IOException e) {
                 log.warn("Deleting tmp apache-maven.zip failed", e);
             }
 
-                // Add the name of the extracted folder to the path
-            return mavenHome.resolve("apache-maven-3.5.4");
+            return extractedMavenLocation;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void tryToChmod(Path path) {
+        try {
+            Set<PosixFilePermission> permissions = Files.getPosixFilePermissions(path);
+            if (!permissions.contains(PosixFilePermission.OWNER_EXECUTE)) {
+                permissions.add(PosixFilePermission.OWNER_EXECUTE);
+                Files.setPosixFilePermissions(path, permissions);
+            }
+        } catch (IOException ex) { }
     }
 
     static Path getConfigDirectory() {

@@ -65,11 +65,11 @@
     <repositories>
         <repository>
             <id>maven.mooc.fi.releases</id>
-            <url>s3://maven.mooc.fi/releases</url>
+            <url>https://maven.mooc.fi/releases</url>
         </repository>
         <repository>
             <id>maven.mooc.fi.snapshots</id>
-            <url>s3://maven.mooc.fi/snapshots</url>
+            <url>https://maven.mooc.fi/snapshots</url>
         </repository>
     </repositories>
 

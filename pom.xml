@@ -24,12 +24,12 @@
         <repository>
             <id>maven.mooc.fi.releases</id>
             <name>TMC releases</name>
-            <url>http://maven.mooc.fi/releases</url>
+            <url>https://maven.mooc.fi/releases</url>
         </repository>
         <repository>
             <id>maven.mooc.fi.snapshots</id>
             <name>TMC snapshots</name>
-            <url>http://maven.mooc.fi/snapshots</url>
+            <url>https://maven.mooc.fi/snapshots</url>
         </repository>
     </repositories>
 

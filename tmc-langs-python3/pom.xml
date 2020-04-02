@@ -68,6 +68,7 @@
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
+                    <forceCreation>true</forceCreation>
                 </configuration>
             </plugin>
         </plugins>

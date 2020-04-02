@@ -32,7 +32,7 @@ before_install:
   - source /opt/qt59/bin/qt59-env.sh
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
   - mkdir -p $HOME/bin && ln -s $(which python3.4) $HOME/bin/python3 && export PATH="$HOME/bin:$PATH"
-  - mvn install -Dmaven.test.skip=true
+  - mvn clean install -Dmaven.test.skip=true -q
 
 script:
   - mvn clean test -q

@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,7 +50,8 @@ public final class Python3TestResultParser {
     }
 
     private List<TestResult> getTestResults() throws IOException {
-        byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
+        String json = String.join("", Files.readAllLines(
+                path.resolve(RESULT_FILE), Charset.defaultCharset()));
         List<TestResult> results = new ArrayList<>();
 
         JsonNode tree = mapper.readTree(json);

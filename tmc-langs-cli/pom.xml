@@ -5,8 +5,11 @@
         <artifactId>tmc-langs</artifactId>
         <groupId>fi.helsinki.cs.tmc</groupId>
         <version>0.7.17-SNAPSHOT</version>
+        <relativePath>../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <groupId>fi.helsinki.cs.tmc</groupId>
+    <name>tmc-langs-cli</name>
 
     <properties>
         <tmc.basedir>${basedir}/../target</tmc.basedir>
@@ -159,6 +162,21 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <outputDirectory>${tmc.basedir}</outputDirectory>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                    <forceCreation>true</forceCreation>
+                </configuration>
             </plugin>
         </plugins>
     </build>

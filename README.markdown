@@ -62,12 +62,12 @@ Supported tasks and their return types and parameters can be read from [TaskExec
 ### CLI
 
 Running tasks from the command-line can be accomplished by passing the required task with projects directory path and in some tasks the output file path.
-After building the `tmc-langs-cli` commandline interface you can find the jar to use under `tmc-langs-cli/target/`
+After building the `tmc-langs-cli` commandline interface you can find the jar to use under `target/`
 
-`java -jar tmc-langs-cli/target/tmc-langs-cli-1.0-SNAPSHOT.jar run-tests --exercisePath test_projects/arith_funcs --outputPath results.txt`
+`java -jar target/tmc-langs-cli-1.0-SNAPSHOT.jar run-tests --exercisePath test_projects/arith_funcs --outputPath results.txt`
 
 For all options run
-`java -jar tmc-langs-cli/target/tmc-langs-cli-1.0-SNAPSHOT.jar help`
+`java -jar target/tmc-langs-cli-1.0-SNAPSHOT.jar help`
 
 ## Credits
 

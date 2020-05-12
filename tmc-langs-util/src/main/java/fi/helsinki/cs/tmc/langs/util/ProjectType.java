@@ -9,7 +9,7 @@ import fi.helsinki.cs.tmc.langs.make.MakePlugin;
 import fi.helsinki.cs.tmc.langs.python3.Python3Plugin;
 import fi.helsinki.cs.tmc.langs.qmake.QmakePlugin;
 import fi.helsinki.cs.tmc.langs.r.RPlugin;
-
+import fi.helsinki.cs.tmc.langs.csharp.CSharpPlugin;
 
 
 import org.slf4j.Logger;
@@ -26,6 +26,7 @@ public enum ProjectType {
     MAKEFILE(new MakePlugin()),
     PYTHON3(new Python3Plugin()),
     R(new RPlugin()),
+    CSHARP(new CSharpPlugin()),
     JAVA_MAVEN(new MavenPlugin()),
     // for legacy and matching reasons keep the java ant as the last choise.
     JAVA_ANT(new AntPlugin());

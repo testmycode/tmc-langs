@@ -67,6 +67,12 @@
         </dependency>
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
+            <artifactId>tmc-langs-csharp</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>fi.helsinki.cs.tmc</groupId>
             <artifactId>tmc-langs-r</artifactId>
             <version>${project.version}</version>
             <type>jar</type>

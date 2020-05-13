@@ -18,12 +18,14 @@ import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +134,16 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
     
     private String[] getTestCommand() {
-        return new String[]{"dotnet", "/home/pp/Documents/ohtuprojekti/test/tmc-csharp-runner/Bootstrap/bin/Debug/netcoreapp3.1/Bootstrap.dll", "-t"};
+        return new String[]{"dotnet", getBootstrapPath(), "-t"};
     }
     
+    private String getBootstrapPath() {
+        try {
+            Scanner in = new Scanner(new FileReader("bootstrapPath.txt"));
+            return in.nextLine();
+        } catch (Exception e) {
+            log.error("Runner locating error: ", e);
+            return null;
+        }
+    }
 }

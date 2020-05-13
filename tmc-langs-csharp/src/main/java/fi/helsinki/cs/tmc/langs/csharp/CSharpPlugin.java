@@ -15,9 +15,11 @@ import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
+import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
@@ -75,10 +77,16 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
+        deleteOldResults(path);
+        
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
         
         try {
-            runner.call();
+            ProcessResult result = runner.call();
+            
+            if (result.statusCode != 0) {
+                log.error("Process status code != 0");
+            }
         } catch (Exception e) {
             log.error("Test execution error: ", e);
         }
@@ -109,6 +117,14 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {
+    }
+    
+    private void deleteOldResults(Path path) {
+        try {
+            Files.deleteIfExists(path.resolve(".tmc_test_results.json"));
+        } catch (Exception e) {
+            log.error("Old test result purging error: ", e);
+        }
     }
 
     private String[] getAvailablePointsCommand() {

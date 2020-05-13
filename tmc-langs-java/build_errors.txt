@@ -1,5 +1,0 @@
-
-BUILD FAILED
-Error reading project file /home/pp/Documents/ohtuprojekti/test/tmc-langs/tmc-langs-java/build.xml: /home/pp/Documents/ohtuprojekti/test/tmc-langs/tmc-langs-java/build.xml
-
-Total time: 0 seconds

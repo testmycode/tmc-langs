@@ -20,8 +20,11 @@ import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,21 +33,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CSharpPlugin extends AbstractLanguagePlugin {
-    
+
+    private static final Path SRC_PATH = Paths.get("src");
+
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 
     public CSharpPlugin() {
         super(
-                new ExerciseBuilder(), 
-                new StudentFileAwareSubmissionProcessor(), 
-                new StudentFileAwareZipper(), 
+                new ExerciseBuilder(),
+                new StudentFileAwareSubmissionProcessor(),
+                new StudentFileAwareZipper(),
                 new StudentFileAwareUnzipper()
         );
     }
 
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
-        return true;
+        return doesProjectContainCSharpFiles(path);
     }
 
     @Override
@@ -60,13 +65,13 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
         ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), path);
-        
+
         try {
             runner.call();
         } catch (Exception e) {
             log.error("Exercise scan error: ", e);
         }
-        
+
         try {
             ImmutableList<TestDesc> testDescs = new CSharpExerciseDescParser(path).parse();
             return Optional.of(new ExerciseDesc(exerciseName, testDescs));
@@ -80,25 +85,25 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     @Override
     public RunResult runTests(Path path) {
         deleteOldResults(path);
-        
+
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
-        
+
         try {
             ProcessResult result = runner.call();
-            
+
             if (result.statusCode != 0) {
                 log.error("Process status code != 0");
             }
         } catch (Exception e) {
             log.error("Test execution error: ", e);
         }
-        
+
         try {
             return new CSharpTestResultParser(path).parse();
         } catch (IOException e) {
             log.error("Test parse error: ", e);
         }
-        
+
         return null;
     }
 
@@ -120,7 +125,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     @Override
     public void clean(Path path) {
     }
-    
+
     private void deleteOldResults(Path path) {
         try {
             Files.deleteIfExists(path.resolve(".tmc_test_results.json"));
@@ -132,18 +137,34 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private String[] getAvailablePointsCommand() {
         return new String[]{"placeholder", "tmc", "available_points"};
     }
-    
+
     private String[] getTestCommand() {
         return new String[]{"dotnet", getBootstrapPath(), "-t"};
     }
-    
+
     private String getBootstrapPath() {
         try {
-            Scanner in = new Scanner(new FileReader("bootstrapPath.txt"));
+            Scanner in = new Scanner(new FileReader("tmc-langs-csharp/bootstrapPath.txt"));
             return in.nextLine();
         } catch (Exception e) {
             log.error("Runner locating error: ", e);
             return null;
         }
+    }
+
+    private boolean doesProjectContainCSharpFiles(Path path) {
+
+        PathMatcher matcher = FileSystems.getDefault()
+                .getPathMatcher("glob:**.csproj");
+
+        try {
+            if (Files.exists(path.resolve(SRC_PATH))) {
+                return Files.walk(path.resolve(SRC_PATH), 2).anyMatch(p -> matcher.matches(p));
+            }
+        } catch (Exception e) {
+            
+        }
+
+        return false;
     }
 }

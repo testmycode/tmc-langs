@@ -67,9 +67,15 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), path);
 
         try {
-            runner.call();
+            ProcessResult result = runner.call();
+            
+            if (result.statusCode != 0) {
+                log.error("Process status code != 0");
+                return Optional.absent();
+            }
         } catch (Exception e) {
             log.error("Exercise scan error: ", e);
+            return Optional.absent();
         }
 
         try {
@@ -108,7 +114,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ValidationResult checkCodeStyle(Path path, Locale messageLocale) throws UnsupportedOperationException {
+    public ValidationResult checkCodeStyle(Path path, Locale messageLocale) {
         return new ValidationResult() {
             @Override
             public Strategy getStrategy() {
@@ -135,7 +141,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     private String[] getAvailablePointsCommand() {
-        return new String[]{"placeholder", "tmc", "available_points"};
+        return new String[]{"dotnet", getBootstrapPath(), "-p"};
     }
 
     private String[] getTestCommand() {
@@ -153,7 +159,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     private boolean doesProjectContainCSharpFiles(Path path) {
-
         PathMatcher matcher = FileSystems.getDefault()
                 .getPathMatcher("glob:**.csproj");
 

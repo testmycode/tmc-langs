@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.util;
 
 import fi.helsinki.cs.tmc.langs.LanguagePlugin;
 import fi.helsinki.cs.tmc.langs.NoTestsPlugin;
+import fi.helsinki.cs.tmc.langs.csharp.CSharpPlugin;
 import fi.helsinki.cs.tmc.langs.domain.NoLanguagePluginFoundException;
 import fi.helsinki.cs.tmc.langs.java.ant.AntPlugin;
 import fi.helsinki.cs.tmc.langs.java.maven.MavenPlugin;
@@ -9,8 +10,6 @@ import fi.helsinki.cs.tmc.langs.make.MakePlugin;
 import fi.helsinki.cs.tmc.langs.python3.Python3Plugin;
 import fi.helsinki.cs.tmc.langs.qmake.QmakePlugin;
 import fi.helsinki.cs.tmc.langs.r.RPlugin;
-import fi.helsinki.cs.tmc.langs.csharp.CSharpPlugin;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

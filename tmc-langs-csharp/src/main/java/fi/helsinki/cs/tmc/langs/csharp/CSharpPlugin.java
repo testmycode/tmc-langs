@@ -1,8 +1,5 @@
 package fi.helsinki.cs.tmc.langs.csharp;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.Strategy;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
@@ -17,6 +14,14 @@ import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
 import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,12 +30,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class CSharpPlugin extends AbstractLanguagePlugin {
 
@@ -108,7 +113,9 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     @Override
-    public ValidationResult checkCodeStyle(Path path, Locale messageLocale) throws UnsupportedOperationException {
+    public ValidationResult checkCodeStyle(Path path, Locale messageLocale) 
+            throws UnsupportedOperationException {
+        
         return new ValidationResult() {
             @Override
             public Strategy getStrategy() {

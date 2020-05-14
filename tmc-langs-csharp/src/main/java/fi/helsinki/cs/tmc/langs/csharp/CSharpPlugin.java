@@ -47,7 +47,8 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE =
             "Failed to parse exercise description.";
     private static final String CANNOT_LOCATE_RUNNER_MESSAGE = "Failed to locate runner.";
-    private static final String CANNOT_PURGE_OLD_RESULTS_MESSAGE = "Failed to purge old test results.";
+    private static final String CANNOT_PURGE_OLD_RESULTS_MESSAGE =
+            "Failed to purge old test results.";
 
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 

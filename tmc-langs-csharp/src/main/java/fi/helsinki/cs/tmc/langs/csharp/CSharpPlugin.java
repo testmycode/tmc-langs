@@ -159,6 +159,11 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     private String getBootstrapPath() {
+        String envVarPath = System.getenv("TMC_CSHARP_BOOTSTRAP_PATH");
+        if (envVarPath != null) {
+            return envVarPath;
+        }
+
         try {
             Scanner in = new Scanner(new FileReader("tmc-langs-csharp/bootstrapPath.txt"));
             return in.nextLine();

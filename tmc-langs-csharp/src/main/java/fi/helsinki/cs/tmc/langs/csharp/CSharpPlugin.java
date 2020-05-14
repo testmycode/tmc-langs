@@ -36,6 +36,14 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     private static final Path SRC_PATH = Paths.get("src");
 
+    private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
+    private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
+    private static final String CANNOT_SCAN_EXERCISE_MESSAGE = "Failed to scan exercise.";
+    private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE =
+            "Failed to parse exercise description.";
+    private static final String CANNOT_LOCATE_RUNNER_MESSAGE = "Failed to locate runner.";
+    private static final String CANNOT_PURGE_OLD_RESULTS_MESSAGE = "Failed to purge old test results.";
+
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 
     public CSharpPlugin() {
@@ -70,11 +78,11 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             ProcessResult result = runner.call();
             
             if (result.statusCode != 0) {
-                log.error("Process status code != 0");
+                log.error(CANNOT_SCAN_EXERCISE_MESSAGE);
                 return Optional.absent();
             }
         } catch (Exception e) {
-            log.error("Exercise scan error: ", e);
+            log.error(CANNOT_SCAN_EXERCISE_MESSAGE, e);
             return Optional.absent();
         }
 
@@ -82,7 +90,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             ImmutableList<TestDesc> testDescs = new CSharpExerciseDescParser(path).parse();
             return Optional.of(new ExerciseDesc(exerciseName, testDescs));
         } catch (IOException e) {
-            log.error("Descrition parse error: ", e);
+            log.error(CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE, e);
         }
 
         return Optional.absent();
@@ -98,16 +106,18 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             ProcessResult result = runner.call();
 
             if (result.statusCode != 0) {
-                log.error("Process status code != 0");
+                log.error(CANNOT_RUN_TESTS_MESSAGE);
+                return null;
             }
         } catch (Exception e) {
-            log.error("Test execution error: ", e);
+            log.error(CANNOT_RUN_TESTS_MESSAGE, e);
+            return null;
         }
 
         try {
             return new CSharpTestResultParser(path).parse();
         } catch (IOException e) {
-            log.error("Test parse error: ", e);
+            log.error(CANNOT_PARSE_TEST_RESULTS_MESSAGE, e);
         }
 
         return null;
@@ -136,7 +146,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         try {
             Files.deleteIfExists(path.resolve(".tmc_test_results.json"));
         } catch (Exception e) {
-            log.error("Old test result purging error: ", e);
+            log.error(CANNOT_PURGE_OLD_RESULTS_MESSAGE, e);
         }
     }
 
@@ -153,7 +163,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             Scanner in = new Scanner(new FileReader("tmc-langs-csharp/bootstrapPath.txt"));
             return in.nextLine();
         } catch (Exception e) {
-            log.error("Runner locating error: ", e);
+            log.error(CANNOT_LOCATE_RUNNER_MESSAGE, e);
             return null;
         }
     }

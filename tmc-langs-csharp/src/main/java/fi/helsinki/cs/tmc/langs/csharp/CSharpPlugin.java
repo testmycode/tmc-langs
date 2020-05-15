@@ -49,6 +49,8 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private static final String CANNOT_LOCATE_RUNNER_MESSAGE = "Failed to locate runner.";
     private static final String CANNOT_PURGE_OLD_RESULTS_MESSAGE =
             "Failed to purge old test results.";
+    private static final String CANNOT_SCAN_PROJECT_TYPE_MESSAGE = 
+            "Failed to scan project files.";
 
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 
@@ -188,7 +190,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
                 return Files.walk(path.resolve(SRC_PATH), 2).anyMatch(p -> matcher.matches(p));
             }
         } catch (Exception e) {
-            
+            log.error(CANNOT_SCAN_PROJECT_TYPE_MESSAGE, e);
         }
 
         return false;

@@ -56,21 +56,20 @@ public class CSharpTestResultParser {
 
     private TestResult toTestResult(JsonNode node) {
         List<String> points = new ArrayList<>();
-//        for (JsonNode point : node.get("points")) {
-//            points.add(point.asText());
-//        }
+        for (JsonNode point : node.get("Points")) {
+            points.add(point.asText());
+        }
 
         List<String> backTrace = new ArrayList<>();
-//        for (JsonNode line : node.get("backtrace")) {
-//            backTrace.add(line.asText());
-//        }
+        for (JsonNode line : node.get("ErrorStackTrace")) {
+            backTrace.add(line.asText());
+        }
 
         return new TestResult(
                 node.get("Name").asText(),
                 node.get("Passed").asBoolean(),
                 ImmutableList.copyOf(points),
-                "",
-//                node.get("message").asText(),
+                node.get("Message").asText(),
                 ImmutableList.copyOf(backTrace));
     }
     

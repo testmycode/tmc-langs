@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +92,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             ProcessResult result = runner.call();
             
             if (result.statusCode != 0) {
-                log.error(CANNOT_SCAN_EXERCISE_MESSAGE);
+                log.error(COMPILATION_FAILED_MESSAGE);
                 return Optional.absent();
             }
         } catch (Exception e) {

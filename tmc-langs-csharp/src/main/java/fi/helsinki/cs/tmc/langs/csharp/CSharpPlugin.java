@@ -7,7 +7,9 @@ import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
+import fi.helsinki.cs.tmc.langs.domain.SpecialLogs;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
@@ -17,6 +19,7 @@ import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import org.slf4j.Logger;
@@ -30,7 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,6 +55,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             "Failed to purge old test results.";
     private static final String CANNOT_SCAN_PROJECT_TYPE_MESSAGE = 
             "Failed to scan project files.";
+    private static final String COMPILATION_FAILED_MESSAGE = "Failed to compile excercise.";
 
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 
@@ -114,8 +119,8 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             ProcessResult result = runner.call();
 
             if (result.statusCode != 0) {
-                log.error(CANNOT_RUN_TESTS_MESSAGE);
-                return null;
+                log.error(COMPILATION_FAILED_MESSAGE);
+                return runResultFromFailedCompilation(result);
             }
         } catch (Exception e) {
             log.error(CANNOT_RUN_TESTS_MESSAGE, e);
@@ -194,5 +199,16 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         }
 
         return false;
+    }
+
+    private RunResult runResultFromFailedCompilation(ProcessResult result) {
+        Map<String, byte[]> logs = new HashMap<>();
+        logs.put(SpecialLogs.STDOUT, result.output.getBytes());
+        logs.put(SpecialLogs.STDERR, result.errorOutput.getBytes());
+
+        return new RunResult(
+                RunResult.Status.COMPILE_FAILED,
+                ImmutableList.copyOf(new ArrayList<TestResult>()),
+                ImmutableMap.copyOf(logs));
     }
 }

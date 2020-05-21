@@ -172,6 +172,34 @@
                 <version>3.1.0</version>
             </plugin>
             <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <configuration>
+                    <skip>${maven.test.skip}</skip>
+                    <output>file</output>
+                    <append>true</append>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- not needed?
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    -->
+                </executions>
+            </plugin>
+<!-- does not support java 8
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.6</version>
@@ -181,11 +209,12 @@
                         <format>html</format>
                     </formats>
                     <maxmem>256m</maxmem>
-                    <!-- aggregated reports for multi-module projects -->
+                    <!-asd- aggregated reports for multi-module projects -asd->
                     <aggregate>true</aggregate>
                     <check />
                 </configuration>
             </plugin>
+-->
             <plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>

@@ -178,13 +178,9 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             return envVarPath;
         }
 
-        try {
-            Scanner in = new Scanner(new FileReader("tmc-langs-csharp/bootstrapPath.txt"));
-            return in.nextLine();
-        } catch (Exception e) {
-            log.error(CANNOT_LOCATE_RUNNER_MESSAGE, e);
-            return null;
-        }
+        log.error(CANNOT_LOCATE_RUNNER_MESSAGE);
+
+        return null;
     }
 
     private boolean doesProjectContainCSharpFiles(Path path) {

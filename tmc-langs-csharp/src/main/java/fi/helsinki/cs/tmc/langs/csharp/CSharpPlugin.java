@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,10 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private static final String CANNOT_SCAN_PROJECT_TYPE_MESSAGE = 
             "Failed to scan project files.";
     private static final String COMPILATION_FAILED_MESSAGE = "Failed to compile excercise.";
+    private static final String CANNOT_CLEANUP =
+            "Failed to run cleanup task.";
+    private static final String CANNOT_CLEANUP_DIR =
+            "Failed to run cleanup task on a directory.";
 
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 
@@ -154,6 +159,24 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {
+        try {
+            Files.walk(path).filter(Files::isDirectory).forEach(dir -> {
+                Path fileName = dir.getFileName();
+
+                if (!fileName.equals(Paths.get("bin"))
+                        && !fileName.equals(Paths.get("obj"))) {
+                    return;
+                }
+
+                try {
+                    FileUtils.deleteDirectory(dir.toFile());
+                } catch (IOException e) {
+                    log.error(CANNOT_CLEANUP_DIR, e);
+                }
+            });
+        } catch (IOException e) {
+            log.error(CANNOT_CLEANUP, e);
+        }
     }
 
     private void deleteOldResults(Path path) {
@@ -178,13 +201,9 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             return envVarPath;
         }
 
-        try {
-            Scanner in = new Scanner(new FileReader("tmc-langs-csharp/bootstrapPath.txt"));
-            return in.nextLine();
-        } catch (Exception e) {
-            log.error(CANNOT_LOCATE_RUNNER_MESSAGE, e);
-            return null;
-        }
+        log.error(CANNOT_LOCATE_RUNNER_MESSAGE);
+
+        return null;
     }
 
     private boolean doesProjectContainCSharpFiles(Path path) {

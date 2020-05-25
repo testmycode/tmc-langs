@@ -23,12 +23,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,12 +44,15 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
-
+import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class CSharpPlugin extends AbstractLanguagePlugin {
 
@@ -50,18 +61,18 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
     private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
     private static final String CANNOT_SCAN_EXERCISE_MESSAGE = "Failed to scan exercise.";
-    private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE =
-            "Failed to parse exercise description.";
+    private static final String CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE
+            = "Failed to parse exercise description.";
     private static final String CANNOT_LOCATE_RUNNER_MESSAGE = "Failed to locate runner.";
-    private static final String CANNOT_PURGE_OLD_RESULTS_MESSAGE =
-            "Failed to purge old test results.";
-    private static final String CANNOT_SCAN_PROJECT_TYPE_MESSAGE = 
-            "Failed to scan project files.";
+    private static final String CANNOT_PURGE_OLD_RESULTS_MESSAGE
+            = "Failed to purge old test results.";
+    private static final String CANNOT_SCAN_PROJECT_TYPE_MESSAGE
+            = "Failed to scan project files.";
     private static final String COMPILATION_FAILED_MESSAGE = "Failed to compile excercise.";
-    private static final String CANNOT_CLEANUP =
-            "Failed to run cleanup task.";
-    private static final String CANNOT_CLEANUP_DIR =
-            "Failed to run cleanup task on a directory.";
+    private static final String CANNOT_CLEANUP
+            = "Failed to run cleanup task.";
+    private static final String CANNOT_CLEANUP_DIR
+            = "Failed to run cleanup task on a directory.";
 
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 
@@ -95,7 +106,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
         try {
             ProcessResult result = runner.call();
-            
+
             if (result.statusCode != 0) {
                 log.error(COMPILATION_FAILED_MESSAGE);
                 return Optional.absent();
@@ -230,5 +241,53 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
                 RunResult.Status.COMPILE_FAILED,
                 ImmutableList.copyOf(new ArrayList<TestResult>()),
                 ImmutableMap.copyOf(logs));
+    }
+
+    private void ensureRunnerAvailability() {
+        String jarPathString = CSharpPlugin.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        
+        try {
+            String decodedPath = URLDecoder.decode(jarPathString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            log.error("how did you end up here?", e);
+        }
+        
+        Path jarPath = Paths.get(jarPathString);
+        
+        try {
+            if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
+                File runnerZip = new File("tmc-csharp-runner.zip");
+                FileUtils.copyURLToFile(new URL("https://github.com/TMC-C/tmc-csharp-runner/releases/download/v1.0.2/tmc-csharp-runner.zip"), runnerZip);
+                
+                File runnerDir = new File("tmc-csharp-runner");
+                runnerDir.mkdir();
+                unzip(runnerZip, runnerDir);
+                
+                
+            }
+        } catch (Exception e) {
+            log.error("lol", e);
+        }
+    }
+    
+    private void unzip(File zip, File targetDir) {
+        try (java.util.zip.ZipFile zipFile = new ZipFile(zip)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                File entryDestination = new File(targetDir, entry.getName());
+                if (entry.isDirectory()) {
+                    entryDestination.mkdirs();
+                } else {
+                    entryDestination.getParentFile().mkdirs();
+                    try (InputStream in = zipFile.getInputStream(entry);
+                            OutputStream out = new FileOutputStream(entryDestination)) {
+                        IOUtils.copy(in, out);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            log.error("asd", e);
+        }
     }
 }

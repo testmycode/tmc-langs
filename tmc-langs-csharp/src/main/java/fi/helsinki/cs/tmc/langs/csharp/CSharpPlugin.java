@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.FileSystems;
@@ -102,6 +103,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
+        ensureRunnerAvailability();
         ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), path);
 
         try {
@@ -130,6 +132,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     public RunResult runTests(Path path) {
         deleteOldResults(path);
 
+        ensureRunnerAvailability();
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
 
         try {
@@ -245,15 +248,25 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     private void ensureRunnerAvailability() {
         String jarPathString = CSharpPlugin.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        Path jarPath;
         
         try {
             String decodedPath = URLDecoder.decode(jarPathString, "UTF-8");
+            
+            try {
+                jarPath = Paths.get(URI.create("file://" + decodedPath));
+            } catch (Exception e) {
+                log.error("URI parsing failed", e);
+                return;
+            }
         } catch (UnsupportedEncodingException e) {
             log.error("how did you end up here?", e);
+            //returning so that we don't put the runner in a random location. Is there an alternative?
+            return;
         }
         
-        Path jarPath = Paths.get(jarPathString);
-        
+        System.out.println(jarPath.toString());
+
         try {
             if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
                 File runnerZip = new File("tmc-csharp-runner.zip");
@@ -262,8 +275,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
                 File runnerDir = new File("tmc-csharp-runner");
                 runnerDir.mkdir();
                 unzip(runnerZip, runnerDir);
-                
-                
             }
         } catch (Exception e) {
             log.error("lol", e);

@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -50,8 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -70,10 +67,12 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private static final String CANNOT_SCAN_PROJECT_TYPE_MESSAGE
             = "Failed to scan project files.";
     private static final String COMPILATION_FAILED_MESSAGE = "Failed to compile excercise.";
-    private static final String CANNOT_CLEANUP
-            = "Failed to run cleanup task.";
-    private static final String CANNOT_CLEANUP_DIR
-            = "Failed to run cleanup task on a directory.";
+    private static final String CANNOT_CLEANUP = "Failed to run cleanup task.";
+    private static final String CANNOT_CLEANUP_DIR = "Failed to run cleanup task on a directory.";
+    private static final String RUNNER_DL_FAILED_MESSAGE = "Failed to download the CSharp Runner.";
+    private static final String UNZIP_FAILED_MESSAGE = "Failed to unzip the CSharp Runner.";
+    private static final String JARPATH_DECODE_FAILED_MESSAGE = "Failed to decode the langs jar file path";
+    private static final String JARPATH_PARSE_FAILED_MESSAGE = "Failed to parse the langs jar file path";
 
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 
@@ -263,7 +262,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         try {
             if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
                 File runnerZip = File.createTempFile("tmc-csharp-runner", null);
-                System.out.println(runnerZip.getPath());
                 FileUtils.copyURLToFile(new URL("https://github.com/TMC-C/tmc-csharp-runner/releases/download/v1.0.2/tmc-csharp-runner.zip"), runnerZip);
 
                 File runnerDir = jarPath.resolve("tmc-csharp-runner").toFile();
@@ -272,7 +270,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
                 runnerZip.deleteOnExit();
             }
         } catch (Exception e) {
-            log.error("Runner downloading failed", e);
+            log.error(RUNNER_DL_FAILED_MESSAGE, e);
         }
     }
     
@@ -285,12 +283,11 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             try {
                 return Paths.get(URI.create("file://" + decodedPath)).getParent();
             } catch (Exception e) {
-                log.error("Jar path parsing failed", e);
+                log.error(JARPATH_PARSE_FAILED_MESSAGE, e);
                 return null;
             }
         } catch (UnsupportedEncodingException e) {
-            log.error("Could not decode jar path", e);
-            //returning so that we don't put the runner in a random location. Is there an alternative?
+            log.error(JARPATH_DECODE_FAILED_MESSAGE, e);
             return null;
         }
     }
@@ -315,7 +312,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
                 }
             }
         } catch (IOException e) {
-            log.error("Unzipping failed", e);
+            log.error(UNZIP_FAILED_MESSAGE, e);
         }
     }
 }

@@ -103,7 +103,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public Optional<ExerciseDesc> scanExercise(Path path, String exerciseName) {
-        ensureRunnerAvailability();
         ProcessRunner runner = new ProcessRunner(getAvailablePointsCommand(), path);
 
         try {
@@ -132,7 +131,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     public RunResult runTests(Path path) {
         deleteOldResults(path);
 
-        ensureRunnerAvailability();
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
 
         try {
@@ -210,7 +208,18 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     private String getBootstrapPath() {
+        ensureRunnerAvailability();
+        
+        Path jarPath = getJarPath();
+        
+        if (jarPath != null && Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
+            return jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")).toString();
+        } else {
+            System.out.println("Runner downloading failed, defaulting to environment variable");
+        }
+        
         String envVarPath = System.getenv("TMC_CSHARP_BOOTSTRAP_PATH");
+        
         if (envVarPath != null) {
             return envVarPath;
         }
@@ -247,50 +256,58 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     private void ensureRunnerAvailability() {
-        String jarPathString = CSharpPlugin.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        Path jarPath;
+        Path jarPath = getJarPath();
         
-        try {
-            String decodedPath = URLDecoder.decode(jarPathString, "UTF-8");
-            
-            try {
-                jarPath = Paths.get(URI.create("file://" + decodedPath));
-            } catch (Exception e) {
-                log.error("URI parsing failed", e);
-                return;
-            }
-        } catch (UnsupportedEncodingException e) {
-            log.error("how did you end up here?", e);
-            //returning so that we don't put the runner in a random location. Is there an alternative?
-            return;
-        }
+        if (jarPath == null) return;
         
-        System.out.println(jarPath.toString());
-
         try {
             if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
-                File runnerZip = new File("tmc-csharp-runner.zip");
+                File runnerZip = File.createTempFile("tmc-csharp-runner", null);
+                System.out.println(runnerZip.getPath());
                 FileUtils.copyURLToFile(new URL("https://github.com/TMC-C/tmc-csharp-runner/releases/download/v1.0.2/tmc-csharp-runner.zip"), runnerZip);
-                
-                File runnerDir = new File("tmc-csharp-runner");
+
+                File runnerDir = jarPath.resolve("tmc-csharp-runner").toFile();
                 runnerDir.mkdir();
                 unzip(runnerZip, runnerDir);
+                runnerZip.deleteOnExit();
             }
         } catch (Exception e) {
-            log.error("lol", e);
+            log.error("Runner downloading failed", e);
         }
     }
     
+    private Path getJarPath() {
+        String jarPathString = CSharpPlugin.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        
+        try {
+            String decodedPath = URLDecoder.decode(jarPathString, "UTF-8");
+
+            try {
+                return Paths.get(URI.create("file://" + decodedPath)).getParent();
+            } catch (Exception e) {
+                log.error("Jar path parsing failed", e);
+                return null;
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.error("Could not decode jar path", e);
+            //returning so that we don't put the runner in a random location. Is there an alternative?
+            return null;
+        }
+    }
+
     private void unzip(File zip, File targetDir) {
         try (java.util.zip.ZipFile zipFile = new ZipFile(zip)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 File entryDestination = new File(targetDir, entry.getName());
+
                 if (entry.isDirectory()) {
                     entryDestination.mkdirs();
                 } else {
                     entryDestination.getParentFile().mkdirs();
+
                     try (InputStream in = zipFile.getInputStream(entry);
                             OutputStream out = new FileOutputStream(entryDestination)) {
                         IOUtils.copy(in, out);
@@ -298,7 +315,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
                 }
             }
         } catch (IOException e) {
-            log.error("asd", e);
+            log.error("Unzipping failed", e);
         }
     }
 }

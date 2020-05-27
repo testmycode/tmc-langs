@@ -71,8 +71,10 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private static final String CANNOT_CLEANUP_DIR = "Failed to run cleanup task on a directory.";
     private static final String RUNNER_DL_FAILED_MESSAGE = "Failed to download the CSharp Runner.";
     private static final String UNZIP_FAILED_MESSAGE = "Failed to unzip the CSharp Runner.";
-    private static final String JARPATH_DECODE_FAILED_MESSAGE = "Failed to decode the langs jar file path";
-    private static final String JARPATH_PARSE_FAILED_MESSAGE = "Failed to parse the langs jar file path";
+    private static final String JARPATH_DECODE_FAILED_MESSAGE 
+            = "Failed to decode the langs jar file path";
+    private static final String JARPATH_PARSE_FAILED_MESSAGE 
+            = "Failed to parse the langs jar file path";
 
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
 
@@ -211,7 +213,8 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         
         Path jarPath = getJarPath();
         
-        if (jarPath != null && Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
+        if (jarPath != null 
+        && Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
             return jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")).toString();
         } else {
             System.out.println("Runner downloading failed, defaulting to environment variable");
@@ -257,7 +260,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private void ensureRunnerAvailability() {
         Path jarPath = getJarPath();
         
-        if (jarPath == null) return;
+        if (jarPath == null) { return; }
         
         try {
             if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
@@ -275,7 +278,8 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
     
     private Path getJarPath() {
-        String jarPathString = CSharpPlugin.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String jarPathString 
+            = CSharpPlugin.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         
         try {
             String decodedPath = URLDecoder.decode(jarPathString, "UTF-8");

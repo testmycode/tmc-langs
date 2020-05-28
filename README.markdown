@@ -1,7 +1,7 @@
 # tmc-langs
 
-[![Build Status](https://travis-ci.com/TMC-C/tmc-langs.svg?branch=CSharpTests)](https://travis-ci.com/TMC-C/tmc-langs)
-[![Coverage Status](https://coveralls.io/repos/github/TMC-C/tmc-langs/badge.svg?branch=CSharpTests)](https://coveralls.io/github/TMC-C/tmc-langs?branch=CSharpTests)
+[![Build Status](https://travis-ci.com/TMC-C/tmc-langs.svg?branch=master)](https://travis-ci.com/TMC-C/tmc-langs)
+[![Coverage Status](https://coveralls.io/repos/github/TMC-C/tmc-langs/badge.svg?branch=master)](https://coveralls.io/github/TMC-C/tmc-langs?branch=master)
 
 Framework for supporting different programming languages in [TMC](https://github.com/testmycode/tmc-server).
 

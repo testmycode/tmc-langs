@@ -55,6 +55,8 @@ import java.util.zip.ZipFile;
 public class CSharpPlugin extends AbstractLanguagePlugin {
 
     private static final Path SRC_PATH = Paths.get("src");
+    private static final String RUNNER_ZIP_DOWNLOAD_URL
+            = "https://github.com/TMC-C/tmc-csharp-runner/releases/download/1.0.6/tmc-csharp-runner.zip";
 
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
     private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
@@ -71,9 +73,9 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     private static final String CANNOT_CLEANUP_DIR = "Failed to run cleanup task on a directory.";
     private static final String RUNNER_DL_FAILED_MESSAGE = "Failed to download the CSharp Runner.";
     private static final String UNZIP_FAILED_MESSAGE = "Failed to unzip the CSharp Runner.";
-    private static final String JARPATH_DECODE_FAILED_MESSAGE 
+    private static final String JARPATH_DECODE_FAILED_MESSAGE
             = "Failed to decode the langs jar file path";
-    private static final String JARPATH_PARSE_FAILED_MESSAGE 
+    private static final String JARPATH_PARSE_FAILED_MESSAGE
             = "Failed to parse the langs jar file path";
 
     private static Logger log = LoggerFactory.getLogger(CSharpPlugin.class);
@@ -136,7 +138,13 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
         try {
             ProcessResult result = runner.call();
-
+            
+            // Begin debug snippet
+            System.out.println("ProcessResult status code: " + result.statusCode);
+            System.out.println("ProcessResult output: " + result.output);
+            System.out.println("ProcessResult error output: " + result.errorOutput);
+            //End debug snippet
+            
             if (result.statusCode != 0) {
                 log.error(COMPILATION_FAILED_MESSAGE);
                 return runResultFromFailedCompilation(result);
@@ -209,21 +217,22 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     private String getBootstrapPath() {
+
+        String envVarPath = System.getenv("TMC_CSHARP_BOOTSTRAP_PATH");
+
+        if (envVarPath != null) {
+            return envVarPath;
+        }
+
         ensureRunnerAvailability();
-        
+
         Path jarPath = getJarPath();
-        
-        if (jarPath != null 
-        && Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
+
+        if (jarPath != null
+                && Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
             return jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")).toString();
         } else {
             System.out.println("Runner downloading failed, defaulting to environment variable");
-        }
-        
-        String envVarPath = System.getenv("TMC_CSHARP_BOOTSTRAP_PATH");
-        
-        if (envVarPath != null) {
-            return envVarPath;
         }
 
         log.error(CANNOT_LOCATE_RUNNER_MESSAGE);
@@ -259,14 +268,15 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     private void ensureRunnerAvailability() {
         Path jarPath = getJarPath();
-        
-        if (jarPath == null) { return; }
-        
+
+        if (jarPath == null) {
+            return;
+        }
+
         try {
             if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
                 File runnerZip = File.createTempFile("tmc-csharp-runner", null);
-                FileUtils.copyURLToFile(new URL("https://github.com/TMC-C/tmc-csharp-runner/releases/download/v1.0.2/tmc-csharp-runner.zip"), runnerZip);
-
+                FileUtils.copyURLToFile(new URL(RUNNER_ZIP_DOWNLOAD_URL), runnerZip);
                 File runnerDir = jarPath.resolve("tmc-csharp-runner").toFile();
                 runnerDir.mkdir();
                 unzip(runnerZip, runnerDir);
@@ -276,11 +286,11 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             log.error(RUNNER_DL_FAILED_MESSAGE, e);
         }
     }
-    
-    private Path getJarPath() {
-        String jarPathString 
-            = CSharpPlugin.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        
+
+    public Path getJarPath() {
+        String jarPathString
+                = CSharpPlugin.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+
         try {
             String decodedPath = URLDecoder.decode(jarPathString, "UTF-8");
 

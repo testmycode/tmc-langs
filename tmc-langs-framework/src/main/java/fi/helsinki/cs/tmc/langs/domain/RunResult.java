@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.stream.Collectors;
+
 /**
  * The result of running an exercise's test suite against a submission.
  */
@@ -81,7 +83,10 @@ public final class RunResult {
         return "RunResult{"
                 + "status=" + status
                 + ", testResults=" + testResults
-                + ", logKeys=" + logs.keySet()
+                + ", logKeys=" + logs.entrySet().stream().collect(Collectors.toMap(
+                        e -> e.getKey(),
+                        e -> new String(e.getValue())
+                ))
                 + '}';
     }
 }

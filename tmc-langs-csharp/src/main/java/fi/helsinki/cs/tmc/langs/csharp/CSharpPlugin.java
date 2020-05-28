@@ -139,12 +139,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         try {
             ProcessResult result = runner.call();
             
-            // Begin debug snippet
-            System.out.println("ProcessResult status code: " + result.statusCode);
-            System.out.println("ProcessResult output: " + result.output);
-            System.out.println("ProcessResult error output: " + result.errorOutput);
-            //End debug snippet
-            
             if (result.statusCode != 0) {
                 log.error(COMPILATION_FAILED_MESSAGE);
                 return runResultFromFailedCompilation(result);

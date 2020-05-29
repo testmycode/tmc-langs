@@ -43,7 +43,7 @@ script:
   - mvn checkstyle:check -q
   - . ./clitest.sh
 after_success:
-  - mvn clean jacoco:report coveralls:report -q
+  - mvn org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report -q
   - ./deploy.sh
 os:
   - linux

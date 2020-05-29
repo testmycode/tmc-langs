@@ -39,11 +39,11 @@ before_install:
   - mvn clean install -Dmaven.test.skip=true -q
 
 script:
-  - mvn clean test -q
+  - mvn clean test org.jacoco:jacoco-maven-plugin:report -q
   - mvn checkstyle:check -q
   - . ./clitest.sh
 after_success:
-  - mvn org.jacoco:jacoco-maven-plugin:report org.eluder.coveralls:coveralls-maven-plugin:report -q
+  - mvn org.eluder.coveralls:coveralls-maven-plugin:report -q
   - ./deploy.sh
 os:
   - linux

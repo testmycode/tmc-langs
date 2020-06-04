@@ -141,11 +141,11 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             
             if (result.statusCode != 0) {
                 log.error(COMPILATION_FAILED_MESSAGE);
-                return runResultFromFailedCompilation(result);
+                return runResultFromError(result, RunResult.Status.COMPILE_FAILED);
             }
         } catch (Exception e) {
             log.error(CANNOT_RUN_TESTS_MESSAGE, e);
-            return null;
+            return runResultFromError(RunResult.Status.GENERIC_ERROR);
         }
 
         try {
@@ -154,7 +154,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
             log.error(CANNOT_PARSE_TEST_RESULTS_MESSAGE, e);
         }
 
-        return null;
+        return runResultFromError(RunResult.Status.GENERIC_ERROR);
     }
 
     @Override
@@ -249,15 +249,22 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         return false;
     }
 
-    private RunResult runResultFromFailedCompilation(ProcessResult result) {
+    private RunResult runResultFromError(ProcessResult result, RunResult.Status errorStatus) {
         Map<String, byte[]> logs = new HashMap<>();
         logs.put(SpecialLogs.STDOUT, result.output.getBytes());
         logs.put(SpecialLogs.STDERR, result.errorOutput.getBytes());
 
         return new RunResult(
-                RunResult.Status.COMPILE_FAILED,
+                errorStatus,
                 ImmutableList.copyOf(new ArrayList<TestResult>()),
                 ImmutableMap.copyOf(logs));
+    }
+    
+    private RunResult runResultFromError(RunResult.Status errorStatus) {
+        return new RunResult(
+                errorStatus,
+                ImmutableList.copyOf(new ArrayList<TestResult>()),
+                ImmutableMap.copyOf(new HashMap<>()));
     }
 
     private void ensureRunnerAvailability() {

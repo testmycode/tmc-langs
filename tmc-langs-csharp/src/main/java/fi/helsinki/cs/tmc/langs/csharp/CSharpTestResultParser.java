@@ -17,18 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CSharpTestResultParser {
-    
     private static Path RESULT_FILE = Paths.get(".tmc_test_results.json");
-    private Path path;
-    private ObjectMapper mapper;
 
-    public CSharpTestResultParser(Path path) {
-        this.path = path;
-        this.mapper = new ObjectMapper();
-    }
-    
-    public RunResult parse() throws IOException {
-        List<TestResult> testResults = getTestResults();
+    public static RunResult parse(Path path) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<TestResult> testResults = getTestResults(path, mapper);
         
         RunResult.Status status = RunResult.Status.PASSED;
         for (TestResult result : testResults) {
@@ -42,7 +35,7 @@ public class CSharpTestResultParser {
         return new RunResult(status, immutableResults, logs);
     }
     
-    private List<TestResult> getTestResults() throws IOException {
+    private static List<TestResult> getTestResults(Path path, ObjectMapper mapper) throws IOException {
         byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
         List<TestResult> results = new ArrayList<>();
         
@@ -54,7 +47,7 @@ public class CSharpTestResultParser {
         return results;
     }
 
-    private TestResult toTestResult(JsonNode node) {
+    private static TestResult toTestResult(JsonNode node) {
         List<String> points = new ArrayList<>();
         for (JsonNode point : node.get("Points")) {
             points.add(point.asText());

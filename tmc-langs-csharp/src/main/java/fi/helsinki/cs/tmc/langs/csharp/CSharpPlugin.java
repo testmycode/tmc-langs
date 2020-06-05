@@ -149,7 +149,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         }
 
         try {
-            return new CSharpTestResultParser(path).parse();
+            return CSharpTestResultParser.parse(path);
         } catch (IOException e) {
             log.error(CANNOT_PARSE_TEST_RESULTS_MESSAGE, e);
         }
@@ -211,7 +211,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     private String getBootstrapPath() {
-
         String envVarPath = System.getenv("TMC_CSHARP_BOOTSTRAP_PATH");
 
         if (envVarPath != null) {
@@ -228,7 +227,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         }
 
         log.error(CANNOT_LOCATE_RUNNER_MESSAGE);
-
         return null;
     }
 

@@ -31,7 +31,7 @@ public class CSharpExerciseDescParserTest {
 
     @Test
     public void testDescParsePointsCorrectly() throws IOException {
-        ImmutableList<TestDesc> descs = new CSharpExerciseDescParser(allPassedSampleDir).parse();
+        ImmutableList<TestDesc> descs = CSharpExerciseDescParser.parse(allPassedSampleDir);
 
         testDescAsExpected(descs.get(0), "PassingSampleTests.ProgramTest.TestGetName", 
                 new String[]{"1", "1.1"});
@@ -41,7 +41,7 @@ public class CSharpExerciseDescParserTest {
 
     @Test
     public void testDescParseEmptyPointsCorrectly() throws IOException {
-        ImmutableList<TestDesc> descs = new CSharpExerciseDescParser(noPointsSampleDir).parse();
+        ImmutableList<TestDesc> descs = CSharpExerciseDescParser.parse(allPassedSampleDir);
 
         testDescAsExpected(descs.get(0), 
                 "NoPoints.ProgramTest.TestCheckSameFailed", new String[]{});

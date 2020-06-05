@@ -20,15 +20,8 @@ public class CSharpExerciseDescParser {
     private static final TypeReference<Map<String, List<String>>> MAP_TYPE_REFERENCE
             = new TypeReference<Map<String, List<String>>>() {};
     
-    private final Path path;
-    private final ObjectMapper mapper;
-
-    public CSharpExerciseDescParser(Path path) {
-        this.path = path;
-        this.mapper = new ObjectMapper();
-    }
-    
-    public ImmutableList<TestDesc> parse() throws IOException {
+    public static ImmutableList<TestDesc> parse(Path path) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
         List<TestDesc> testDescs = new ArrayList<>();
         byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
         Map<String, List<String>> parse = mapper.readValue(json, MAP_TYPE_REFERENCE);

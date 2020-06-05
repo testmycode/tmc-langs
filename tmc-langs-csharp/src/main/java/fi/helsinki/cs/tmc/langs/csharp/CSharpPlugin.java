@@ -121,7 +121,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         }
 
         try {
-            ImmutableList<TestDesc> testDescs = new CSharpExerciseDescParser(path).parse();
+            ImmutableList<TestDesc> testDescs = new CSharpExerciseDescParser().parse(path);
             return Optional.of(new ExerciseDesc(exerciseName, testDescs));
         } catch (IOException e) {
             log.error(CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE, e);
@@ -225,8 +225,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         if (jarPath != null
                 && Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
             return jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")).toString();
-        } else {
-            System.out.println("Runner downloading failed, defaulting to environment variable");
         }
 
         log.error(CANNOT_LOCATE_RUNNER_MESSAGE);

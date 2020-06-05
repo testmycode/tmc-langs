@@ -91,7 +91,18 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public boolean isExerciseTypeCorrect(Path path) {
-        return doesProjectContainCSharpFiles(path);
+        PathMatcher matcher = FileSystems.getDefault()
+                .getPathMatcher("glob:**.csproj");
+
+        try {
+            if (Files.exists(path.resolve(SRC_PATH))) {
+                return Files.walk(path.resolve(SRC_PATH), 2).anyMatch(p -> matcher.matches(p));
+            }
+        } catch (Exception e) {
+            log.error(CANNOT_SCAN_PROJECT_TYPE_MESSAGE, e);
+        }
+
+        return false;
     }
 
     @Override
@@ -228,21 +239,6 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
         log.error(CANNOT_LOCATE_RUNNER_MESSAGE);
         return null;
-    }
-
-    private boolean doesProjectContainCSharpFiles(Path path) {
-        PathMatcher matcher = FileSystems.getDefault()
-                .getPathMatcher("glob:**.csproj");
-
-        try {
-            if (Files.exists(path.resolve(SRC_PATH))) {
-                return Files.walk(path.resolve(SRC_PATH), 2).anyMatch(p -> matcher.matches(p));
-            }
-        } catch (Exception e) {
-            log.error(CANNOT_SCAN_PROJECT_TYPE_MESSAGE, e);
-        }
-
-        return false;
     }
 
     private RunResult runResultFromError(ProcessResult result, RunResult.Status errorStatus) {

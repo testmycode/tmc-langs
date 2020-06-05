@@ -121,7 +121,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         }
 
         try {
-            ImmutableList<TestDesc> testDescs = new CSharpExerciseDescParser().parse(path);
+            ImmutableList<TestDesc> testDescs = CSharpExerciseDescParser.parse(path);
             return Optional.of(new ExerciseDesc(exerciseName, testDescs));
         } catch (IOException e) {
             log.error(CANNOT_PARSE_EXERCISE_DESCRIPTION_MESSAGE, e);

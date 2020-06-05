@@ -41,7 +41,7 @@ public class CSharpExerciseDescParserTest {
 
     @Test
     public void testDescParseEmptyPointsCorrectly() throws IOException {
-        ImmutableList<TestDesc> descs = CSharpExerciseDescParser.parse(allPassedSampleDir);
+        ImmutableList<TestDesc> descs = CSharpExerciseDescParser.parse(noPointsSampleDir);
 
         testDescAsExpected(descs.get(0), 
                 "NoPoints.ProgramTest.TestCheckSameFailed", new String[]{});

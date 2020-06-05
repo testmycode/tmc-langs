@@ -1,0 +1,32 @@
+[
+  {
+    "Passed": true,
+    "Name": "TestProjectTests.ProgramTest.ReturnsNotInput",
+    "Message": "",
+    "Points": [
+      "1",
+      "1.2"
+    ],
+    "ErrorStackTrace": []
+  },
+  {
+    "Passed": true,
+    "Name": "TestProjectTests.ProgramTest.TestReturnsTrue",
+    "Message": "",
+    "Points": [
+      "1",
+      "1.1"
+    ],
+    "ErrorStackTrace": []
+  },
+  {
+    "Passed": true,
+    "Name": "TestProjectTests.ProgramTest.ReturnsString",
+    "Message": "",
+    "Points": [
+      "1",
+      "1.3"
+    ],
+    "ErrorStackTrace": []
+  }
+]

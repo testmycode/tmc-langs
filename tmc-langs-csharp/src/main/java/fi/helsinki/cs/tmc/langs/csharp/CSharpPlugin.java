@@ -174,6 +174,8 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {
+        deleteOldResults(path);
+
         try {
             Files.walk(path).filter(Files::isDirectory).forEach(dir -> {
                 Path fileName = dir.getFileName();

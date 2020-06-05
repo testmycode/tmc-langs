@@ -21,7 +21,7 @@ public class CSharpTestResultParser {
 
     public static RunResult parse(Path path) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        List<TestResult> testResults = getTestResults(path, mapper);
+        List<TestResult> testResults = getResults(path, mapper);
         
         RunResult.Status status = RunResult.Status.PASSED;
         for (TestResult result : testResults) {
@@ -35,7 +35,7 @@ public class CSharpTestResultParser {
         return new RunResult(status, immutableResults, logs);
     }
     
-    private static List<TestResult> getTestResults(Path path, ObjectMapper mapper) throws IOException {
+    private static List<TestResult> getResults(Path path, ObjectMapper mapper) throws IOException {
         byte[] json = Files.readAllBytes(path.resolve(RESULT_FILE));
         List<TestResult> results = new ArrayList<>();
         

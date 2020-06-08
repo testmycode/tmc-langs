@@ -71,7 +71,7 @@ public class Filer {
     }
 
     private void copyWithFilters(Path source, Path destination) throws IOException {
-        List<String> originalFile = FileUtils.readLines(source.toFile());
+        List<String> originalFile = FileUtils.readLines(source.toFile(), StandardCharsets.UTF_8);
         List<String> preparedFile = prepareFile(originalFile, getFileExtension(source));
         logger.debug("Filtered file while copying from: {} to:{}", source, destination);
         if (!originalFile.isEmpty() && preparedFile.isEmpty()) {

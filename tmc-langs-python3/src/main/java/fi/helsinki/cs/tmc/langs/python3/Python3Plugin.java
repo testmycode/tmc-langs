@@ -42,6 +42,7 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     private static final Path INIT_PY_PATH = Paths.get("__init__.py");
     private static final Path TMC_TEST_LIBRARY_PATH = Paths.get("tmc");
     private static final Path MAIN_PY_PATH = Paths.get("__main__.py");
+    private static final String CANNOT_CLEAN_FILES_MESSAGE = "Failed to clean files.";
 
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
     private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
@@ -155,7 +156,13 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {
-        // no op
+        String[] command = {"/bin/bash", "-c", "find . -type d -name __pycache__ -exec rm -r {} \\+ -o -type f -name .available_points.json -delete -o -type f -name .tmc_test_results.json -delete" };
+        ProcessRunner runner = new ProcessRunner(command, path);
+        try {
+            runner.call();
+        } catch (Exception e) {
+            log.error(CANNOT_CLEAN_FILES_MESSAGE, e);
+        }
     }
 
     @Override

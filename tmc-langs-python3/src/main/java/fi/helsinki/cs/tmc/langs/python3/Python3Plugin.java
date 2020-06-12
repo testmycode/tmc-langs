@@ -27,9 +27,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,6 +46,7 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
     private static final Path TMC_TEST_LIBRARY_PATH = Paths.get("tmc");
     private static final Path MAIN_PY_PATH = Paths.get("__main__.py");
 
+    private static final String CANNOT_CLEAN_FILES_MESSAGE = "Failed to clean files.";
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
     private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
     private static final String CANNOT_SCAN_EXERCISE_MESSAGE = "Failed to scan exercise.";
@@ -155,7 +159,31 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {
-        // no op
+        try {
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) 
+                throws IOException {
+                    if (file.endsWith(".available_points.json")
+                            || file.endsWith(".tmc_test_results.json")
+                            || file.toString().contains("__pycache__")) {
+                        Files.delete(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) 
+                throws IOException {
+                    if (dir.endsWith("__pycache__")) {
+                        Files.delete(dir);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            log.error(CANNOT_CLEAN_FILES_MESSAGE, e);
+        }
     }
 
     @Override

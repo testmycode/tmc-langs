@@ -143,7 +143,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        deleteOldResults(path);
+        deleteResults(path);
 
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
 
@@ -185,6 +185,8 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     @Override
     public void clean(Path path) {
+        deleteResults(path);
+
         try {
             Files.walk(path).filter(Files::isDirectory).forEach(dir -> {
                 Path fileName = dir.getFileName();
@@ -205,7 +207,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         }
     }
 
-    private void deleteOldResults(Path path) {
+    private void deleteResults(Path path) {
         try {
             Files.deleteIfExists(path.resolve(".tmc_test_results.json"));
         } catch (Exception e) {

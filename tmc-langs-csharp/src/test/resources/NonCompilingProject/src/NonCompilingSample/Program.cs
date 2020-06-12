@@ -11,7 +11,7 @@ namespace NonCompilingSample
         public static void Main(string[] args)
         {
             Console.WriteLine("This is a passing test.");
-            (
+            #error This is a compile error
         }
     }
 }

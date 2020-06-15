@@ -55,7 +55,8 @@ import java.util.zip.ZipFile;
 public class CSharpPlugin extends AbstractLanguagePlugin {
 
     private static final Path SRC_PATH = Paths.get("src");
-    private static final String RUNNER_ZIP_DOWNLOAD_VERSION = "1.0";
+    
+    public static final String RUNNER_ZIP_DOWNLOAD_VERSION = "1.0";
     private static final String RUNNER_ZIP_DOWNLOAD_URL
             = "https://download.mooc.fi/tmc-csharp/tmc-csharp-runner-" 
             + RUNNER_ZIP_DOWNLOAD_VERSION + ".zip";

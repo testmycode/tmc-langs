@@ -78,7 +78,8 @@ public class CSharpPluginTest {
         assumeTrue(System.getenv("TMC_CSHARP_BOOTSTRAP_PATH") == null);
 
         Path jarPath = csPlugin.getJarPath();
-        Path dirPath = jarPath.resolve(Paths.get("tmc-csharp-runner"));
+        Path dirPath = jarPath.resolve(Paths.get("tmc-csharp-runner",
+                CSharpPlugin.RUNNER_ZIP_DOWNLOAD_VERSION));
 
         if (Files.exists(dirPath)) {
             FileUtils.deleteDirectory(dirPath.toFile());
@@ -91,7 +92,8 @@ public class CSharpPluginTest {
         assertEquals(runResult.toString(), RunResult.Status.PASSED, runResult.status);
 
         assertTrue(Files.exists(dirPath));
-        assertTrue(Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll"))));
+        assertTrue(Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner",
+                CSharpPlugin.RUNNER_ZIP_DOWNLOAD_VERSION, "Bootstrap.dll"))));
     }
 
     @Test

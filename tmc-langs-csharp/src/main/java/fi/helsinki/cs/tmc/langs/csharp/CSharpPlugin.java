@@ -218,11 +218,11 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
     }
 
     private String[] getAvailablePointsCommand() {
-        return new String[]{"dotnet", getBootstrapPath(), "-p"};
+        return new String[]{"dotnet", getBootstrapPath(), "--generate-points-file"};
     }
 
     private String[] getTestCommand() {
-        return new String[]{"dotnet", getBootstrapPath(), "-t"};
+        return new String[]{"dotnet", getBootstrapPath(), "--run-tests"};
     }
 
     private String getBootstrapPath() {

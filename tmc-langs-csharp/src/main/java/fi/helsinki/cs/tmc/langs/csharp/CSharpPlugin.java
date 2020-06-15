@@ -55,8 +55,10 @@ import java.util.zip.ZipFile;
 public class CSharpPlugin extends AbstractLanguagePlugin {
 
     private static final Path SRC_PATH = Paths.get("src");
+    private static final String RUNNER_ZIP_DOWNLOAD_VERSION = "1.0";
     private static final String RUNNER_ZIP_DOWNLOAD_URL
-            = "https://download.mooc.fi/tmc-csharp/tmc-csharp-runner-1.0.zip";
+            = "https://download.mooc.fi/tmc-csharp/tmc-csharp-runner-" 
+            + RUNNER_ZIP_DOWNLOAD_VERSION + ".zip";
 
     private static final String CANNOT_RUN_TESTS_MESSAGE = "Failed to run tests.";
     private static final String CANNOT_PARSE_TEST_RESULTS_MESSAGE = "Failed to read test results.";
@@ -235,10 +237,12 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         ensureRunnerAvailability();
 
         Path jarPath = getJarPath();
+        
+        Path bootstrap = jarPath.resolve(Paths.get("tmc-csharp-runner", 
+                RUNNER_ZIP_DOWNLOAD_VERSION, "Bootstrap.dll"));
 
-        if (jarPath != null
-                && Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
-            return jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")).toString();
+        if (jarPath != null && Files.exists(bootstrap)) {
+            return bootstrap.toString();
         }
 
         log.error(CANNOT_LOCATE_RUNNER_MESSAGE);
@@ -271,11 +275,19 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         }
 
         try {
-            if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", "Bootstrap.dll")))) {
+            if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", 
+                    RUNNER_ZIP_DOWNLOAD_VERSION, "Bootstrap.dll")))) {
+                
+                if (Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner")))) {
+                    FileUtils.deleteDirectory(
+                            jarPath.resolve(Paths.get("tmc-csharp-runner")).toFile());
+                }
+                
                 File runnerZip = File.createTempFile("tmc-csharp-runner", null);
                 FileUtils.copyURLToFile(new URL(RUNNER_ZIP_DOWNLOAD_URL), runnerZip);
-                File runnerDir = jarPath.resolve("tmc-csharp-runner").toFile();
-                runnerDir.mkdir();
+                File runnerDir = jarPath.resolve(Paths.get("tmc-csharp-runner", 
+                        RUNNER_ZIP_DOWNLOAD_VERSION)).toFile();
+                runnerDir.mkdirs();
                 unzip(runnerZip, runnerDir);
                 runnerZip.deleteOnExit();
             }

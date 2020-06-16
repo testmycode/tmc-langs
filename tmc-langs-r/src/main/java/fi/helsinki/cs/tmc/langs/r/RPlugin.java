@@ -120,11 +120,9 @@ public final class RPlugin extends AbstractLanguagePlugin {
 
     @Override
     public RunResult runTests(Path path) {
-        ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
-
-        deleteResultsJson(path);
- 
         try {
+            ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
+            deleteResultsJson(path);
             ProcessResult result = runner.call();
             if (result.statusCode != 0) {
                 log.error(CANNOT_RUN_TESTS_MESSAGE);

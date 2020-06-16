@@ -1,0 +1,32 @@
+[
+  {
+    "Passed": true,
+    "Name": "TestProjectTests.ProgramTest.ReturnsNotInput",
+    "Message": "",
+    "Points": [
+      "1",
+      "1.2"
+    ],
+    "ErrorStackTrace": []
+  },
+  {
+    "Passed": false,
+    "Name": "TestProjectTests.ProgramTest.TestReturnsTrue",
+    "Message": "Assert.True() Failure\r\nExpected: True\r\nActual:   False",
+    "Points": [],
+    "ErrorStackTrace": [
+      "   at Xunit.Assert.True(Nullable\u00601 condition, String userMessage) in C:\\Dev\\xunit\\xunit\\src\\xunit.assert\\Asserts\\BooleanAsserts.cs:line 95",
+      "   at TestProjectTests.ProgramTest.TestReturnsTrue() in C:\\git\\tmcc\\tmc-testcourse\\csharp_simple\\test\\TestProjectTests\\ProgramTest.cs:line 15"
+    ]
+  },
+  {
+    "Passed": true,
+    "Name": "TestProjectTests.ProgramTest.ReturnsString",
+    "Message": "",
+    "Points": [
+      "1",
+      "1.3"
+    ],
+    "ErrorStackTrace": []
+  }
+]

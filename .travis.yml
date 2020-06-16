@@ -1,6 +1,6 @@
 language: java
 sudo: false
-dist: trusty
+dist: xenial
 cache:
   directories:
     - "$HOME/.m2"
@@ -8,10 +8,13 @@ addons:
   apt:
     sources:
       - deadsnakes
+      - sourceline: 'deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main'
+        key_url: 'https://packages.microsoft.com/keys/microsoft.asc'
     packages:
       - valgrind
       - check
       - python3.4
+      - dotnet-sdk-3.1
 env:
   global:
   - secure: yiW+hXiZEycKFzF19rLlejJX8BTGbncSisBHyE8uulZee5n7UVGXnG1yvt9+6hz0nvMbxL7r1Daql0xxRHXUFB9VYVUKhF0ycHyJO5ze87U51mlIKAL8UnCkmxpkHNdxY45olEdK+mEbZBtot67nenlwGDfxLI7laITkR8IBAvY=
@@ -20,14 +23,15 @@ env:
 
 before_install:
   - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-  - echo "deb https://cloud.r-project.org/bin/linux/ubuntu trusty/" | sudo tee -a /etc/apt/sources.list
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt591-trusty
+  - echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial/" | sudo tee -a /etc/apt/sources.list
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt591-xenial
   - sudo apt-get update -qq
   - sudo apt-get install r-base -y -qq
   - sudo apt-get install qt59base -qq
   - sudo chmod 277 /usr/local/lib/R/site-library
   - Rscript -e 'install.packages(c("devtools","testthat"),repos="http://cran.us.r-project.org")'
   - Rscript -e 'devtools::install_github("RTMC/tmc-r-tester/tmcRtestrunner")'
+  - sudo apt-get install apt-transport-https -y -qq
   - export PATH=$PATH:$PWD/bin
   - source /opt/qt59/bin/qt59-env.sh
   - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
@@ -35,11 +39,11 @@ before_install:
   - mvn clean install -Dmaven.test.skip=true -q
 
 script:
-  - mvn clean test -q
+  - mvn clean test org.jacoco:jacoco-maven-plugin:report -q
   - mvn checkstyle:check -q
   - . ./clitest.sh
 after_success:
-  - mvn clean cobertura:cobertura org.eluder.coveralls:coveralls-maven-plugin:report -q
+  - mvn org.eluder.coveralls:coveralls-maven-plugin:report -q
   - ./deploy.sh
 os:
   - linux

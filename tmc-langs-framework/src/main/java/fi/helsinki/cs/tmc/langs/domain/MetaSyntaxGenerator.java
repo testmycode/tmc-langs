@@ -15,7 +15,7 @@ public class MetaSyntaxGenerator {
             return cache.get(fileType);
         }
         List<MetaSyntax> list = new ArrayList<>();
-        if (fileType.matches("java|c|cpp|h|hpp|js|css|rs|qml")) {
+        if (fileType.matches("java|c|cpp|h|hpp|js|css|rs|qml|cs")) {
             list.add(new MetaSyntax("\\/\\/", "")); //
             list.add(new MetaSyntax("\\/\\*+", "\\*+\\/")); /* */
         } else if (fileType.matches("xml|http|html|qrc")) {

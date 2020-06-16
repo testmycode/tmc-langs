@@ -1,13 +1,10 @@
 iitarget/
 *dependency-reduced-pom.xml
 *.*~
-/tmc-langs-framework/src/test/resources/example_ant_project/nbproject/private/
 /tmc-langs-framework/src/test/resources/example_ant_project/build/
 /tmc-langs-framework/src/test/resources/example_ant_project/dist/
 /tmc-langs-ant/src/test/resources/example_ant_project/build/
 /tmc-langs-ant/src/test/resources/example_ant_project/dist/
-/tmc-langs-ant/src/test/resources/example_ant_project/nbproject/private/
-/tmc-langs-ant/src/test/resources/most_errors/nbproject/private/
 /tmc-langs-ant/src/test/resources/most_errors/build/
 /tmc-langs-ant/src/test/resources/trivial/build/
 /tmc-langs-ant/src/test/resources/ant_arith_funcs/build/
@@ -25,6 +22,7 @@ crashlytics.properties
 crashlytics-build.properties
 .settings
 workbench.xmi
+nbproject/
 
 # Maven
 target/
@@ -54,3 +52,7 @@ __pycache__/
 *.pro.user*
 *.qmlc
 *.qmake.stash
+
+# CSharp
+obj/
+bin/

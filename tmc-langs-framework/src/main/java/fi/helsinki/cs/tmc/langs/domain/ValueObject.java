@@ -53,6 +53,14 @@ public final class ValueObject {
         return (List<String>) this.value;
     }
 
+    public Integer asInteger() {
+        if (!(value instanceof Integer)) {
+            log.error("Couldn't convert configuration {} to Long.", value.toString());
+            return null;
+        }
+        return (Integer) this.value;
+    }
+
     @Override
     public String toString() {
         return "<ValueObject: value=" + value + ">";

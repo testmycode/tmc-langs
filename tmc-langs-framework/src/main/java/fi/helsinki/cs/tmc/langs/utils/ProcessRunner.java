@@ -1,5 +1,7 @@
 package fi.helsinki.cs.tmc.langs.utils;
 
+import fi.helsinki.cs.tmc.langs.domain.Configuration;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Used to run subprocesses with a timeout and capture their output.
@@ -21,10 +24,12 @@ public final class ProcessRunner implements Callable<ProcessResult> {
 
     private final String[] command;
     private final Path workDir;
+    private Configuration configuration;
 
     public ProcessRunner(String[] command, Path workDir) {
         this.command = command;
         this.workDir = workDir;
+        this.configuration = new Configuration(workDir);
     }
 
     @Override
@@ -38,10 +43,27 @@ public final class ProcessRunner implements Callable<ProcessResult> {
             StringWriter stdoutWriter = new StringWriter();
             StringWriter stderrWriter = new StringWriter();
 
-            Thread stdoutReaderThread = startReadingThread(process.getInputStream(), stdoutWriter);
-            Thread stderrReaderThread = startReadingThread(process.getErrorStream(), stderrWriter);
+            final Thread stdoutReaderThread = startReadingThread(process.getInputStream(),
+                    stdoutWriter);
+            final Thread stderrReaderThread = startReadingThread(process.getErrorStream(),
+                    stderrWriter);
 
-            int statusCode = process.waitFor();
+            boolean status = false;
+            if (this.configuration.isSet("tests_timeout_ms")) {
+                status = process.waitFor(this.configuration.get("tests_timeout_ms").asInteger(),
+                        TimeUnit.MILLISECONDS);
+            } else {
+                status = process.waitFor(5, TimeUnit.MINUTES);
+            }
+            if (!status) {
+                process.destroy();
+            }
+
+            /* We have to wait for process.destroy() to finish before calling process.exitValue().
+            Otherwise, process.exitValue() will throw an IllegalThreadStateException. */
+            Thread.sleep(5000);
+            int statusCode = process.exitValue();
+
             stdoutReaderThread.join();
             stderrReaderThread.join();
 

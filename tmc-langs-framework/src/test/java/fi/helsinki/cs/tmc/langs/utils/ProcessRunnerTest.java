@@ -53,4 +53,22 @@ public class ProcessRunnerTest extends TestCase {
         String error = runner.call().errorOutput;
         assertTrue(error.contains("version"));
     }
+
+    @Test
+    public void testCustomTimeout() throws Exception {
+        long start = System.nanoTime();
+
+        String[] command = new String[] {"python3", "-m", "tmc"};
+        Path path = TestUtils.getPath(getClass(), "python_project");
+        ProcessRunner runner = new ProcessRunner(command, path);
+        ProcessResult result = runner.call();
+
+        long end = System.nanoTime();
+        long durationInSeconds = (end - start) / 1000000000;
+
+        /* Timeout is set to 5 seconds in .tmcproject.yml and ProcessRunner sleeps for 5 seconds,
+        so this should take at least 10 seconds. */
+        assertTrue(durationInSeconds >= 10);
+        assertEquals(143, result.statusCode);
+    }
 }

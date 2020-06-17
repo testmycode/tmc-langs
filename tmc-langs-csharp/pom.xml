@@ -7,6 +7,23 @@
         <version>0.8.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <tmc.basedir>${basedir}/../target</tmc.basedir>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>maven.mooc.fi.releases</id>
+            <name>TMC releases</name>
+            <url>s3://maven.mooc.fi/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven.mooc.fi.snapshots</id>
+            <name>TMC snapshots</name>
+            <url>s3://maven.mooc.fi/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>fi.helsinki.cs.tmc</groupId>
@@ -15,6 +32,16 @@
             <type>jar</type>
         </dependency>
     </dependencies>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>com.github.seahen</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>1.3.0</version>
+            </extension>
+        </extensions>
+    </build>
 
     <artifactId>tmc-langs-csharp</artifactId>
     <packaging>jar</packaging>

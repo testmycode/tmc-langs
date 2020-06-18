@@ -62,6 +62,22 @@ public final class Python3TestResultParser {
         return results;
     }
 
+    private String parseTestName(String testName) {
+        String[] parts = testName.split("\\.");
+        if (parts.length == 4) {
+            return parts[2] + ": " + parts[3];
+        }
+        return testName;
+    }
+
+    private String parseTestMessage(String testMessage) {
+        String matcher = testMessage.toLowerCase();
+        if (matcher.matches("^(true|false) is not (true|false) :[\\s\\S]*")) {
+            return testMessage.split(":")[1].trim();
+        }
+        return testMessage;
+    }
+
     private TestResult toTestResult(JsonNode node) {
         List<String> points = new ArrayList<>();
         for (JsonNode point : node.get("points")) {
@@ -74,10 +90,10 @@ public final class Python3TestResultParser {
         }
 
         return new TestResult(
-                node.get("name").asText(),
+                parseTestName(node.get("name").asText()),
                 node.get("passed").asBoolean(),
                 ImmutableList.copyOf(points),
-                node.get("message").asText(),
+                parseTestMessage(node.get("message").asText()),
                 ImmutableList.copyOf(backTrace));
     }
 }

@@ -2,6 +2,7 @@ package fi.helsinki.cs.tmc.langs.python3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import fi.helsinki.cs.tmc.langs.abstraction.Strategy;
@@ -94,7 +95,8 @@ public class Python3PluginTest {
         assertEquals(RunResult.Status.PASSED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
         assertTrue(testResult.isSuccessful());
-        assertEquals("test.test_new.TestCase.test_new", testResult.getName());
+        assertNotEquals("test.test_new.TestCase.test_new", testResult.getName());
+        assertEquals("TestCase: test_new", testResult.getName());
         assertEquals(2, testResult.points.size());
         assertTrue(testResult.points.contains("1.2"));
         assertEquals("", testResult.getMessage());
@@ -111,6 +113,18 @@ public class Python3PluginTest {
         assertFalse(testResult.isSuccessful());
         assertFalse(testResult.getMessage().isEmpty());
         assertEquals(6, testResult.getException().size());
+    }
+
+    @Test
+    public void testFailingTestNoBoolIsBool() {
+        Path path = TestUtils.getPath(getClass(), "failparsing");
+        RunResult runResult = python3Plugin.runTests(path);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
+        TestResult testResult = runResult.testResults.get(0);
+        assertEquals(
+                "No false is not true at beginning\n   newlines  are kept",
+                testResult.getMessage());
     }
 
     @Test

@@ -123,7 +123,7 @@ public class Python3PluginTest {
         assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
         TestResult testResult = runResult.testResults.get(0);
         assertEquals(
-                "No false is not true at beginning\n   newlines  are kept",
+                "No false is not true at beginning\n   newlines  are:kept:not:split",
                 testResult.getMessage());
     }
 

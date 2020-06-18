@@ -80,7 +80,8 @@ public final class ProcessRunner implements Callable<ProcessResult> {
             stdoutReaderThread.join();
             stderrReaderThread.join();
 
-            return new ProcessResult(statusCode, stdoutWriter.toString(), stderrWriter.toString(), testRunTimedOut[0]);
+            return new ProcessResult(statusCode, stdoutWriter.toString(),
+                    stderrWriter.toString(), testRunTimedOut[0]);
         } finally {
             if (process != null) {
                 process.getOutputStream().close();

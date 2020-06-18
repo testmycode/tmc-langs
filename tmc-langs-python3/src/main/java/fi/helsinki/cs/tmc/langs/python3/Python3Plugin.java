@@ -1,6 +1,5 @@
 package fi.helsinki.cs.tmc.langs.python3;
 
-import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.Strategy;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
@@ -19,6 +18,7 @@ import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -115,9 +115,11 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
             // TODO: handle non successful return codes
             ProcessResult result = runner.call();
             if (result.timedOut) {
-                return new RunResult(RunResult.Status.TESTS_FAILED, ImmutableList.copyOf(Arrays.asList(
-                        new TestResult("Timeout test", false,
-                                "Tests timed out. Make sure you don't have an infinite loop in your code."))),
+                return new RunResult(RunResult.Status.TESTS_FAILED, ImmutableList.copyOf(
+                        Arrays.asList(new TestResult("Timeout test", false,
+                                "Tests timed out. "
+                                        + "Make sure you don't have an infinite loop in your code."
+                        ))),
                         ImmutableMap.of());
             }
         } catch (Exception e) {

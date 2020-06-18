@@ -113,8 +113,15 @@ public class Python3PluginTest {
         assertFalse(testResult.isSuccessful());
         assertFalse(testResult.getMessage().isEmpty());
         assertEquals(6, testResult.getException().size());
+    }
 
-        testResult = runResult.testResults.get(1);
+    @Test
+    public void testFailingTestNoBoolIsBool() {
+        Path path = TestUtils.getPath(getClass(), "failparsing");
+        RunResult runResult = python3Plugin.runTests(path);
+
+        assertEquals(RunResult.Status.TESTS_FAILED, runResult.status);
+        TestResult testResult = runResult.testResults.get(0);
         assertEquals(
                 "No false is not true at beginning\n   newlines  are kept",
                 testResult.getMessage());

@@ -2,11 +2,11 @@ import unittest
 from tmc import points
 
 
-class FailingTest(unittest.TestCase):
+class FailParsingTest(unittest.TestCase):
 
     @points('1.1')
     def test_new(self):
-        self.assertEqual("a", "b")
+        self.assertFalse(True, "No false is not true at beginning\n   newlines  are kept")
 
 if __name__ == '__main__':
     unittest.main()

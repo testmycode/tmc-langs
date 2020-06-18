@@ -66,9 +66,8 @@ public class ProcessRunnerTest extends TestCase {
         long end = System.nanoTime();
         long durationInSeconds = (end - start) / 1000000000;
 
-        /* Timeout is set to 5 seconds in .tmcproject.yml and ProcessRunner sleeps for 5 seconds,
-        so this should take at least 10 seconds. */
-        assertTrue(durationInSeconds >= 10);
+        // Custom timeout is set to 5 seconds
+        assertTrue(durationInSeconds >= 5);
         assertEquals(143, result.statusCode);
     }
 }

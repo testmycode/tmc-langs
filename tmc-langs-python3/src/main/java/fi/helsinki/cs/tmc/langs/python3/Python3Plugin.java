@@ -1,18 +1,20 @@
 package fi.helsinki.cs.tmc.langs.python3;
 
+import com.google.common.collect.ImmutableMap;
 import fi.helsinki.cs.tmc.langs.AbstractLanguagePlugin;
 import fi.helsinki.cs.tmc.langs.abstraction.Strategy;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationResult;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseBuilder;
 import fi.helsinki.cs.tmc.langs.domain.ExerciseDesc;
-import fi.helsinki.cs.tmc.langs.domain.ExercisePackagingConfiguration;
 import fi.helsinki.cs.tmc.langs.domain.RunResult;
 import fi.helsinki.cs.tmc.langs.domain.TestDesc;
+import fi.helsinki.cs.tmc.langs.domain.TestResult;
 import fi.helsinki.cs.tmc.langs.io.StudentFilePolicy;
 import fi.helsinki.cs.tmc.langs.io.sandbox.StudentFileAwareSubmissionProcessor;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareUnzipper;
 import fi.helsinki.cs.tmc.langs.io.zip.StudentFileAwareZipper;
+import fi.helsinki.cs.tmc.langs.utils.ProcessResult;
 import fi.helsinki.cs.tmc.langs.utils.ProcessRunner;
 
 import com.google.common.base.Optional;
@@ -33,6 +35,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -109,7 +112,14 @@ public final class Python3Plugin extends AbstractLanguagePlugin {
 
         ProcessRunner runner = new ProcessRunner(getTestCommand(), path);
         try {
-            runner.call();
+            // TODO: handle non successful return codes
+            ProcessResult result = runner.call();
+            if (result.timedOut) {
+                return new RunResult(RunResult.Status.TESTS_FAILED, ImmutableList.copyOf(Arrays.asList(
+                        new TestResult("Timeout test", false,
+                                "Tests timed out. Make sure you don't have an infinite loop in your code."))),
+                        ImmutableMap.of());
+            }
         } catch (Exception e) {
             log.error(CANNOT_RUN_TESTS_MESSAGE, e);
         }

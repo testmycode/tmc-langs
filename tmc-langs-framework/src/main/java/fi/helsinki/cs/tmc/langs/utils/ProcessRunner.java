@@ -35,6 +35,8 @@ public final class ProcessRunner implements Callable<ProcessResult> {
     @Override
     public ProcessResult call() throws IOException, InterruptedException {
         Process process = null;
+        Thread timeoutThread = null;
+        final boolean[] testRunTimedOut = {false};
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command);
             processBuilder.directory(workDir.toFile());
@@ -48,30 +50,44 @@ public final class ProcessRunner implements Callable<ProcessResult> {
             final Thread stderrReaderThread = startReadingThread(process.getErrorStream(),
                     stderrWriter);
 
-            boolean status = false;
+            // default timeout 5 minutes
+            int timeout = 300000;
             if (this.configuration.isSet("tests_timeout_ms")) {
-                status = process.waitFor(this.configuration.get("tests_timeout_ms").asInteger(),
-                        TimeUnit.MILLISECONDS);
-            } else {
-                status = process.waitFor(5, TimeUnit.MINUTES);
-            }
-            if (!status) {
-                process.destroy();
+                timeout = this.configuration.get("tests_timeout_ms").asInteger();
             }
 
-            /* We have to wait for process.destroy() to finish before calling process.exitValue().
-            Otherwise, process.exitValue() will throw an IllegalThreadStateException. */
-            Thread.sleep(5000);
-            int statusCode = process.exitValue();
+            int finalTimeout = timeout;
+            Process finalProcess = process;
+            timeoutThread = new Thread(() -> {
+                try {
+                    Thread.sleep(finalTimeout);
+                    if (finalProcess.isAlive()) {
+                        testRunTimedOut[0] = true;
+                        finalProcess.destroy();
+                    }
+                    Thread.sleep(1000);
+                    if (finalProcess.isAlive()) {
+                        finalProcess.destroyForcibly();
+                    }
+                } catch (InterruptedException e) {
+                    log.info("Process timeout thread interrupted.", e);
+                }
+            });
+            timeoutThread.start();
+
+            int statusCode = process.waitFor();
 
             stdoutReaderThread.join();
             stderrReaderThread.join();
 
-            return new ProcessResult(statusCode, stdoutWriter.toString(), stderrWriter.toString());
+            return new ProcessResult(statusCode, stdoutWriter.toString(), stderrWriter.toString(), testRunTimedOut[0]);
         } finally {
             if (process != null) {
                 process.getOutputStream().close();
                 process.destroy();
+            }
+            if (timeoutThread != null && timeoutThread.isAlive()) {
+                timeoutThread.interrupt();
             }
         }
     }

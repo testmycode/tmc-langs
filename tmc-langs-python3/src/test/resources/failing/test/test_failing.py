@@ -8,5 +8,9 @@ class FailingTest(unittest.TestCase):
     def test_new(self):
         self.assertEqual("a", "b")
 
+    @points('1.2')
+    def test_two(self):
+        self.failIf(True, "No false is not true at beginning\n   newlines  are kept")
+
 if __name__ == '__main__':
     unittest.main()

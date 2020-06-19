@@ -73,7 +73,7 @@ public final class Python3TestResultParser {
     private String parseTestMessage(String testMessage) {
         String matcher = testMessage.toLowerCase();
         if (matcher.matches("^(true|false) is not (true|false) :[\\s\\S]*")) {
-            return testMessage.split(":")[1].trim();
+            return testMessage.split(":", 2)[1].trim();
         }
         return testMessage;
     }

@@ -70,7 +70,6 @@ public final class ProcessRunner implements Callable<ProcessResult> {
                         finalProcess.destroyForcibly();
                     }
                 } catch (InterruptedException e) {
-                    log.info("Process timeout thread interrupted.", e);
                 }
             });
             timeoutThread.start();

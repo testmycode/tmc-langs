@@ -9,8 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +24,8 @@ import java.util.List;
 
 public final class Python3TestResultParser {
     private static Path RESULT_FILE = Paths.get(".tmc_test_results.json");
+
+    private static Logger log = LoggerFactory.getLogger(Python3TestResultParser.class);
 
     private Path path;
     private ObjectMapper mapper;
@@ -50,8 +56,20 @@ public final class Python3TestResultParser {
     }
 
     private List<TestResult> getTestResults() throws IOException {
-        String json = String.join("", Files.readAllLines(
+        String json;
+        try {
+            json = String.join("", Files.readAllLines(
+                path.resolve(RESULT_FILE), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            try {
+                json = String.join("", Files.readAllLines(
                 path.resolve(RESULT_FILE), Charset.defaultCharset()));
+            } catch (IOException ex) {
+                log.error("Failed to read test results with both UTF-8 and "
+                        + Charset.defaultCharset() + " encodings.", ex);
+                throw ex;
+            }
+        }
         List<TestResult> results = new ArrayList<>();
 
         JsonNode tree = mapper.readTree(json);

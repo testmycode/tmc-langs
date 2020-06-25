@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fi.helsinki.cs.tmc</groupId>
     <artifactId>build-tools</artifactId>
-    <version>0.8.3-SNAPSHOT</version>
+    <version>0.8.4-SNAPSHOT</version>
     <name>build-tools</name>
 
     <distributionManagement>

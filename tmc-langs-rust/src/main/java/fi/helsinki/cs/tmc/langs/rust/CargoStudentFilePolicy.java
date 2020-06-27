@@ -20,7 +20,7 @@ public class CargoStudentFilePolicy extends ConfigurableStudentFilePolicy {
      * decision to move them is made by {@link ConfigurableStudentFilePolicy}.
      */
     @Override
-    public boolean isStudentSourceFile(Path path) {
+    public boolean isStudentSourceFile(Path path, Path projectRootPath) {
         return !path.endsWith(Constants.CARGO_TOML) && path.startsWith(Constants.SOURCE);
     }
     

@@ -19,11 +19,11 @@ public class CargoStudentFilePolicyTest {
 
     @Test
     public void testCargoTomlIsNotStudentFile() {
-        assertFalse(policy.isStudentSourceFile(Paths.get("src", "Cargo.toml")));
+        assertFalse(policy.isStudentSourceFile(Paths.get("src", "Cargo.toml"), Paths.get("")));
     }
 
     @Test
     public void testSourceFileIsSourceFile() {
-        assertTrue(policy.isStudentSourceFile(Paths.get("src", "hello.rs")));
+        assertTrue(policy.isStudentSourceFile(Paths.get("src", "hello.rs"), Paths.get("")));
     }
 }

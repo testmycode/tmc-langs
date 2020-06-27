@@ -50,9 +50,9 @@ public class CargoResultParserTest {
     public void failContainsRightResult() {
         RunResult parsed = parser.parse(failResult);
         assertEquals(1, parsed.testResults.size());
-        assertEquals("description", parsed.testResults.get(0).errorMessage);
-        assertEquals("name", parsed.testResults.get(0).name);
-        assertEquals(false, parsed.testResults.get(0).passed);
+        assertEquals("description", parsed.testResults.get(0).getMessage());
+        assertEquals("name", parsed.testResults.get(0).getName());
+        assertEquals(false, parsed.testResults.get(0).isSuccessful());
     }
 
     @Test

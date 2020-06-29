@@ -56,7 +56,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
     private static final Path SRC_PATH = Paths.get("src");
     
-    public static final String RUNNER_ZIP_DOWNLOAD_VERSION = "1.0";
+    public static final String RUNNER_ZIP_DOWNLOAD_VERSION = "1.0.1";
     private static final String RUNNER_ZIP_DOWNLOAD_URL
             = "https://download.mooc.fi/tmc-csharp/tmc-csharp-runner-" 
             + RUNNER_ZIP_DOWNLOAD_VERSION + ".zip";
@@ -240,7 +240,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
         Path jarPath = getJarPath();
         
         Path bootstrap = jarPath.resolve(Paths.get("tmc-csharp-runner", 
-                RUNNER_ZIP_DOWNLOAD_VERSION, "Bootstrap.dll"));
+                RUNNER_ZIP_DOWNLOAD_VERSION, "TestMyCode.CSharp.Bootstrap.dll"));
 
         if (jarPath != null && Files.exists(bootstrap)) {
             return bootstrap.toString();
@@ -277,7 +277,7 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
         try {
             if (!Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner", 
-                    RUNNER_ZIP_DOWNLOAD_VERSION, "Bootstrap.dll")))) {
+                    RUNNER_ZIP_DOWNLOAD_VERSION, "TestMyCode.CSharp.Bootstrap.dll")))) {
                 
                 if (Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner")))) {
                     FileUtils.deleteDirectory(

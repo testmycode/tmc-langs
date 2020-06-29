@@ -4,7 +4,7 @@
     <parent>
         <artifactId>tmc-langs</artifactId>
         <groupId>fi.helsinki.cs.tmc</groupId>
-        <version>0.8.4-SNAPSHOT</version>
+        <version>0.8.5-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>

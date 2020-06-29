@@ -93,7 +93,7 @@ public class CSharpPluginTest {
 
         assertTrue(Files.exists(dirPath));
         assertTrue(Files.exists(jarPath.resolve(Paths.get("tmc-csharp-runner",
-                CSharpPlugin.RUNNER_ZIP_DOWNLOAD_VERSION, "Bootstrap.dll"))));
+                CSharpPlugin.RUNNER_ZIP_DOWNLOAD_VERSION, "TestMyCode.CSharp.Bootstrap.dll"))));
     }
 
     @Test

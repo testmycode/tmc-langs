@@ -9,6 +9,7 @@ iitarget/
 /tmc-langs-ant/src/test/resources/trivial/build/
 /tmc-langs-ant/src/test/resources/ant_arith_funcs/build/
 
+
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion
 *.iml
 .idea/
@@ -23,6 +24,7 @@ crashlytics-build.properties
 .settings
 workbench.xmi
 nbproject/
+.factorypath
 
 # Maven
 target/
@@ -35,6 +37,8 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+build_errors.txt
+build_log.txt
 
 *.log
 

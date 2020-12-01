@@ -14,7 +14,7 @@ addons:
       - valgrind
       - check
       - python3.4
-      - dotnet-sdk-3.1
+      - dotnet-sdk-5.0
 env:
   global:
   - secure: yiW+hXiZEycKFzF19rLlejJX8BTGbncSisBHyE8uulZee5n7UVGXnG1yvt9+6hz0nvMbxL7r1Daql0xxRHXUFB9VYVUKhF0ycHyJO5ze87U51mlIKAL8UnCkmxpkHNdxY45olEdK+mEbZBtot67nenlwGDfxLI7laITkR8IBAvY=

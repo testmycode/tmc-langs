@@ -127,6 +127,8 @@ public class CSharpPlugin extends AbstractLanguagePlugin {
 
             if (result.statusCode != 0) {
                 log.error(COMPILATION_FAILED_MESSAGE);
+                log.error(result.output);
+                log.error(result.errorOutput);
                 return Optional.absent();
             }
         } catch (Exception e) {

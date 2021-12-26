@@ -36,19 +36,21 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     private static final Logger log = LoggerFactory.getLogger(CargoPlugin.class);
     private static final RunResult EMPTY_FAILURE =
             new RunResult(
-                    Status.COMPILE_FAILED,
-                    ImmutableList.<TestResult>of(),
-                    new ImmutableMap.Builder<String, byte[]>().build());
+                Status.COMPILE_FAILED,
+                ImmutableList.<TestResult>of(),
+                new ImmutableMap.Builder<String, byte[]>().build()
+            );
 
     /**
      * Creates new plugin for cargo with all default stuff set.
      */
     public CargoPlugin() {
         super(
-                new ExerciseBuilder(),
-                new StudentFileAwareSubmissionProcessor(),
-                new StudentFileAwareZipper(),
-                new StudentFileAwareUnzipper());
+            new ExerciseBuilder(),
+            new StudentFileAwareSubmissionProcessor(),
+            new StudentFileAwareZipper(),
+            new StudentFileAwareUnzipper()
+        );
     }
 
     @Override
@@ -64,11 +66,24 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     @Override
     public ValidationResult checkCodeStyle(Path path, Locale locale) {
         if (run(new String[] {"cargo", "clean"}, path).isPresent()) {
-            String[] command = {"cargo", "rustc", "--", "--forbid", "warnings"};
+            String[] command = {
+                "cargo" , "rustc", "--message-format", "json"
+            };
             log.info("Building for lints with command {}", Arrays.deepToString(command));
             Optional<ProcessResult> result = run(command, path);
             if (result.isPresent()) {
-                return parseLints(result.get());
+                ValidationResult validationResult = parseLints(result.get());
+                if (validationResult.getValidationErrors().isEmpty()) {
+                    String[] command2 = {
+                        "cargo" , "rustc", "--message-format", "json", "--", "--forbid", "warnings"
+                    };
+                    log.info("Ensuring that lints are not being dissabled {}", Arrays.deepToString(command2));
+                    Optional<ProcessResult> result2 = run(command, path);
+                    if (result2.isPresent()) {
+                        return parseLints(result2.get());
+                    }
+                }
+                return validationResult;
             }
         }
         log.error("Build for lints failed.");
@@ -76,7 +91,7 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     }
 
     public String getLanguageName() {
-        return "cargo";
+        return "Rust";
     }
 
     public String getPluginName() {
@@ -152,9 +167,9 @@ public class CargoPlugin extends AbstractLanguagePlugin {
     private RunResult filledFailure(ProcessResult processResult) {
         byte[] errorOutput = processResult.errorOutput.getBytes(StandardCharsets.UTF_8);
         ImmutableMap<String, byte[]> logs =
-                new ImmutableMap.Builder()
+                new ImmutableMap.Builder<String, byte[]>()
                         .put(SpecialLogs.COMPILER_OUTPUT, errorOutput)
-                        .<String, byte[]>build();
+                        .build();
         return new RunResult(Status.COMPILE_FAILED, ImmutableList.<TestResult>of(), logs);
     }
 

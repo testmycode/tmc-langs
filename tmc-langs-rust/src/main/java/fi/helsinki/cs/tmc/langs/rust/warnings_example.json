@@ -1,0 +1,186 @@
+[
+  {
+    "reason": "compiler-message",
+    "package_id": "passing 0.1.0 (path+file:///home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/warnings)",
+    "target": {
+      "kind": ["lib"],
+      "crate_types": ["lib"],
+      "name": "passing",
+      "src_path": "/home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/warnings/src/lib.rs",
+      "edition": "2015"
+    },
+    "message": {
+      "message": "unused variable: `z`",
+      "code": { "code": "unused_variables", "explanation": null },
+      "level": "warning",
+      "spans": [
+        {
+          "file_name": "src/lib.rs",
+          "byte_start": 138,
+          "byte_end": 139,
+          "line_start": 8,
+          "line_end": 8,
+          "column_start": 9,
+          "column_end": 10,
+          "is_primary": true,
+          "text": [
+            {
+              "text": "    let z = 0;",
+              "highlight_start": 9,
+              "highlight_end": 10
+            }
+          ],
+          "label": null,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "expansion": null
+        }
+      ],
+      "children": [
+        {
+          "message": "#[warn(unused_variables)] on by default",
+          "code": null,
+          "level": "note",
+          "spans": [],
+          "children": [],
+          "rendered": null
+        },
+        {
+          "message": "consider prefixing with an underscore",
+          "code": null,
+          "level": "help",
+          "spans": [
+            {
+              "file_name": "src/lib.rs",
+              "byte_start": 138,
+              "byte_end": 139,
+              "line_start": 8,
+              "line_end": 8,
+              "column_start": 9,
+              "column_end": 10,
+              "is_primary": true,
+              "text": [
+                {
+                  "text": "    let z = 0;",
+                  "highlight_start": 9,
+                  "highlight_end": 10
+                }
+              ],
+              "label": null,
+              "suggested_replacement": "_z",
+              "suggestion_applicability": "MachineApplicable",
+              "expansion": null
+            }
+          ],
+          "children": [],
+          "rendered": null
+        }
+      ],
+      "rendered": "warning: unused variable: `z`\n --> src/lib.rs:8:9\n  |\n8 |     let z = 0;\n  |         ^ help: consider prefixing with an underscore: `_z`\n  |\n  = note: #[warn(unused_variables)] on by default\n\n"
+    }
+  },
+  {
+    "reason": "compiler-message",
+    "package_id": "passing 0.1.0 (path+file:///home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/warnings)",
+    "target": {
+      "kind": ["lib"],
+      "crate_types": ["lib"],
+      "name": "passing",
+      "src_path": "/home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/warnings/src/lib.rs",
+      "edition": "2015"
+    },
+    "message": {
+      "message": "function `xorAdd` should have a snake case name",
+      "code": { "code": "non_snake_case", "explanation": null },
+      "level": "warning",
+      "spans": [
+        {
+          "file_name": "src/lib.rs",
+          "byte_start": 90,
+          "byte_end": 96,
+          "line_start": 7,
+          "line_end": 7,
+          "column_start": 4,
+          "column_end": 10,
+          "is_primary": true,
+          "text": [
+            {
+              "text": "fn xorAdd(x: u64, a: u64, b: u64) -> u64 {",
+              "highlight_start": 4,
+              "highlight_end": 10
+            }
+          ],
+          "label": null,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "expansion": null
+        }
+      ],
+      "children": [
+        {
+          "message": "#[warn(non_snake_case)] on by default",
+          "code": null,
+          "level": "note",
+          "spans": [],
+          "children": [],
+          "rendered": null
+        },
+        {
+          "message": "convert the identifier to snake case",
+          "code": null,
+          "level": "help",
+          "spans": [
+            {
+              "file_name": "src/lib.rs",
+              "byte_start": 90,
+              "byte_end": 96,
+              "line_start": 7,
+              "line_end": 7,
+              "column_start": 4,
+              "column_end": 10,
+              "is_primary": true,
+              "text": [
+                {
+                  "text": "fn xorAdd(x: u64, a: u64, b: u64) -> u64 {",
+                  "highlight_start": 4,
+                  "highlight_end": 10
+                }
+              ],
+              "label": null,
+              "suggested_replacement": "xor_add",
+              "suggestion_applicability": "MaybeIncorrect",
+              "expansion": null
+            }
+          ],
+          "children": [],
+          "rendered": null
+        }
+      ],
+      "rendered": "warning: function `xorAdd` should have a snake case name\n --> src/lib.rs:7:4\n  |\n7 | fn xorAdd(x: u64, a: u64, b: u64) -> u64 {\n  |    ^^^^^^ help: convert the identifier to snake case: `xor_add`\n  |\n  = note: #[warn(non_snake_case)] on by default\n\n"
+    }
+  },
+  {
+    "reason": "compiler-artifact",
+    "package_id": "passing 0.1.0 (path+file:///home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/warnings)",
+    "target": {
+      "kind": ["lib"],
+      "crate_types": ["lib"],
+      "name": "passing",
+      "src_path": "/home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/warnings/src/lib.rs",
+      "edition": "2015"
+    },
+    "profile": {
+      "opt_level": "0",
+      "debuginfo": 2,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": false
+    },
+    "features": [],
+    "filenames": [
+      "/home/delma/git/tmc-langs/tmc-langs-rust/src/test/resources/warnings/target/debug/libpassing.rlib"
+    ],
+    "executable": null,
+    "fresh": false
+  }
+]

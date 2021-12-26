@@ -2,44 +2,31 @@ package fi.helsinki.cs.tmc.langs.rust;
 
 import fi.helsinki.cs.tmc.langs.abstraction.ValidationError;
 
-import java.util.List;
-
 public class LintError implements ValidationError {
 
-    private final List<String> code;
     private final int startLine;
     private final int startColumn;
-    private final String description;
+    private final String message;
     private final String file;
-    private final int endLine;
-    private final int endColumn;
 
     /**
      * Creates new error that failing lints generate.
      * 
      * @param file file that the error is in
-     * @param description describes what is wrong
-     * @param code list of code lines the error is in
+     * @param message describes what is wrong
      * @param startLine from what line error start
      * @param startColumn from what column in that line error starts
-     * @param endLine in what line error ends
-     * @param endColumn in what column in that line error ends
      */
     public LintError(
             String file,
-            String description,
-            List<String> code,
+            String message,
             int startLine,
-            int startColumn,
-            int endLine,
-            int endColumn) {
-        this.code = code;
+            int startColumn
+    ) {
         this.file = file;
-        this.description = description;
+        this.message = message;
         this.startLine = startLine;
         this.startColumn = startColumn;
-        this.endLine = endLine;
-        this.endColumn = endColumn;
     }
 
     @Override
@@ -52,26 +39,14 @@ public class LintError implements ValidationError {
         return startLine;
     }
 
-    public int getEndColumn() {
-        return endColumn;
-    }
-
-    public int getEndLine() {
-        return endLine;
-    }
-
     @Override
     public String getMessage() {
-        return description;
+        return message;
     }
 
     @Override
     public String getSourceName() {
         return file;
-    }
-
-    public List<String> getCode() {
-        return code;
     }
 
 }
